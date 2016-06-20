@@ -2,7 +2,7 @@
     class Rights
     {
         public $id;
-        public $prefixCategory;
+        public $sortOrder;
         public $prefix;
         public $title;
     }

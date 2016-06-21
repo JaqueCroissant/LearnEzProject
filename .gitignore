@@ -1,2 +1,3 @@
 /nbproject/private/
 /include/classes/db.class.php
+include/extra/db.class.php

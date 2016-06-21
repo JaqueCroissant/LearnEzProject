@@ -1,0 +1,49 @@
+html {
+    
+}
+
+.noPadding {
+    padding: 0px !important;
+}
+
+.collapsed {
+    width: 100px !important;
+    overflow: hidden;
+}
+
+.collapsedTitle {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
+    position: relative;
+    float: left;
+}
+
+#navBar {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.menu_header {
+    font-size: 0.875em;
+    padding-top: 0.625em;
+    padding-bottom: 0.625em;
+    color: white;
+    display: block;
+    padding-left: 0.313em;
+}
+
+.menu_header a {
+    text-decoration: none;
+}
+
+.menu_icon {
+    position: relative;
+    float: left;
+    width: 40px !important;
+    height: 40px !important;
+}

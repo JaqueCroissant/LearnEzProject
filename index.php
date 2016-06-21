@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <?php
 require_once 'include/extra/require.php';
-<<<<<<< HEAD
 require_once 'test.php';
-=======
-
->>>>>>> 984ce136d23d97efc4a9642239c51bb7dde4410e
 ?>
 <html>
     <head>

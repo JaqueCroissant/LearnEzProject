@@ -9,6 +9,8 @@ require_once 'include/extra/require.php';
         <title>LearnEZ</title>
         <link href="css/bootstrap.css" rel="stylesheet" type="text/css"/>
         <link href="css/css.css" rel="stylesheet" type="text/css"/>
+        <script src="js/jQuery.js" type="text/javascript"></script>
+        <script src="js/scripts.js" type="text/javascript"></script>
     </head>
     <body>
         <div class="col-xs-12 navbar-default pull-right">
@@ -18,18 +20,13 @@ require_once 'include/extra/require.php';
             ?>
 
         </div>
-        <div class="col-xs-12">
-            <div class="col-xs-1 navbar-default">
-                <ul>
-                    <a href="?page=front"><li>Front Page</li></a>
-                    <a href='?page=news'><li>News</li></a>
-                    <a href="?page=courses"><li>Courses</li></a>
-
-
-                </ul>
-
+        <div class="noPadding col-xs-12">
+            <div class="noPadding collapsed col-xs-2 navbar-default" id="navBar">
+                <div class="menu_header">
+                    <a href="?page=front"><img class="menu_icon" src="assets/images/news.png"><div class="menu_text collapsedTitle">Front Page</div></a>
+                </div>
             </div>
-            <div class="col-xs-11">
+            <div class="col-xs-10">
                 <?php
                 if (isset($_GET['page'])) {
                     if (in_array($_GET['page'], $pages)) {

@@ -8,5 +8,6 @@
         public $firstname;
         public $surname;
         public $email;
+        public $lol;
     }
 ?>

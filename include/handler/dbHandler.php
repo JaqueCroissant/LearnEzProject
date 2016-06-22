@@ -113,6 +113,7 @@
                 $this->_prepare = $this->GetConnInstance()->prepare($query);
                 $this->HandleArguments($query, func_num_args(), func_get_args());
                 $this->_prepare->execute();
+                return true;
             }
             catch (PDOException $ex) 
             {

@@ -9,7 +9,6 @@
                 $_SESSION[$key] = $value;
                 return $_SESSION;
             }
-
             return null;
         }
 

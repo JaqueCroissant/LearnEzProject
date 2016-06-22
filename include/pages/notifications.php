@@ -1,3 +1,4 @@
 <?php
 
-echo 'Notify Bitch';
+
+echo 'Notifications will be put here';

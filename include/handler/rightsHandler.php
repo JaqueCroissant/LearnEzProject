@@ -6,12 +6,18 @@
             if(SessionKeyHandler::SessionExists('user'))
             {
                 $user = SessionKeyHandler::GetFromSession('user');
-                $userRights = DbHandler::getInstance()->ReturnQuery("SELECT prefix, `user_type_rights.user_type_id` AS user_type_id 
-                                                        FROM `rights` INNER JOIN `user_type_rights` 
-                                                        ON `rights.id` = `user_type_rights.rights_id` 
-                                                        WHERE `user_type_id` = :type", $user->userTypeId);
+                $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.prefix
+                                                        FROM rights INNER JOIN user_type_rights 
+                                                        ON rights.id = user_type_rights.rights_id 
+                                                        WHERE user_type_rights.user_type_id = :type", $user->userTypeId);
                 
-                SessionKeyHandler::AddToSession('rights', $userRights);
+                $rightArray = array();
+                foreach(reset($userRights) as $right)
+                {
+                    array_push($rightArray, $right);
+                }
+
+                SessionKeyHandler::AddToSession('rights', $rightArray);
             }
         }
 
@@ -19,10 +25,12 @@
         {
             if(is_string($prefix) && !empty($prefix))
             {
-                return in_array($prefix, $_SESSION['rights']);
+                return in_array($prefix, SessionKeyHandler::GetFromSession("rights"));
             }
 
             return false;
         }
+
+
     }
 ?>

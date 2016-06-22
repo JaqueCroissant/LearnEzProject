@@ -14,34 +14,31 @@ require_once 'test.php';
         <script src="js/scripts.js" type="text/javascript"></script>
     </head>
     <body>
-        <div class="col-xs-12 topbar navbar-default">
-            
+        <div class="noPadding topbar menu_design">
             <?php
             include 'include/topbar.php';
             ?>
-
         </div>
-        <div class="noPadding col-xs-12">
-            <div class="noPadding collapsed col-xs-2 navbar-default" id="navBar">
-                <div class="menu_header">
-                    <a href="?page=front"><img class="menu_icon" src="assets/images/news.png">
-                        <div class="menu_text collapsedTitle">Front Page</div>
-                    </a>
-                </div>
-            </div>
-            <div class='col-xs-10'>
-                <?php
-                if (isset($_GET['page'])) {
-                    if (in_array($_GET['page'], $pages)) {
-                        include('include/pages/' . $_GET['page'] . '.php');
-                    } else {
-                        include('include/pages/front.php');
-                    }
+        <div class="noPadding sidebar menu_design collapsed" id="navBar">
+            <?php 
+            include 'include/sidebar.php';
+            ?>
+        </div>
+        <div class='col-md-12 content'>
+            <?php
+            if (isset($_GET['page'])) {
+                if (in_array($_GET['page'], $pages)) {
+                    include('include/pages/' . $_GET['page'] . '.php');
                 } else {
                     include('include/pages/front.php');
                 }
-            ?>
-            </div>
+            } else {
+                include('include/pages/front.php');
+            }
+        ?>
+        </div>
+        <div id="notificationWindow">
+            yo
         </div>
     </body>
 </html>

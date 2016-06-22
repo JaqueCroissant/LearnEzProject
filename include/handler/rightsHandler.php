@@ -9,7 +9,7 @@
                 $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.prefix
                                                         FROM rights INNER JOIN user_type_rights 
                                                         ON rights.id = user_type_rights.rights_id 
-                                                        WHERE user_type_rights.user_type_id = :type", $user->userTypeId);
+                                                        WHERE user_type_rights.user_type_id = :type", $user->user_type_id);
                 
                 $rightArray = array();
                 foreach(reset($userRights) as $right)

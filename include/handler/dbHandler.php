@@ -1,38 +1,43 @@
 <?php
     class DbHandler 
     {
-        private $dsn = 'mysql:dbname=mokhtar_project_learnez_;host=mysql7.gigahost.dk:3306';
-        private $username;
-        private $password;
+        private $_dsn = 'mysql:dbname=mokhtar_project_learnez_;host=mysql7.gigahost.dk:3306';
+        private $_username;
+        private $_password;
         
-        private $conn = null;
-        private $prepare;
+        private $_conn = null;
+        private $_prepare;
         
         public function __construct ($username, $password) 
         {
-            $this->username = $username;
-            $this->password = $password;
+            $this->_username = $username;
+            $this->_password = $password;
             $this->Connect();
         }
         
         private function Connect() 
         {
             try {
-                $this->conn = new PDO($this->dsn, $this->username, $this->password);
-                $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                
+                if($this->_conn != null) {
+                    return;
+                }
+                
+                $this->_conn = new PDO($this->_dsn, $this->_username, $this->_password);
+                $this->_conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } 
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::ReturnError($ex->getCode());
+                $errorMessage = ErrorHandler::ReturnError("DATABASE_COULD_NOT_CONNECT");
                 echo $errorMessage;
             }
         }
         
         private function GetConnInstance() {
-            if($this->conn == null) {
+            if($this->_conn == null) {
                 $this->Connect();
             }
-            return $this->conn;
+            return $this->_conn;
         }
         
         private function HandleArguments($query, $num_args, $args) {
@@ -47,7 +52,7 @@
         }
         
         private function AddArgument($argName, $argValue) {
-            $this->prepare->bindParam($argName, $argValue, $this->GetArgumentType($argValue));
+            $this->_prepare->bindParam($argName, $argValue, $this->GetArgumentType($argValue));
         }
         
         private function FindArguments($charArray) {
@@ -96,9 +101,9 @@
         public function Query($query) 
         {
             try {
-                $this->prepare = $this->GetConnInstance()->prepare($query);
+                $this->_prepare = $this->GetConnInstance()->prepare($query);
                 $this->HandleArguments($query, func_num_args(), func_get_args());
-                $this->prepare->execute();
+                $this->_prepare->execute();
             }
             catch (PDOException $ex) 
             {
@@ -111,12 +116,12 @@
         public function ReturnQuery($query) 
         {
             try {
-                $this->prepare = $this->GetConnInstance()->prepare($query);
+                $this->_prepare = $this->GetConnInstance()->prepare($query);
                 $this->HandleArguments($query, func_num_args(), func_get_args());
-                $this->prepare->execute();
+                $this->_prepare->execute();
                 
-                if($this->prepare->rowCount() > 0) {
-                    return $this->prepare->fetchall(PDO::FETCH_ASSOC);
+                if($this->_prepare->rowCount() > 0) {
+                    return $this->_prepare->fetchall(PDO::FETCH_ASSOC);
                 }
             }
             catch (PDOException $ex) 
@@ -130,11 +135,11 @@
         public function CountQuery($query) 
         {
             try {
-                $this->prepare = $this->GetConnInstance()->prepare($query);
+                $this->_prepare = $this->GetConnInstance()->prepare($query);
                 $this->HandleArguments($query, func_num_args(), func_get_args());
-                $this->prepare->execute();
+                $this->_prepare->execute();
                 
-                return $this->prepare->rowCount();
+                return $this->_prepare->rowCount();
             }
             catch (PDOException $ex) 
             {

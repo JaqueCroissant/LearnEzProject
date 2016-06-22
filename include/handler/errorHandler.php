@@ -1,16 +1,17 @@
 <?php
 class ErrorHandler
 {
-    public static $Error;
+    public static $error;
 
     public static function ReturnError($errorCode = null)
     {
-        ErrorHandler::$Error = ErrorHandler::SetErrorMessage($errorCode);
-        return ErrorHandler::$Error;
+        self::$error = self::SetErrorMessage($errorCode);
+        return self::$error;
     }
 
     private static function SetErrorMessage($errorCode = null)
     {
+        $userData = DbHandler::getInstance()->CountQuery("SELECT error.prefix, translation_error.title, translation_error.text FROM error INNER JOIN translation_error ON translation_error.error_id = error.id WHERE translation_error.language_id = :language_id", 1);
         $errorTitle = null;
         $errorText = null;
         switch ($errorCode)

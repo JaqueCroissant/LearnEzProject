@@ -7,6 +7,7 @@
         
         private $_conn = null;
         private $_prepare;
+        private static $_instance;
         
         public function __construct ($username, $password) 
         {
@@ -15,10 +16,18 @@
             $this->Connect();
         }
         
+        public static function getInstance()
+        {
+            if ( is_null( self::$_instance ) )
+            {
+              self::$_instance = new self(db_info::$db_username, db_info::$db_password);
+            }
+            return self::$_instance;
+        }
+        
         private function Connect() 
         {
             try {
-                
                 if($this->_conn != null) {
                     return;
                 }

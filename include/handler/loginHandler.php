@@ -1,8 +1,6 @@
 <?php
 class LoginHandler 
 {
-    private $_dbHandler;
-    
     private $_user;
     private $_username;
     private $_password;
@@ -11,9 +9,8 @@ class LoginHandler
     private $_token;
     public $error;
     
-    public function __construct($dbHandler) 
+    public function __construct() 
     {
-        $this->_dbHandler = $dbHandler;
 	$this->_errors	= array();
 	$this->_access	= false;
     }
@@ -62,7 +59,7 @@ class LoginHandler
             return false;
         }
         
-        if($this->_dbHandler->CountQuery("SELECT id FROM users WHERE username = :username LIMIT 1", strtolower($this->_username)) < 1) {
+        if(DbHandler::getInstance()->CountQuery("SELECT id FROM users WHERE username = :username LIMIT 1", strtolower($this->_username)) < 1) {
              return false;
         }
         
@@ -74,7 +71,7 @@ class LoginHandler
             return false;
         }
         
-        $userData = $this->_dbHandler->ReturnQuery("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), $this->_password);
+        $userData = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), $this->_password);
         
         if(empty($userData)) {
              return false;

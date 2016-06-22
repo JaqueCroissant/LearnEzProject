@@ -1,15 +1,14 @@
 jQuery(function ($) {
    $(document).ready(function () {
-       $('#navBar').mouseenter(function () {
+       $('#navBar').mouseover(function () {
            $('#navBar').removeClass("collapsed");
-           $('.menu_text').removeClass("collapsedTitle");
-           $('.menu_text').addClass("visible");
+           $('.menu_text').switchClass("collapsedTitle", "visible");
        }); 
        
        $('#navBar').mouseleave(function () {
+           $('#navBar .menu_text').removeClass("visible");
+           $('#navBar .menu_text').addClass("collapsedTitle");
            $('#navBar').addClass("collapsed");
-           $('.menu_text').removeClass("visible");
-           $('.menu_text').addClass("collapsedTitle");
        });
     });
  });

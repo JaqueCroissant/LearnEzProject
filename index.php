@@ -10,10 +10,11 @@ require_once 'include/extra/require.php';
         <link href="css/bootstrap.css" rel="stylesheet" type="text/css"/>
         <link href="css/css.css" rel="stylesheet" type="text/css"/>
         <script src="js/jQuery.js" type="text/javascript"></script>
+        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="js/scripts.js" type="text/javascript"></script>
     </head>
     <body>
-        <div class="col-xs-12 navbar-default pull-right">
+        <div class="col-xs-12 topbar navbar-default">
             
             <?php
             include 'include/topbar.php';
@@ -23,10 +24,12 @@ require_once 'include/extra/require.php';
         <div class="noPadding col-xs-12">
             <div class="noPadding collapsed col-xs-2 navbar-default" id="navBar">
                 <div class="menu_header">
-                    <a href="?page=front"><img class="menu_icon" src="assets/images/news.png"><div class="menu_text collapsedTitle">Front Page</div></a>
+                    <a href="?page=front"><img class="menu_icon" src="assets/images/news.png">
+                        <div class="menu_text collapsedTitle">Front Page</div>
+                    </a>
                 </div>
             </div>
-            <div class="col-xs-10">
+            <div class='col-xs-10'>
                 <?php
                 if (isset($_GET['page'])) {
                     if (in_array($_GET['page'], $pages)) {

@@ -7,7 +7,7 @@ html {
 }
 
 .collapsed {
-    width: 100px !important;
+    width: 60px !important;
     overflow: hidden;
 }
 
@@ -17,7 +17,6 @@ html {
 
 .visible {
     visibility: visible;
-    position: relative;
     float: left;
 }
 
@@ -26,19 +25,24 @@ html {
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    height: 1200px;
+    background-color: #33bdea;
 }
 
 .menu_header {
     font-size: 0.875em;
     padding-top: 0.625em;
     padding-bottom: 0.625em;
-    color: white;
+    color: #1a3132;
     display: block;
-    padding-left: 0.313em;
+    padding-left: 0.613em;
 }
 
-.menu_header a {
+a .menu_text {
     text-decoration: none;
+    color: white;
+    font-size: 20px;
+    display: block;
 }
 
 .menu_icon {
@@ -46,4 +50,23 @@ html {
     float: left;
     width: 40px !important;
     height: 40px !important;
+}
+
+.menu_text {
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    transition: none;
+    padding-left: 7px;
+    padding-top: 5px;
+}
+
+.login_input {
+    margin-top: 2px;
+    width: 200px;
+}
+
+.topbar {
+    background-color: #33bdea;
+    
 }

@@ -1,14 +1,9 @@
 html {
-    
+    background-color: white;
 }
 
 .noPadding {
     padding: 0px !important;
-}
-
-.collapsed {
-    width: 60px !important;
-    overflow: hidden;
 }
 
 .collapsedTitle {
@@ -24,9 +19,8 @@ html {
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+    transition: all 0.25s ease;
     height: 1200px;
-    background-color: #33bdea;
 }
 
 .menu_header {
@@ -38,10 +32,10 @@ html {
     padding-left: 0.613em;
 }
 
-a .menu_text {
+.menu_header a {
     text-decoration: none;
     color: white;
-    font-size: 20px;
+    font-size: 28px;
     display: block;
 }
 
@@ -66,7 +60,49 @@ a .menu_text {
     width: 200px;
 }
 
-.topbar {
+.menu_design {
     background-color: #33bdea;
-    
+}
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 9000;
+}
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    z-index: 8000;
+}
+
+.collapsed {
+    width: 60px !important;
+    overflow: hidden;
+}
+
+.expanded {
+    width: 300px !important;
+}
+
+.content {
+    padding-left: 60px;
+    z-index: 1000;
+}
+
+#notificationWindow {
+    border-width: 1px;
+    border-color: black;
+    border-radius: 5px;
+    border-style: groove;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .25);
+    padding: 2px;
+    width: 300px;
+    max-height: 600px;
+    position: fixed;
+    z-index: 8000;
 }

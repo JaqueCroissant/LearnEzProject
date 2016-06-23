@@ -62,7 +62,7 @@ class TranslationHandler
     
     private function loadLanguageSettings(){
         if (SessionKeyHandler::SessionExists("user")){
-            return SessionKeyHandler::GetFromSession("user", true)->languageId;
+            return SessionKeyHandler::GetFromSession("user", true)->language_id;
         }
         if (isset($_COOKIE["language_id"])) {
             return $_COOKIE["language_id"];            

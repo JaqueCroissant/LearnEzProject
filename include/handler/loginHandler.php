@@ -83,7 +83,7 @@ class LoginHandler
             return false;
         }
         
-        $this->_user = new User(reset($new_user));
+        $this->_user = new User(reset($user));
         return true;
     }
     

@@ -9,3 +9,5 @@ You could see there was text coming out of her eyes, text coming out of her wher
 Lorem Ispum is a choke artist. It chokes! You know, it really doesn’t matter what you write as long as you’ve got a young, and beautiful, piece of text. An ‘extremely credible source’ has called my office and told me that Barack Obama’s placeholder text is a fraud. I’m the best thing that ever happened to placeholder text.
 <br/><br/>
 I’m the best thing that ever happened to placeholder text.';
+
+?>

@@ -133,6 +133,7 @@
                 if($this->_prepare->rowCount() > 0) {
                     return $this->_prepare->fetchall(PDO::FETCH_ASSOC);
                 }
+                return null;
             }
             catch (PDOException $ex) 
             {

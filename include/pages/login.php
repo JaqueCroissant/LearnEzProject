@@ -7,13 +7,13 @@
     }
     if(isset($_POST["submit"])) {
         if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
-            echo "logged in";
+            header("Location: index.php?page=login");
         } else {
             echo $loginHandler->error->title;
         }
     }
     
-    if(!$loginHandler->check_login()) {
+    if(!$loginHandler->check_login() || isset($_GET["logout"])) {
 ?>
 
 <div class="text-center">
@@ -28,6 +28,20 @@
         </form>
     </div>
 </div>
+
+<?php
+    } else { 
+    
+    echo "Username: " . SessionKeyHandler::GetFromSession("user", true)->username;
+    echo "Email: " . SessionKeyHandler::GetFromSession("user", true)->email;
+    echo "Firstname: " . SessionKeyHandler::GetFromSession("user", true)->firstname;
+    echo "Surname: " . SessionKeyHandler::GetFromSession("user", true)->surname;
+    echo "Last login: " . SessionKeyHandler::GetFromSession("user", true)->last_login;
+    echo "User type: " . SessionKeyHandler::GetFromSession("user", true)->user_type_id;
+    echo "Language: " . SessionKeyHandler::GetFromSession("user", true)->language_id;
+?>
+    <br />
+    <a href="index.php?page=login&logout=true">Logout</a>
 
 <?php
     }

@@ -14,16 +14,25 @@ require_once 'test.php';
         <script src="js/scripts.js" type="text/javascript"></script>
     </head>
     <body>
+        <div class="sidebarButton hidden-lg menu_design" id="sidebarButton">
+            <a href="#">
+                <img src="assets/images/ic_keyboard_arrow_right_white_18dp/web/ic_keyboard_arrow_right_white_18dp_1x.png"><br/>
+                <img src="assets/images/ic_keyboard_arrow_right_white_18dp/web/ic_keyboard_arrow_right_white_18dp_1x.png"><br/>
+                <img src="assets/images/ic_keyboard_arrow_right_white_18dp/web/ic_keyboard_arrow_right_white_18dp_1x.png">
+            </a>
+        </div>
         <div class="noPadding topbar menu_design">
             <?php
             include 'include/topbar.php';
             ?>
         </div>
-        <div class="noPadding sidebar menu_design collapsed" id="navBar">
+        
+        <div class="noPadding sidebar menu_design collapsed hidden-md hidden-sm hidden-xs" id="navBar">
             <?php 
             include 'include/sidebar.php';
             ?>
         </div>
+        
         <div class='col-md-12 content'>
             <?php
             if (isset($_GET['page'])) {
@@ -38,7 +47,7 @@ require_once 'test.php';
         ?>
         </div>
         <div id="notificationWindow">
-            yo
+            
         </div>
     </body>
 </html>

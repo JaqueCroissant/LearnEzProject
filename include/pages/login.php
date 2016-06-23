@@ -39,6 +39,17 @@
     echo "Last login: " . SessionKeyHandler::GetFromSession("user", true)->last_login;
     echo "User type: " . SessionKeyHandler::GetFromSession("user", true)->user_type_id;
     echo "Language: " . SessionKeyHandler::GetFromSession("user", true)->language_id;
+    $not = new NotificationHandler();
+?>
+<br/>
+<br/>
+<?php
+    echo $not->getNumberOfUnread(SessionKeyHandler::GetFromSession("user", true)->id);
+    echo "<br/>";
+    $notifications = $not->getNotifications(SessionKeyHandler::GetFromSession("user", true)->id, 5);
+    foreach ($notifications as $value) {
+        echo $value->title . "<br/>";
+    }
 ?>
     <br />
     <a href="index.php?page=login&logout=true">Logout</a>

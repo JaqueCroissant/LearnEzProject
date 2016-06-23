@@ -1,8 +1,9 @@
-<div class="pull-left col-md-3">
-    <h1>LearnEZ</h1>
+<div class="pull-left col-md-3 title">
+    <img src="assets/images/LearnEZ-Maskot-hvid.png" class="title_icon">
+    <div class="headline">Learn<span id="EZ">EZ</span></div>
 </div>
 
-<div class="pull-right col-xl-3 hidden-xs">
+<div class="pull-right col-xl-3 hidden-xs" style="height: 100%; margin-right: 0.5em;">
     <?php
         echo '  <div class="col-xl-2 menu_header pull-right">
                     <a href="#" id="notificationLink">

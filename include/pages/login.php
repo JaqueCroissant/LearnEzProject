@@ -1,5 +1,7 @@
 <?php
-
+    if(!$loginHandler->reset_password("mathiasklinke@gmail.com")) {
+        echo $loginHandler->error->title;
+    }
     if(isset($_GET['logout'])) {
         if($loginHandler->check_login()) {
             $loginHandler->log_out();

@@ -1,16 +1,18 @@
 <?php
-    if(!$loginHandler->reset_password("mathiasklinke@gmail.com")) {
+    if(!$loginHandler->reset_password("test@test.dk")) {
         echo $loginHandler->error->title;
     }
     if(isset($_GET['logout'])) {
         if($loginHandler->check_login()) {
             $loginHandler->log_out();
+            header("Location: index.php?page=front");
         }
     }
     
     if(isset($_POST["submit"])) {
         if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
-            header("Location: index.php?page=front");
+            TranslationHandler::resetLanguage();
+            header("Location: index.php?page=login");
         } else {
             echo $loginHandler->error->title;
         }

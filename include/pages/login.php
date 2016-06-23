@@ -2,6 +2,7 @@
     if(!$loginHandler->reset_password("test@test.dk")) {
         echo $loginHandler->error->title;
     }
+    
     if(isset($_GET['logout'])) {
         if($loginHandler->check_login()) {
             $loginHandler->log_out();

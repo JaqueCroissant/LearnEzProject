@@ -65,6 +65,26 @@ class LoginHandler
         
         return true;
     }
+
+    private function verify_email()
+    {
+        if(preg_match("^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$", $_email))
+        {
+           $new_user = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE email = :email", $_email);
+
+           if(empty($new_user))
+           {
+               return false;
+           }
+           else
+           {
+               $this->_user = new User(reset($new_user));
+               return true;
+           }
+        }
+
+        return false;
+    }
     
     private function verify_password() {
         if(empty($this->_password)) {
@@ -144,6 +164,33 @@ class LoginHandler
             $this->verify_login_session();
         }
 	return $this->_access;
+    }
+
+
+
+    public function reset_password($email)
+    {
+        $_email = $email;
+
+        try
+        {
+            if(empty($email))
+            {
+                throw new Exception ("LOGIN_INVALID_EMAIL");
+            }
+
+            if(verify_email())
+            {
+                throw new Exception ("LOGIN_INVALID_EMAIL");
+            }
+        }
+        catch (Exception $ex)
+	    {
+            $this->error = ErrorHandler::ReturnError($ex->getMessage());
+	    }
+
+        if($this->_user->last_password_request)
+
     }
 }
 

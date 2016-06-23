@@ -10,5 +10,8 @@
         public $firstname;
         public $surname;
         public $email;
+
+        public $validation_code;
+        public $last_password_request;
     }
 ?>

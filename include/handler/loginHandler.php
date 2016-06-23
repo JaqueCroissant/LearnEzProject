@@ -11,11 +11,12 @@ class LoginHandler
     
     public function __construct() 
     {
-	$this->_errors	= array();
-	$this->_access	= false;
+        $this->_errors	= array();
+        $this->_access	= false;
     }
     
-    private function assign_properties($username, $password, $token) {
+    private function assign_properties($username, $password, $token) 
+    {
         $this->_token	= isset($token) ? $token : null;
         $this->_username = $username;
         $this->_password = $password;
@@ -23,20 +24,22 @@ class LoginHandler
     
     private function verify_login()
     {
-	try 
-	{
-	    if(!$this->token_valid()) {
-		throw new Exception ("LOGIN_INVALID_FORM");
-	    }
-	    
-	    if(empty($this->_username) || empty($this->_password)) {
-		throw new Exception ("LOGIN_EMPTY_FORM");
-	    }
-            
-            if($this->login_exists()) {
-		throw new Exception ("LOGIN_ALREADY_EXISTS");
-	    }
-            
+        try
+        {
+            if(!$this->token_valid()) 
+            {
+                throw new Exception ("LOGIN_INVALID_FORM");
+            }
+
+            if(empty($this->_username) || empty($this->_password)) 
+            {
+                throw new Exception ("LOGIN_EMPTY_FORM");
+            }
+
+                if($this->login_exists()) {
+            throw new Exception ("LOGIN_ALREADY_EXISTS");
+            }
+                
             if(!$this->verify_username()) {
                 throw new Exception ("LOGIN_INVALID_USERNAME");
             }
@@ -64,6 +67,26 @@ class LoginHandler
         }
         
         return true;
+    }
+
+    private function verify_email()
+    {
+        if(preg_match("^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$", $_email))
+        {
+           $new_user = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE email = :email", $_email);
+
+           if(empty($new_user))
+           {
+               return false;
+           }
+           else
+           {
+               $this->_user = new User(reset($new_user));
+               return true;
+           }
+        }
+
+        return false;
     }
     
     private function verify_password() {
@@ -142,6 +165,40 @@ class LoginHandler
             $this->verify_login_session();
         }
 	return $this->_access;
+    }
+
+
+
+    public function reset_password($email)
+    {
+        $_email = $email;
+
+        try
+        {
+            if(empty($email))
+            {
+                throw new Exception ("LOGIN_INVALID_EMAIL");
+            }
+
+            if(verify_email())
+            {
+                throw new Exception ("LOGIN_INVALID_EMAIL");
+            }
+
+            if(strtotime($this->_user->last_password_request)<strtotime("-15 minutes"))
+            {
+                throw new Exception("LOGIN_INVALID_TIME");
+            }
+        }
+        catch (Exception $ex)
+	    {
+            $this->error = ErrorHandler::ReturnError($ex->getMessage());
+	    }
+
+        $date = new DateTime();
+
+        
+
     }
 }
 

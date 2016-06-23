@@ -48,6 +48,10 @@ html {
     box-shadow: 0 -0.2em 0.3em #005885 !important;
 }
 
+.menu_header:active {
+    box-shadow: inset 0 0em 0.2em #005885 !important;
+}
+
 #navBar .menu_header:hover {
     -moz-box-shadow: 0 0 0.3em #005885;
     -webkit-box-shadow: 0 0 0.3em #005885;

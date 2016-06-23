@@ -168,7 +168,6 @@ class LoginHandler
     public function reset_password($email = null)
     {
         $this->_email = $email;
-
         try
         {
             if(empty($this->_email)){
@@ -179,9 +178,13 @@ class LoginHandler
                 throw new Exception ("LOGIN_INVALID_EMAIL");
             }
 
-            if(strtotime($this->_user->last_password_request) < strtotime("-15 minutes")){
+            if(strtotime($this->_user->last_password_request) > strtotime("-15 minutes")){
                 throw new Exception("LOGIN_INVALID_TIME");
             }
+            
+            // mail function
+            
+            DbHandler::getInstance()->Query("UPDATE users SET last_password_request = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
         }
         catch (Exception $ex)
         {

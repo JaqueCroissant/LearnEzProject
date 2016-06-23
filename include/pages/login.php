@@ -48,7 +48,7 @@
 <?php
     echo $not->getNumberOfUnread(SessionKeyHandler::GetFromSession("user", true)->id);
     echo "<br/>";
-    $notifications = $not->getNotifications(SessionKeyHandler::GetFromSession("user", true)->id, 5);
+    $notifications = $not->getNotifications(SessionKeyHandler::GetFromSession("user", true)->id, 2);
     foreach ($notifications as $value) {
         echo $value->title . "<br/>";
     }

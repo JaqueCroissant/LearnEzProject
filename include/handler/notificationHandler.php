@@ -2,20 +2,20 @@
     class NotificationHandler
     {
         public function getNumberOfUnread($userId){
-            if (is_int($userId)) {
+            if (is_numeric($userId)) {
                 return DbHandler::getInstance()->CountQuery("SELECT notification_id FROM user_notifications WHERE user_id=:userId AND is_read=0", $userId);
             }
             return 0;
         }
         
         public function readNotification($notificationId){
-            if (is_int($userId)) {
+            if (is_numeric($userId)) {
                 DbHandler::getInstance()->Query("UPDATE user_notification SET is_read=1 WHERE id=:notificationId", $notificationId);               
             }            
         }
         
         public function getNotifications($userId, $limit = 5){
-            if (is_int($userId) && is_int($limit)) {
+            if (is_numeric($userId) && is_int($limit)) {
                 $dbData = DbHandler::getInstance()->ReturnQuery("SELECT user_notifications.id, user_notifications.datetime, "
                         . "user_notifications.is_read AS isRead, users.firstname AS sender_name, "
                         . "notifications.title, notifications.text "
@@ -27,7 +27,6 @@
                         . "WHERE user_notifications.user_id = :userId "
                         . "ORDER BY user_notifications.is_read, user_notifications.datetime DESC "
                         . "LIMIT :limit", $userId, $limit);
-
                 if (count($dbData) == 0) {
                     return array();
                 }

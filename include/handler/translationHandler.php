@@ -22,6 +22,11 @@ class TranslationHandler
         }
     }
     
+    public static function resetLanguage(){
+        SessionKeyHandler::RemoveFromSession("static_text");
+        SessionKeyHandler::RemoveFromSession("current_language");
+    }
+    
     public static function getCurrentLanguage(){
         if (SessionKeyHandler::SessionExists("current_language")) {
             return SessionKeyHandler::GetFromSession("current_language");

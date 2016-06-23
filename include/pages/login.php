@@ -7,9 +7,10 @@
             $loginHandler->log_out();
         }
     }
+    
     if(isset($_POST["submit"])) {
         if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
-            header("Location: index.php?page=login");
+            header("Location: index.php?page=front");
         } else {
             echo $loginHandler->error->title;
         }

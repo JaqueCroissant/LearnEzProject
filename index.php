@@ -42,6 +42,7 @@ require_once 'include/extra/require.php';
             } else {
                 include('include/pages/front.php');
             }
+            
         ?>
         </div>
         <div id="notificationWindow">

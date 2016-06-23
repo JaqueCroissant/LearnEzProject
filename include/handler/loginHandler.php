@@ -23,16 +23,16 @@ class LoginHandler
     
     private function verify_login()
     {
-	try 
+	try
 	{
 	    if(!$this->token_valid()) {
 		throw new Exception ("LOGIN_INVALID_FORM");
 	    }
-	    
+
 	    if(empty($this->_username) || empty($this->_password)) {
 		throw new Exception ("LOGIN_EMPTY_FORM");
 	    }
-            
+
             if($this->login_exists()) {
 		throw new Exception ("LOGIN_ALREADY_EXISTS");
 	    }

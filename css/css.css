@@ -1,5 +1,6 @@
 html {
     background-color: white;
+    color: white;
 }
 
 .noPadding {
@@ -28,10 +29,10 @@ html {
 }
 
 .menu_header {
-    font-size: 0.875em;
+    font-size: 1.3em;
     padding-top: 0.625em;
     padding-bottom: 0.625em;
-    color: #1a3132;
+    /*color: #1a3132;*/
     display: block;
     padding: 0.8em 0.5em;
     margin: auto !important;
@@ -58,10 +59,9 @@ html {
     box-shadow: -0.5em 0 0.3em #005885 !important;
 }
 
-.menu_header a {
+a .menu_header {
     text-decoration: none;
     color: white;
-    font-size: 1.75em;
     display: block;
 }
 

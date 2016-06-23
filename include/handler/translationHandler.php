@@ -23,11 +23,17 @@ class TranslationHandler
     }
     
     public static function getCurrentLanguage(){
-        return SessionKeyHandler::GetFromSession("current_language");
+        if (SessionKeyHandler::SessionExists("current_language")) {
+            return SessionKeyHandler::GetFromSession("current_language");
+        }
+        return $this->_defaultLanguage;
     }
     
     public function getStaticText($key){
-        return $this->translation_static_text[$key];
+        if (array_key_exists($key, $this->translation_static_text)) {
+            return $this->translation_static_text[$key];
+        }
+        return $key;
     }
     
     public function setLanguage($language){

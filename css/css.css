@@ -39,15 +39,15 @@ html {
 }
 
 .menu_header:hover {
-    -moz-box-shadow: 0 0 10px #005885;
-    -webkit-box-shadow: 0 0 10px #005885;
-    box-shadow: 0 0 10px #005885 !important;
+    -moz-box-shadow: 0 0 0.3em #005885;
+    -webkit-box-shadow: 0 0 0.3em #005885;
+    box-shadow: 0 -0.2em 0.3em #005885 !important;
 }
 
 #navBar .menu_header:hover {
-    -moz-box-shadow: 0 0 10px #005885;
-    -webkit-box-shadow: 0 0 10px #005885;
-    box-shadow: -0.5em 0 10px #005885 !important;
+    -moz-box-shadow: 0 0 0.3em #005885;
+    -webkit-box-shadow: 0 0 0.3em #005885;
+    box-shadow: -0.5em 0 0.3em #005885 !important;
 }
 
 .menu_header a {

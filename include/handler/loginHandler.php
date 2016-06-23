@@ -11,11 +11,12 @@ class LoginHandler
     
     public function __construct() 
     {
-	$this->_errors	= array();
-	$this->_access	= false;
+        $this->_errors	= array();
+        $this->_access	= false;
     }
     
-    private function assign_properties($username, $password, $token) {
+    private function assign_properties($username, $password, $token) 
+    {
         $this->_token	= isset($token) ? $token : null;
         $this->_username = $username;
         $this->_password = $password;
@@ -23,20 +24,22 @@ class LoginHandler
     
     private function verify_login()
     {
-	try
-	{
-	    if(!$this->token_valid()) {
-		throw new Exception ("LOGIN_INVALID_FORM");
-	    }
+        try
+        {
+            if(!$this->token_valid()) 
+            {
+                throw new Exception ("LOGIN_INVALID_FORM");
+            }
 
-	    if(empty($this->_username) || empty($this->_password)) {
-		throw new Exception ("LOGIN_EMPTY_FORM");
-	    }
+            if(empty($this->_username) || empty($this->_password)) 
+            {
+                throw new Exception ("LOGIN_EMPTY_FORM");
+            }
 
-            if($this->login_exists()) {
-		throw new Exception ("LOGIN_ALREADY_EXISTS");
-	    }
-            
+                if($this->login_exists()) {
+            throw new Exception ("LOGIN_ALREADY_EXISTS");
+            }
+                
             if(!$this->verify_username()) {
                 throw new Exception ("LOGIN_INVALID_USERNAME");
             }
@@ -139,7 +142,7 @@ class LoginHandler
     public function get_user_session() 
     {
 	if($this->login_exists()) {
-            return SessionKeyHandler::GetFromSession("user");
+            return SessionKeyHandler::GetFromSession("user", true);
         }
     }
     
@@ -181,13 +184,20 @@ class LoginHandler
             {
                 throw new Exception ("LOGIN_INVALID_EMAIL");
             }
+
+            if(strtotime($this->_user->last_password_request)<strtotime("-15 minutes"))
+            {
+                throw new Exception("LOGIN_INVALID_TIME");
+            }
         }
         catch (Exception $ex)
 	    {
             $this->error = ErrorHandler::ReturnError($ex->getMessage());
 	    }
 
-        if($this->_user->last_password_request)
+        $date = new DateTime();
+
+        
 
     }
 }

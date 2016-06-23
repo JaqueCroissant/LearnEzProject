@@ -95,6 +95,8 @@ a .menu_header {
 .title_icon {
     position: relative;
     float: left;
+    margin-left: 0.2em;
+    margin-top: 0.1em;
     padding-top: 0.1em;
     padding-right: 0.1em;
     width: 1.2em !important;

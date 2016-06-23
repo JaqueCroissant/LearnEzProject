@@ -21,4 +21,3 @@
     echo "<br/>";
     echo "Danish prefix: " . $trans->getStaticText("ENGLISH");
 ?>
-

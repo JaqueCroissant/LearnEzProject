@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <?php
 require_once 'include/extra/require.php';
-
 ?>
 <html>
     <head>
@@ -25,16 +24,15 @@ require_once 'include/extra/require.php';
             <?php
             include 'include/topbar.php';
             ?>
-        </div>
-        
+        </div>      
         <div class="noPadding sidebar menu_design collapsed hidden-md hidden-sm hidden-xs" id="navBar">
             <?php 
             include 'include/sidebar.php';
             ?>
-        </div>
-        
+        </div>       
         <div class='col-md-12 content'>
             <?php
+            require_once 'test.php';
             if (isset($_GET['page'])) {
                 if (in_array($_GET['page'], $pages)) {
                     include('include/pages/' . $_GET['page'] . '.php');
@@ -44,7 +42,7 @@ require_once 'include/extra/require.php';
             } else {
                 include('include/pages/front.php');
             }
-            require_once 'test.php';
+            
         ?>
         </div>
         <div id="notificationWindow">

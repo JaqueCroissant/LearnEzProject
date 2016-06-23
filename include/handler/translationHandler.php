@@ -1,8 +1,8 @@
 <?php
 class TranslationHandler
 {
-    private $_defaultLanguage = 1; 
-    private$translation_static_text;
+    private static $_defaultLanguage = 1; 
+    private $translation_static_text;
     
     public function __construct(){
         if (!SessionKeyHandler::SessionExists("current_language")) {
@@ -31,7 +31,7 @@ class TranslationHandler
         if (SessionKeyHandler::SessionExists("current_language")) {
             return SessionKeyHandler::GetFromSession("current_language");
         }
-        return $this->_defaultLanguage;
+        return self::$_defaultLanguage;
     }
     
     public function getStaticText($key){
@@ -42,7 +42,7 @@ class TranslationHandler
     }
     
     public function setLanguage($language){
-        if ($language != TranslationHandler::getCurrentLanguage()) {
+        if ($language != self::getCurrentLanguage()) {
             setcookie("language_id", $language);
             if (SessionKeyHandler::SessionExists("user")) {
                 $user = SessionKeyHandler::GetFromSession("user", true);
@@ -50,8 +50,8 @@ class TranslationHandler
                 SessionKeyHandler::AddToSession("user", $user, true);
                 DbHandler::getInstance()->Query("UPDATE users SET language_id=:languageId WHERE id=:userId", $language, $user->id);
             }
-            TranslationHandler::setCurrentLanguage($language);
-            TranslationHandler::updateStaticText();
+            self::setCurrentLanguage($language);
+            self::updateStaticText();
             $this->loadStaticTexts();
         }
     }
@@ -67,7 +67,7 @@ class TranslationHandler
         if (isset($_COOKIE["language_id"])) {
             return $_COOKIE["language_id"];            
         }
-        return $this->_defaultLanguage;
+        return self::$_defaultLanguage;
     }
     
     private static function updateStaticText(){
@@ -75,7 +75,7 @@ class TranslationHandler
                 . "FROM translation_static_text "
                 . "INNER JOIN static_text "
                 . "ON static_text.id = translation_static_text.static_text_id "
-                . "WHERE language_id=:languageId", TranslationHandler::getCurrentLanguage());
+                . "WHERE language_id=:languageId", self::getCurrentLanguage());
         $finalArray = array();
         foreach ($dbdata as $value) {
             $finalArray[$value["prefix"]] = $value["text"];

@@ -119,7 +119,7 @@ class LoginHandler
     public function get_user_session() 
     {
 	if($this->login_exists()) {
-            return SessionKeyHandler::GetFromSession("user");
+            return SessionKeyHandler::GetFromSession("user", true);
         }
     }
     

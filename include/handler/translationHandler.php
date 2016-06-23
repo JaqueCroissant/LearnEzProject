@@ -83,4 +83,3 @@ class TranslationHandler
         SessionKeyHandler::AddToSession("static_text", $finalArray);
     }
 }
-?>

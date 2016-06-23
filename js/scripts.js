@@ -27,13 +27,10 @@ jQuery(function ($) {
             if ($('#notificationWindow').is(":hidden")) {
                 $.ajax({
                    type: "POST",
-                   url: "pages/notifications.php",
+                   url: "include/pages/notifications.php",
                    data: {},
                    success: function (result) {
                        $('#notificationWindow').html(result);
-                   }, 
-                   failure: function (r) {
-                       alert(r);
                    }
                 });
                 $('#notificationWindow').show("fast");

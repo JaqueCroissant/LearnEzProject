@@ -4,6 +4,7 @@ class LoginHandler
     private $_user;
     private $_username;
     private $_password;
+    private $_email;
     
     private $_access;
     private $_token;
@@ -71,22 +72,18 @@ class LoginHandler
 
     private function verify_email()
     {
-        if(preg_match("^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$", $_email))
-        {
-           $new_user = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE email = :email", $_email);
-
-           if(empty($new_user))
-           {
-               return false;
-           }
-           else
-           {
-               $this->_user = new User(reset($new_user));
-               return true;
-           }
+        if(!preg_match("^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$", $this->_email)) {
+            return false;
         }
-
-        return false;
+        
+        $user = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE email = :email", $this->_email);
+           
+        if(empty($user)) {
+            return false;
+        }
+        
+        $this->_user = new User(reset($new_user));
+        return true;
     }
     
     private function verify_password() {
@@ -166,39 +163,29 @@ class LoginHandler
         }
 	return $this->_access;
     }
-
-
-
+    
     public function reset_password($email)
     {
-        $_email = $email;
+        $this->_email = $email;
 
         try
         {
-            if(empty($email))
-            {
+            if(empty($email)){
                 throw new Exception ("LOGIN_INVALID_EMAIL");
             }
 
-            if(verify_email())
-            {
+            if(!verify_email()){
                 throw new Exception ("LOGIN_INVALID_EMAIL");
             }
 
-            if(strtotime($this->_user->last_password_request)<strtotime("-15 minutes"))
-            {
+            if(strtotime($this->_user->last_password_request) < strtotime("-15 minutes")){
                 throw new Exception("LOGIN_INVALID_TIME");
             }
         }
         catch (Exception $ex)
-	    {
+        {
             $this->error = ErrorHandler::ReturnError($ex->getMessage());
-	    }
-
-        $date = new DateTime();
-
-        
-
+        }
     }
 }
 

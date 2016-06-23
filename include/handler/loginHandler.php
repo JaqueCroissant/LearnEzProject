@@ -49,7 +49,7 @@ class LoginHandler
 	    $this->register_login_session();
 	}
 	catch (Exception $ex) 
-	{
+        {
             $this->error = ErrorHandler::ReturnError($ex->getMessage());
 	}
     }
@@ -91,18 +91,15 @@ class LoginHandler
             return false;
         }
         
-        $userData = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), $this->_password);
+        $userData = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username));
         
         if(empty($userData)) {
              return false;
         }
 
-        $this->assign_user_login();
+        $this->_user = new User(reset($userData));
+        DbHandler::getInstance()->Query("UPDATE users SET last_login = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
         return true;
-    }
-    
-    private function assign_user_login() {
-        
     }
     
     private function token_valid()
@@ -115,7 +112,8 @@ class LoginHandler
         if(empty($this->_user)) {
             return;
         }
-        SessionKeyHandler::AddToSession("user", $this->_user);
+        
+        SessionKeyHandler::AddToSession("user", $this->_user, true);
     }
     
     
@@ -149,7 +147,7 @@ class LoginHandler
     {
 	if($this->login_exists()) 
 	{
-	    SessionKeyHandler::RemoveFromSession("login_token");
+	    SessionKeyHandler::RemoveFromSession("user");
 	    return true;
 	}
         return false;

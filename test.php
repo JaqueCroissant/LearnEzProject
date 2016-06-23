@@ -3,6 +3,7 @@
     //$dbHandler->Query("UPDATE `rights` SET prefix = :prefix, sort_order = :sort_order WHERE id = :id", "JAKOB", 10, 1);
     //echo DbHandler::getInstance()->CountQuery("SELECT * FROM `rights` WHERE prefix = :prefix AND sort_order = :sort_order", "HEJ", 5);
     //require_once 'include/handler/sessionKeyHandler.php';
+    //$user = new User(array());
 //    echo "Current language: " . TranslationHandler::getCurrentLanguage();
 //    $trans = new TranslationHandler();
 //    echo "<br/>";
@@ -19,7 +20,5 @@
 //    echo "Current language: " . $trans->getCurrentLanguage();
 //    echo "<br/>";
 //    echo "Danish prefix: " . $trans->getStaticText("ENGLISH");
-    
-    
 ?>
 

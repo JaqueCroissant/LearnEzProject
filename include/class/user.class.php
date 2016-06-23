@@ -1,10 +1,12 @@
 <?php
-    class User
+    class User extends ORM
     {
         public $id;
-        public $languageId;
-        public $userTypeId;
+        public $language_id;
+        public $user_type_id;
+        public $last_login;
 
+        public $username;
         public $firstname;
         public $surname;
         public $email;

@@ -6,3 +6,4 @@ $pages[] = "courses";
 $pages[] = "login";
 $pages[] = "settings";
 $pages[] = "support";
+$pages[] = "resetpassword";

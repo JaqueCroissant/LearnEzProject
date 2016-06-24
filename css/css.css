@@ -185,3 +185,29 @@ a .menu_header {
     display: block;
     background-color: white;
 }
+
+.notification {
+    width:100%;
+    margin: 1em 0 1em 0;
+    background-color: #e6f2ff;
+}
+
+.notification:hover{
+    background-color: #cce5ff;
+}
+
+.notificationGroup:first-child {
+    border-bottom: solid 1px black;
+    margin-bottom: 1em;
+}
+
+.notificationGroup a{
+    text-decoration: none;
+    color: black;
+    
+}
+
+.notificationGroup a:hover{
+    color: black;
+    
+}

@@ -28,18 +28,22 @@
                         . "ORDER BY user_notifications.is_read, user_notifications.datetime DESC "
                         . "LIMIT :limit", $userId, $limit);
                 if (count($dbData) == 0) {
-                    return array();
+                    return array(array(), array());
                 }
+                $fullArray = array();
                 if (count($dbData) == 1) {
-                    return array(new Notification(reset($dbData)));
+                    $fullArray = array(new Notification(reset($dbData)));
                 }
-                $array = array();
-                foreach ($dbData as $notification) {
-                    array_push($array, new Notification($notification));
+                else{
+                    foreach ($dbData as $notification) {
+                        array_push($fullArray, new Notification($notification));
+                    }
                 }
-                return $array;
+                $arr1 = array_filter($fullArray, function($value){return ($value->isRead == 1 ? false : true);});
+                $arr2 = array_filter($fullArray, function($value){return ($value->isRead == 0 ? false : true);});
+                return array($arr1, $arr2);
             }
-            return array();
+            return array(array(), array());
         }
         
         

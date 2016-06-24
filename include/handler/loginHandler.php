@@ -215,7 +215,6 @@ class LoginHandler
             if(strtotime($user->last_password_request) < strtotime("-15 minutes")){
                 throw new Exception("LOGIN_INVALID_VALIDATION_TIME");
             }
-            echo "<br>" . strtotime($user->last_password_request) . " and " . strtotime("-15 minutes") . "<br>";
             return true;
         }
         catch (Exception $ex)

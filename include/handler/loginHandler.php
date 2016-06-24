@@ -184,11 +184,44 @@ class LoginHandler
             
             // mail function
             
-            DbHandler::getInstance()->Query("UPDATE users SET last_password_request = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
+            DbHandler::getInstance()->Query("UPDATE users SET last_password_request = :date, validation_code = :validation_code WHERE id = :id", date ("Y-m-d H:i:s"), md5(uniqid(mt_rand(), true)), $this->_user->id);
+            return true;
         }
         catch (Exception $ex)
         {
             $this->error = ErrorHandler::ReturnError($ex->getMessage());
+            return false;
+        }
+    }
+    
+    public function validate_reset_password($user_id = null, $validation_code = null) {
+        try
+        {
+            if(empty($validation_code) || empty($user_id) || !is_numeric($user_id)){
+                throw new Exception ("LOGIN_INVALID_VALIDATION_CODE");
+            }
+            $user_data = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE id = :id AND validation_code = :validation_code", $user_id, $validation_code);
+            
+            if(empty($user_data)){
+                throw new Exception ("LOGIN_INVALID_VALIDATION_CODE");
+            }
+            
+            $user = new User(reset($user_data));
+            
+            if(empty($user->validation_code)){
+                throw new Exception ("LOGIN_INVALID_VALIDATION_CODE");
+            }
+
+            if(strtotime($user->last_password_request) < strtotime("-15 minutes")){
+                throw new Exception("LOGIN_INVALID_VALIDATION_TIME");
+            }
+            echo "<br>" . strtotime($user->last_password_request) . " and " . strtotime("-15 minutes") . "<br>";
+            return true;
+        }
+        catch (Exception $ex)
+        {
+            $this->error = ErrorHandler::ReturnError($ex->getMessage());
+            return false;
         }
     }
 }

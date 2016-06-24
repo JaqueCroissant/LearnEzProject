@@ -1,6 +1,14 @@
 <?php
-    if(!$loginHandler->reset_password("test@test.dk")) {
+    if(!$loginHandler->reset_password("test@test.d")) {
         echo $loginHandler->error->title;
+    } else {
+        echo "works";
+    }
+    
+    if(!$loginHandler->validate_reset_password(1, "b0f01858b70937a5a6ca3e2f1ea32bee")) {
+        echo $loginHandler->error->title;
+    } else {
+        echo "lol";
     }
     
     if(isset($_GET['logout'])) {

@@ -48,7 +48,7 @@ jQuery(function ($) {
             if ($('#notificationWindow').is(":hidden")) {
                 $.ajax({
                    type: "POST",
-                   url: "include/pages/notifications.php",
+                   url: "ajax/notifications.php",
                    data: {},
                    success: function (result) {
                        $('#notificationWindow').html(result);

@@ -1,3 +1,2 @@
 <?php
 
-echo 'Settings page';

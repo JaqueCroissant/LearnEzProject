@@ -3,6 +3,23 @@ html {
     color: white;
 }
 
+@font-face {
+    font-family: Lane;
+    src: url(../fonts/LANENAR_.ttf);
+    /*src: local(mixrfont), url('../font.ttf') ;*/
+}
+
+.center {
+    float: none;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.center .form-control {
+    float: none;
+    width: auto;
+}
+
 .noPadding {
     padding: 0px !important;
 }
@@ -80,6 +97,8 @@ a .menu_header {
     /*padding-left: 0.5em;*/
     padding-top: 0.125em;
     float: left;
+    font-family: "Lane", sans-serif;
+    font-weight: bold;
 }
 
 #navBar .menu_text {
@@ -105,6 +124,8 @@ a .menu_header {
 
 .headline {
     float: left;
+    font-family: "Lane", sans-serif;
+    font-weight: normal;
 }
 
 #EZ {

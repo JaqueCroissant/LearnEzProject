@@ -1,25 +1,9 @@
 <?php
-class UserHandler 
+class UserHandler extends Handler
 {
-    private $_user;
-    
-    public $_error;
-    
     public function __construct() {
+        parent::__construct();
         $this->get_user_object();
-    }
-    
-    private function get_user_object() {
-        if(SessionKeyHandler::SessionExists("user")) {
-            $this->_user = SessionKeyHandler::GetFromSession("user", true);
-            return;
-        }
-        $this->_user = null;
-    }
-    
-    private function user_exists() {
-        $this->get_user_object();
-        return !empty($this->_user);
     }
     
     // old password, new password, new password copy

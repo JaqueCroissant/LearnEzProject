@@ -9,6 +9,17 @@ html {
     /*src: local(mixrfont), url('../font.ttf') ;*/
 }
 
+.center {
+    float: none;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.center .form-control {
+    float: none;
+    width: auto;
+}
+
 .noPadding {
     padding: 0px !important;
 }

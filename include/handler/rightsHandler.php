@@ -1,15 +1,17 @@
 <?php
-    class RightsHandler
+    class RightsHandler extends Handler
     {
+        public function __construct() {
+            parent::__construct();
+        }
+        
         public function GetFromDatabase()
         {
-            if(SessionKeyHandler::SessionExists('user'))
-            {
-                $user = SessionKeyHandler::GetFromSession('user');
+            if($this->user_exists()) {
                 $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.prefix
                                                         FROM rights INNER JOIN user_type_rights 
                                                         ON rights.id = user_type_rights.rights_id 
-                                                        WHERE user_type_rights.user_type_id = :type", $user->user_type_id);
+                                                        WHERE user_type_rights.user_type_id = :type", $this->_user->user_type_id);
                 
                 $rightArray = array();
                 foreach(reset($userRights) as $right)

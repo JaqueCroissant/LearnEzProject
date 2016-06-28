@@ -3,6 +3,7 @@
     if(isset($_GET['logout'])) {
         if($loginHandler->check_login()) {
             $loginHandler->log_out();
+            $rightsHandler->ResetRights();
             //$pageHandler->reset_pages();
             header("Location: index.php?page=front");
         }
@@ -19,6 +20,10 @@
     }
     
     if(!$loginHandler->check_login() || isset($_GET["logout"])) {
+        if(!$rightsHandler->RightExists("CHANGE_PASSWORD"))
+        {
+            echo "Jeg har ikke rettigheder til at ændre mit kodeord<br/>";
+        }
 ?>
 
 <div class="text-center">
@@ -39,15 +44,19 @@
 
 <?php
     } else { 
-    
-    echo "Username: " . SessionKeyHandler::GetFromSession("user", true)->username;
-    echo "Email: " . SessionKeyHandler::GetFromSession("user", true)->email;
-    echo "Firstname: " . SessionKeyHandler::GetFromSession("user", true)->firstname;
-    echo "Surname: " . SessionKeyHandler::GetFromSession("user", true)->surname;
-    echo "Last login: " . SessionKeyHandler::GetFromSession("user", true)->last_login;
-    echo "User type: " . SessionKeyHandler::GetFromSession("user", true)->user_type_id;
-    echo "Language: " . SessionKeyHandler::GetFromSession("user", true)->language_id;
-    $not = new NotificationHandler();
+        if($rightsHandler->RightExists("CHANGE_PASSWORD"))
+        {
+            echo "Jeg har rettigheder til at ændre mit kodeord<br/>";
+        }
+        
+        echo "Username: " . SessionKeyHandler::GetFromSession("user", true)->username;
+        echo "Email: " . SessionKeyHandler::GetFromSession("user", true)->email;
+        echo "Firstname: " . SessionKeyHandler::GetFromSession("user", true)->firstname;
+        echo "Surname: " . SessionKeyHandler::GetFromSession("user", true)->surname;
+        echo "Last login: " . SessionKeyHandler::GetFromSession("user", true)->last_login;
+        echo "User type: " . SessionKeyHandler::GetFromSession("user", true)->user_type_id;
+        echo "Language: " . SessionKeyHandler::GetFromSession("user", true)->language_id;
+        $not = new NotificationHandler();
 ?>
 <br/>
 <br/>

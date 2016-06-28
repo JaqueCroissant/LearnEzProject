@@ -3,6 +3,7 @@
     if(isset($_GET['logout'])) {
         if($loginHandler->check_login()) {
             $loginHandler->log_out();
+            //$pageHandler->reset_pages();
             header("Location: index.php?page=front");
         }
     }
@@ -10,6 +11,7 @@
     if(isset($_POST["submit"])) {
         if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
             TranslationHandler::resetLanguage();
+            //$pageHandler->reset_pages();
             header("Location: index.php?page=login");
         } else {
             echo $loginHandler->error->title;
@@ -49,10 +51,10 @@
 <?php
     echo $not->getNumberOfUnread(SessionKeyHandler::GetFromSession("user", true)->id);
     echo "<br/>";
-    $notifications = $not->getNotifications(SessionKeyHandler::GetFromSession("user", true)->id, 1);
+    /*$notifications = $not->getNotifications(SessionKeyHandler::GetFromSession("user", true)->id, 1);
     foreach ($notifications as $value) {
         echo $value->title . "<br/>";
-    }
+    }*/
 ?>
     <br />
     <a href="index.php?page=login&logout=true">Logout</a>

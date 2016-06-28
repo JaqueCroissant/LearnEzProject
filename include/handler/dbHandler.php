@@ -62,6 +62,7 @@
         
         private function AddArgument($argName, $argValue) {
             $this->_prepare->bindParam($argName, $argValue, $this->GetArgumentType($argValue));
+            echo $argName . " and " . $argValue ."<br/>";
         }
         
         private function FindArguments($charArray) {

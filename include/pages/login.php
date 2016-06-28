@@ -43,7 +43,7 @@
     } else { 
         if($rightsHandler->RightExists("CHANGE_PASSWORD"))
         {
-            echo "Jeg har rettigheder til at ændre mit kodeord<br/>";
+            echo "Jeg har ikke rettigheder til at ændre mit kodeord<br/>";
         }
         
         echo "Username: " . SessionKeyHandler::GetFromSession("user", true)->username;

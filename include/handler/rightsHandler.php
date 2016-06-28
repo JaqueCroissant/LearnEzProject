@@ -9,18 +9,25 @@
         private function GetFromDatabase()
         {
             if($this->user_exists()) {
-                $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.prefix
-                                                        FROM rights INNER JOIN user_type_rights 
-                                                        ON rights.id = user_type_rights.rights_id 
-                                                        WHERE user_type_rights.user_type_id = :type", $this->_user->user_type_id);
+                $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.id, rights.prefix, rights.sort_order, translation_rights.title
+                                                        FROM rights INNER JOIN translation_rights ON rights.id = translation_rights.rights_id 
+                                                        INNER JOIN user_type_rights ON rights.id = user_type_rights.rights_id
+                                                        WHERE user_type_rights.user_type_id = :type AND translation_rights.language_id = :lang", 
+                                                        $this->_user->user_type_id, translationHandler::getCurrentLanguage());
+
+                if(count($userRights)<1)
+                {
+                    return false;
+                }                
                 
                 $rightArray = array();
                 foreach($userRights as $right)
                 {
-                    array_push($rightArray, reset($right));
+                    $new_right = new Rights($right);
+                    $rightArray[$new_right->prefix] = $new_right;
                 }
                 
-                SessionKeyHandler::AddToSession('rights', $rightArray);
+                SessionKeyHandler::AddToSession('rights', $rightArray, true);
                 return true;
             }
             return false;
@@ -38,7 +45,7 @@
 
             if(is_string($prefix) && !empty($prefix))
             {
-                return in_array($prefix, SessionKeyHandler::GetFromSession("rights"));
+                return array_key_exists($prefix, SessionKeyHandler::GetFromSession("rights", true));
             }
             
             return false;

@@ -1,8 +1,8 @@
 <?php
-    class Rights
+    class Rights extends ORM
     {
         public $id;
-        public $sortOrder;
+        public $sort_order;
         public $prefix;
         public $title;
     }

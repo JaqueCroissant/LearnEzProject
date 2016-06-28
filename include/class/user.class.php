@@ -5,6 +5,8 @@
         public $language_id;
         public $user_type_id;
         public $last_login;
+        public $school_id;
+        public $class_ids;
 
         public $username;
         public $firstname;

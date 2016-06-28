@@ -5,7 +5,7 @@
             $loginHandler->log_out();
             $rightsHandler->ResetRights();
             //$pageHandler->reset_pages();
-            header("Location: index.php?page=front");
+            echo '<META HTTP-EQUIV="Refresh" Content="0; URL=index.php?page=front">';
         }
     }
     
@@ -13,7 +13,7 @@
         if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
             TranslationHandler::resetLanguage();
             //$pageHandler->reset_pages();
-            header("Location: index.php?page=login");
+            echo '<META HTTP-EQUIV="Refresh" Content="0; URL=index.php?page=login">';
         } else {
             echo $loginHandler->error->title;
         }

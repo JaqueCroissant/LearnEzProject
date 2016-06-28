@@ -121,6 +121,7 @@
                 echo $ex->getMessage();
                 echo $errorMessage;
             }
+            return false;
         }
         
         public function ReturnQuery($query) 

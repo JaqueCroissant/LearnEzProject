@@ -1,10 +1,8 @@
 <?php
 session_start();
-?>
-<!DOCTYPE html>
-<?php
 require_once 'include/extra/require.php';
 ?>
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -45,7 +43,6 @@ require_once 'include/extra/require.php';
             } else {
                 include('include/pages/front.php');
             }
-            require_once 'test.php';
         ?>
         </div>
         <div id="notificationWindow">

@@ -34,6 +34,9 @@
     </div>
 </div>
 
+<br />
+    <a href="index.php?page=resetpassword">Reset password</a>
+
 <?php
     } else { 
     

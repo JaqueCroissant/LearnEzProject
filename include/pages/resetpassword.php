@@ -46,7 +46,9 @@
             } 
             else 
             {
-                echo "An email has been sent, with a reset link!";
+                $temp = DbHandler::getInstance()->ReturnQuery("SELECT * FROM users WHERE email = :email", $_POST['email']);
+                echo "Temporary (will be sent to email): <br />"
+                . "   Click this link to confirm your password reset: <a href='index.php?page=resetpassword&id=". reset($temp)["id"]."&code=". reset($temp)["validation_code"]."'>Click here</a>";
             }
         }
         else

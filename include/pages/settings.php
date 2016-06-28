@@ -27,7 +27,7 @@
             if ($userHandler->change_password($_POST['oldPassword'], $_POST['newPassword1'], $_POST['newPassword2'])) {
                 echo '<h3 class="text-center">Password changed</h3>';
             } else {
-                echo '<h3 class="text-center">Something went wrong</h3>';
+                echo '<h3 class="text-center">'. $userHandler->error->title .'</h3>';
             }
         }
     } else {

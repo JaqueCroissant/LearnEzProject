@@ -39,6 +39,9 @@
     </div>
 </div>
 
+<br />
+    <a href="index.php?page=resetpassword">Reset password</a>
+
 <?php
     } else { 
         if($rightsHandler->RightExists("CHANGE_PASSWORD"))

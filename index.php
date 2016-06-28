@@ -32,7 +32,7 @@ require_once 'include/extra/require.php';
         </div>       
         <div class='col-md-12 content'>
             <?php
-            require_once 'test.php';
+
             if (isset($_GET['page'])) {
                 if (in_array($_GET['page'], $pages)) {
                     include('include/pages/' . $_GET['page'] . '.php');
@@ -42,7 +42,7 @@ require_once 'include/extra/require.php';
             } else {
                 include('include/pages/front.php');
             }
-            
+            require_once 'test.php';
         ?>
         </div>
         <div id="notificationWindow">

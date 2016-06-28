@@ -5,5 +5,6 @@
     require_once 'include/class/notification.class.php';
     require_once 'include/class/rights.class.php';
     require_once 'include/class/error.class.php';
+    require_once 'include/class/school.class.php';
     require_once 'include/class/page.class.php';
 ?>

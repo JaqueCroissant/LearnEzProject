@@ -26,10 +26,10 @@
     
     <div class="col-xs-12">
         <form method="POST" action="" id="login" name="login">
-            <input type="text" id="username" name="username" placeholder="User Name:" class="login_input"><br/>
-            <input type="password" id="password" name="password" placeholder="Password:" class="login_input"><br/><br/>
+            <input type="text" id="username" name="username" placeholder="User Name:" class="form-control login_input"><br/>
+            <input type="password" id="password" name="password" placeholder="Password:" class="form-control login_input"><br/><br/>
             <input type="hidden" id="token" name="token" value="<?php echo $loginHandler->generate_login_token(); ?>">
-            <input type="submit" id="submit" name="submit" value="Login" class="login_submit">
+            <input type="submit" id="submit" name="submit" value="Login" class="form-control login_submit">
         </form>
     </div>
 </div>

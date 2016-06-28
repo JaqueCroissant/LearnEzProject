@@ -39,7 +39,7 @@ class SchoolHandler {
             $school = new school($school_array);
             return $school;
         } catch (Exception $exc) {
-            echo $exc->getMessage();
+            ErrorHandler::ReturnError($exc->getMessage());
         }
     }
     
@@ -59,7 +59,7 @@ class SchoolHandler {
             
             $this->create_school($school);
         } catch (Exception $exc) {
-            echo $exc->getTraceAsString();
+            ErrorHandler::ReturnError($exc->getMessage());
         }
     }
     
@@ -145,10 +145,10 @@ class SchoolHandler {
     private function create_school ($school) 
     {
         $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_end) "
-                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end))";
+                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end);";
         $executedQuery = DbHandler::getInstance()->Query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_end);
         if ($executedQuery) {
-            echo 'Fuck yeah';
+            echo 'School created successfully';
         }
     }
 }

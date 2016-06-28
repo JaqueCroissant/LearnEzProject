@@ -1,25 +1,9 @@
 <?php
-class UserHandler 
+class UserHandler extends Handler
 {
-    private $_user;
-    
-    public $_error;
-    
     public function __construct() {
+        parent::__construct();
         $this->get_user_object();
-    }
-    
-    private function get_user_object() {
-        if(SessionKeyHandler::SessionExists("user")) {
-            $this->_user = SessionKeyHandler::GetFromSession("user", true);
-            return;
-        }
-        $this->_user = null;
-    }
-    
-    private function user_exists() {
-        $this->get_user_object();
-        return !empty($this->_user);
     }
     
     // old password, new password, new password copy
@@ -91,6 +75,102 @@ class UserHandler
             return false;
         }
         
+    }
+
+    private function is_valid_input($string)
+    {
+        return preg_match('/^[a-zA-Z]+$/', $string);
+    }
+
+    public function validate_information()
+    {
+        if(empty($firstname) || empty($surname))
+        {
+            throw new Exception("USER_EMPTY_USERNAME_INPUT");
+        }
+
+        if(!is_string($firstname) || !is_string($surname))
+        {
+            throw new Exception("USER_INVALID_USERNAME_INPUT");
+        }
+
+        if(is_valid_input($firstname) || is_valid_input($surname))
+        {
+            throw new Exception("USER_INVALID_USERNAME_INPUT");
+        }
+
+        //returner bruger med nye oplysninger
+    }
+
+    public function generate_username($firstname, $surname)
+    {
+        $firstname = strtolower($firstname);
+        $surname = strtolower($surname);
+        $new_username = "";
+        $conc_name = "";
+
+        if(strlen($firstname) < 4)
+        {
+            $new_username .= $firstname;
+            $diff = 4 - strlen($firstname);
+            
+            if(strlen($surname)<$diff)
+            {
+                $new_username .= $surname;
+            }
+            else
+            {
+                $new_username .= substr($surname, 0, $diff);
+            }
+        }
+        else
+        {
+            $new_username .= substr($firstname, 0, 4);
+        }
+
+        do
+        {
+            $conc_name = $new_username .= $this->add_random_elements(); 
+        }
+        while($this->username_exists($conc_name));
+
+        return $conc_name;
+    }
+
+    private function add_random_elements()
+    {
+        $elements = "";
+        for($i = 0; $i < 4; $i++)
+        {
+            if($i==3)
+            {
+                $elements .= $this->random_char();
+            }
+            else
+            {
+                $elements .= rand(0,9);
+            }
+        }
+        return $elements;
+    }
+
+    private function random_char()
+    {
+        $int = rand(0,36);
+        $a_z = "abcdefghijklmnopqrstuvwxyz1234567890";
+        $rand_letter = $a_z[$int];
+        return $rand_letter;
+    }
+
+    private function username_exists($username)
+    {
+        $count = DbHandler::getInstance()->CountQuery("SELECT * FROM users WHERE username = :name", $username);
+        return $count > 1;
+    }
+
+    public function create_user()
+    {
+
     }
 }
 ?>

@@ -32,7 +32,7 @@ require_once 'include/extra/require.php';
         </div>       
         <div class='col-md-12 content'>
             <?php
-            
+
             if (isset($_GET['page'])) {
                 if (in_array($_GET['page'], $pages)) {
                     include('include/pages/' . $_GET['page'] . '.php');

@@ -79,11 +79,13 @@ class UserHandler extends Handler
 
     private function is_valid_input($string)
     {
-        return preg_match('/^[a-zA-Z]+$/', $string);
+        return preg_match('/^[a-zA-Z0-9]+$/', $string);
     }
 
-    public function validate_information()
+    public function validate_user_information($firstname, $surname, $email = null)
     {
+        $new_user = new User();
+
         if(empty($firstname) || empty($surname))
         {
             throw new Exception("USER_EMPTY_USERNAME_INPUT");
@@ -94,12 +96,88 @@ class UserHandler extends Handler
             throw new Exception("USER_INVALID_USERNAME_INPUT");
         }
 
-        if(is_valid_input($firstname) || is_valid_input($surname))
+        if(!$this->is_valid_input($firstname) || !$this->is_valid_input($surname))
         {
             throw new Exception("USER_INVALID_USERNAME_INPUT");
         }
 
-        //returner bruger med nye oplysninger
+        if(!empty($email))
+        {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+            {
+                throw new Exception("USER_INVALID_EMAIL_INPUT");
+            }
+            else
+            {
+                $new_user->email = $email;
+            }
+        }
+
+        $new_user->firstname = $firstname;
+        $new_user->surname = $surname;
+        
+        return $new_user;
+    }
+
+    public function validate_user_affiliations($user_object, $user_type, $school_id = null, $class_ids = null)
+    {
+        if(!$this->user_exists())
+        {
+            throw new Exception("USER_DOESNT_EXIST");
+        }
+        
+        if(!is_numeric($user_type) || $user_type < 1 || $user_type > 4)
+        {
+            throw new Exception("USER_INVALID_TYPE");
+        }
+
+        if(!empty($school_id) && !is_numeric($school_id))
+        {
+            throw new Exception("USER_INVALID_SCHOOL_ID");
+        }
+
+        if($user_type != 1 && empty($school_id))
+        {
+            throw new Exception("USER_INVALID_SCHOOL_ID");
+        }
+
+        $count = DbHandler::getInstance()->CountQuery("SELECT id FROM school WHERE id = :school_id", $school_id);
+        if($count < 1)
+        {
+            throw new Exception("USER_INVALID_SCHOOL_ID");
+        }
+    
+        if(!empty($class_ids))
+        {
+            $query = "SELECT id FROM class WHERE ";   
+            for($i=0; $i<count($class_ids); $i++)
+            {
+                $class = $class_ids[$i];
+                if($i != 0 && $i!=count($class_ids))
+                {
+                    $insert_values .= " OR ";
+                }
+
+                if(is_numeric($class['id']))
+                {
+                    throw new Exception("USER_INVALID_CLASS_ID");
+                }
+                $query .= "id = " . $class['id'];
+            }
+
+            $count = DbHandler::getInstance()->CountQuery($query);
+            if($count < count($class_ids))
+            {
+                throw new Exception("USER_INVALID_CLASS_ID");
+            }
+
+            $user_object->class_ids = $class_ids;
+        }
+        
+        $user_object->user_type_id = $user_type;
+        $user_object->school_id = $school_id;
+
+        $this->create_user($user_object);
     }
 
     public function generate_username($firstname, $surname)
@@ -144,7 +222,7 @@ class UserHandler extends Handler
         {
             if($i==3)
             {
-                $elements .= $this->random_char();
+                $elements .= $this->random_char(1);
             }
             else
             {
@@ -154,11 +232,17 @@ class UserHandler extends Handler
         return $elements;
     }
 
-    private function random_char()
+    private function random_char($iterations)
     {
         $int = rand(0,36);
         $a_z = "abcdefghijklmnopqrstuvwxyz1234567890";
-        $rand_letter = $a_z[$int];
+        $rand_letter = "";
+        
+        for($i=0; $i<$iterations; $i++)
+        {
+            $rand_letter .= $a_z[$int];
+        }
+
         return $rand_letter;
     }
 
@@ -168,9 +252,29 @@ class UserHandler extends Handler
         return $count > 1;
     }
 
-    public function create_user()
+    private function create_user($user_object)
     {
-
+        $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
+        $password = $this->random_char(8);
+        $hashed_password = hash("sha256", $password . " " . $user_object->username);
+        
+        var_dump($user_object->username);
+        var_dump($hashed_password);
+        var_dump($user_object->user_type_id);
+        var_dump($user_object->school_id);
+        var_dump($user_object->email);
+        var_dump($user_object->firstname);
+        var_dump($user_object->surname);
+        
+        if(!DbHandler::getInstance()->Query("INSERT INTO users (username, password, user_type_id, 
+                                            school_id, email, firstname, surname) VALUES 
+                                            (:username, :password, :user_id, :school_id, :email, :firstname, :surname)", 
+                                            $user_object->username, $hashed_password,
+                                            $user_object->user_type_id, $user_object->school_id, $user_object->email,
+                                            $user_object->firstname, $user_object->surname))
+                                            {
+                                                throw new Exception("USER_COULDNT_CREATE");
+                                            }
     }
 }
 ?>

@@ -105,7 +105,7 @@ class UserHandler extends Handler
         {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
             {
-                throw new Exception("USER_INVALID_EMAIL_INPUT");
+                throw new Exception("EMAIL_HAS_WRONG_FORMAT");
             }
             else
             {
@@ -141,8 +141,7 @@ class UserHandler extends Handler
             throw new Exception("USER_INVALID_SCHOOL_ID");
         }
 
-        $count = DbHandler::getInstance()->CountQuery("SELECT id FROM school WHERE id = :school_id", $school_id);
-        if($count < 1)
+        if($user_type != 1 && $count < 1)
         {
             throw new Exception("USER_INVALID_SCHOOL_ID");
         }
@@ -255,26 +254,25 @@ class UserHandler extends Handler
     private function create_user($user_object)
     {
         $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
-        $password = $this->random_char(8);
-        $hashed_password = hash("sha256", $password . " " . $user_object->username);
         
-        var_dump($user_object->username);
-        var_dump($hashed_password);
-        var_dump($user_object->user_type_id);
-        var_dump($user_object->school_id);
-        var_dump($user_object->email);
-        var_dump($user_object->firstname);
-        var_dump($user_object->surname);
         
-        if(!DbHandler::getInstance()->Query("INSERT INTO users (username, password, user_type_id, 
+        if(!DbHandler::getInstance()->Query("INSERT INTO users (username, user_type_id, 
                                             school_id, email, firstname, surname) VALUES 
-                                            (:username, :password, :user_id, :school_id, :email, :firstname, :surname)", 
-                                            $user_object->username, $hashed_password,
-                                            $user_object->user_type_id, $user_object->school_id, $user_object->email,
+                                            (:username, :user_id, :school_id, :email, :firstname, :surname)", 
+                                            $user_object->username, $user_object->user_type_id, 
+                                            $user_object->school_id, $user_object->email,
                                             $user_object->firstname, $user_object->surname))
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
+
+        echo "User created!";
+    }
+
+    public function assign_passwords($user_array)
+    {
+        $password = $this->random_char(8);
+        $hashed_password = hash("sha256", $password . " " . $user_object->username);
     }
 }
 ?>

@@ -3,34 +3,41 @@
     {
         public function __construct() {
             parent::__construct();
-            $this->GetFromDatabase();
+            $this->get_from_database();
         }
         
-        private function GetFromDatabase()
+        private function get_from_database()
         {
             if($this->user_exists()) {
-                $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.prefix
-                                                        FROM rights INNER JOIN user_type_rights 
-                                                        ON rights.id = user_type_rights.rights_id 
-                                                        WHERE user_type_rights.user_type_id = :type", $this->_user->user_type_id);
+                $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.id, rights.prefix, rights.sort_order, translation_rights.title
+                                                        FROM rights INNER JOIN translation_rights ON rights.id = translation_rights.rights_id 
+                                                        INNER JOIN user_type_rights ON rights.id = user_type_rights.rights_id
+                                                        WHERE user_type_rights.user_type_id = :type AND translation_rights.language_id = :lang", 
+                                                        $this->_user->user_type_id, translationHandler::getCurrentLanguage());
+
+                if(count($userRights)<1)
+                {
+                    return false;
+                }                
                 
                 $rightArray = array();
                 foreach($userRights as $right)
                 {
-                    array_push($rightArray, reset($right));
+                    $new_right = new Rights($right);
+                    $rightArray[$new_right->prefix] = $new_right;
                 }
                 
-                SessionKeyHandler::AddToSession('rights', $rightArray);
+                SessionKeyHandler::AddToSession('rights', $rightArray, true);
                 return true;
             }
             return false;
         }
 
-        public function RightExists($prefix)
+        public function right_exists($prefix)
         {
             if(!SessionKeyHandler::SessionExists("rights"))
             {
-                if(!$this->GetFromDatabase())
+                if(!$this->get_from_database())
                 {
                     return false;
                 }
@@ -38,18 +45,18 @@
 
             if(is_string($prefix) && !empty($prefix))
             {
-                return in_array($prefix, SessionKeyHandler::GetFromSession("rights"));
+                return array_key_exists($prefix, SessionKeyHandler::GetFromSession("rights", true));
             }
             
             return false;
         }
 
-        public function ResetRights()
+        public function reset_rights()
         {
             SessionKeyHandler::RemoveFromSession("rights");
         }
 
-        public function UpdateTypeRights($user_type, $rights_array)
+        public function update_type_rights($user_type, $rights_array)
         {
             if(is_int($user_type) && $user_type < 5 && $user_type > 0)
             {
@@ -83,7 +90,6 @@
 
                 return true;
             }
-
             return false;
         }
     }

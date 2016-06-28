@@ -3,10 +3,10 @@
     {
         public function __construct() {
             parent::__construct();
-            $this->GetFromDatabase();
+            $this->get_from_database();
         }
         
-        private function GetFromDatabase()
+        private function get_from_database()
         {
             if($this->user_exists()) {
                 $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.id, rights.prefix, rights.sort_order, translation_rights.title
@@ -33,11 +33,11 @@
             return false;
         }
 
-        public function RightExists($prefix)
+        public function right_exists($prefix)
         {
             if(!SessionKeyHandler::SessionExists("rights"))
             {
-                if(!$this->GetFromDatabase())
+                if(!$this->get_from_database())
                 {
                     return false;
                 }
@@ -51,12 +51,12 @@
             return false;
         }
 
-        public function ResetRights()
+        public function reset_rights()
         {
             SessionKeyHandler::RemoveFromSession("rights");
         }
 
-        public function UpdateTypeRights($user_type, $rights_array)
+        public function update_type_rights($user_type, $rights_array)
         {
             if(is_int($user_type) && $user_type < 5 && $user_type > 0)
             {
@@ -90,7 +90,6 @@
 
                 return true;
             }
-
             return false;
         }
     }

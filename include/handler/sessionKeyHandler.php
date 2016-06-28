@@ -35,12 +35,12 @@
 
         public static function SessionExists($key)
         {
-            if(is_string($key )&& !empty($key))
+            if(!is_string($key) || empty($key))
             {
-                return isset($_SESSION[$key]);
-            }   
+                throw new Exception("SESSION_INVALID_KEY");
+            }
 
-            return false;
+            return isset($_SESSION[$key]);
         }
     }
 

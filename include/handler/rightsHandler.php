@@ -3,9 +3,10 @@
     {
         public function __construct() {
             parent::__construct();
+            $this->GetFromDatabase();
         }
         
-        public function GetFromDatabase()
+        private function GetFromDatabase()
         {
             if($this->user_exists()) {
                 $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.prefix
@@ -14,23 +15,38 @@
                                                         WHERE user_type_rights.user_type_id = :type", $this->_user->user_type_id);
                 
                 $rightArray = array();
-                foreach(reset($userRights) as $right)
+                foreach($userRights as $right)
                 {
-                    array_push($rightArray, $right);
+                    array_push($rightArray, reset($right));
                 }
-
+                
                 SessionKeyHandler::AddToSession('rights', $rightArray);
+                return true;
             }
+            return false;
         }
 
         public function RightExists($prefix)
         {
+            if(!SessionKeyHandler::SessionExists("rights"))
+            {
+                if(!$this->GetFromDatabase())
+                {
+                    return false;
+                }
+            }
+
             if(is_string($prefix) && !empty($prefix))
             {
                 return in_array($prefix, SessionKeyHandler::GetFromSession("rights"));
             }
-
+            
             return false;
+        }
+
+        public function ResetRights()
+        {
+            SessionKeyHandler::RemoveFromSession("rights");
         }
 
         public function UpdateTypeRights($user_type, $rights_array)

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <?php
 require_once 'include/extra/require.php';
+require_once 'test.php';
 ?>
 <html>
     <head>
@@ -42,7 +43,7 @@ require_once 'include/extra/require.php';
             } else {
                 include('include/pages/front.php');
             }
-            require_once 'test.php';
+            
         ?>
         </div>
         <div id="notificationWindow">

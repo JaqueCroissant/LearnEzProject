@@ -5,6 +5,7 @@
     //echo DbHandler::getInstance()->CountQuery("SELECT * FROM `rights` WHERE prefix = :prefix AND sort_order = :sort_order", "HEJ", 5);
     //require_once 'include/handler/sessionKeyHandler.php';
     //$user = new User(array());
+
     echo "Current language: " . TranslationHandler::getCurrentLanguage();
     $trans = new TranslationHandler();
     echo "<br/>";
@@ -63,5 +64,6 @@
 //    } else {
 //        echo $schoolHandler->error->title;
 //    }
+
 ?>
 </div>

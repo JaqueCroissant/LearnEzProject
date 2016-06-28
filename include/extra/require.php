@@ -1,5 +1,5 @@
 <?php
-    session_start();
+    
     require_once 'include/extra/required_datamodels.php';
     require_once 'include/handler/handler.php';
     require_once 'include/handler/errorHandler.php';
@@ -12,12 +12,10 @@
     require_once 'include/handler/translationHandler.php';
     require_once 'include/handler/notificationHandler.php';
     require_once 'include/pages/pagelist.php';
-    require_once 'include/handler/schoolHandler.php';
-
+    //require_once 'include/handler/schoolHandler.php';
     $loginHandler = new LoginHandler();
     $rightsHandler = new RightsHandler();
     $userHandler = new UserHandler();
-    $schoolHandler = new SchoolHandler();
-    //$pageHandler = new PageHandler();
-    //$pageHandler->get_menu();
+    $pageHandler = new PageHandler();
+    var_dump($pageHandler->get_menu(1));
 ?>

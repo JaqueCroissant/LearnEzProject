@@ -1,6 +1,13 @@
 <?php
 
     if ($loginHandler->check_login()) {
+
+        if(!$rightsHandler->right_exists("CHANGE_PASSWORD"))
+        {
+            echo "Nope<br/>";
+            die();
+        }
+
         echo '  <div class="text-center">
                     <div class="">
                         <h1>Change password</h1>

@@ -22,9 +22,17 @@
     echo "Danish prefix: " . $trans->getStaticText("ENGLISH");
     
     echo '<h1>Mortens TEST!</h1>';
-    $schoolH = new SchoolHandler();
-    $school = $schoolH->create_school_step_one("VUC", "22334455", "testvej 1, 4000 roskilde", "test@test.dk", 1);
     
-    $sub_end = date_create("12/31/2016");
-    $school = $schoolH->create_school_step_two($school, 300, "2016/12/31");
+    if ($schoolHandler->create_school_step_one("VUC", "22334455", "testvej 1, 4000 roskilde", "test@test.dk", 1)) {
+        echo 'Step one completed<br/>';
+    } else {
+        echo $schoolHandler->error->title;
+        die();
+    }
+
+    if ($school = $schoolHandler->create_school_step_two($schoolHandler->school, 300, "2016/12/31")) {
+        echo "Step two completed and school created";
+    } else {
+        echo $schoolHandler->error->title;
+    }
 ?>

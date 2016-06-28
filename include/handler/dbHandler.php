@@ -62,7 +62,6 @@
         
         private function AddArgument($argName, $argValue) {
             $this->_prepare->bindParam($argName, $argValue, $this->GetArgumentType($argValue));
-            echo $argName . " and " . $argValue ."<br/>";
         }
         
         private function FindArguments($charArray) {
@@ -73,17 +72,17 @@
             for($i = 0; $i < count($charArray); $i++) {
                 if($isValid) {
                     if(!preg_match('/^[a-zA-Z_]+$/', $charArray[$i]) || $i == count($charArray)-1) {
-                        
-                        if($i == count($charArray)-1) {
+                        if($i == count($charArray)-1 && preg_match('/^[a-zA-Z_]+$/', $charArray[$i])) {
                             $currentArg .= $charArray[$i];
                         }
                         
                         $isValid = false;
                         $argArray[] = $currentArg;
+                        $test = $currentArg;
                         $currentArg = "";
                     } else {
                         $currentArg .= $charArray[$i];
-                    }   
+                    }
                 } else {
                     if($charArray[$i] == ":") {
                         $isValid = true;

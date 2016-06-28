@@ -1,10 +1,12 @@
 <?php
 
-class SchoolHandler {
-//    
-//    public function __construct() {
-//        parent::__construct();
-//    }
+class SchoolHandler extends Handler {
+    
+    public $school;
+    
+    public function __construct() {
+        parent::__construct();
+    }
     
     public function create_school_step_one ($name, $phone, $address, $email, $school_type_id) {
         try {
@@ -36,10 +38,10 @@ class SchoolHandler {
                 "school_type_id" => $school_type_id
             );
             
-            $school = new school($school_array);
-            return $school;
+            $this->school = new school($school_array);
+            return true;
         } catch (Exception $exc) {
-            ErrorHandler::ReturnError($exc->getMessage());
+            $this->error = ErrorHandler::ReturnError($exc->getMessage());
         }
     }
     
@@ -57,9 +59,13 @@ class SchoolHandler {
             $school->max_students = $max_students;
             $school->subscription_end = $subscription_end;
             
-            $this->create_school($school);
+            if ($this->create_school($school)) {
+                return true;
+            } else {
+                throw new Exception ("SCHOOL_CREATION_FAILED_UNKNOWN_ERROR");
+            }
         } catch (Exception $exc) {
-            ErrorHandler::ReturnError($exc->getMessage());
+            $this->error = ErrorHandler::ReturnError($exc->getMessage());
         }
     }
     
@@ -145,10 +151,10 @@ class SchoolHandler {
     private function create_school ($school) 
     {
         $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_end) "
-                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end);";
+                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end)";
         $executedQuery = DbHandler::getInstance()->Query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_end);
         if ($executedQuery) {
-            echo 'School created successfully';
+            return true;
         }
     }
 }

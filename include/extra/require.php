@@ -17,5 +17,4 @@
     $rightsHandler = new RightsHandler();
     $userHandler = new UserHandler();
     $pageHandler = new PageHandler();
-    var_dump($pageHandler->get_menu(1));
 ?>

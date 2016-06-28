@@ -43,7 +43,7 @@ jQuery(function ($) {
         $('#notificationWindow').css("right", 40);
 
 
-        $('#notificationLink').click(function (event) {
+        $('#notifications').click(function (event) {
             event.stopPropagation();
             if ($('#notificationWindow').is(":hidden")) {
                 $.ajax({

@@ -17,5 +17,6 @@
     $loginHandler = new LoginHandler();
     $rightsHandler = new RightsHandler();
     $userHandler = new UserHandler();
-    $pageHandler = new PageHandler();
+    //$pageHandler = new PageHandler();
+    //$pageHandler->get_menu();
 ?>

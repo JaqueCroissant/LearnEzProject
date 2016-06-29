@@ -6,7 +6,7 @@ class TranslationHandler
     
     public function __construct(){
         if (!SessionKeyHandler::SessionExists("current_language")) {
-            $this->setCurrentLanguage($this->load_language_settings());
+            $this->set_current_language($this->load_language_settings());
         }
         $this->load_static_texts();
     }
@@ -17,7 +17,7 @@ class TranslationHandler
             $this->translation_static_text = $trans;
         }
         else {
-            $this->updateStaticText();
+            $this->update_static_text();
             $this->translation_static_text = SessionKeyHandler::GetFromSession("static_text");
         }
     }

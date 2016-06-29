@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once 'include/extra/require.php';
-require_once 'test.php';
 ?>
 <!DOCTYPE html>
 <html>

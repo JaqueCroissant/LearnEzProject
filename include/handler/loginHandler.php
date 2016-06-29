@@ -54,7 +54,7 @@ class LoginHandler
 	}
 	catch (Exception $ex) 
         {
-            $this->error = ErrorHandler::ReturnError($ex->getMessage());
+            $this->error = ErrorHandler::return_error($ex->getMessage());
 	}
     }
     
@@ -189,7 +189,7 @@ class LoginHandler
         }
         catch (Exception $ex)
         {
-            $this->error = ErrorHandler::ReturnError($ex->getMessage());
+            $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }
@@ -219,7 +219,7 @@ class LoginHandler
         }
         catch (Exception $ex)
         {
-            $this->error = ErrorHandler::ReturnError($ex->getMessage());
+            $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }

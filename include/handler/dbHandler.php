@@ -13,7 +13,7 @@
         {
             $this->_username = $username;
             $this->_password = $password;
-            $this->Connect();
+            $this->connect();
         }
         
         public static function get_instance()
@@ -25,7 +25,7 @@
             return self::$_instance;
         }
         
-        private function Connect() 
+        private function connect() 
         {
             try {
                 if($this->_conn != null) {
@@ -37,34 +37,34 @@
             } 
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::ReturnError("DATABASE_COULD_NOT_CONNECT");
+                $errorMessage = ErrorHandler::return_error("DATABASE_COULD_NOT_CONNECT");
                 echo $errorMessage;
             }
         }
         
-        private function GetConnInstance() {
+        private function get_conn_instance() {
             if($this->_conn == null) {
-                $this->Connect();
+                $this->connect();
             }
             return $this->_conn;
         }
         
-        private function HandleArguments($query, $num_args, $args) {
+        private function handle_arguments($query, $num_args, $args) {
             if($num_args > 0) {
-                $queryArguments = $this->FindArguments($this->GetCharArray($query));
+                $queryArguments = $this->find_arguments($this->get_char_array($query));
                 $arguments = $args;
                 
                 for($i = 1; $i < count($args); $i++) {
-                    $this->AddArgument($queryArguments[$i-1], $arguments[$i]);
+                    $this->add_argument($queryArguments[$i-1], $arguments[$i]);
                 }
             }
         }
         
-        private function AddArgument($argName, $argValue) {
-            $this->_prepare->bindParam($argName, $argValue, $this->GetArgumentType($argValue));
+        private function add_argument($argName, $argValue) {
+            $this->_prepare->bindParam($argName, $argValue, $this->get_argument_type($argValue));
         }
         
-        private function FindArguments($charArray) {
+        private function find_arguments($charArray) {
             $argArray = array();
             $currentArg = "";
             $isValid = false;
@@ -92,11 +92,11 @@
             return $argArray;
         }
         
-        private function GetCharArray($string) {
+        private function get_char_array($string) {
             return str_split($string);
         }
         
-        private function GetArgumentType($arg) {
+        private function get_argument_type($arg) {
             switch(gettype($arg)) {
                 case "integer":
                     return PDO::PARAM_INT;
@@ -110,14 +110,14 @@
         public function query($query) 
         {
             try {
-                $this->_prepare = $this->GetConnInstance()->prepare($query);
-                $this->HandleArguments($query, func_num_args(), func_get_args());
+                $this->_prepare = $this->get_conn_instance()->prepare($query);
+                $this->handle_arguments($query, func_num_args(), func_get_args());
                 $this->_prepare->execute();
                 return true;
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::ReturnError($ex->getCode());
+                $errorMessage = ErrorHandler::return_error($ex->getCode());
                 echo $ex->getMessage();
                 echo $errorMessage;
             }
@@ -127,8 +127,8 @@
         public function return_query($query) 
         {
             try {
-                $this->_prepare = $this->GetConnInstance()->prepare($query);
-                $this->HandleArguments($query, func_num_args(), func_get_args());
+                $this->_prepare = $this->get_conn_instance()->prepare($query);
+                $this->handle_arguments($query, func_num_args(), func_get_args());
                 $this->_prepare->execute();
                 
                 if($this->_prepare->rowCount() > 0) {
@@ -138,7 +138,7 @@
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::ReturnError($ex->getCode());
+                $errorMessage = ErrorHandler::return_error($ex->getCode());
                 echo $ex->getMessage();
                 echo $errorMessage;
             }
@@ -147,15 +147,15 @@
         public function count_query($query) 
         {
             try {
-                $this->_prepare = $this->GetConnInstance()->prepare($query);
-                $this->HandleArguments($query, func_num_args(), func_get_args());
+                $this->_prepare = $this->get_conn_instance()->prepare($query);
+                $this->handle_arguments($query, func_num_args(), func_get_args());
                 $this->_prepare->execute();
                 
                 return $this->_prepare->rowCount();
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::ReturnError($ex->getCode());
+                $errorMessage = ErrorHandler::return_error($ex->getCode());
                 echo $ex->getMessage();
                 echo $errorMessage;
             }

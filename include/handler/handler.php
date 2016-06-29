@@ -2,7 +2,7 @@
 
 class Handler {
     protected $_user;
-    public $_error;
+    public $error;
     
     public function __construct() {
         $this->get_user_object();

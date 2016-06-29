@@ -326,10 +326,10 @@ class UserHandler extends Handler
     {
         try
         {
-            if(!$this->user_exists)
+            if(!$this->user_exists())
             {
                 $this->get_user_object();
-                if(!$this->user_exists)
+                if(!$this->user_exists())
                 {
                     throw new Exception("USER_DOESNT_EXIST");
                 }
@@ -341,10 +341,9 @@ class UserHandler extends Handler
                 {
                     throw new Exception("USER_INVALID_USERNAME_INPUT");
                 }
-                elseif ($_user->firstname != $firstname)
-                {
-                    $_user->firstname = $firstname;
-                }
+
+                $this->_user->firstname = $firstname;
+
             }
 
             if(!empty($surname))
@@ -353,22 +352,20 @@ class UserHandler extends Handler
                 {
                     throw new Exception("USER_INVALID_USERNAME_INPUT");
                 }
-                elseif ($_user->surname != $surname)
-                {
-                    $_user->surname = $surname;
-                }
+
+                $this->_user->surname = $surname;
+
             }
 
             if(!empty($description))
             {
-                if(!is_string($description) || !$this->is_valid_input_with_num($description))
+                if(!is_string($description))
                 {
                     throw new Exception("USER_INVALID_DESCRIPTION");
                 }
-                elseif ($_user->description != $description)
-                {
-                    $_user->desciption = $description;
-                }
+
+                $this->_user->description = $description;
+
             }
 
             if(!empty($email))
@@ -377,10 +374,9 @@ class UserHandler extends Handler
                 {
                     throw new Exception("EMAIL_HAS_WRONG_FORMAT");
                 }
-                elseif ($_user->email != $email)
-                {
-                    $_user->email = $email;
-                }
+
+                $this->_user->email = $email;
+
             }
 
             if(!empty($image))
@@ -389,17 +385,23 @@ class UserHandler extends Handler
                 {
                     throw new Exception("USER_INVALID_IMAGE_ID");
                 }
-                elseif ($_user->image_id != $image)
+                $this->_user->image_id = $image;
+
+            }
+
+            foreach(get_object_vars($this->_user) as $key => $value)
+            {
+                if(!isset($key))
                 {
-                    $_user->image_id = $image;
+                    $value = "";
                 }
             }
 
             if(!DbHandler::get_instance()->query("UPDATE users SET firstname = :firstname,
                                                   surname = :surname, description = :description,
                                                   email = :email, image_id = :image WHERE id = :id",
-                                                  $_user->firstname, $_user->surname, $_user->description,
-                                                  $_user->email, $_user->image_id, $_user->id))
+                                                  $this->_user->firstname, $this->_user->surname, $this->_user->description,
+                                                  $this->_user->email, $this->_user->image_id, $this->_user->id))
             {
                 throw new Exception("DATABASE_UNKNOWN_ERROR");
             }
@@ -409,7 +411,7 @@ class UserHandler extends Handler
                 SessionKeyHandler::remove_from_session("user");
             }
 
-            SessionKeyHandler::add_to_session("user", $_user);
+            SessionKeyHandler::add_to_session("user", $this->_user, true);
 
             return true;
         }

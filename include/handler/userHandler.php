@@ -265,14 +265,23 @@ class UserHandler extends Handler
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
-
         echo "User created!";
     }
 
     public function assign_passwords($user_array)
     {
-        $password = $this->random_char(8);
-        $hashed_password = hash("sha256", $password . " " . $user_object->username);
+        foreach ($user_array as $user) 
+        {
+            $user->unhashed_password = $this->random_char(8);
+            $hashed_password = hash("sha256", $user->unhashed_password . " " . $user_object->username);
+            if(!DbHandler::get_instance()->query("INSERT INTO users (password) VALUES (:password) 
+                                                WHERE id = :id", $hashed_password, $user->id))
+                                                {
+                                                    throw new Exception("PASSWORD_COULDNT_ASSIGN");
+                                                }
+        }
+
+        return $user_array;
     }
 }
 ?>

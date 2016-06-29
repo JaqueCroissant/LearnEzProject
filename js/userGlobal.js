@@ -1,5 +1,5 @@
 $(document).ready(function () {
     notification_beat();
     
-    start_notification_beat(10);
+    start_notification_beat(3);
 });

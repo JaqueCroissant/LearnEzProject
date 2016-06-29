@@ -144,6 +144,20 @@
             }
         }
         
+        public function last_inserted_id() 
+        {
+            try {
+                if(!isset($this->_conn) || empty($this->_conn)) {
+                    return;
+                }
+                return $this->_conn->lastInsertId();
+            }
+            catch (PDOException $ex) 
+            {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
+        }
+        
         public function count_query($query) 
         {
             try {

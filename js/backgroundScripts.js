@@ -1,5 +1,6 @@
 function start_notification_beat(timerInSeconds){
     setInterval(function(){
+        console.log("running notification beat");
         notification_beat();
     }, timerInSeconds * 1000);
 }
@@ -13,7 +14,7 @@ function notification_beat(){
        success: function (result) {
             if (result !== null) {
                 if (result.id !== 0) {
-                    $('#notification_counter').html(result);
+                    $('#notification_counter').html(result.id);
                 }
                 else {
                      $('#notification_counter').html("");

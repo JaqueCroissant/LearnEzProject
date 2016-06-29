@@ -48,7 +48,7 @@ class TranslationHandler
                 $user = SessionKeyHandler::GetFromSession("user", true);
                 $user->languageId = $language;
                 SessionKeyHandler::AddToSession("user", $user, true);
-                DbHandler::getInstance()->Query("UPDATE users SET language_id=:languageId WHERE id=:userId", $language, $user->id);
+                DbHandler::get_instance()->Query("UPDATE users SET language_id=:languageId WHERE id=:userId", $language, $user->id);
             }
             self::setCurrentLanguage($language);
             self::updateStaticText();
@@ -71,7 +71,7 @@ class TranslationHandler
     }
     
     private static function updateStaticText(){
-        $dbdata = DbHandler::getInstance()->ReturnQuery("SELECT static_text.prefix, translation_static_text.text "
+        $dbdata = DbHandler::get_instance()->ReturnQuery("SELECT static_text.prefix, translation_static_text.text "
                 . "FROM translation_static_text "
                 . "INNER JOIN static_text "
                 . "ON static_text.id = translation_static_text.static_text_id "

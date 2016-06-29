@@ -16,7 +16,7 @@
             $this->Connect();
         }
         
-        public static function getInstance()
+        public static function get_instance()
         {
             if ( is_null( self::$_instance ) )
             {

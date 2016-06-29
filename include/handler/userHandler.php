@@ -100,26 +100,13 @@ class UserHandler extends Handler
                 throw new Exception("USER_EMPTY_USERNAME_INPUT");
             }
 
-            if(!is_string($firstname) || !is_string($surname))
-            {
-                throw new Exception("USER_INVALID_USERNAME_INPUT");
-            }
-
-            if(!$this->is_valid_input($firstname) || !$this->is_valid_input($surname))
-            {
-                throw new Exception("USER_INVALID_USERNAME_INPUT");
-            }
+            check_if_valid_string($firstname, false);
+            check_if_valid_string($surname, false);
 
             if(!empty($email))
             {
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL))
-                {
-                    throw new Exception("EMAIL_HAS_WRONG_FORMAT");
-                }
-                else
-                {
-                    $new_user->email = $email;
-                }
+                check_if_email($email);
+                $new_user->email = $email;
             }
         }
         catch(Exception $ex)
@@ -337,46 +324,26 @@ class UserHandler extends Handler
 
             if(!empty($firstname))
             {
-                if(!is_string($firstname) || !$this->is_valid_input($firstname))
-                {
-                    throw new Exception("USER_INVALID_USERNAME_INPUT");
-                }
-
+                check_if_valid_string($firstname, false);
                 $this->_user->firstname = $firstname;
-
             }
 
             if(!empty($surname))
             {
-                if(!is_string($surname) || !$this->is_valid_input($surname))
-                {
-                    throw new Exception("USER_INVALID_USERNAME_INPUT");
-                }
-
+                check_if_valid_string($surname, false);
                 $this->_user->surname = $surname;
-
             }
 
             if(!empty($description))
             {
-                if(!is_string($description))
-                {
-                    throw new Exception("USER_INVALID_DESCRIPTION");
-                }
-
+                check_if_valid_string($description, true);
                 $this->_user->description = $description;
-
             }
 
             if(!empty($email))
             {
-                if (!filter_var($email, FILTER_VALIDATE_EMAIL))
-                {
-                    throw new Exception("EMAIL_HAS_WRONG_FORMAT");
-                }
-
+                check_if_email($email);
                 $this->_user->email = $email;
-
             }
 
             if(!empty($image))
@@ -386,7 +353,6 @@ class UserHandler extends Handler
                     throw new Exception("USER_INVALID_IMAGE_ID");
                 }
                 $this->_user->image_id = $image;
-
             }
 
             foreach(get_object_vars($this->_user) as $key => $value)
@@ -419,6 +385,30 @@ class UserHandler extends Handler
         {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
+        }
+    }
+
+    private function check_if_email($email)
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+        {
+            throw new Exception("EMAIL_HAS_WRONG_FORMAT");
+        }
+    }
+
+    private function check_if_valid_string($string, $allow_special_characters)
+    {
+        if(!$allow_special_characters)
+        {
+            if(!$this->is_valid_input($string))
+            {
+                throw new Exception("USER_INVALID_DESCRIPTION");
+            }
+        }
+
+        if(!is_string($string))
+        {
+            throw new Exception("USER_INVALID_USERNAME_INPUT");
         }
     }
 }

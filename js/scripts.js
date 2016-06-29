@@ -49,7 +49,7 @@ jQuery(function ($) {
                 $.ajax({
                    type: "POST",
                    url: "ajax/notifications.php",
-                   data: {action: 'getNotifications'},
+                   data: {action: 'get_notifications'},
                    success: function (result) {
                        $('#notificationWindow').html(result);
                    }

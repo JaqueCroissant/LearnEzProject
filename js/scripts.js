@@ -55,12 +55,10 @@ jQuery(function ($) {
                    }
                 });
                 $('#notificationWindow').show("fast");
+                $('#notification_counter').html("");
             } else {
                 $('#notificationWindow').hide("fast");
-                $('#notification_counter').html("0");
-                $('#notification_counter').hide();
             }
-            $('notification_counter').html()
         });
         
         $('#sidebarButton').click(function (e) {

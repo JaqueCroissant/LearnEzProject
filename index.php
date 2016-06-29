@@ -12,6 +12,14 @@ require_once 'include/extra/require.php';
         <script src="js/jQuery.js" type="text/javascript"></script>
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="js/scripts.js" type="text/javascript"></script>
+        <?php        
+        if (SessionKeyHandler::session_exists("user")) {
+            ?>
+            <script src="js/backgroundScripts.js" type="text/javascript"></script>
+            <script src="js/userGlobal.js" type="text/javascript"></script>
+        <?php
+        }
+        ?>
     </head>
     <body>
         <div class="sidebarButton hidden-lg menu_design" id="sidebarButton">

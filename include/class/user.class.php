@@ -7,11 +7,14 @@
         public $last_login;
         public $school_id;
         public $class_ids;
+        public $image_id;
+        public $time_created;
 
         public $username;
         public $firstname;
         public $surname;
         public $email;
+        public $description;
 
         public $validation_code;
         public $last_password_request;

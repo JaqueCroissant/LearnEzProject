@@ -8,7 +8,7 @@ class TranslationHandler
         if (!SessionKeyHandler::session_exists("current_language")) {
             $this->setCurrentLanguage($this->loadLanguageSettings());
         if (!SessionKeyHandler::SessionExists("current_language")) {
-            $this->setCurrentLanguage($this->load_language_settings());
+            $this->set_current_language($this->load_language_settings());
         }
         $this->load_static_texts();
     }
@@ -21,8 +21,13 @@ class TranslationHandler
             $this->translation_static_text = $trans;
         }
         else {
+<<<<<<< HEAD
             $this->updateStaticText();
             $this->translation_static_text = SessionKeyHandler::get_from_session("static_text");
+=======
+            $this->update_static_text();
+            $this->translation_static_text = SessionKeyHandler::GetFromSession("static_text");
+>>>>>>> f5b26dcab1dd77ee1b5287d3cfdf85c8c1f3ae2d
         }
     }
     

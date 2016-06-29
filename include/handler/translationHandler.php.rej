@@ -1,0 +1,21 @@
+diff a/include/handler/translationHandler.php b/include/handler/translationHandler.php	(rejected hunks)
+@@ -5,14 +5,18 @@
+      private $translation_static_text;
+      
+      public function __construct(){
+ +        if (!SessionKeyHandler::session_exists("current_language")) {
+ +            $this->setCurrentLanguage($this->loadLanguageSettings());
++         if (!SessionKeyHandler::SessionExists("current_language")) {
++             $this->setCurrentLanguage($this->load_language_settings());
+          }
+-         $this->loadStaticTexts();
++         $this->load_static_texts();
+      }
+      
+ +    public function loadStaticTexts(){
+ +        $trans = SessionKeyHandler::get_from_session("static_text");
++     public function load_static_texts(){
++         $trans = SessionKeyHandler::GetFromSession("static_text");
+          if (!empty($trans)) {
+              $this->translation_static_text = $trans;
+          }

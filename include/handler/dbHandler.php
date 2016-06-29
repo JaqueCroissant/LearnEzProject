@@ -107,7 +107,7 @@
             }
         }
         
-        public function Query($query) 
+        public function query($query) 
         {
             try {
                 $this->_prepare = $this->GetConnInstance()->prepare($query);
@@ -124,7 +124,7 @@
             return false;
         }
         
-        public function ReturnQuery($query) 
+        public function return_query($query) 
         {
             try {
                 $this->_prepare = $this->GetConnInstance()->prepare($query);
@@ -144,7 +144,7 @@
             }
         }
         
-        public function CountQuery($query) 
+        public function count_query($query) 
         {
             try {
                 $this->_prepare = $this->GetConnInstance()->prepare($query);

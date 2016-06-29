@@ -63,7 +63,7 @@ class LoginHandler
             return false;
         }
         
-        if(DbHandler::get_instance()->CountQuery("SELECT id FROM users WHERE username = :username LIMIT 1", strtolower($this->_username)) < 1) {
+        if(DbHandler::get_instance()->count_query("SELECT id FROM users WHERE username = :username LIMIT 1", strtolower($this->_username)) < 1) {
              return false;
         }
         
@@ -77,7 +77,7 @@ class LoginHandler
         }
         
         
-        $user = DbHandler::get_instance()->ReturnQuery("SELECT * FROM users WHERE email = :email", $this->_email);
+        $user = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE email = :email", $this->_email);
            
         if(empty($user)) {
             return false;
@@ -92,14 +92,14 @@ class LoginHandler
             return false;
         }
         
-        $userData = DbHandler::get_instance()->ReturnQuery("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username));
+        $userData = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username));
         
         if(empty($userData)) {
              return false;
         }
 
         $this->_user = new User(reset($userData));
-        DbHandler::get_instance()->Query("UPDATE users SET last_login = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
+        DbHandler::get_instance()->query("UPDATE users SET last_login = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
         return true;
     }
     
@@ -184,7 +184,7 @@ class LoginHandler
             
             // mail function
             
-            DbHandler::get_instance()->Query("UPDATE users SET last_password_request = :date, validation_code = :validation_code WHERE id = :id", date ("Y-m-d H:i:s"), md5(uniqid(mt_rand(), true)), $this->_user->id);
+            DbHandler::get_instance()->query("UPDATE users SET last_password_request = :date, validation_code = :validation_code WHERE id = :id", date ("Y-m-d H:i:s"), md5(uniqid(mt_rand(), true)), $this->_user->id);
             return true;
         }
         catch (Exception $ex)
@@ -200,7 +200,7 @@ class LoginHandler
             if(empty($validation_code) || empty($user_id) || !is_numeric($user_id)){
                 throw new Exception ("LOGIN_INVALID_VALIDATION_CODE");
             }
-            $user_data = DbHandler::get_instance()->ReturnQuery("SELECT * FROM users WHERE id = :id AND validation_code = :validation_code", $user_id, $validation_code);
+            $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id AND validation_code = :validation_code", $user_id, $validation_code);
             
             if(empty($user_data)){
                 throw new Exception ("LOGIN_INVALID_VALIDATION_CODE");

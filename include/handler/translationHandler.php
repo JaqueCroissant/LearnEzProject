@@ -6,48 +6,29 @@ class TranslationHandler
     
     public function __construct(){
         if (!SessionKeyHandler::session_exists("current_language")) {
-            $this->setCurrentLanguage($this->loadLanguageSettings());
-        if (!SessionKeyHandler::SessionExists("current_language")) {
             $this->set_current_language($this->load_language_settings());
         }
         $this->load_static_texts();
     }
     
-    public function loadStaticTexts(){
-        $trans = SessionKeyHandler::get_from_session("static_text");
     public function load_static_texts(){
-        $trans = SessionKeyHandler::GetFromSession("static_text");
+        $trans = SessionKeyHandler::get_from_session("static_text");
         if (!empty($trans)) {
             $this->translation_static_text = $trans;
         }
         else {
-<<<<<<< HEAD
-            $this->updateStaticText();
-            $this->translation_static_text = SessionKeyHandler::get_from_session("static_text");
-=======
             $this->update_static_text();
-            $this->translation_static_text = SessionKeyHandler::GetFromSession("static_text");
->>>>>>> f5b26dcab1dd77ee1b5287d3cfdf85c8c1f3ae2d
+            $this->translation_static_text = SessionKeyHandler::get_from_session("static_text");
         }
     }
-    
-    public static function resetLanguage(){
+    public static function reset_language(){
         SessionKeyHandler::remove_from_session("static_text");
         SessionKeyHandler::remove_from_session("current_language");
     }
     
-    public static function getCurrentLanguage(){
+    public static function get_current_language(){
         if (SessionKeyHandler::session_exists("current_language")) {
             return SessionKeyHandler::get_from_session("current_language");
-
-    public static function reset_language(){
-        SessionKeyHandler::RemoveFromSession("static_text");
-        SessionKeyHandler::RemoveFromSession("current_language");
-    }
-    
-    public static function get_current_language(){
-        if (SessionKeyHandler::SessionExists("current_language")) {
-            return SessionKeyHandler::GetFromSession("current_language");
         }
         return self::$_defaultLanguage;
     }
@@ -74,21 +55,13 @@ class TranslationHandler
         }
     }
     
-    private static function setCurrentLanguage($language){
+    private static function set_current_language($language){
         SessionKeyHandler::add_to_session("current_language", $language);
     }
     
-    private function loadLanguageSettings(){
+    private function load_language_settings(){
         if (SessionKeyHandler::session_exists("user")){
             return SessionKeyHandler::get_from_session("user", true)->language_id;
-
-    private static function set_current_language($language){
-        SessionKeyHandler::AddToSession("current_language", $language);
-    }
-    
-    private function load_language_settings(){
-        if (SessionKeyHandler::SessionExists("user")){
-            return SessionKeyHandler::GetFromSession("user", true)->language_id;
 
         }
         if (isset($_COOKIE["language_id"])) {

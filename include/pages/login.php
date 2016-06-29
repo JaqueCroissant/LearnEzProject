@@ -61,13 +61,8 @@
 <br/>
 <br/>
 <?php
-    echo $not->getNumberOfUnread(SessionKeyHandler::get_from_session("user", true)->id);
-    echo $not->get_number_of_unread(SessionKeyHandler::GetFromSession("user", true)->id);
+    echo $not->get_number_of_unread(SessionKeyHandler::get_from_session("user", true)->id);
     echo "<br/>";
-    /*$notifications = $not->getNotifications(SessionKeyHandler::GetFromSession("user", true)->id, 1);
-    foreach ($notifications as $value) {
-        echo $value->title . "<br/>";
-    }*/
 ?>
     <br />
     <a href="index.php?page=login&logout=true">Logout</a>

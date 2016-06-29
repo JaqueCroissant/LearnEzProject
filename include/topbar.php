@@ -16,6 +16,9 @@
                         <div class="menu_header" style="display:inline-block">
                             <div class="menu_text">
                                 <img src="assets/images/'. $menu->image .'" class="menu_icon"> ';
+                                if($menu->pagename == "notifications"){
+                                    echo "<div id='notification_counter'>1</div>";
+                                }
                 if($menu->display_text) {
                     echo "<label style='margin-left:5px;cursor:pointer'> ". $menu->title ."</label>";
                 }

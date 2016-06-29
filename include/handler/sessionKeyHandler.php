@@ -2,7 +2,7 @@
 
     class SessionKeyHandler
     {
-        public static function AddToSession($key, $value, $serialize = false)
+        public static function add_to_session($key, $value, $serialize = false)
         {
             if(is_string($key) && !empty($key))
             {
@@ -12,9 +12,9 @@
             return null;
         }
 
-        public static function GetFromSession($key, $unserialize = false)
+        public static function get_from_session($key, $unserialize = false)
         {
-            if(is_string($key) && self::SessionExists($key))
+            if(is_string($key) && self::session_exists($key))
             {
                 return $unserialize ? unserialize($_SESSION[$key]) : $_SESSION[$key];
             }
@@ -22,9 +22,9 @@
             return null;
         }
 
-        public static function RemoveFromSession($key)
+        public static function remove_from_session($key)
         {
-            if(is_string($key) && self::SessionExists($key))
+            if(is_string($key) && self::session_exists($key))
             {
                 unset($_SESSION[$key]);
                 return true;
@@ -33,7 +33,7 @@
             return false;
         }
 
-        public static function SessionExists($key)
+        public static function session_exists($key)
         {
             if(!is_string($key) || empty($key))
             {

@@ -21,8 +21,8 @@ class pageHandler extends Handler {
             return;
         }
         
-        if(SessionKeyHandler::SessionExists("pages")) {
-            $this->_pages = SessionKeyHandler::GetFromSession("pages", true);
+        if(SessionKeyHandler::session_exists("pages")) {
+            $this->_pages = SessionKeyHandler::get_from_session("pages", true);
             return;
         }
         $this->generate_pages();
@@ -33,8 +33,8 @@ class pageHandler extends Handler {
             return;
         }
         
-        if(SessionKeyHandler::SessionExists("menu")) {
-            $this->_menu = SessionKeyHandler::GetFromSession("menu", true);
+        if(SessionKeyHandler::session_exists("menu")) {
+            $this->_menu = SessionKeyHandler::get_from_session("menu", true);
             return;
         }
         $this->generate_menu();
@@ -64,7 +64,7 @@ class pageHandler extends Handler {
             
             $this->_pages = $pageArray;
             $this->assign_page_children();
-            SessionKeyHandler::AddToSession("pages", $this->_pages, true);
+            SessionKeyHandler::add_to_session("pages", $this->_pages, true);
         }
     }
     
@@ -131,7 +131,7 @@ class pageHandler extends Handler {
                 $new_menu[$i] = $menu;
             }
             $this->_menu = $new_menu;
-            SessionKeyHandler::AddToSession("menu", $this->_menu, true);
+            SessionKeyHandler::add_to_session("menu", $this->_menu, true);
         }
     }
     
@@ -140,8 +140,8 @@ class pageHandler extends Handler {
             return;
         }
         
-        if(SessionKeyHandler::SessionExists("menu")) {
-            $this->_menu = SessionKeyHandler::GetFromSession("menu", true);
+        if(SessionKeyHandler::session_exists("menu")) {
+            $this->_menu = SessionKeyHandler::get_from_session("menu", true);
         }
         
         if(array_key_exists($position, $this->_menu)) {

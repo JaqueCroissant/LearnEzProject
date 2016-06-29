@@ -9,8 +9,8 @@ class Handler {
     }
     
     protected function get_user_object() {
-        if(SessionKeyHandler::SessionExists("user")) {
-            $this->_user = SessionKeyHandler::GetFromSession("user", true);
+        if(SessionKeyHandler::session_exists("user")) {
+            $this->_user = SessionKeyHandler::get_from_session("user", true);
             return;
         }
         $this->_user = null;

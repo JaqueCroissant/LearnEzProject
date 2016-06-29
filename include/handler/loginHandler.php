@@ -105,7 +105,7 @@ class LoginHandler
     
     private function token_valid()
     {
-	return (!SessionKeyHandler::SessionExists("login_token") || SessionKeyHandler::GetFromSession("login_token") != $this->_token) ? false : true;
+	return (!SessionKeyHandler::session_exists("login_token") || SessionKeyHandler::get_from_session("login_token") != $this->_token) ? false : true;
     }
     
     private function register_login_session()
@@ -114,20 +114,20 @@ class LoginHandler
             return;
         }
         
-        SessionKeyHandler::AddToSession("user", $this->_user, true);
+        SessionKeyHandler::add_to_session("user", $this->_user, true);
     }
     
     
     public function generate_login_token() {
-        if(SessionKeyHandler::SessionExists("login_token")) {
-            return SessionKeyHandler::GetFromSession("login_token");
+        if(SessionKeyHandler::session_exists("login_token")) {
+            return SessionKeyHandler::get_from_session("login_token");
         }
-        return reset(SessionKeyHandler::AddToSession("login_token", md5(uniqid(mt_rand(), true))));
+        return reset(SessionKeyHandler::add_to_session("login_token", md5(uniqid(mt_rand(), true))));
     }
     
     private function login_exists() 
     {
-	return SessionKeyHandler::SessionExists("user");
+	return SessionKeyHandler::session_exists("user");
     }
     
     private function verify_login_session()
@@ -140,7 +140,7 @@ class LoginHandler
     public function get_user_session() 
     {
 	if($this->login_exists()) {
-            return SessionKeyHandler::GetFromSession("user", true);
+            return SessionKeyHandler::get_from_session("user", true);
         }
     }
     
@@ -148,7 +148,7 @@ class LoginHandler
     {
 	if($this->login_exists()) 
 	{
-	    SessionKeyHandler::RemoveFromSession("user");
+	    SessionKeyHandler::remove_from_session("user");
 	    return true;
 	}
         return false;

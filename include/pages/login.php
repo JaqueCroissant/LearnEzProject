@@ -49,19 +49,19 @@
             echo "Jeg har ikke rettigheder til at ændre mit kodeord<br/>";
         }
         
-        echo "Username: " . SessionKeyHandler::GetFromSession("user", true)->username;
-        echo "Email: " . SessionKeyHandler::GetFromSession("user", true)->email;
-        echo "Firstname: " . SessionKeyHandler::GetFromSession("user", true)->firstname;
-        echo "Surname: " . SessionKeyHandler::GetFromSession("user", true)->surname;
-        echo "Last login: " . SessionKeyHandler::GetFromSession("user", true)->last_login;
-        echo "User type: " . SessionKeyHandler::GetFromSession("user", true)->user_type_id;
-        echo "Language: " . SessionKeyHandler::GetFromSession("user", true)->language_id;
+        echo "Username: " . SessionKeyHandler::get_from_session("user", true)->username;
+        echo "Email: " . SessionKeyHandler::get_from_session("user", true)->email;
+        echo "Firstname: " . SessionKeyHandler::get_from_session("user", true)->firstname;
+        echo "Surname: " . SessionKeyHandler::get_from_session("user", true)->surname;
+        echo "Last login: " . SessionKeyHandler::get_from_session("user", true)->last_login;
+        echo "User type: " . SessionKeyHandler::get_from_session("user", true)->user_type_id;
+        echo "Language: " . SessionKeyHandler::get_from_session("user", true)->language_id;
         $not = new NotificationHandler();
 ?>
 <br/>
 <br/>
 <?php
-    echo $not->getNumberOfUnread(SessionKeyHandler::GetFromSession("user", true)->id);
+    echo $not->getNumberOfUnread(SessionKeyHandler::get_from_session("user", true)->id);
     echo "<br/>";
     /*$notifications = $not->getNotifications(SessionKeyHandler::GetFromSession("user", true)->id, 1);
     foreach ($notifications as $value) {

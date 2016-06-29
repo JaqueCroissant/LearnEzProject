@@ -5,31 +5,31 @@ class TranslationHandler
     private $translation_static_text;
     
     public function __construct(){
-        if (!SessionKeyHandler::SessionExists("current_language")) {
+        if (!SessionKeyHandler::session_exists("current_language")) {
             $this->setCurrentLanguage($this->loadLanguageSettings());
         }
         $this->loadStaticTexts();
     }
     
     public function loadStaticTexts(){
-        $trans = SessionKeyHandler::GetFromSession("static_text");
+        $trans = SessionKeyHandler::get_from_session("static_text");
         if (!empty($trans)) {
             $this->translation_static_text = $trans;
         }
         else {
             $this->updateStaticText();
-            $this->translation_static_text = SessionKeyHandler::GetFromSession("static_text");
+            $this->translation_static_text = SessionKeyHandler::get_from_session("static_text");
         }
     }
     
     public static function resetLanguage(){
-        SessionKeyHandler::RemoveFromSession("static_text");
-        SessionKeyHandler::RemoveFromSession("current_language");
+        SessionKeyHandler::remove_from_session("static_text");
+        SessionKeyHandler::remove_from_session("current_language");
     }
     
     public static function getCurrentLanguage(){
-        if (SessionKeyHandler::SessionExists("current_language")) {
-            return SessionKeyHandler::GetFromSession("current_language");
+        if (SessionKeyHandler::session_exists("current_language")) {
+            return SessionKeyHandler::get_from_session("current_language");
         }
         return self::$_defaultLanguage;
     }
@@ -44,10 +44,10 @@ class TranslationHandler
     public function setLanguage($language){
         if ($language != self::getCurrentLanguage()) {
             setcookie("language_id", $language);
-            if (SessionKeyHandler::SessionExists("user")) {
-                $user = SessionKeyHandler::GetFromSession("user", true);
+            if (SessionKeyHandler::session_exists("user")) {
+                $user = SessionKeyHandler::get_from_session("user", true);
                 $user->languageId = $language;
-                SessionKeyHandler::AddToSession("user", $user, true);
+                SessionKeyHandler::add_to_session("user", $user, true);
                 DbHandler::get_instance()->query("UPDATE users SET language_id=:languageId WHERE id=:userId", $language, $user->id);
             }
             self::setCurrentLanguage($language);
@@ -57,12 +57,12 @@ class TranslationHandler
     }
     
     private static function setCurrentLanguage($language){
-        SessionKeyHandler::AddToSession("current_language", $language);
+        SessionKeyHandler::add_to_session("current_language", $language);
     }
     
     private function loadLanguageSettings(){
-        if (SessionKeyHandler::SessionExists("user")){
-            return SessionKeyHandler::GetFromSession("user", true)->language_id;
+        if (SessionKeyHandler::session_exists("user")){
+            return SessionKeyHandler::get_from_session("user", true)->language_id;
         }
         if (isset($_COOKIE["language_id"])) {
             return $_COOKIE["language_id"];            
@@ -80,6 +80,6 @@ class TranslationHandler
         foreach ($dbdata as $value) {
             $finalArray[$value["prefix"]] = $value["text"];
         }
-        SessionKeyHandler::AddToSession("static_text", $finalArray);
+        SessionKeyHandler::add_to_session("static_text", $finalArray);
     }
 }

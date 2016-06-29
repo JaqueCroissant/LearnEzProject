@@ -27,7 +27,7 @@
                     $rightArray[$new_right->prefix] = $new_right;
                 }
                 
-                SessionKeyHandler::AddToSession('rights', $rightArray, true);
+                SessionKeyHandler::add_to_session('rights', $rightArray, true);
                 return true;
             }
             return false;
@@ -35,7 +35,7 @@
 
         public function right_exists($prefix)
         {
-            if(!SessionKeyHandler::SessionExists("rights"))
+            if(!SessionKeyHandler::session_exists("rights"))
             {
                 if(!$this->get_from_database())
                 {
@@ -45,7 +45,7 @@
 
             if(is_string($prefix) && !empty($prefix))
             {
-                return array_key_exists($prefix, SessionKeyHandler::GetFromSession("rights", true));
+                return array_key_exists($prefix, SessionKeyHandler::get_from_session("rights", true));
             }
             
             return false;
@@ -53,7 +53,7 @@
 
         public function reset_rights()
         {
-            SessionKeyHandler::RemoveFromSession("rights");
+            SessionKeyHandler::remove_from_session("rights");
         }
 
         public function update_type_rights($user_type, $rights_array)

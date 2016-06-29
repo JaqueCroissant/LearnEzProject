@@ -1,6 +1,8 @@
 <?php
 class UserHandler extends Handler
 {
+    public $temp_user_array;
+
     public function __construct() {
         parent::__construct();
         $this->get_user_object();
@@ -79,6 +81,11 @@ class UserHandler extends Handler
 
     private function is_valid_input($string)
     {
+        return preg_match('/^[a-zA-Z]+$/', $string);
+    }
+
+    private function is_valid_input_with_num($string)
+    {
         return preg_match('/^[a-zA-Z0-9]+$/', $string);
     }
 
@@ -86,31 +93,39 @@ class UserHandler extends Handler
     {
         $new_user = new User();
 
-        if(empty($firstname) || empty($surname))
+        try
         {
-            throw new Exception("USER_EMPTY_USERNAME_INPUT");
-        }
-
-        if(!is_string($firstname) || !is_string($surname))
-        {
-            throw new Exception("USER_INVALID_USERNAME_INPUT");
-        }
-
-        if(!$this->is_valid_input($firstname) || !$this->is_valid_input($surname))
-        {
-            throw new Exception("USER_INVALID_USERNAME_INPUT");
-        }
-
-        if(!empty($email))
-        {
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
+            if(empty($firstname) || empty($surname))
             {
-                throw new Exception("EMAIL_HAS_WRONG_FORMAT");
+                throw new Exception("USER_EMPTY_USERNAME_INPUT");
             }
-            else
+
+            if(!is_string($firstname) || !is_string($surname))
             {
-                $new_user->email = $email;
+                throw new Exception("USER_INVALID_USERNAME_INPUT");
             }
+
+            if(!$this->is_valid_input($firstname) || !$this->is_valid_input($surname))
+            {
+                throw new Exception("USER_INVALID_USERNAME_INPUT");
+            }
+
+            if(!empty($email))
+            {
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+                {
+                    throw new Exception("EMAIL_HAS_WRONG_FORMAT");
+                }
+                else
+                {
+                    $new_user->email = $email;
+                }
+            }
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
         }
 
         $new_user->firstname = $firstname;
@@ -121,56 +136,64 @@ class UserHandler extends Handler
 
     public function validate_user_affiliations($user_object, $user_type, $school_id = null, $class_ids = null)
     {
-        if(!$this->user_exists())
+        try
         {
-            throw new Exception("USER_DOESNT_EXIST");
-        }
-        
-        if(!is_numeric($user_type) || $user_type < 1 || $user_type > 4)
-        {
-            throw new Exception("USER_INVALID_TYPE");
-        }
-
-        if(!empty($school_id) && !is_numeric($school_id))
-        {
-            throw new Exception("USER_INVALID_SCHOOL_ID");
-        }
-
-        if($user_type != 1 && empty($school_id))
-        {
-            throw new Exception("USER_INVALID_SCHOOL_ID");
-        }
-
-        if($user_type != 1 && $count < 1)
-        {
-            throw new Exception("USER_INVALID_SCHOOL_ID");
-        }
-    
-        if(!empty($class_ids))
-        {
-            $query = "SELECT id FROM class WHERE ";   
-            for($i=0; $i<count($class_ids); $i++)
+            if(!$this->user_exists())
             {
-                $class = $class_ids[$i];
-                if($i != 0 && $i!=count($class_ids))
+                throw new Exception("USER_DOESNT_EXIST");
+            }
+
+            if(!is_numeric($user_type) || $user_type < 1 || $user_type > 4)
+            {
+                throw new Exception("USER_INVALID_TYPE");
+            }
+
+            if(!empty($school_id) && !is_numeric($school_id))
+            {
+                throw new Exception("USER_INVALID_SCHOOL_ID");
+            }
+
+            if($user_type != 1 && empty($school_id))
+            {
+                throw new Exception("USER_INVALID_SCHOOL_ID");
+            }
+
+            if($user_type != 1 && $count < 1)
+            {
+                throw new Exception("USER_INVALID_SCHOOL_ID");
+            }
+
+            if(!empty($class_ids))
+            {
+                $query = "SELECT id FROM class WHERE ";
+                for($i=0; $i<count($class_ids); $i++)
                 {
-                    $insert_values .= " OR ";
+                    $class = $class_ids[$i];
+                    if($i != 0 && $i!=count($class_ids))
+                    {
+                        $insert_values .= " OR ";
+                    }
+
+                    if(is_numeric($class['id']))
+                    {
+                        throw new Exception("USER_INVALID_CLASS_ID");
+                    }
+                    $query .= "id = " . $class['id'];
                 }
 
-                if(is_numeric($class['id']))
+                $count = DbHandler::get_instance()->count_query($query);
+                if($count < count($class_ids))
                 {
                     throw new Exception("USER_INVALID_CLASS_ID");
                 }
-                $query .= "id = " . $class['id'];
-            }
 
-            $count = DbHandler::get_instance()->count_query($query);
-            if($count < count($class_ids))
-            {
-                throw new Exception("USER_INVALID_CLASS_ID");
+                $user_object->class_ids = $class_ids;
             }
-
-            $user_object->class_ids = $class_ids;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
         }
         
         $user_object->user_type_id = $user_type;
@@ -254,34 +277,149 @@ class UserHandler extends Handler
     private function create_user($user_object)
     {
         $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
-        
-        
-        if(!DbHandler::get_instance()->query("INSERT INTO users (username, user_type_id, 
-                                            school_id, email, firstname, surname) VALUES 
-                                            (:username, :user_id, :school_id, :email, :firstname, :surname)", 
+        try
+        {
+            if(!DbHandler::get_instance()->query("INSERT INTO users (username, user_type_id,
+                                            school_id, email, firstname, surname, time_created) VALUES
+                                            (:username, :user_id, :school_id, :email, :firstname, :surname, :time_created)",
                                             $user_object->username, $user_object->user_type_id, 
                                             $user_object->school_id, $user_object->email,
-                                            $user_object->firstname, $user_object->surname))
+                                            $user_object->firstname, $user_object->surname, date ("Y-m-d H:i:s")))
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
-        echo "User created!";
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
     }
 
     public function assign_passwords($user_array)
     {
-        foreach ($user_array as $user) 
+        try
         {
-            $user->unhashed_password = $this->random_char(8);
-            $hashed_password = hash("sha256", $user->unhashed_password . " " . $user_object->username);
-            if(!DbHandler::get_instance()->query("INSERT INTO users (password) VALUES (:password) 
-                                                WHERE id = :id", $hashed_password, $user->id))
-                                                {
-                                                    throw new Exception("PASSWORD_COULDNT_ASSIGN");
-                                                }
-        }
+            foreach ($user_array as $user)
+            {
+                $user->unhashed_password = $this->random_char(8);
+                $hashed_password = hash("sha256", $user->unhashed_password . " " . $user_object->username);
+                if(!DbHandler::get_instance()->query("INSERT INTO users (password) VALUES (:password)
+                                                    WHERE id = :id", $hashed_password, $user->id))
+                                                    {
+                                                        throw new Exception("PASSWORD_COULDNT_ASSIGN");
+                                                    }
+            }
 
-        return $user_array;
+            $temp_user_array = $user_array;
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    public function edit_user_info($firstname, $surname, $email, $description, $image)
+    {
+        try
+        {
+            if(!$this->user_exists())
+            {
+                $this->get_user_object();
+                if(!$this->user_exists())
+                {
+                    throw new Exception("USER_DOESNT_EXIST");
+                }
+            }
+
+            if(!empty($firstname))
+            {
+                if(!is_string($firstname) || !$this->is_valid_input($firstname))
+                {
+                    throw new Exception("USER_INVALID_USERNAME_INPUT");
+                }
+
+                $this->_user->firstname = $firstname;
+
+            }
+
+            if(!empty($surname))
+            {
+                if(!is_string($surname) || !$this->is_valid_input($surname))
+                {
+                    throw new Exception("USER_INVALID_USERNAME_INPUT");
+                }
+
+                $this->_user->surname = $surname;
+
+            }
+
+            if(!empty($description))
+            {
+                if(!is_string($description))
+                {
+                    throw new Exception("USER_INVALID_DESCRIPTION");
+                }
+
+                $this->_user->description = $description;
+
+            }
+
+            if(!empty($email))
+            {
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL))
+                {
+                    throw new Exception("EMAIL_HAS_WRONG_FORMAT");
+                }
+
+                $this->_user->email = $email;
+
+            }
+
+            if(!empty($image))
+            {
+                if(!is_numeric($image))
+                {
+                    throw new Exception("USER_INVALID_IMAGE_ID");
+                }
+                $this->_user->image_id = $image;
+
+            }
+
+            foreach(get_object_vars($this->_user) as $key => $value)
+            {
+                if(!isset($key))
+                {
+                    $value = "";
+                }
+            }
+
+            if(!DbHandler::get_instance()->query("UPDATE users SET firstname = :firstname,
+                                                  surname = :surname, description = :description,
+                                                  email = :email, image_id = :image WHERE id = :id",
+                                                  $this->_user->firstname, $this->_user->surname, $this->_user->description,
+                                                  $this->_user->email, $this->_user->image_id, $this->_user->id))
+            {
+                throw new Exception("DATABASE_UNKNOWN_ERROR");
+            }
+
+            if(SessionKeyHandler::session_exists("user"))
+            {
+                SessionKeyHandler::remove_from_session("user");
+            }
+
+            SessionKeyHandler::add_to_session("user", $this->_user, true);
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
     }
 }
 ?>

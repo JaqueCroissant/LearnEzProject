@@ -6,6 +6,7 @@ require_once '../include/handler/dbHandler.php';
 //Session handlers
 require_once '../include/handler/sessionKeyHandler.php';
 //Other handlers
+require_once '../include/handler/handler.php';
 require_once '../include/handler/notificationHandler.php';
 require_once '../include/handler/translationHandler.php';
 require_once '../include/handler/errorHandler.php';

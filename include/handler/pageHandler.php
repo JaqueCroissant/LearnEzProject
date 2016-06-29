@@ -1,19 +1,30 @@
 <?php
 
 class pageHandler extends Handler {
+    
+    public $current_page;
+    
     private $_pages_raw = array();
     private $_pages = array();
     private $_menu = array();
    
     public function __construct() {
         parent::__construct();
+        $this->get_pages_raw();
         $this->get_pages();
         $this->get_menus();
+    }
+    
+    private function get_pages_raw() {
+        if($this->raw_pages_exists()) {
+            return;
+        }
         
-        /*foreach($this->_pages as $key => $value) {
-            echo "Key: " . $key . " <br />";
-            echo "Value: " . var_dump($value) . "<br /> <br />";
-        }*/
+        if(SessionKeyHandler::session_exists("pages_raw")) {
+            $this->_pages_raw = SessionKeyHandler::get_from_session("pages_raw", true);
+            return;
+        }
+        $this->generate_pages();
     }
     
     private function get_pages() {
@@ -25,7 +36,7 @@ class pageHandler extends Handler {
             $this->_pages = SessionKeyHandler::get_from_session("pages", true);
             return;
         }
-        $this->generate_pages();
+        $this->assign_pages();
     }
     
     private function get_menus() {
@@ -40,10 +51,14 @@ class pageHandler extends Handler {
         $this->generate_menu();
     }
     
+    private function raw_pages_exists() {
+        return !empty($this->_pages_raw) && is_array($this->_pages_raw) && count($this->_pages_raw) > 0;
+    }
+    
     private function pages_exists() {
         return !empty($this->_pages) && is_array($this->_pages) && count($this->_pages) > 0;
     }
-    
+
     private function menus_exists() {
         return !empty($this->_menu) && is_array($this->_menu) && count($this->_menu) > 0;
     }
@@ -57,12 +72,27 @@ class pageHandler extends Handler {
                 return;
             }
             
-            $pageArray = array();
-            foreach($pageData as $key => $value) {
-                $pageArray[] = new Page($value);
+            foreach($pageData as $page) {
+                $this->_pages_raw[$page["pagename"]] = new Page($page);
+            }
+           
+            SessionKeyHandler::add_to_session("pages_raw", $this->_pages_raw, true);
+        }
+    }
+    
+    private function assign_pages() {
+        if(empty($this->_pages) || count($this->_pages) < 1) {
+            
+            if(count($this->_pages_raw) < 1) {
+                return;
             }
             
+            $pageArray = array();
+            foreach($this->_pages_raw as $value) {
+                $pageArray[] = $value;
+            }
             $this->_pages = $pageArray;
+            
             $this->assign_page_children();
             SessionKeyHandler::add_to_session("pages", $this->_pages, true);
         }
@@ -149,10 +179,49 @@ class pageHandler extends Handler {
         }
     }
     
+    public function has_rights($pagename) {
+        if(!$this->raw_pages_exists()) {
+            return false;
+        }
+        
+        if(!array_key_exists($pagename, $this->_pages_raw)) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public function get_page_from_name($pagename) {
+        try {
+            if(empty($pagename) || !preg_match('/^[a-zA-Z_]+$/', $pagename)) {
+                throw new Exception ("PAGE_INVALID");
+            }
+
+            if(!$this->has_rights($pagename)) {
+                throw new Exception ("PAGE_NO_RIGHTS");
+            }
+
+            if(!file_exists('include/pages/' . $pagename . '.php')) {
+                throw new Exception ("PAGE_DOES_NOT_EXIST");
+            }
+
+            $this->current_page = $this->_pages_raw[$pagename];
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+	}
+        return false;
+    }
+    
+    
     public function reset() {
         $this->_pages = array();
         $this->_menu = array();
+        $this->_pages_raw = array();
         $this->generate_pages();
+        $this->assign_pages();
         $this->generate_menu();
     }
 }

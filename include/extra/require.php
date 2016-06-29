@@ -11,7 +11,6 @@
     require_once 'include/handler/userHandler.php';
     require_once 'include/handler/translationHandler.php';
     require_once 'include/handler/notificationHandler.php';
-    require_once 'include/pages/pagelist.php';
     require_once 'include/handler/schoolHandler.php';
     $loginHandler = new LoginHandler();
     $rightsHandler = new RightsHandler();

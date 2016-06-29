@@ -1,7 +1,7 @@
 <?php
 
 class Handler {
-    protected $_user;
+    protected $user;
     public $error;
     
     public function __construct() {
@@ -10,14 +10,14 @@ class Handler {
     
     protected function get_user_object() {
         if(SessionKeyHandler::session_exists("user")) {
-            $this->_user = SessionKeyHandler::get_from_session("user", true);
+            $this->user = SessionKeyHandler::get_from_session("user", true);
             return;
         }
-        $this->_user = null;
+        $this->user = null;
     }
     
     protected function user_exists() {
         $this->get_user_object();
-        return !empty($this->_user);
+        return !empty($this->user);
     }
 }

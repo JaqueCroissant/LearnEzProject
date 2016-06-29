@@ -169,7 +169,7 @@ class SchoolHandler extends Handler {
                 "school_type_id" => $school_type_id
             );
             
-            $this->school = new school($school_array);
+            $this->school = new School($school_array);
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());

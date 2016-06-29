@@ -5,7 +5,7 @@ if (isset($_POST["action"])) {
     try {
         call_user_func($_POST["action"]);
     } catch (Exception $ex) {
-        //TODO add error handling
+        echo ErrorHandler::return_error($ex->getMessage());
     }
 
 }

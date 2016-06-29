@@ -9,7 +9,7 @@
         private function get_from_database()
         {
             if($this->user_exists()) {
-                $userRights = DbHandler::getInstance()->ReturnQuery("SELECT rights.id, rights.prefix, rights.sort_order, translation_rights.title
+                $userRights = DbHandler::get_instance()->return_query("SELECT rights.id, rights.prefix, rights.sort_order, translation_rights.title
                                                         FROM rights INNER JOIN translation_rights ON rights.id = translation_rights.rights_id 
                                                         INNER JOIN user_type_rights ON rights.id = user_type_rights.rights_id
                                                         WHERE user_type_rights.user_type_id = :type AND translation_rights.language_id = :lang", 
@@ -60,8 +60,8 @@
         {
             if(is_int($user_type) && $user_type < 5 && $user_type > 0)
             {
-                DbHandler::getInstance()->Query("DELETE FROM user_type_rights WHERE user_type_id = :id", $user_type);
-                $rights = DbHandler::getInstance()->ReturnQuery("SELECT * FROM rights");
+                DbHandler::get_instance()->query("DELETE FROM user_type_rights WHERE user_type_id = :id", $user_type);
+                $rights = DbHandler::get_instance()->return_query("SELECT * FROM rights");
                 
                 $new_rights = array();
                 foreach($rights as $right)
@@ -86,7 +86,7 @@
                     $insert_values .= "(" . $user_type . ", " . $right['id'] . ")";
                 }
 
-                DbHandler::getInstance()->Query("INSERT INTO user_type_rights (user_type_id, rights_id) VALUES " . $insert_values);
+                DbHandler::get_instance()->query("INSERT INTO user_type_rights (user_type_id, rights_id) VALUES " . $insert_values);
 
                 return true;
             }

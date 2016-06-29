@@ -11,7 +11,7 @@ class ErrorHandler
 
     private static function SetErrorMessage($errorCode = null)
     {
-        $error = DbHandler::getInstance()->ReturnQuery("SELECT error.prefix, translation_error.title, translation_error.text FROM error INNER JOIN translation_error ON translation_error.error_id = error.id WHERE error.prefix = :prefix AND translation_error.language_id = :language_id", $errorCode, TranslationHandler::getCurrentLanguage());
+        $error = DbHandler::get_instance()->return_query("SELECT error.prefix, translation_error.title, translation_error.text FROM error INNER JOIN translation_error ON translation_error.error_id = error.id WHERE error.prefix = :prefix AND translation_error.language_id = :language_id", $errorCode, TranslationHandler::getCurrentLanguage());
         if($error != null) {
             return new Error(reset($error)["title"], reset($error)["text"]);
         }

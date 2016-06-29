@@ -3,7 +3,7 @@
 require_once '../include/extra/db.class.php';
 require_once '../include/handler/dbHandler.php';
 //Session handlers
-require_once '../include/handler/SessionKeyHandler.php';
+require_once '../include/handler/sessionKeyHandler.php';
 //Other handlers
 require_once '../include/handler/notificationHandler.php';
 require_once '../include/handler/errorHandler.php';

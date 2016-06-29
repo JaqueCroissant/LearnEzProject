@@ -1,16 +1,19 @@
 <?php
 
 class pageHandler extends Handler {
+    private $_pages_raw = array();
     private $_pages = array();
-    
+    private $_menu = array();
+   
     public function __construct() {
         parent::__construct();
         $this->get_pages();
+        $this->get_menus();
         
-        foreach($this->_pages as $key => $value) {
+        /*foreach($this->_pages as $key => $value) {
             echo "Key: " . $key . " <br />";
             echo "Value: " . var_dump($value) . "<br /> <br />";
-        }
+        }*/
     }
     
     private function get_pages() {
@@ -25,14 +28,30 @@ class pageHandler extends Handler {
         $this->generate_pages();
     }
     
+    private function get_menus() {
+       if($this->menus_exists()) {
+            return;
+        }
+        
+        if(SessionKeyHandler::SessionExists("menu")) {
+            $this->_menu = SessionKeyHandler::GetFromSession("menu", true);
+            return;
+        }
+        $this->generate_menu();
+    }
+    
     private function pages_exists() {
         return !empty($this->_pages) && is_array($this->_pages) && count($this->_pages) > 0;
+    }
+    
+    private function menus_exists() {
+        return !empty($this->_menu) && is_array($this->_menu) && count($this->_menu) > 0;
     }
     
     private function generate_pages() {
         if(empty($this->_pages) || count($this->_pages) < 1) {
             $user_type_id = $this->user_exists() ? $this->_user->user_type_id : 5;
-            $pageData = DbHandler::getInstance()->ReturnQuery("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id", $user_type_id, TranslationHandler::getCurrentLanguage());
+            $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.page_arguments, page.is_dropdown, page.image, page.display_text, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::getCurrentLanguage());
             
             if(count($pageData) < 1) {
                 return;
@@ -90,67 +109,51 @@ class pageHandler extends Handler {
         return $children;
     }
     
-    private function iterate_page_children(&$element, $function) {
-        if(empty($element)) {
-            return;
-        }
-        
-        if(is_array($element)) {
-            foreach($element as $element_key => $element_value) {
-                if(!empty($element_value->children) && count($element_value->children) > 0) {
-                    
-                    $children = array();
-                    foreach($element_value->children as $key => $value) {
-                        $children[]= $this->iterate_page_children($value, $function);
-                    }
-                    $element_value->children = $children;
-                    
-                } else {
-                    if(!$function($element_value)) {
-                        unset($element[$element_key]);
-                    }
+    private function generate_menu() {
+        if(empty($this->_menu) || count($this->_menu) < 1) {
+            $new_menu = array();
+            for($i = 1; $i < 3; $i++) {
+                if(!is_array($this->_pages) || empty($this->_pages)) {
+                    return;
                 }
-            }
-        } else {
-            if(!empty($element->children) && count($element->children) > 0) {
-                $children = array();
-                foreach($element->children as $key => $value) {
-                    $children[] = $this->iterate_page_children($value, $function);
-                }
-                $element->children = $children;
 
-            } else {
-                if($function($element)) {
-                    return $element;
+                $menu = array();
+                foreach($this->_pages as $key => $value) {
+
+                    if($value->master_page_id > 0) {
+                        continue;
+                    }
+
+                    if($value->location_id == $i) {
+                        array_push($menu, clone $value);
+                    }
                 }
-                return null;
+                $new_menu[$i] = $menu;
             }
+            $this->_menu = $new_menu;
+            SessionKeyHandler::AddToSession("menu", $this->_menu, true);
         }
-    }
-    
-    private $current_menu_position = 1;
-    private function check_page_position() {
-        if(empty(func_get_args()[0]->position_id) || !is_numeric(func_get_args()[0]->position_id)) {
-            return false;
-        }
-        
-        return func_get_args()[0]->position_id == $this->current_menu_position;
     }
     
     public function get_menu($position = 1) {
-        if(!$this->pages_exists()) {
+        if(!$this->menus_exists()) {
             return;
         }
         
-        $menu_pages = $this->_pages;
-        $lol = $this->iterate_page_children($menu_pages, $this->check_page_position());
+        if(SessionKeyHandler::SessionExists("menu")) {
+            $this->_menu = SessionKeyHandler::GetFromSession("menu", true);
+        }
         
-        return $menu_pages;
+        if(array_key_exists($position, $this->_menu)) {
+            return $this->_menu[$position];
+        }
     }
     
-    public function reset_pages() {
+    public function reset() {
         $this->_pages = array();
+        $this->_menu = array();
         $this->generate_pages();
+        $this->generate_menu();
     }
 }
 

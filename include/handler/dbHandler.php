@@ -16,7 +16,7 @@
             $this->Connect();
         }
         
-        public static function getInstance()
+        public static function get_instance()
         {
             if ( is_null( self::$_instance ) )
             {
@@ -107,7 +107,7 @@
             }
         }
         
-        public function Query($query) 
+        public function query($query) 
         {
             try {
                 $this->_prepare = $this->GetConnInstance()->prepare($query);
@@ -121,9 +121,10 @@
                 echo $ex->getMessage();
                 echo $errorMessage;
             }
+            return false;
         }
         
-        public function ReturnQuery($query) 
+        public function return_query($query) 
         {
             try {
                 $this->_prepare = $this->GetConnInstance()->prepare($query);
@@ -143,7 +144,7 @@
             }
         }
         
-        public function CountQuery($query) 
+        public function count_query($query) 
         {
             try {
                 $this->_prepare = $this->GetConnInstance()->prepare($query);

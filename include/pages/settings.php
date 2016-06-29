@@ -2,7 +2,7 @@
 
     if ($loginHandler->check_login()) {
 
-        if(!$rightsHandler->RightExists("CHANGE_PASSWORD"))
+        if(!$rightsHandler->right_exists("CHANGE_PASSWORD"))
         {
             echo "Nope<br/>";
             die();

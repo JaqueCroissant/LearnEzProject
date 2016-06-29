@@ -3,24 +3,24 @@
     if(isset($_GET['logout'])) {
         if($loginHandler->check_login()) {
             $loginHandler->log_out();
-            $rightsHandler->ResetRights();
-            //$pageHandler->reset_pages();
-            header("Location: index.php?page=front");
+            $rightsHandler->reset_rights();
+            $pageHandler->reset();
+            echo '<META HTTP-EQUIV="Refresh" Content="0; URL=index.php?page=front">';
         }
     }
     
     if(isset($_POST["submit"])) {
         if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
             TranslationHandler::resetLanguage();
-            //$pageHandler->reset_pages();
-            header("Location: index.php?page=login");
+            $pageHandler->reset();
+            echo '<META HTTP-EQUIV="Refresh" Content="0; URL=index.php?page=login">';
         } else {
             echo $loginHandler->error->title;
         }
     }
     
     if(!$loginHandler->check_login() || isset($_GET["logout"])) {
-        if(!$rightsHandler->RightExists("CHANGE_PASSWORD"))
+        if(!$rightsHandler->right_exists("CHANGE_PASSWORD"))
         {
             echo "Jeg har ikke rettigheder til at ændre mit kodeord<br/>";
         }
@@ -44,7 +44,7 @@
 
 <?php
     } else { 
-        if($rightsHandler->RightExists("CHANGE_PASSWORD"))
+        if(!$rightsHandler->right_exists("CHANGE_PASSWORD"))
         {
             echo "Jeg har ikke rettigheder til at ændre mit kodeord<br/>";
         }

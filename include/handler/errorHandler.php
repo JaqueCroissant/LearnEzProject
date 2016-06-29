@@ -3,13 +3,13 @@ class ErrorHandler
 {
     public static $error;
 
-    public static function ReturnError($errorCode = null)
+    public static function return_error($errorCode = null)
     {
-        self::$error = self::SetErrorMessage($errorCode);
+        self::$error = self::set_error_messages($errorCode);
         return self::$error;
     }
 
-    private static function SetErrorMessage($errorCode = null)
+    private static function set_error_messages($errorCode = null)
     {
         $error = DbHandler::get_instance()->return_query("SELECT error.prefix, translation_error.title, translation_error.text FROM error INNER JOIN translation_error ON translation_error.error_id = error.id WHERE error.prefix = :prefix AND translation_error.language_id = :language_id", $errorCode, TranslationHandler::getCurrentLanguage());
         if($error != null) {

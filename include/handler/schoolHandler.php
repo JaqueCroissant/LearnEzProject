@@ -20,7 +20,7 @@ class SchoolHandler extends Handler {
             }
             
         } catch (Exception $exc) {
-            $this->error = ErrorHandler::ReturnError($exc->getMessage());
+            $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
     }
@@ -33,7 +33,7 @@ class SchoolHandler extends Handler {
             $this->school = reset(DbHandler::get_instance()->return_query($query, $id));
             return true;
         } catch (Exception $exc) {
-            $this->error = ErrorHandler::ReturnError($exc->getMessage());
+            $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
     }
@@ -57,7 +57,7 @@ class SchoolHandler extends Handler {
                 throw new Exception ("SCHOOL_NOT_UPDATED_UNKNOWN_ERROR");
             }
         } catch (Exception $exc) {
-            $this->error = ErrorHandler::ReturnError($exc->getMessage());
+            $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
     }
@@ -81,7 +81,7 @@ class SchoolHandler extends Handler {
             $this->school = new school($school_array);
             return true;
         } catch (Exception $exc) {
-            $this->error = ErrorHandler::ReturnError($exc->getMessage());
+            $this->error = ErrorHandler::return_error($exc->getMessage());
         }
     }
     
@@ -103,7 +103,7 @@ class SchoolHandler extends Handler {
                 throw new Exception ("SCHOOL_CREATION_FAILED_UNKNOWN_ERROR");
             }
         } catch (Exception $exc) {
-            $this->error = ErrorHandler::ReturnError($exc->getMessage());
+            $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
     }

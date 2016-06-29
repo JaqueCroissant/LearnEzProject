@@ -12,10 +12,12 @@
     require_once 'include/handler/translationHandler.php';
     require_once 'include/handler/notificationHandler.php';
     require_once 'include/pages/pagelist.php';
-    //require_once 'include/handler/schoolHandler.php';
+    require_once 'include/handler/schoolHandler.php';
     $loginHandler = new LoginHandler();
     $rightsHandler = new RightsHandler();
     $userHandler = new UserHandler();
     $pageHandler = new PageHandler();
+    $schoolHandler = new SchoolHandler();
+    $translationHandler = new TranslationHandler();
     var_dump($pageHandler->get_menu(1));
 ?>

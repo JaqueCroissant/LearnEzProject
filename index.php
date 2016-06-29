@@ -33,13 +33,8 @@ require_once 'include/extra/require.php';
         </div>       
         <div class='col-md-12 content'>
             <?php
-
-            if (isset($_GET['page'])) {
-                if (in_array($_GET['page'], $pages)) {
-                    include('include/pages/' . $_GET['page'] . '.php');
-                } else {
-                    include('include/pages/front.php');
-                }
+            if($pageHandler->get_page_from_name($_GET['page'])) {
+                include('include/pages/' . $pageHandler->current_page->pagename . '.php');
             } else {
                 include('include/pages/front.php');
             }

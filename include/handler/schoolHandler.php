@@ -13,7 +13,7 @@ class SchoolHandler extends Handler {
             $this->verify_school_exists($id);
             
             $query = "DELETE FROM school WHERE id = :id";
-            if (DbHandler::get_instance()->Query($query, $id)) {
+            if (DbHandler::get_instance()->query($query, $id)) {
                 return true;
             } else {
                 throw new Exception ("SCHOOL_COULD_NOT_BE_DELETED_UNKNOWN_ERROR");
@@ -30,7 +30,7 @@ class SchoolHandler extends Handler {
             $this->verify_school_exists($id);
             
             $query = "SELECT * FROM school WHERE id = :id LIMIT 1";
-            $this->school = reset(DbHandler::get_instance()->ReturnQuery($query, $id));
+            $this->school = reset(DbHandler::get_instance()->return_query($query, $id));
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::ReturnError($exc->getMessage());
@@ -51,7 +51,7 @@ class SchoolHandler extends Handler {
             
             $query = "UPDATE school SET name=:name, phone=:phone, address=:address, email=:email, school_type_id=:school_type_id, max_students=:max_students, subscription_end=:subscription_end WHERE id = :id";
             
-            if (DbHandler::get_instance()->Query($query, $name, $phone, $address, $email, $school_type_id, $max_students, $subscription_end, $id)) {
+            if (DbHandler::get_instance()->query($query, $name, $phone, $address, $email, $school_type_id, $max_students, $subscription_end, $id)) {
                 return true;
             } else {
                 throw new Exception ("SCHOOL_NOT_UPDATED_UNKNOWN_ERROR");
@@ -134,7 +134,7 @@ class SchoolHandler extends Handler {
             throw new Exception ("INVALID_INPUT_IS_NOT_INT");
         }
         
-        $count = DbHandler::get_instance()->CountQuery("SELECT * FROM school WHERE id = :id", $id);
+        $count = DbHandler::get_instance()->count_query("SELECT * FROM school WHERE id = :id", $id);
         if (!($count == 1)) {
             throw new Exception ("NO_SCHOOLS_FOUND_WITH_THIS_ID");
         } 
@@ -145,7 +145,7 @@ class SchoolHandler extends Handler {
             throw new Exception ("WRONG_SCHOOL_TYPE_ID");
         }
         
-        $count = DbHandler::get_instance()->CountQuery("SELECT * FROM school_type WHERE id = :id", $school_type_id);
+        $count = DbHandler::get_instance()->count_query("SELECT * FROM school_type WHERE id = :id", $school_type_id);
         if (!($count == 1)) {
             throw new Exception ("WRONG_SCHOOL_TYPE_ID");
         }
@@ -189,7 +189,7 @@ class SchoolHandler extends Handler {
     private function create_school ($school) {
         $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_end) "
                 . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end)";
-        $executedQuery = DbHandler::get_instance()->Query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_end);
+        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_end);
         if ($executedQuery) {
             return true;
         }

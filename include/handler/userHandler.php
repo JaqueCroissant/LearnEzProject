@@ -43,7 +43,7 @@ class UserHandler extends Handler
                     throw new Exception ("USER_INVALID_ID");
                 }
                 
-                $userData = DbHandler::get_instance()->ReturnQuery("SELECT username FROM users WHERE id = :user_id AND validation_code = :validation_code", $user_id, $validation_code);
+                $userData = DbHandler::get_instance()->return_query("SELECT username FROM users WHERE id = :user_id AND validation_code = :validation_code", $user_id, $validation_code);
                 if(empty($userData)) {
                     throw new Exception ("USER_INVALID_PASSWORD_RESET");
                 }
@@ -59,13 +59,13 @@ class UserHandler extends Handler
                     throw new Exception ("USER_EMPTY_FORM");
                 }
                 
-                if(DbHandler::get_instance()->CountQuery("SELECT id FROM users WHERE id = :id AND password = :password LIMIT 1", $this->_user->id, hash("sha256", $old_password . " " . $this->_user->username)) < 1) {
+                if(DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id AND password = :password LIMIT 1", $this->_user->id, hash("sha256", $old_password . " " . $this->_user->username)) < 1) {
                     throw new Exception ("USER_INVALID_OLD_PASSWORD");
                 }
             }
             
             $user_id = !$password_reset && $this->user_exists() ? $this->_user->id : $user_id;
-            DbHandler::get_instance()->Query("UPDATE users SET password = :password, validation_code = :validation_code WHERE id = :id", hash("sha256", $new_password . " " . $username), null, $user_id);
+            DbHandler::get_instance()->query("UPDATE users SET password = :password, validation_code = :validation_code WHERE id = :id", hash("sha256", $new_password . " " . $username), null, $user_id);
             
             return true;
         }
@@ -164,7 +164,7 @@ class UserHandler extends Handler
                 $query .= "id = " . $class['id'];
             }
 
-            $count = DbHandler::get_instance()->CountQuery($query);
+            $count = DbHandler::get_instance()->count_query($query);
             if($count < count($class_ids))
             {
                 throw new Exception("USER_INVALID_CLASS_ID");
@@ -247,7 +247,7 @@ class UserHandler extends Handler
 
     private function username_exists($username)
     {
-        $count = DbHandler::get_instance()->CountQuery("SELECT * FROM users WHERE username = :name", $username);
+        $count = DbHandler::get_instance()->count_query("SELECT * FROM users WHERE username = :name", $username);
         return $count > 1;
     }
 
@@ -256,7 +256,7 @@ class UserHandler extends Handler
         $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
         
         
-        if(!DbHandler::get_instance()->Query("INSERT INTO users (username, user_type_id, 
+        if(!DbHandler::get_instance()->query("INSERT INTO users (username, user_type_id, 
                                             school_id, email, firstname, surname) VALUES 
                                             (:username, :user_id, :school_id, :email, :firstname, :surname)", 
                                             $user_object->username, $user_object->user_type_id, 

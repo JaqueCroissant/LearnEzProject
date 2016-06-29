@@ -1,6 +1,7 @@
 <?php
 
 class pageHandler extends Handler {
+    private $_pages_raw = array();
     private $_pages = array();
     private $_menu = array();
    
@@ -50,7 +51,7 @@ class pageHandler extends Handler {
     private function generate_pages() {
         if(empty($this->_pages) || count($this->_pages) < 1) {
             $user_type_id = $this->user_exists() ? $this->_user->user_type_id : 5;
-            $pageData = DbHandler::getInstance()->ReturnQuery("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::getCurrentLanguage());
+            $pageData = DbHandler::get_instance()->ReturnQuery("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.page_arguments, page.is_dropdown, page.image, page.display_text, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::getCurrentLanguage());
             
             if(count($pageData) < 1) {
                 return;
@@ -129,7 +130,6 @@ class pageHandler extends Handler {
                 }
                 $new_menu[$i] = $menu;
             }
-            
             $this->_menu = $new_menu;
             SessionKeyHandler::AddToSession("menu", $this->_menu, true);
         }

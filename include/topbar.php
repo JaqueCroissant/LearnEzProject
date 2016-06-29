@@ -7,52 +7,23 @@
 
 <div class="pull-right col-xl-3 hidden-xs" style="height: 100%; margin-right: 0.5em;">
     <?php
-        if ($loginHandler->check_login()) {
-            echo '  <a href="?page=login&logout=true">
-                        <div class="menu_header pull-right">
+        //var_dump($pageHandler->get_menu(2));
+        foreach($pageHandler->get_menu(2) as $menu) {
+            if($menu->display_menu) {
+                echo '<a href="';
+                echo $menu->is_dropdown ? "#" : "?page=". $menu->pagename ."". $menu->page_arguments;
+                echo '" id="'.$menu->pagename.'">
+                        <div class="menu_header" style="display:inline-block">
                             <div class="menu_text">
-                                <img src="assets/images/ic_close_white_24dp/web/ic_close_white_24dp_1x.png" class="menu_icon">
+                                <img src="assets/images/'. $menu->image .'" class="menu_icon"> ';
+                if($menu->display_text) {
+                    echo "<label style='margin-left:5px;cursor:pointer'> ". $menu->title ."</label>";
+                }
+                echo '
                             </div>
                         </div>
                     </a>';
-        }
-        echo '  <a href="#" id="notificationLink">
-                    <div class="menu_header pull-right">
-                        <div class="menu_text">
-                            <img src="assets/images/ic_notifications_white_24dp/web/ic_notifications_white_24dp_1x.png" class="menu_icon">
-                        </div>
-                    </div>
-                </a>';
-
-        // check if user is logged in or not.
-        if (!$loginHandler->check_login()) {
-            echo '  <a href="?page=login">
-                        <div class="menu_header pull-right">
-                            <div class="menu_text">
-                                <img src="assets/images/ic_account_box_white_24dp/web/ic_account_box_white_24dp_1x.png" class="menu_icon">
-                                Login
-                            </div>
-                        </div>
-                    </a>';
-        } else {
-            echo '  <a href="?page=settings">
-                        <div class="menu_header pull-right">
-                            <div class="menu_text">
-                                <img src="assets/images/ic_settings_white_24dp/web/ic_settings_white_24dp_1x.png" class="menu_icon">
-                                Settings
-                            </div>
-                        </div>
-                    </a>';
-        }
-        echo '  <a href="?page=support">
-                    <div class="menu_header pull-right">
-                        <div class="menu_text">
-                            <img src="assets/images/ic_help_white_24dp/web/ic_help_white_24dp_1x.png" class="menu_icon">
-                            Support
-                        </div>
-                    </div>
-                </a>';
-        
-        
+            }
+        }    
     ?>
 </div>

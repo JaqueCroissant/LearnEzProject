@@ -19,5 +19,4 @@
     $pageHandler = new PageHandler();
     $schoolHandler = new SchoolHandler();
     $translationHandler = new TranslationHandler();
-    var_dump($pageHandler->get_menu(1));
 ?>

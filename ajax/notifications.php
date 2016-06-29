@@ -10,9 +10,9 @@ if (isset($_POST["action"])) {
 
 }
 
-function getNotifications(){
+function get_notifications(){
     $notificationHandler = new NotificationHandler();
-    $data = $notificationHandler->getNotifications(1, 5);
+    $data = $notificationHandler->get_notifications(1, 5);
     echo "<div id='notificationData'>Nye" .
             "<div class='notificationGroup'>";     
     if (count($data[0]) == 0) {

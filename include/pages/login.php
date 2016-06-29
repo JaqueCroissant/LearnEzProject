@@ -11,7 +11,7 @@
     
     if(isset($_POST["submit"])) {
         if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
-            TranslationHandler::resetLanguage();
+            TranslationHandler::reset_language();
             $pageHandler->reset();
             echo '<META HTTP-EQUIV="Refresh" Content="0; URL=index.php?page=login">';
         } else {
@@ -62,6 +62,7 @@
 <br/>
 <?php
     echo $not->getNumberOfUnread(SessionKeyHandler::get_from_session("user", true)->id);
+    echo $not->get_number_of_unread(SessionKeyHandler::GetFromSession("user", true)->id);
     echo "<br/>";
     /*$notifications = $not->getNotifications(SessionKeyHandler::GetFromSession("user", true)->id, 1);
     foreach ($notifications as $value) {

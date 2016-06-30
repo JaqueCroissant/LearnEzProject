@@ -55,18 +55,18 @@ class UserHandler extends Handler
             
             if(!$password_reset && $this->user_exists()) {
                 $old_password = func_get_args()[0];
-                $username = $this->user->username;
+                $username = $this->_user->username;
                 
                 if(empty($old_password)) {
                     throw new Exception ("USER_EMPTY_FORM");
                 }
                 
-                if(DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id AND password = :password LIMIT 1", $this->user->id, hash("sha256", $old_password . " " . $this->user->username)) < 1) {
+                if(DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id AND password = :password LIMIT 1", $this->_user->id, hash("sha256", $old_password . " " . $this->_user->username)) < 1) {
                     throw new Exception ("USER_INVALID_OLD_PASSWORD");
                 }
             }
             
-            $user_id = !$password_reset && $this->user_exists() ? $this->user->id : $user_id;
+            $user_id = !$password_reset && $this->user_exists() ? $this->_user->id : $user_id;
             DbHandler::get_instance()->query("UPDATE users SET password = :password, validation_code = :validation_code WHERE id = :id", hash("sha256", $new_password . " " . $username), null, $user_id);
             
             return true;

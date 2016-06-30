@@ -1,5 +1,4 @@
 <?php
-    
     require_once 'include/extra/required_datamodels.php';
     require_once 'include/handler/handler.php';
     require_once 'include/handler/errorHandler.php';
@@ -13,6 +12,7 @@
     require_once 'include/handler/notificationHandler.php';
     require_once 'include/handler/schoolHandler.php';
     require_once 'include/handler/classHandler.php';
+    
     $loginHandler = new LoginHandler();
     $rightsHandler = new RightsHandler();
     $userHandler = new UserHandler();
@@ -20,4 +20,8 @@
     $schoolHandler = new SchoolHandler();
     $translationHandler = new TranslationHandler();
     $classHandler = new ClassHandler();
+    
+    SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
+    SessionKeyHandler::add_to_session("login_handler", $loginHandler, true);
+    SessionKeyHandler::add_to_session("rights_handler", $rightsHandler, true);
 ?>

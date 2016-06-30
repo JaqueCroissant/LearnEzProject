@@ -11,6 +11,10 @@ class SchoolHandler extends Handler {
     
     public function get_school_rights ($school_id) {
         try {
+            if (!$this->user_exists()) {
+                return false;
+            }
+            
             $this->verify_school_exists($school_id);
             
             $query = "SELECT * FROM school_rights WHERE school_id = :school_id";
@@ -121,7 +125,7 @@ class SchoolHandler extends Handler {
             $this->verify_school_exists($id);
             
             $query = "SELECT * FROM school WHERE id = :id LIMIT 1";
-            $this->school = reset(DbHandler::get_instance()->return_query($query, $id));
+            $this->school = new School(reset(DbHandler::get_instance()->return_query($query, $id)));
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());

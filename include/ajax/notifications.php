@@ -1,5 +1,8 @@
 <?php
-include 'ajax_require.php';
+require_once '../../include/ajax/require.php';
+require_once '../../include/handler/notificationHandler.php';
+
+$notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
 
 if (isset($_POST["action"])) {
     try {

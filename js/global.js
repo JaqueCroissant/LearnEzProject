@@ -47,7 +47,7 @@ $(document).ready(function () {
 
     $(function() {
         preload([
-            'assets/images/loading_player.GIF'
+            'assets/images/loading_page.GIF'
         ]);
     });
     

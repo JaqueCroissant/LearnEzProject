@@ -13,7 +13,7 @@
                                                         FROM rights INNER JOIN translation_rights ON rights.id = translation_rights.rights_id 
                                                         INNER JOIN user_type_rights ON rights.id = user_type_rights.rights_id
                                                         WHERE user_type_rights.user_type_id = :type AND translation_rights.language_id = :lang", 
-                                                        $this->user->user_type_id, translationHandler::get_current_language());
+                                                        $this->_user->user_type_id, translationHandler::get_current_language());
 
                 if(count($userRights)<1)
                 {

@@ -1,7 +1,9 @@
 <?php
 class UserHandler extends Handler
 {
+    public $temp_user;
     public $temp_user_array;
+
 
     public function __construct() {
         parent::__construct();
@@ -152,28 +154,7 @@ class UserHandler extends Handler
 
             if(!empty($class_ids))
             {
-                $query = "SELECT id FROM class WHERE ";
-                for($i=0; $i<count($class_ids); $i++)
-                {
-                    $class = $class_ids[$i];
-                    if($i != 0 && $i!=count($class_ids))
-                    {
-                        $insert_values .= " OR ";
-                    }
-
-                    if(is_numeric($class['id']))
-                    {
-                        throw new Exception("USER_INVALID_CLASS_ID");
-                    }
-                    $query .= "id = " . $class['id'];
-                }
-
-                $count = DbHandler::get_instance()->count_query($query);
-                if($count < count($class_ids))
-                {
-                    throw new Exception("USER_INVALID_CLASS_ID");
-                }
-
+                verify_class_ids($class_ids);
                 $user_object->class_ids = $class_ids;
             }
         }
@@ -187,6 +168,34 @@ class UserHandler extends Handler
         $user_object->school_id = $school_id;
 
         $this->create_user($user_object);
+
+        return true;
+    }
+
+    private function verify_class_ids($class_ids)
+    {
+        $query = "SELECT id FROM class WHERE ";
+        for($i=0; $i<count($class_ids); $i++)
+        {
+            if($i != 0 && $i!=count($class_ids))
+            {
+                $insert_values .= " OR ";
+            }
+
+            if(!is_numeric($class_ids[$i]))
+            {
+                throw new Exception("USER_INVALID_CLASS_ID");
+            }
+            $query .= "id = " . $class_ids[$i];
+        }
+
+        $count = DbHandler::get_instance()->count_query($query);
+        if($count < count($class_ids))
+        {
+            throw new Exception("USER_INVALID_CLASS_ID");
+        }
+
+        return $class_ids;
     }
 
     public function generate_username($firstname, $surname)
@@ -261,6 +270,23 @@ class UserHandler extends Handler
         return $count > 1;
     }
 
+    private function delete_user($user_object)
+    {
+        try
+        {
+            if(!DbHandler::get_instance()->query("DELETE FROM users WHERE id = :id", $user_object->id))
+            {
+                throw new Exception("DATABASE_UNKNOWN_ERROR");
+            }
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
     private function create_user($user_object)
     {
         $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
@@ -298,8 +324,8 @@ class UserHandler extends Handler
                                                         throw new Exception("PASSWORD_COULDNT_ASSIGN");
                                                     }
             }
-
-            $temp_user_array = $user_array;
+            $this->temp_user_array = array();
+            $this->temp_user_array = $user_array;
             return true;
         }
         catch(Exception $ex)
@@ -410,6 +436,75 @@ class UserHandler extends Handler
         {
             throw new Exception("USER_INVALID_USERNAME_INPUT");
         }
+    }
+
+    public function get_users($ids)
+    {
+        try
+        {
+            if(is_array($ids))
+            {
+                 $this->get_multiple_users($ids);
+            }
+            elseif(is_numeric($ids))
+            {
+                $this->get_single_user($ids);
+            }
+            else
+            {
+                throw new Exception("USER_INVALID_ID");
+            }
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    private function get_multiple_users($ids)
+    {
+        $query = "SELECT * FROM users WHERE id IN (";
+        for($i=0; $i<count($ids); $i++)
+        {
+            $user = $ids[$i];
+            if($i != 0 && $i!=count($ids))
+            {
+                $query .= ", ";
+            }
+
+            if(!is_numeric($ids[$i]))
+            {
+                throw new Exception("USER_INVALID_ID");
+            }
+            $query .=  $ids[$i];
+        }
+
+        $query .= ")";
+        $user_data = DbHandler::get_instance()->return_query($query);
+        if(count($user_data > 0))
+        {
+            $this->temp_user_array = array();
+            foreach ($user_data as $user)
+            {
+
+                $this->temp_user_array[] = new User($user);
+            }
+
+        }
+        else
+        {
+            unset($this->temp_user_array);
+        }
+
+    }
+
+    private function get_single_user($id)
+    {
+        $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
+        $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
     }
 }
 ?>

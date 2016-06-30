@@ -1,6 +1,6 @@
 <?php
 
-class school extends ORM{
+class School extends ORM{
     public $id;
     public $name;
     public $address;

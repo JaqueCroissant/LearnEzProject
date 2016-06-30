@@ -55,6 +55,7 @@ jQuery(function ($) {
                    }
                 });
                 $('#notificationWindow').show("fast");
+                $('#notification_counter').html("");
             } else {
                 $('#notificationWindow').hide("fast");
             }

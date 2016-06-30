@@ -237,12 +237,14 @@ a .menu_header {
     background-color: #4db8ff;  
 }
 
-#notification_counter{
-    z-index: 10000 !important;
-    color: red !important;
+#notification_counter {
+    z-index: 10000;
+    font-size: 1.2em;
+    color: white;
     font-weight: bold;
     position: fixed;
     margin-top: -0.4em; 
+    background-image: url(../assets/images/ic_account_box_black_24dp/web/ic_account_box_black_24dp_1x.png);
 }
 
 .notificationGroup:first-child {

@@ -3,17 +3,112 @@
 class SchoolHandler extends Handler {
     
     public $school;
+    public $this_school_rights;
     
     public function __construct() {
         parent::__construct();
     }
     
+    public function get_school_rights ($school_id) {
+        try {
+            if (!$this->user_exists()) {
+                return false;
+            }
+            
+            $this->verify_school_exists($school_id);
+            
+            $query = "SELECT * FROM school_rights WHERE school_id = :school_id";
+            $school_rights_id_array = DbHandler::get_instance()->return_query($query, $school_id);
+            
+            if (count($school_rights_id_array) == 0) {
+                throw new Exception ("NO_RIGHTS_FOUND_FOR_THIS_SCHOOL");
+            } 
+            
+            $query_rights = "SELECT * FROM rights WHERE id = :id";
+            foreach ($school_rights_id_array as $rights_id) {
+                $right = reset(DbHandler::get_instance()->return_query($query_rights, $rights_id["rights_id"]));
+                $this->this_school_rights[] = $right["prefix"];
+            }
+            return true;
+            
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }    
+    
+    public function update_school_rights_by_id($school_id, $array_of_rights_prefixes) {
+        try {
+            $this->verify_school_exists($school_id);
+            if (!$this->delete_school_rights_by_school_id($school_id)) {
+                return false;
+            }
+            
+            if ($this->assign_school_rights_by_school_id($school_id, $array_of_rights_prefixes)) {
+                return true;
+            }
+            
+            return false;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+    
+    public function assign_school_rights_by_school_id($school_id, $array_of_rights_prefixes) {
+        try {
+            $this->verify_array_contains_strings($array_of_rights_prefixes);
+            $query_rights_id = "SELECT id FROM rights WHERE prefix in (";
+            if (empty($array_of_rights_prefixes)) {
+                throw new Exception ("RIGHTS_ARRAY_IS_EMPTY");
+            }
+            
+            foreach ($array_of_rights_prefixes as $value) {
+                $query_rights_id .= "'" . $value . "', "; 
+            }
+            
+            $query_rights_id = rtrim($query_rights_id, ', ');
+            $query_rights_id .= ")";
+            $rights_id_array = DbHandler::get_instance()->return_query($query_rights_id);
+            $query_assign_rights = "INSERT INTO school_rights (school_id, rights_id) VALUES (:school_id, :rights_id)";
+            
+            foreach ($rights_id_array as $value) {
+                DbHandler::get_instance()->query($query_assign_rights, $school_id, $value['id']);
+            }
+            
+            $this->get_school_rights($school_id);
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+    
+    private function delete_school_rights_by_school_id($school_id) {
+        try {
+            $this->verify_school_exists($school_id);
+            
+            $query = "DELETE FROM school_rights WHERE school_id = :school_id";
+            
+            if (DbHandler::get_instance()->query($query, $school_id)) {
+                return true;
+            } else {
+                throw new Exception ("SCHOOL_RIGHTS_COULD_NOT_BE_DELETED_UNKNOWN_ERROR");
+            }
+            
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+        
     public function delete_school_by_id ($id) {
         try {
             $this->verify_school_exists($id);
             
             $query = "DELETE FROM school WHERE id = :id";
             if (DbHandler::get_instance()->query($query, $id)) {
+                $this->delete_school_rights_by_school_id($id);
                 return true;
             } else {
                 throw new Exception ("SCHOOL_COULD_NOT_BE_DELETED_UNKNOWN_ERROR");
@@ -30,7 +125,7 @@ class SchoolHandler extends Handler {
             $this->verify_school_exists($id);
             
             $query = "SELECT * FROM school WHERE id = :id LIMIT 1";
-            $this->school = reset(DbHandler::get_instance()->return_query($query, $id));
+            $this->school = new School(reset(DbHandler::get_instance()->return_query($query, $id)));
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -78,7 +173,7 @@ class SchoolHandler extends Handler {
                 "school_type_id" => $school_type_id
             );
             
-            $this->school = new school($school_array);
+            $this->school = new School($school_array);
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -87,10 +182,7 @@ class SchoolHandler extends Handler {
     
     public function create_school_step_two ($school, $max_students, $subscription_end) {
         try {
-            if (!$this->is_null_or_empty($school)) {
-                throw new Exception ("SCHOOL_OBJECT_IS_EMPTY");
-            }
-            
+            $this->is_null_or_empty($school);
             $this->verify_max_students($max_students);
             $this->verify_subscription_end($subscription_end);
             
@@ -105,6 +197,14 @@ class SchoolHandler extends Handler {
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
+        }
+    }
+    
+    private function verify_array_contains_strings($array_of_strings) {
+        foreach ($array_of_strings as $value) {
+            if (!is_string($value)) {
+                throw new Exception ("ARRAY_IS_NOT_STRINGS");
+            }
         }
     }
     
@@ -124,9 +224,10 @@ class SchoolHandler extends Handler {
     }
     
     private function verify_max_students($max_students) {
-        if (!is_int($max_students) || !$this->is_null_or_empty($max_students)) {
+        if (!is_int($max_students)) {
             throw new Exception ("MAX_STUDENTS_HAS_INVALID_NUMBER");
         }
+        $this->is_null_or_empty($max_students);
     }
     
     private function verify_school_exists($id) {
@@ -141,9 +242,10 @@ class SchoolHandler extends Handler {
     }
     
     private function verify_school_type($school_type_id) {
-        if (!is_int($school_type_id) || !$this->is_null_or_empty($school_type_id)) {
+        if (!is_int($school_type_id)) {
             throw new Exception ("WRONG_SCHOOL_TYPE_ID");
         }
+        $this->is_null_or_empty($school_type_id);
         
         $count = DbHandler::get_instance()->count_query("SELECT * FROM school_type WHERE id = :id", $school_type_id);
         if (!($count == 1)) {
@@ -152,15 +254,11 @@ class SchoolHandler extends Handler {
     }
     
     private function verify_address($address) {
-        if (!$this->is_null_or_empty($address)) {
-            throw new Exception ("ADDRESS_IS_NULL_OR_EMPTY");
-        }
+        $this->is_null_or_empty($school_type_id);
     }
     
     private function verify_phone ($phone) {
-        if (!$this->is_null_or_empty($phone)) {
-            throw new Exception ("PHONE_IS_NULL_OR_EMPTY");
-        }
+        $this->is_null_or_empty($school_type_id);
     }
     
     private function verify_email ($email) {
@@ -170,20 +268,17 @@ class SchoolHandler extends Handler {
     }
     
     private function verify_name ($name) {
-        if (!$this->is_null_or_empty($name)) {
-            throw new Exception ("NAME_IS_NULL_OR_EMPTY");
-        }
+        $this->is_null_or_empty($school_type_id);
     }
     
     private function is_null_or_empty($var) {
         if (empty($var)) {
-            return false;
+            throw new Exception ("OBJECT_IS_EMPTY");
         }
 
         if (!isset($var)) {
-            return false;
+            throw new Exception ("OBJECT_DOESNT_EXIST");
         }
-        return true;
     }
     
     private function create_school ($school) {

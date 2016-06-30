@@ -11,6 +11,7 @@
     require_once 'include/handler/translationHandler.php';
     require_once 'include/handler/notificationHandler.php';
     require_once 'include/handler/schoolHandler.php';
+    require_once 'include/handler/classHandler.php';
     
     $loginHandler = new LoginHandler();
     $rightsHandler = new RightsHandler();
@@ -18,6 +19,7 @@
     $pageHandler = new PageHandler();
     $schoolHandler = new SchoolHandler();
     $translationHandler = new TranslationHandler();
+    $classHandler = new ClassHandler();
     
     SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
     SessionKeyHandler::add_to_session("login_handler", $loginHandler, true);

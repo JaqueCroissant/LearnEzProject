@@ -5,14 +5,24 @@ if (isset($_POST["action"])) {
     try {
         call_user_func($_POST["action"]);
     } catch (Exception $ex) {
-        //TODO add error handling
+        echo ErrorHandler::return_error($ex->getMessage());
     }
 
 }
 
+function get_new_notifications(){
+    $notificationHandler = new NotificationHandler();
+    if (SessionKeyHandler::session_exists("user")) {
+        $jsonArray = [
+        'id' => $notificationHandler->get_number_of_unseen(SessionKeyHandler::get_from_session("user", true)->id),
+        ];
+        echo json_encode($jsonArray);
+    }
+}
+
 function get_notifications(){
     $notificationHandler = new NotificationHandler();
-    $data = $notificationHandler->get_notifications(1, true, 5);
+    $data = $notificationHandler->get_notifications(SessionKeyHandler::get_from_session("user", true)->id, true, 5);
     echo "<div id='notificationData'>Nye" .
             "<div class='notificationGroup'><br/>";     
     if (count($data[0]) == 0 && count($data[1]) == 0) {

@@ -260,3 +260,7 @@ a .menu_header {
     color: black;
     
 }
+
+.hidden {
+    display:none;
+}

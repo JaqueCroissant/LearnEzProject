@@ -9,6 +9,8 @@
         private $_prepare;
         private static $_instance;
         
+        public $error;
+        
         public function __construct ($username, $password) 
         {
             $this->_username = $username;
@@ -37,8 +39,7 @@
             } 
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::return_error("DATABASE_COULD_NOT_CONNECT");
-                echo $errorMessage;
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
         
@@ -117,11 +118,23 @@
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::return_error($ex->getCode());
-                echo $ex->getMessage();
-                echo $errorMessage;
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
             return false;
+        }
+        
+        public function last_inserted_id() 
+        {
+            try {
+                if(!isset($this->_conn) || empty($this->_conn)) {
+                    return;
+                }
+                return $this->_conn->lastInsertId();
+            }
+            catch (PDOException $ex) 
+            {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
         }
         
         public function return_query($query) 
@@ -138,9 +151,7 @@
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::return_error($ex->getCode());
-                echo $ex->getMessage();
-                echo $errorMessage;
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
         
@@ -155,9 +166,7 @@
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::return_error($ex->getCode());
-                echo $ex->getMessage();
-                echo $errorMessage;
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
     }

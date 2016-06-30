@@ -12,6 +12,10 @@ require_once 'include/extra/require.php';
         <script src="js/jQuery.js" type="text/javascript"></script>
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="js/scripts.js" type="text/javascript"></script>
+        <script src="js/global.js" type="text/javascript"></script>
+        <script src="js/navigation.js" type="text/javascript"></script>
+        <script src="js/form.js" type="text/javascript"></script>
+        
     </head>
     <body>
         <div class="sidebarButton hidden-lg menu_design" id="sidebarButton">
@@ -30,16 +34,16 @@ require_once 'include/extra/require.php';
             <?php 
             include 'include/sidebar.php';
             ?>
-        </div>       
+        </div>
+        
         <div class='col-md-12 content'>
-            <?php
-            if($pageHandler->get_page_from_name($_GET['page'])) {
-                include('include/pages/' . $pageHandler->current_page->pagename . '.php');
-            } else {
-                include('include/pages/front.php');
-            }
-
-        ?>
+            <div id="loading_page" class="hidden">
+                <img src="assets/images/loading_page.GIF" />
+            </div>
+            
+            <div id="content_container">
+            </div>
+            
         </div>
         <div id="notificationWindow">
             

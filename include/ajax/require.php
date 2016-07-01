@@ -14,6 +14,7 @@ require_once '../../include/class/notification.class.php';
 require_once '../../include/class/page.class.php';
 require_once '../../include/class/rights.class.php';
 require_once '../../include/class/school.class.php';
+require_once '../../include/class/school_class.class.php';
 require_once '../../include/class/user.class.php';
 
 

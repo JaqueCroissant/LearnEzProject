@@ -10,6 +10,9 @@ class ClassHandler extends Handler {
     
     public function get_class_by_id ($class_id) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_class_exists($class_id);
             
             $query =        "SELECT class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
@@ -34,7 +37,10 @@ class ClassHandler extends Handler {
     
     public function get_classes_by_school_id ($school_id) {
         try {
-            $this->verify_school_exists($school_id);
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
+            $this->is_null_or_empty($school_id);
             
             $query =        "SELECT class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
                             class.start_date, class.end_date, class.open
@@ -57,7 +63,10 @@ class ClassHandler extends Handler {
     
     public function get_classes_by_user_id ($user_id) {
         try {
-            $this->verify_user_exists($user_id);
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
+            $this->is_null_or_empty($user_id);
             $this->verify_user_has_class($user_id);
             
             $query =        "SELECT class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
@@ -82,10 +91,13 @@ class ClassHandler extends Handler {
     
     public function create_class($title, $description, $year, $year_prefix, $school_id, $class_open, $class_start = null, $class_end = null) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->is_null_or_empty($title);
             $this->is_null_or_empty($year);
             $this->is_null_or_empty($year_prefix);
-            $this->verify_school_exists($school_id);
+            $this->is_null_or_empty($school_id);
             $this->is_null_or_empty($class_open);
             if (!is_bool($class_open)) {
                 throw new Exception ("ARGUMENT_NOT_BOOL");
@@ -111,11 +123,14 @@ class ClassHandler extends Handler {
     
     public function update_class ($class_id, $title, $description, $year, $year_prefix, $school_id, $class_open, $class_start, $class_end = null) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_class_exists($class_id);
             $this->is_null_or_empty($title);
             $this->is_null_or_empty($year);
             $this->is_null_or_empty($year_prefix);
-            $this->verify_school_exists($school_id);
+            $this->is_null_or_empty($school_id);
             $this->is_null_or_empty($class_open);
             if (!is_bool($class_open)) {
                 throw new Exception ("ARGUMENT_NOT_BOOL");
@@ -140,6 +155,9 @@ class ClassHandler extends Handler {
     
     public function delete_class_by_id ($class_id) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_class_exists($class_id);
             
             $query = "DELETE FROM class where id = :id";
@@ -189,28 +207,6 @@ class ClassHandler extends Handler {
         if ($count == 0) {
             throw new Exception ("USER_HAS_NO_CLASS");
         }
-    }
-    
-    private function verify_user_exists ($user_id) {
-        if (!is_int($user_id)) {
-            throw new Exception ("INVALID_INPUT_IS_NOT_INT");
-        }
-        
-        $count = DbHandler::get_instance()->count_query("SELECT * FROM users WHERE id = :id", $user_id);
-        if (!($count == 1)) {
-            throw new Exception ("USER_INVALID_ID");
-        } 
-    }
-    
-    private function verify_school_exists($school_id) {
-        if (!is_int($school_id)) {
-            throw new Exception ("INVALID_INPUT_IS_NOT_INT");
-        }
-        
-        $count = DbHandler::get_instance()->count_query("SELECT * FROM school WHERE id = :id", $school_id);
-        if (!($count == 1)) {
-            throw new Exception ("NO_SCHOOLS_FOUND_WITH_THIS_ID");
-        } 
     }
     
     private function verify_class_exists ($class_id) {

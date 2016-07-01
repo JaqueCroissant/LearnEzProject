@@ -1,5 +1,4 @@
 <?php
-
 class Handler {
     protected $_user;
     public $error;

@@ -30,7 +30,7 @@ class TranslationHandler
         if (SessionKeyHandler::session_exists("current_language")) {
             return SessionKeyHandler::get_from_session("current_language");
         }
-        return self::$_defaultLanguage;
+        return self::load_language_settings();
     }
     
     public function get_static_text($key){

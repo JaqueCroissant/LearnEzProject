@@ -9,7 +9,10 @@ jQuery(function ($) {
         }
         
         $("html").click(function () {
-            $("#notificationWindow").hide("fast");
+            if (!$("#notificationWindow").is(":hidden")){
+                $("#notificationWindow").hide("fast");
+                $(".notificationUnseen").switchClass("notificationUnseen", "notificationSeen");
+            }
             HideSidebarOnTablet();
         });
         

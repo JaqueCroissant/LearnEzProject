@@ -14,6 +14,7 @@ class LoginHandler
     {
         $this->_errors	= array();
         $this->_access	= false;
+        $this->generate_login_token();
     }
     
     private function assign_properties($username, $password, $token) 
@@ -37,8 +38,8 @@ class LoginHandler
                 throw new Exception ("LOGIN_EMPTY_FORM");
             }
 
-                if($this->login_exists()) {
-            throw new Exception ("LOGIN_ALREADY_EXISTS");
+            if($this->login_exists()) {
+                throw new Exception ("LOGIN_ALREADY_EXISTS");
             }
                 
             if(!$this->verify_username()) {
@@ -118,7 +119,13 @@ class LoginHandler
     }
     
     
-    public function generate_login_token() {
+    private function generate_login_token() {
+        if(!SessionKeyHandler::session_exists("login_token")) {
+            SessionKeyHandler::add_to_session("login_token", md5(uniqid(mt_rand(), true)));
+        }
+    }
+    
+    public function get_login_token() {
         if(SessionKeyHandler::session_exists("login_token")) {
             return SessionKeyHandler::get_from_session("login_token");
         }

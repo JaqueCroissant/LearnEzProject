@@ -83,12 +83,12 @@ class UserHandler extends Handler
 
     private function is_valid_input($string)
     {
-        return preg_match('/^[a-zA-Z]+$/', $string);
+        return preg_match('/^[a-zA-ZÆØÅæøå]+$/i', $string);
     }
 
     private function is_valid_input_with_num($string)
     {
-        return preg_match('/^[a-zA-Z0-9]+$/', $string);
+        return preg_match('/^[a-zA-Z0-9ÆØÅæøå]+$/i', $string);
     }
 
     public function validate_user_information($firstname, $surname, $email = null)
@@ -147,14 +147,9 @@ class UserHandler extends Handler
                 throw new Exception("USER_INVALID_SCHOOL_ID");
             }
 
-            if($user_type != 1 && $count < 1)
-            {
-                throw new Exception("USER_INVALID_SCHOOL_ID");
-            }
-
             if(!empty($class_ids))
             {
-                verify_class_ids($class_ids);
+                $this->verify_class_ids($class_ids);
                 $user_object->class_ids = $class_ids;
             }
         }
@@ -167,35 +162,30 @@ class UserHandler extends Handler
         $user_object->user_type_id = $user_type;
         $user_object->school_id = $school_id;
 
-        $this->create_user($user_object);
+        $this->create_user($user_object, false);
 
         return true;
     }
 
     private function verify_class_ids($class_ids)
     {
-        $query = "SELECT id FROM class WHERE ";
-        for($i=0; $i<count($class_ids); $i++)
+        if(is_array($class_ids))
         {
-            if($i != 0 && $i!=count($class_ids))
+            foreach($class_ids as $id)
             {
-                $insert_values .= " OR ";
+                if(!is_numeric($id))
+                {
+                    throw new Exception("USER_INVALID_CLASS_ID");
+                }
             }
-
-            if(!is_numeric($class_ids[$i]))
+        }
+        else
+        {
+            if(!is_numeric($id))
             {
                 throw new Exception("USER_INVALID_CLASS_ID");
             }
-            $query .= "id = " . $class_ids[$i];
         }
-
-        $count = DbHandler::get_instance()->count_query($query);
-        if($count < count($class_ids))
-        {
-            throw new Exception("USER_INVALID_CLASS_ID");
-        }
-
-        return $class_ids;
     }
 
     public function generate_username($firstname, $surname)
@@ -287,7 +277,7 @@ class UserHandler extends Handler
         }
     }
 
-    private function create_user($user_object)
+    private function create_user($user_object, $add_to_user_array)
     {
         $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
         try
@@ -301,6 +291,42 @@ class UserHandler extends Handler
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
+
+            if($add_to_user_array)
+            {
+                $temp_user_array[] = $user_object;
+            }
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    private function create_user_with_password($user_object, $add_to_user_array)
+    {
+        $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
+        $password = hash("sha256", $user_object->unhashed_password . " " . $user_object->username);
+        try
+        {
+            if(!DbHandler::get_instance()->query("INSERT INTO users (username, user_type_id,
+                                            school_id, email, firstname, surname, password,time_created) VALUES
+                                            (:username, :user_id, :school_id, :email, :firstname, :surname, :password, :time_created)",
+                                            $user_object->username, $user_object->user_type_id, 
+                                            $user_object->school_id, $user_object->email,
+                                            $user_object->firstname, $user_object->surname, $password, date ("Y-m-d H:i:s")))
+                                            {
+                                                throw new Exception("USER_COULDNT_CREATE");
+                                            }
+            $user_object->unhashed_password = "";
+            
+            if($add_to_user_array)
+            {
+                $temp_user_array[] = $user_object;
+            }
+
             return true;
         }
         catch(Exception $ex)
@@ -317,7 +343,7 @@ class UserHandler extends Handler
             foreach ($user_array as $user)
             {
                 $user->unhashed_password = $this->random_char(8);
-                $hashed_password = hash("sha256", $user->unhashed_password . " " . $user_object->username);
+                $hashed_password = hash("sha256", $user->unhashed_password . " " . $user->username);
                 if(!DbHandler::get_instance()->query("INSERT INTO users (password) VALUES (:password)
                                                     WHERE id = :id", $hashed_password, $user->id))
                                                     {
@@ -492,13 +518,11 @@ class UserHandler extends Handler
 
                 $this->temp_user_array[] = new User($user);
             }
-
         }
         else
         {
             unset($this->temp_user_array);
         }
-
     }
 
     private function get_single_user($id)
@@ -507,32 +531,40 @@ class UserHandler extends Handler
         $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
     }
 
-    public function import_users($csv_file)
+    public function import_users($csv_file, $school_id)
     {
         //try
         //{
-            $this->check_if_csv($csv_file);
-            $is_first = true;
+            $users = array();
             $offset = 0;
-            $file = fopen($csv_file,"r");
+            $index = 0;
 
+            $this->check_if_csv($csv_file);
+            $file = fopen($csv_file,"r");
+            $fp = file($csv_file, FILE_SKIP_EMPTY_LINES);
+            $count = count($fp);
+            
             while(!feof($file))
             {
                 $row = fgetcsv($file, 0, ";",",");
-
-                if($is_first)
+                if($index<$count)
                 {
-                    $offset = $this->validate_csv_columns($row);
-                    $is_first = false;
+                    if($index > 0)
+                    {
+                        $users[] = $this->validate_csv_content($row, $offset, $school_id);
+                    }
+                    else
+                    {
+                        $offset = $this->validate_csv_columns($row);
+                        $is_first = false;
+                    }
                 }
-                else
-                {
-                    $this->validate_csv_content($row, $offset);
-                }
+                $index++;
             }
-
             fclose($file);
 
+            $this->insert_csv_content($users);
+            
             return true;
         //}
         /*catch(Exception $ex)
@@ -543,8 +575,27 @@ class UserHandler extends Handler
 
     }
 
-    private function validate_csv_content($row, $offset)
+    private function insert_csv_content($users)
     {
+        $this->temp_user_array = array();
+
+        foreach ($users as $user) 
+        {
+            if(empty($user->unhashed_password))
+            {
+                $this->create_user($user, true);
+            }
+            else
+            {
+                $this->create_user_with_password($user, true);
+            }
+        }
+    }
+
+    private function validate_csv_content($row, $offset, $school_id)
+    {
+        $user = new User();
+
         if(empty($row[0+$offset]) || empty($row[1+$offset]) || empty($row[2+$offset]))
         {
             throw new Exception("IMPORT_MISSING_VALUE");
@@ -552,10 +603,15 @@ class UserHandler extends Handler
 
         $this->check_if_valid_string($row[0+$offset], false);
         $this->check_if_valid_string($row[1+$offset], false);
+        $user->user_type_id = $this->check_if_valid_type($row[2+$offset]);
+
+        $user->firstname = $row[0+$offset];
+        $user->surname = $row[1+$offset];
 
         if(!empty($row[3+$offset]))
         {
             $this->check_if_email($row[3+$offset]);
+            $user->email = $row[3+$offset];
         }
 
         if(!empty($row[4+$offset]))
@@ -564,7 +620,11 @@ class UserHandler extends Handler
             {
                 throw new Exception("IMPORT_INVALID_PASSWORD");
             }
+            $user->unhashed_password = $row[4+$offset];
         }
+
+        $user->school_id = $school_id;
+        return $user;
     }
 
     private function validate_csv_columns($row)
@@ -572,11 +632,11 @@ class UserHandler extends Handler
         $count = count($row);
         $offset = 0;
 
-        if($count != 6)
+        if($count != 5)
         {
-            if($count > 6)
+            if($count > 5)
             {
-                $offset = $count - 6;
+                $offset = $count - 5;
             }
             else
             {
@@ -586,7 +646,7 @@ class UserHandler extends Handler
 
         if($row[0+$offset] != "FIRST NAME" || $row[1+$offset] != "SURNAME"
         || $row[2+$offset] != "USER TYPE" || $row[3+$offset] != "EMAIL"
-        || $row[4+$offset] != "PASSWORD" || $row[5+$offset] != "SCHOOL ID")
+        || $row[4+$offset] != "PASSWORD")
         {
             throw new Exception("IMPORT_INVALID_FORMATTING");
         }
@@ -599,6 +659,25 @@ class UserHandler extends Handler
         if($info['extension']!="csv")
         {
             throw new Exception("IMPORT_INVALID_FORMAT");
+        }
+    }
+
+    private function check_if_valid_type($type)
+    {
+        $type = strtoupper($type);
+        switch($type)
+        {
+            case "A":
+                return 2;
+                break;
+            case "T":
+                return 3;
+                break;
+            case "S":
+                return 4;
+                break;
+            default:
+                throw new Exception("IMPORT_INVALID_TYPE");
         }
     }
 }

@@ -1,13 +1,17 @@
 <?php
     class NotificationHandler extends Handler
     {
+        private $_notifications;
+        private $_new_notifications;
+        
+        
         public function __construct() {
             parent::__construct();
         }
         
         public function get_number_of_unseen($userId){
-            if (is_numeric($userId)) {
-                return DbHandler::get_instance()->count_query("SELECT notification_id FROM user_notifications WHERE user_id=:userId AND is_read=0", $userId);
+            if (is_int($userId)) {
+                $_new_notifications = DbHandler::get_instance()->count_query("SELECT notification_id FROM user_notifications WHERE user_id=:userId AND is_read=0", $userId);      
             }
             return 0;
         }
@@ -39,17 +43,27 @@
         
         public function get_notifications($userId, $see = false, $limit = 5){
             if (is_numeric($userId) && is_int($limit)) {
-                $dbData = DbHandler::get_instance()->return_query("SELECT user_notifications.id, user_notifications.datetime, "
-                        . "user_notifications.is_read AS isRead, users.firstname AS sender_name, "
-                        . "notifications.title, notifications.text "
+                $dbData = DbHandler::get_instance()->return_query("SELECT translation_notifications.title AS title, "
+                        . "translation_notifications.text AS text, "
+                        . "user_notifications.datetime AS datetime, "
+                        . "user_notifications.is_read AS isRead "
                         . "FROM user_notifications "
-                        . "INNER JOIN users "
-                        . "ON users.id = user_notifications.sender_user_id "
                         . "INNER JOIN notifications "
                         . "ON notifications.id = user_notifications.notification_id "
+                        . "INNER JOIN users "
+                        . "ON users.id = user_notifications.sender_user_id "
+                        . "INNER JOIN translation_notifications "
+                        . "ON translation_notifications.notification_id = notifications.id "
+                        . "AND translation_notifications.language_id = "
+                        . "(IF ((SELECT notifications.id FROM translation_notifications "
+                        . "WHERE notification_id = notifications.id "
+                        . "AND language_id = :languageId "
+                        . "LIMIT 1),:languageId,notifications.default_language_id)) "
                         . "WHERE user_notifications.user_id = :userId "
-                        . "ORDER BY user_notifications.is_read, user_notifications.datetime DESC "
-                        . "LIMIT :limit", $userId, $limit);
+                        . "ORDER BY user_notifications.is_read, user_notifications.datetime "
+                        . "LIMIT :limit"
+                        , TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $userId, $limit);
+                echo TranslationHandler::get_current_language();
                 if (count($dbData) == 0) {
                     return array(array(), array(), array());
                 }
@@ -72,28 +86,106 @@
             }
             return array(array(), array(), array());
         }
-        
-        public function create_notification($title, $text, $reciever_id, $sender_id){
+        /*
+         * keys in the parameter array is below
+         * sender_id
+         * default_language_id
+         * duration
+         * notifications (array)
+         *      notification.class
+         *          title
+         *          text
+         *          language_id
+         * reciever_ids (array)
+         *      id
+         */
+        public function create_new_notification($parameters){
             try {
-                $this->check_title($title);
-                $this->is_null_or_empty($text);
-                $this->check_reciever($reciever_id);
-                $this->check_sender($sender_id);
-                
-                DbHandler::get_instance()->Query("INSERT INTO notifications (title, text) VALUES (:title,:text)", $title, $text);
-                DbHandler::get_instance()->Query("INSERT INTO user_notifications (user_id, notification_id, datetime, is_read, sender_user_id) " .
-                        "VALUES (:userId, :notId, NOW(), :isRead, :senderId)", $reciever_id, DbHandler::get_instance()->last_inserted_id(), 0,  $sender_id);
-                echo "success";
+                $this->check_array($parameters);
+                $this->check_notification($parameters["notifications"]);
+                $this->check_recievers($parameters["reciever_ids"]);
+
+                $notId = $this->create_notification($parameters["default_language_id"], $parameters["duration"]);
+                foreach ($parameters["notifications"] as $notification) {
+                    $this->create_notification_translation($notId, $notification->language_id, $notification->title, $notification->text);
+                }
+                foreach ($parameters["reciever_ids"] as $id) {
+                    $this->create_user_notification($id, $parameters["sender_id"], $notId);
+                }
+                return true;
                 
             } catch (Exception $exc) {
                 $this->error = ErrorHandler::return_error($exc->getMessage());
+                return false;
             }
         }
         
-        private function check_reciever($value){
+        private function create_notification_translation($notificationId, $languageId, $title, $text){        
+            DbHandler::get_instance()->Query("INSERT INTO translation_notifications (notification_id, language_id, title, text) "
+                    . "VALUES (:notIf,:langId,:title,:text)", $notificationId, $languageId, $title, $text);
+        }
+        
+        private function create_user_notification($recieverId, $senderId, $notificationId){
+            DbHandler::get_instance()->Query("INSERT INTO user_notifications (user_id, notification_id, datetime, is_read, sender_user_id) "
+                    . "VALUES (:recieverId,:notId,NOW(),:isRead,:senderId)", $recieverId, $notificationId, 0, $senderId);
+        }
+        
+        private function create_notification($defaultLandguageId, $duration, $prefix = null){
+            DbHandler::get_instance()->Query("INSERT INTO notifications (default_language_id, prefix, duration) "
+                    . "VALUES (:langId,:prefix,:duration)", $defaultLandguageId, $prefix, $duration);
+            return DbHandler::get_instance()->last_inserted_id();
+        }
+        
+        private function check_array($array){
+            if (!array_key_exists("sender_id", $array) || 
+                    !array_key_exists("default_language_id", $array) || 
+                    !array_key_exists("duration", $array) || 
+                    !array_key_exists("notifications", $array) ||
+                    !array_key_exists("reciever_ids", $array)) {
+                throw new Exception("NOTIFICATION_ARRAY_KEY_DOESNT_EXIST");
+            }
+            if (count($array["notifications"]) < 1) {
+                throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
+            }
+            if (count($array["reciever_ids"]) < 1) {
+                throw new Exception("NOTIFICATIONS_NO_RECIEVERS");
+            }
+        }
+        
+        private function check_notification($notifications){
+            foreach ($notifications as $notification) {
+                $this->check_title($notification->title);
+                $this->is_null_or_empty($notification->text);
+                $this->check_numeric($notification->language_id);
+            }
+        }
+        
+        private function check_prefix($prefix){
+            if (isset($prefix) && empty($prefix)) {
+                throw new Exception("NOTIFICATION_PREFIX_NOT_SET");
+            }
+        }
+        
+        private function check_duration($duration){
+            $this->check_numeric($duration);
+            if ($duration < 31536000) {
+                throw new Exception("NOTIFICATION_DURATION_TOO_LONG");
+            }
+        }
+        
+        private function check_numeric($value){
             $this->is_null_or_empty($value);
             if (!is_numeric($value)) {
-                throw new Exception("NOTIFICATION_INVALID_RECIEVER_ID");
+                throw new Exception("NOTIFICATION_FOREIGN_ID_NOT_INT");
+            }
+        }
+        
+        private function check_recievers($ids){
+            foreach ($ids as $value) {
+                $this->is_null_or_empty($value);
+                if (!is_numeric($value)) {
+                    throw new Exception("NOTIFICATION_INVALID_RECIEVER_ID");
+                }
             }
         }
         private function check_sender($value){
@@ -111,8 +203,11 @@
         }
         
         private function is_null_or_empty($value){
-            if (!isset($value) || empty($value)) {
+            if (!isset($value)) {
                 throw new Exception("OBJECT_DOESNT_EXIST");
+            }
+            if (empty($value)) {
+                throw new Exception("OBJECT_IS_EMPTY");
             }
         }
         

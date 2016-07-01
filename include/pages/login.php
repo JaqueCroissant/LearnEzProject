@@ -11,7 +11,7 @@ $loginHandler = SessionKeyHandler::get_from_session("login_handler", true);
         <form method="POST" action="" id="login_form" url="login.php" name="login">
             <input type="text" id="username" name="username" placeholder="User Name:" class="form-control login_input"><br/>
             <input type="password" id="password" name="password" placeholder="Password:" class="form-control login_input"><br/><br/>
-            <input type="hidden" id="token" name="token" value="<?php echo $loginHandler->generate_login_token(); ?>">
+            <input type="hidden" id="token" name="token" value="<?php echo $loginHandler->get_login_token(); ?>">
             <input type="button" id="submit_button" name="submit" value="Login" class="submit_login form-control login_submit">
         </form>
     </div>

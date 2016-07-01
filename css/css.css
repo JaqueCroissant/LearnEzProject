@@ -9,6 +9,94 @@ html {
     /*src: local(mixrfont), url('../font.ttf') ;*/
 }
 
+.arrow-right {
+  width: 0; 
+  height: 0; 
+  border-top: 60px solid transparent;
+  border-bottom: 60px solid transparent;
+  border-left: 60px solid green;
+}
+
+.right-arrow {
+	border-color: transparent black;
+	border-style: solid;
+	border-width: 20px 0px 20px 20px;
+	height: 0px;
+	width: 0px;
+        float: left !important;
+        z-index: 1000000;
+}
+
+.progress span {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.progress {
+    display: block;
+    height: 40px;
+}
+
+.progress-bar-success {
+    display: table;
+    width: 33.3%;
+    line-height: 40px;
+    font-size: 25px;
+    text-align: center;
+    text-shadow: 0 0em 0.25em #005885 !important;
+    color: white;
+    background-color: #33bdea;
+    font-weight: bold;
+}
+
+.left-col {
+    width: 40%;
+}
+
+.right-col {
+    right: 60%;
+}
+
+.container {
+    padding: 3% 0 0 0 ;
+    overflow: hidden;
+    position: relative;
+    background: #f8f8f8;
+    -moz-box-shadow: 0 0em 0.1em black !important;
+    -webkit-box-shadow: 0 0em 0.1em black !important;
+    box-shadow: 0 0em 0.1em black !important;
+    font-family: "Lane", sans-serif;
+}
+
+.material_design_input {
+    font-family: "Lane", sans-serif;
+    width: 100%;
+    height: 40px;
+}
+
+.input-container {
+    padding: 0 3%;
+}
+
+.input-container form {
+    font-size: 20px;
+}
+
+.input-container table input {
+    font-size:18px;
+    padding:10px 10px 10px 5px;
+    background-color: transparent !important;
+    display:block;
+    border: none !important;
+    border-bottom:1px solid #757575 !important;
+}
+
+.input-container:after {
+    padding-bottom: 1.5%;
+    display: block;
+    content: "";
+}
+
 .center {
     float: none;
     margin: 0 auto;
@@ -130,17 +218,31 @@ a .menu_header {
     font-weight: normal;
 }
 
-#EZ {
-    color: #005885;
-}
-
 .login_input {
     margin-top: 0.125em;
     width: 12.5em;
 }
 
+/*#EZ {
+    color: white;
+    font-weight: bolder;
+}
+
+.menu_design {
+    background-color: #005885;
+}*/
+
+#EZ {
+    color: #005885;
+    font-weight: bolder;
+}
+
 .menu_design {
     background-color: #33bdea;
+}
+
+.form-control:focus {
+    border-color: #33bdea;
 }
 
 .topbar {

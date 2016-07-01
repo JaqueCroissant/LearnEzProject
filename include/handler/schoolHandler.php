@@ -4,15 +4,20 @@ class SchoolHandler extends Handler {
     
     public $school;
     public $this_school_rights;
+    public $school_types;
     
     public function __construct() {
         parent::__construct();
     }
     
+    public function get_school_types () {
+        
+    }
+    
     public function get_school_rights ($school_id) {
         try {
             if (!$this->user_exists()) {
-                return false;
+                throw new Exception ("USER_NOT_LOGGED_IN");
             }
             
             $this->verify_school_exists($school_id);
@@ -39,6 +44,9 @@ class SchoolHandler extends Handler {
     
     public function update_school_rights_by_id($school_id, $array_of_rights_prefixes) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_school_exists($school_id);
             if (!$this->delete_school_rights_by_school_id($school_id)) {
                 return false;
@@ -57,6 +65,9 @@ class SchoolHandler extends Handler {
     
     public function assign_school_rights_by_school_id($school_id, $array_of_rights_prefixes) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_array_contains_strings($array_of_rights_prefixes);
             $query_rights_id = "SELECT id FROM rights WHERE prefix in (";
             if (empty($array_of_rights_prefixes)) {
@@ -86,6 +97,9 @@ class SchoolHandler extends Handler {
     
     private function delete_school_rights_by_school_id($school_id) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_school_exists($school_id);
             
             $query = "DELETE FROM school_rights WHERE school_id = :school_id";
@@ -104,6 +118,9 @@ class SchoolHandler extends Handler {
         
     public function delete_school_by_id ($id) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_school_exists($id);
             
             $query = "DELETE FROM school WHERE id = :id";
@@ -122,6 +139,9 @@ class SchoolHandler extends Handler {
     
     public function get_school_by_id ($id) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_school_exists($id);
             
             $query = "SELECT * FROM school WHERE id = :id LIMIT 1";
@@ -135,6 +155,9 @@ class SchoolHandler extends Handler {
     
     public function update_school_by_id ($id, $name, $phone, $address, $email, $school_type_id, $max_students, $subscription_end) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_school_exists($id);
             $this->verify_name($name);
             $this->verify_phone($phone);
@@ -159,6 +182,9 @@ class SchoolHandler extends Handler {
     
     public function create_school_step_one ($name, $phone, $address, $email, $school_type_id) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->verify_name($name);
             $this->verify_phone($phone);
             $this->verify_address($address);
@@ -182,6 +208,9 @@ class SchoolHandler extends Handler {
     
     public function create_school_step_two ($school, $max_students, $subscription_end) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
             $this->is_null_or_empty($school);
             $this->verify_max_students($max_students);
             $this->verify_subscription_end($subscription_end);

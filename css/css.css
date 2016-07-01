@@ -9,24 +9,6 @@ html {
     /*src: local(mixrfont), url('../font.ttf') ;*/
 }
 
-.arrow-right {
-  width: 0; 
-  height: 0; 
-  border-top: 60px solid transparent;
-  border-bottom: 60px solid transparent;
-  border-left: 60px solid green;
-}
-
-.right-arrow {
-	border-color: transparent black;
-	border-style: solid;
-	border-width: 20px 0px 20px 20px;
-	height: 0px;
-	width: 0px;
-        float: left !important;
-        z-index: 1000000;
-}
-
 .progress span {
     display: table-cell;
     vertical-align: middle;
@@ -68,27 +50,67 @@ html {
     font-family: "Lane", sans-serif;
 }
 
-.material_design_input {
+.material_design_input, .material_design_select {
     font-family: "Lane", sans-serif;
     width: 100%;
     height: 40px;
+    font-size:18px;
+    margin-bottom: 0.5em;
+    padding: 0.5em 0.5em 0.5em 0.25em;
+    background-color: transparent !important;
+    display:block;
+    border: none !important;
+    border-bottom: 1px solid #cccccc !important;
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -o-transition: all 0.25s ease;
+    transition: all 250ms ease;
+}
+
+.material_design_input:focus {
+    animation: material_design_input_animation;
+}
+
+@keyframes material_design_input_animation {
+    from {border-color: black !important}
+    to {border-color: blue !important}
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+.material_design_select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url(../assets/images/ic_arrow_drop_down_black_24dp_1x.png) right no-repeat !important;
+}
+
+/*.material_design_select {
+    margin-top: -30px;
+}*/
+
+.material_design_button {
+    border: none !important;
+    color: #005885;
+    background-color: transparent;
+    text-shadow: 0 0em 0.01em #005885 !important;
+}
+
+.material_design_header {
+    font-size: 3em;
+    font-weight: bold;
+    color: #005885;
 }
 
 .input-container {
     padding: 0 3%;
+    overflow: auto;
 }
 
 .input-container form {
     font-size: 20px;
-}
-
-.input-container table input {
-    font-size:18px;
-    padding:10px 10px 10px 5px;
-    background-color: transparent !important;
-    display:block;
-    border: none !important;
-    border-bottom:1px solid #757575 !important;
 }
 
 .input-container:after {

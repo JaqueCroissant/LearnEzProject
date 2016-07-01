@@ -1,56 +1,72 @@
 <?php
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/schoolHandler.php';
-$loginHandler = SessionKeyHandler::get_from_session("login_handler", true);
+require_once '../../include/handler/translationHandler.php';
+$schoolHandler = SessionKeyHandler::get_from_session("school_handler", true);
+$translationHandler = SessionKeyHandler::get_from_session("translation_handler", true);
+$schoolHandler->get_school_types();
 ?>
 
 <div class="container">
     <div class="input-container">
-        <h1 style="font-weight: bold;">Create school</h1>
+        <div class="material_design_header"><?php echo $translationHandler->get_static_text("SCHOOL_CREATE_NEW"); ?></div>
         <form method="post">
             <table style="width: 100%;">
                 <tr>
                     <td class="left-col">
-                        <?php $translationHandler->get_static_text("SCHOOL_NAME"); ?>
+                        <?php echo $translationHandler->get_static_text("SCHOOL_NAME"); ?>
                     </td>
                     <td class="right-col">
-                        <input class="material_design_input" placeholder="<?php $translationHandler->get_static_text("SCHOOL_NAME"); ?>">
+                        <input class="material_design_input" placeholder="<?php echo $translationHandler->get_static_text("SCHOOL_NAME"); ?>">
                     </td>
                 </tr>
                 <tr>
                     <td class="left-col">
-                        <?php $translationHandler->get_static_text("SCHOOL_ADDRESS"); ?>
+                        <?php echo $translationHandler->get_static_text("SCHOOL_ADDRESS"); ?>
                     </td>
                     <td class="right-col">
-                        <input class="material_design_input" placeholder="<?php $translationHandler->get_static_text("SCHOOL_ADDRESS"); ?>">
+                        <input class="material_design_input" placeholder="<?php echo $translationHandler->get_static_text("SCHOOL_ADDRESS"); ?>">
                     </td>
                 </tr>
                 <tr>
                     <td class="left-col">
-                        <?php $translationHandler->get_static_text("SCHOOL_PHONE"); ?>
+                        <?php echo $translationHandler->get_static_text("SCHOOL_PHONE"); ?>
                     </td>
                     <td class="right-col">
-                        <input class="material_design_input" placeholder="<?php $translationHandler->get_static_text("SCHOOL_PHONE"); ?>">
+                        <input class="material_design_input" placeholder="<?php echo $translationHandler->get_static_text("SCHOOL_PHONE"); ?>">
                     </td>
                 </tr>
                 <tr>
                     <td class="left-col">
-                        <?php $translationHandler->get_static_text("SCHOOL_EMAIL"); ?>
+                        <?php echo $translationHandler->get_static_text("SCHOOL_EMAIL"); ?>
                     </td>
                     <td class="right-col">
-                        <input class="material_design_input" placeholder="<?php $translationHandler->get_static_text("SCHOOL_EMAIL"); ?>">
+                        <input class="material_design_input" placeholder="<?php echo $translationHandler->get_static_text("SCHOOL_EMAIL"); ?>">
                     </td>
                 </tr>
                 <tr>
                     <td class="left-col">
-                        <?php $translationHandler->get_static_text("SCHOOL_TYPE_ID"); ?>
+                        <?php echo $translationHandler->get_static_text("SCHOOL_TYPE"); ?>
                     </td>
                     <td class="right-col">
-                        <input class="material_design_input" placeholder="<?php $translationHandler->get_static_text("SCHOOL_EMAIL"); ?>">
+                        <select class="material_design_select">
+                            <?php
+                            foreach ($schoolHandler->school_types as $value) {
+                                echo '<option value="'. $value['id'] .'">'. $value['title'] .'</option>';
+                            }
+                            ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="left-col">
+                    </td>
+                    <td class="right-col">
+                        <input type="button" value="<?php echo $translationHandler->get_static_text("SCHOOL_FINISH_STEP_ONE"); ?>" class="pull-right material_design_button">   
                     </td>
                 </tr>
             </table>
-            <input type="submit" value="Next">
+            
         </form>
     </div>
     <div class="input-container">

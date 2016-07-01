@@ -1,13 +1,17 @@
 <?php
     class NotificationHandler extends Handler
     {
+        private $_notifications;
+        private $_new_notifications;
+        
+        
         public function __construct() {
             parent::__construct();
         }
         
         public function get_number_of_unseen($userId){
-            if (is_numeric($userId)) {
-                return DbHandler::get_instance()->count_query("SELECT notification_id FROM user_notifications WHERE user_id=:userId AND is_read=0", $userId);
+            if (is_int($userId)) {
+                $_new_notifications = DbHandler::get_instance()->count_query("SELECT notification_id FROM user_notifications WHERE user_id=:userId AND is_read=0", $userId);      
             }
             return 0;
         }

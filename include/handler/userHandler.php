@@ -147,14 +147,9 @@ class UserHandler extends Handler
                 throw new Exception("USER_INVALID_SCHOOL_ID");
             }
 
-            if($user_type != 1 && $count < 1)
-            {
-                throw new Exception("USER_INVALID_SCHOOL_ID");
-            }
-
             if(!empty($class_ids))
             {
-                verify_class_ids($class_ids);
+                $this->verify_class_ids($class_ids);
                 $user_object->class_ids = $class_ids;
             }
         }
@@ -174,28 +169,23 @@ class UserHandler extends Handler
 
     private function verify_class_ids($class_ids)
     {
-        $query = "SELECT id FROM class WHERE ";
-        for($i=0; $i<count($class_ids); $i++)
+        if(is_array($class_ids))
         {
-            if($i != 0 && $i!=count($class_ids))
+            foreach($class_ids as $id)
             {
-                $insert_values .= " OR ";
+                if(!is_numeric($id))
+                {
+                    throw new Exception("USER_INVALID_CLASS_ID");
+                }
             }
-
-            if(!is_numeric($class_ids[$i]))
+        }
+        else
+        {
+            if(!is_numeric($id))
             {
                 throw new Exception("USER_INVALID_CLASS_ID");
             }
-            $query .= "id = " . $class_ids[$i];
         }
-
-        $count = DbHandler::get_instance()->count_query($query);
-        if($count < count($class_ids))
-        {
-            throw new Exception("USER_INVALID_CLASS_ID");
-        }
-
-        return $class_ids;
     }
 
     public function generate_username($firstname, $surname)
@@ -492,7 +482,6 @@ class UserHandler extends Handler
 
                 $this->temp_user_array[] = new User($user);
             }
-
         }
         else
         {
@@ -507,7 +496,7 @@ class UserHandler extends Handler
         $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
     }
 
-    public function import_users($csv_file)
+    public function import_users($csv_file, $verify_school_func)
     {
         //try
         //{
@@ -515,6 +504,8 @@ class UserHandler extends Handler
             $is_first = true;
             $offset = 0;
             $file = fopen($csv_file,"r");
+            
+            $school_id;
 
             while(!feof($file))
             {
@@ -527,7 +518,7 @@ class UserHandler extends Handler
                 }
                 else
                 {
-                    $this->validate_csv_content($row, $offset);
+                    $this->validate_csv_content($row, $offset, $school_id,$verify_school_func);
                 }
             }
 
@@ -543,7 +534,7 @@ class UserHandler extends Handler
 
     }
 
-    private function validate_csv_content($row, $offset)
+    private function validate_csv_content($row, $offset, &$school_id, $verify_school_func)
     {
         if(empty($row[0+$offset]) || empty($row[1+$offset]) || empty($row[2+$offset]))
         {
@@ -563,6 +554,19 @@ class UserHandler extends Handler
             if(strlen($row[4+$offset]) < 6)
             {
                 throw new Exception("IMPORT_INVALID_PASSWORD");
+            }
+        }
+
+        if(!empty($row[5+$offset]))
+        {
+            if(!is_numeric($row[5+$offset]))
+            {
+                throw new Exception("IMPORT_INVALID_PASSWORD");
+            }
+            elseif(!empty($school_id) && $school_id != $row[5+$offset])
+            {
+                $verify_school_func($row[5+$offset]);
+                $school_id = $row[5+$offset];
             }
         }
     }

@@ -24,4 +24,6 @@
     SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
     SessionKeyHandler::add_to_session("login_handler", $loginHandler, true);
     SessionKeyHandler::add_to_session("rights_handler", $rightsHandler, true);
+    SessionKeyHandler::add_to_session("user_handler", $userHandler, true);
+    SessionKeyHandler::add_to_session("school_handler", $schoolHandler, true);
 ?>

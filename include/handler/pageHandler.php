@@ -191,7 +191,7 @@ class pageHandler extends Handler {
         return true;
     }
     
-    public function get_page_from_name($pagename) {
+    public function get_page_from_name($pagename = null) {
         try {
             if(empty($pagename) || !preg_match('/^[a-zA-Z_]+$/', $pagename)) {
                 throw new Exception ("PAGE_INVALID");
@@ -201,7 +201,7 @@ class pageHandler extends Handler {
                 throw new Exception ("PAGE_NO_RIGHTS");
             }
 
-            if(!file_exists('include/pages/' . $pagename . '.php')) {
+            if(!file_exists('../../include/pages/' . $pagename . '.php')) {
                 throw new Exception ("PAGE_DOES_NOT_EXIST");
             }
 

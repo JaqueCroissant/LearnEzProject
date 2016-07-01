@@ -9,6 +9,8 @@
         private $_prepare;
         private static $_instance;
         
+        public $error;
+        
         public function __construct ($username, $password) 
         {
             $this->_username = $username;
@@ -37,8 +39,7 @@
             } 
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::return_error("DATABASE_COULD_NOT_CONNECT");
-                echo $errorMessage;
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
         
@@ -117,9 +118,7 @@
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::return_error($ex->getCode());
-                echo $ex->getMessage();
-                echo $errorMessage;
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
             return false;
         }
@@ -138,9 +137,7 @@
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::return_error($ex->getCode());
-                echo $ex->getMessage();
-                echo $errorMessage;
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
         
@@ -169,9 +166,7 @@
             }
             catch (PDOException $ex) 
             {
-                $errorMessage = ErrorHandler::return_error($ex->getCode());
-                echo $ex->getMessage();
-                echo $errorMessage;
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
     }

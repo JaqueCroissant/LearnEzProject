@@ -8,7 +8,7 @@ function start_notification_beat(timerInSeconds){
 function notification_beat(){
     $.ajax({
        type: "POST",
-       url: "ajax/notifications.php",
+       url: "include/ajax/notifications.php",
        dataType: "json",
        data: {action: 'get_new_notifications'},
        success: function (result) {

@@ -155,6 +155,7 @@ class LoginHandler
     {
 	if($this->login_exists()) 
 	{
+            echo "what?";
 	    SessionKeyHandler::remove_from_session("user");
 	    return true;
 	}

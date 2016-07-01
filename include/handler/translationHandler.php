@@ -42,7 +42,6 @@ class TranslationHandler
     
     public function set_language($language){
         if ($language != self::get_current_language()) {
-            setcookie("language_id", $language);
             if (SessionKeyHandler::session_exists("user")) {
                 $user = SessionKeyHandler::get_from_session("user", true);
                 $user->languageId = $language;

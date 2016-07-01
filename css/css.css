@@ -1,3 +1,8 @@
+:root {
+    --material_design_color_1: #005885;
+    --material_design_color_2: #33bdea;
+}
+
 html {
     background-color: white;
     color: white;
@@ -25,9 +30,9 @@ html {
     line-height: 40px;
     font-size: 25px;
     text-align: center;
-    text-shadow: 0 0em 0.25em #005885 !important;
+    text-shadow: 0 0em 0.25em var(--material_design_color_1) !important;
     color: white;
-    background-color: #33bdea;
+    background-color: var(--material_design_color_2);
     font-weight: bold;
 }
 
@@ -40,20 +45,14 @@ html {
 }
 
 .container {
-    padding: 3% 0 0 0 ;
-    overflow: hidden;
-    position: relative;
-    background: #f8f8f8;
-    -moz-box-shadow: 0 0em 0.1em black !important;
-    -webkit-box-shadow: 0 0em 0.1em black !important;
-    box-shadow: 0 0em 0.1em black !important;
-    font-family: "Lane", sans-serif;
+    
 }
 
 .material_design_input, .material_design_select {
     font-family: "Lane", sans-serif;
     width: 100%;
     height: 40px;
+    outline: none !important;
     font-size:18px;
     margin-bottom: 0.5em;
     padding: 0.5em 0.5em 0.5em 0.25em;
@@ -67,13 +66,12 @@ html {
     transition: all 250ms ease;
 }
 
-.material_design_input:focus {
-    animation: material_design_input_animation;
+@keyframes material_design_input_animation {
+    
 }
 
-@keyframes material_design_input_animation {
-    from {border-color: black !important}
-    to {border-color: blue !important}
+.material_design_input:focus {
+    border-bottom: 1px solid var(--material_design_color_1) !important;
 }
 
 select::-ms-expand {
@@ -87,21 +85,46 @@ select::-ms-expand {
     background: url(../assets/images/ic_arrow_drop_down_black_24dp_1x.png) right no-repeat !important;
 }
 
+.material_design_select option {
+    padding: 0.3em 0.3em;
+    border: none !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.material_design_select option:hover {
+    background-color: var(--material_design_color_1) !important;
+}
+
+.main_container {
+    margin: 0 20%;
+    padding: 3% 0 0 0 ;
+    overflow: hidden;
+    position: relative;
+    background: #f8f8f8;
+    -moz-box-shadow: 0 0em 0.1em black !important;
+    -webkit-box-shadow: 0 0em 0.1em black !important;
+    box-shadow: 0 0em 0.1em black !important;
+    font-family: "Lane", sans-serif;
+}
+
 /*.material_design_select {
     margin-top: -30px;
 }*/
 
 .material_design_button {
     border: none !important;
-    color: #005885;
+    color: var(--material_design_color_1);
     background-color: transparent;
-    text-shadow: 0 0em 0.01em #005885 !important;
+    text-shadow: 0 0em 0.01em var(--material_design_color_1) !important;
+    
 }
 
 .material_design_header {
     font-size: 3em;
     font-weight: bold;
-    color: #005885;
+    color: var(--material_design_color_1);
 }
 
 .input-container {
@@ -171,21 +194,21 @@ select::-ms-expand {
 }
 
 .menu_header:hover {
-    -moz-box-shadow: 0 0 0.3em #005885;
-    -webkit-box-shadow: 0 0 0.3em #005885;
-    box-shadow: 0 -0.2em 0.3em #005885 !important;
+    -moz-box-shadow: 0 0 0.3em var(--material_design_color_1);
+    -webkit-box-shadow: 0 0 0.3em var(--material_design_color_1);
+    box-shadow: 0 -0.2em 0.3em var(--material_design_color_1) !important;
 }
 
 .menu_header:active {
-    box-shadow: inset 0 0em 0.2em #005885 !important;
-    -moz-box-shadow:inset 0 0em 0.2em #005885 !important;
-    -webkit-box-shadow: inset 0 0em 0.2em #005885 !important;
+    box-shadow: inset 0 0em 0.2em var(--material_design_color_1) !important;
+    -moz-box-shadow:inset 0 0em 0.2em var(--material_design_color_1) !important;
+    -webkit-box-shadow: inset 0 0em 0.2em var(--material_design_color_1) !important;
 }
 
 #navBar .menu_header:hover {
-    -moz-box-shadow: 0 0 0.3em #005885;
-    -webkit-box-shadow: 0 0 0.3em #005885;
-    box-shadow: -0.5em 0 0.3em #005885 !important;
+    -moz-box-shadow: 0 0 0.3em var(--material_design_color_1);
+    -webkit-box-shadow: 0 0 0.3em var(--material_design_color_1);
+    box-shadow: -0.5em 0 0.3em var(--material_design_color_1) !important;
 }
 
 a .menu_header {
@@ -255,16 +278,16 @@ a .menu_header {
 }*/
 
 #EZ {
-    color: #005885;
+    color: var(--material_design_color_1);
     font-weight: bolder;
 }
 
 .menu_design {
-    background-color: #33bdea;
+    background-color: var(--material_design_color_2);
 }
 
 .form-control:focus {
-    border-color: #33bdea;
+    border-color: var(--material_design_color_2);
 }
 
 .topbar {

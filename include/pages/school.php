@@ -7,7 +7,7 @@ $translationHandler = SessionKeyHandler::get_from_session("translation_handler",
 $schoolHandler->get_school_types();
 ?>
 
-<div class="container">
+<div class="main_container">
     <div class="input-container">
         <div class="material_design_header"><?php echo $translationHandler->get_static_text("SCHOOL_CREATE_NEW"); ?></div>
         <form method="post">
@@ -50,6 +50,7 @@ $schoolHandler->get_school_types();
                     </td>
                     <td class="right-col">
                         <select class="material_design_select">
+                            <option value=""><?php echo $translationHandler->get_static_text("SCHOOL_TYPE"); ?></option>
                             <?php
                             foreach ($schoolHandler->school_types as $value) {
                                 echo '<option value="'. $value['id'] .'">'. $value['title'] .'</option>';

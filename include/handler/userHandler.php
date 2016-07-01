@@ -1,6 +1,7 @@
 <?php
 class UserHandler extends Handler
 {
+    public $current_user;
     public $temp_user;
     public $temp_user_array;
 
@@ -8,6 +9,7 @@ class UserHandler extends Handler
     public function __construct() {
         parent::__construct();
         $this->get_user_object();
+        $this->current_user = $this->_user;
     }
     
     // old password, new password, new password copy

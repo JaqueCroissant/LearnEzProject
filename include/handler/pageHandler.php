@@ -3,10 +3,13 @@
 class pageHandler extends Handler {
     
     public $current_page;
+    public $current_page_hierarchy;
+    
     
     private $_pages_raw = array();
     private $_pages = array();
     private $_menu = array();
+    private $page_hierarchy_array = array();
    
     public function __construct() {
         parent::__construct();
@@ -89,11 +92,12 @@ class pageHandler extends Handler {
             
             $pageArray = array();
             foreach($this->_pages_raw as $value) {
-                $pageArray[] = $value;
+                $pageArray[$value->pagename] = $value;
             }
             $this->_pages = $pageArray;
             
             $this->assign_page_children();
+            //var_dump($this->_pages);
             SessionKeyHandler::add_to_session("pages", $this->_pages, true);
         }
     }
@@ -103,13 +107,13 @@ class pageHandler extends Handler {
             return;
         }
         
-        foreach($this->_pages as $value) {
+        foreach($this->_pages as $key => $value) {
             if(empty($value->id) || !is_numeric($value->id)) {
                 continue;
             }
             
             $children = $this->find_children($value->id);
-            $value->children = $children;       
+            $value->children = $children;   
         }
     }
     
@@ -126,7 +130,7 @@ class pageHandler extends Handler {
             }
             
             if($value->master_page_id == $id) {
-                $children[] = $value;
+                $children[$value->pagename] = $value;
                 $keys[] = $key;
             }
         }
@@ -163,6 +167,39 @@ class pageHandler extends Handler {
             $this->_menu = $new_menu;
             SessionKeyHandler::add_to_session("menu", $this->_menu, true);
         }
+    }
+
+    private function get_page_hierarchy($pageArray, $page = null) {
+
+        if($page == null) {
+            return reset($pageArray);
+        }
+
+        if(is_array($pageArray) && isset($pageArray[$page])) {
+            $pageArray[$page]->children = null;
+            foreach($pageArray as $key => $value) {
+                if($key != $page) {
+                    unset($pageArray[$key]);
+                }
+            }
+            return $pageArray;
+        }
+
+        if(is_array($pageArray)) {
+            foreach($pageArray as $key => $value) {
+                $child = $this->get_page_hierarchy($value->children, $page);
+                if($child != null) {
+                    $pageArray[$key]->children = $child;
+                    foreach($pageArray as $outerkey => $outervalue) {
+                        if($key != $outerkey) {
+                            unset($pageArray[$outerkey]);
+                        }
+                    }
+                return $pageArray;
+                }
+            }
+        }
+        return null;
     }
     
     public function get_menu($position = 1) {
@@ -204,8 +241,12 @@ class pageHandler extends Handler {
             if(!file_exists('../../include/pages/' . $pagename . '.php')) {
                 throw new Exception ("PAGE_DOES_NOT_EXIST");
             }
-
             $this->current_page = $this->_pages_raw[$pagename];
+            $clone_array = array();
+            foreach($this->_pages as $key => $value) {
+                $clone_array[$key] = clone $value;
+            }
+            $this->current_page_hierarchy = $this->get_page_hierarchy($clone_array, $pagename);
             return true;
         }
         catch (Exception $ex) 
@@ -213,6 +254,16 @@ class pageHandler extends Handler {
             $this->error = ErrorHandler::return_error($ex->getMessage());
 	}
         return false;
+    }
+    
+    public function get_breadcrumbs_array($page = null) {
+        $this->page_hierarchy_array = $page == null ? array() : $this->page_hierarchy_array;
+        $page = ($page == null ? reset($this->current_page_hierarchy) : reset($page));
+        $this->page_hierarchy_array[] = $page;
+        if($page->children != null && is_array($page->children)) {
+            $this->get_breadcrumbs_array($page->children);
+        }
+        return $this->page_hierarchy_array;
     }
     
     

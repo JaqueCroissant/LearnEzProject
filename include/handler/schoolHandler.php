@@ -220,6 +220,7 @@ class SchoolHandler extends Handler {
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
         }
     }
     

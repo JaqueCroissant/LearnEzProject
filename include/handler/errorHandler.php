@@ -17,5 +17,20 @@ class ErrorHandler
         }
         return new Error("Unknown error occoured.", "Unknown error occoured.");
     }
+    
+    public static function display_error($text) {
+        $display_type = 1;
+        include "../template/status_message.php";
+    }
+    
+    public static function display_success($text) {
+        $display_type = 2;
+        include "../template/status_message.php";
+    }
+    
+    public static function display_warning($text) {
+        $display_type = 3;
+        include "../template/status_message.php";
+    }
 }
 ?>

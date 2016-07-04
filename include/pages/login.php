@@ -18,4 +18,4 @@ $loginHandler = SessionKeyHandler::get_from_session("login_handler", true);
 </div>
 
 <br />
-<a href="index.php?page=resetpassword">Reset password</a>
+<a class="change_page" page="resetpassword" id="resetpassword" href="#">Reset password</a>

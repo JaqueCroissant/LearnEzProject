@@ -22,6 +22,7 @@
     $classHandler = new ClassHandler();
     $notificationHandler = new NotificationHandler();
     
+    
     SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
     SessionKeyHandler::add_to_session("login_handler", $loginHandler, true);
     SessionKeyHandler::add_to_session("rights_handler", $rightsHandler, true);

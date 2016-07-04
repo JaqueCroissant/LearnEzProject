@@ -5,9 +5,11 @@ class pageHandler extends Handler {
     public $current_page;
     public $current_page_hierarchy;
     
+    
     private $_pages_raw = array();
-    public $_pages = array();
+    private $_pages = array();
     private $_menu = array();
+    private $page_hierarchy_array = array();
    
     public function __construct() {
         parent::__construct();
@@ -172,9 +174,8 @@ class pageHandler extends Handler {
         if($page == null) {
             return reset($pageArray);
         }
-        //var_dump($pageArray);
+
         if(is_array($pageArray) && isset($pageArray[$page])) {
-            //echo "lol";
             $pageArray[$page]->children = null;
             foreach($pageArray as $key => $value) {
                 if($key != $page) {
@@ -260,12 +261,13 @@ class pageHandler extends Handler {
     }
     
     public function get_breadcrumbs_array($page = null) {
-        $page = ($page == null ? reset($this->current_page_hierarchy) : $page);
-        $breadCrumbs = $page->pagename . ":" . $page->title . ";";
+        $this->page_hierarchy_array = $page == null ? array() : $this->page_hierarchy_array;
+        $page = ($page == null ? reset($this->current_page_hierarchy) : reset($page));
+        $this->page_hierarchy_array[] = $page;
         if($page->children != null && is_array($page->children)) {
-            return $breadCrumbs . "" .$this->GetBreadCrumbs($page->children);
+            $this->get_breadcrumbs_array($page->children);
         }
-        return $breadCrumbs;
+        return $this->page_hierarchy_array;
     }
     
     

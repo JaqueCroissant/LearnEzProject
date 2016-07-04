@@ -8,10 +8,9 @@ $(document).ready(function () {
     
     // Load on startup.
         change_page("front");
-    // Load on startup end.
+    // Load on startup.
     
-    $('.change_page').click(function (event) {
-        
+    $(document).on("click", ".change_page", function(event){
         if(currently_changing_page === false && $(this).attr("clickable") !== "false") {
             $(this).attr("clickable", false);
             event.preventDefault();

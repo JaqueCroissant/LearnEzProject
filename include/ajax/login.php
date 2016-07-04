@@ -14,6 +14,7 @@ if(isset($_GET['logout'])) {
         $loginHandler->log_out();
         $rightsHandler->reset_rights();
         $pageHandler->reset();
+        SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
         $jsonArray['status_value'] = true;
     } else {
         $jsonArray['status_value'] = false;
@@ -26,6 +27,7 @@ if(isset($_POST)) {
     if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
         TranslationHandler::reset_language();
         $pageHandler->reset();
+        SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
         $jsonArray['status_value'] = true;
     } else {
         $jsonArray['status_value'] = false;

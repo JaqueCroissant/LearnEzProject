@@ -36,6 +36,9 @@ require_once 'include/extra/require.php';
                 <img src="assets/images/loading_page.GIF" />
             </div>
             
+            <div id="content_breadcrumbs">
+            </div>
+            
             <div id="content_container">
             </div>
             

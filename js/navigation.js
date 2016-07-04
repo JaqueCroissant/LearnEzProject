@@ -8,6 +8,12 @@ function loading_page(is_loading) {
     }
 }
 
+function load_breadcrumbs(display) {
+    if(display === true) {
+        $("#content_breadcrumbs").load('include/template/breadcrumbs.php', {'url': false}, function() {} );
+    }
+}
+
 function set_clickable(element) {
     if(element !== undefined) {
        element.removeAttr("clickable"); 
@@ -17,6 +23,7 @@ function set_clickable(element) {
 function change_page(pagename, args, element) {
      currently_changing_page = true;
     $("#content_container").html("");
+    $("#content_breadcrumbs").html("");
     var startTime = new Date().getTime();
     loading_page(true);
     var argument = args === undefined ? pagename : pagename + args;
@@ -35,10 +42,12 @@ function change_page(pagename, args, element) {
                         if(elapsedTime < 700) {
                             setTimeout(function() { 
                                 loading_page(false); 
+                                load_breadcrumbs(true);
                                 set_clickable(element); 
                             }, (700-elapsedTime));
                         } else {
                             loading_page(false);
+                            load_breadcrumbs(true);
                             set_clickable(element);
                         }
                     });
@@ -48,10 +57,12 @@ function change_page(pagename, args, element) {
                         if(elapsedTime < 700) {
                             setTimeout(function() { 
                                 loading_page(false); 
+                                load_breadcrumbs(true);
                                 set_clickable(element);
                             }, (700-elapsedTime));
                         } else {
                             loading_page(false);
+                            load_breadcrumbs(true);
                             set_clickable(element);
                         }
                     });
@@ -69,10 +80,12 @@ function change_page(pagename, args, element) {
             if(elapsedTime < 700) {
                 setTimeout(function() { 
                     loading_page(false); 
+                    load_breadcrumbs(true);
                     set_clickable(element); 
                 }, (700-elapsedTime));
             } else {
                 loading_page(false)
+                load_breadcrumbs(true);
                 set_clickable(element);
             }
         });

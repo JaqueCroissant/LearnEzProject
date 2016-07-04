@@ -9,7 +9,7 @@ $translationHandler = SessionKeyHandler::get_from_session("translation_handler",
 <div class="container">
     <div class="input-container">
         <div class="material_design_header"><?php echo $translationHandler->get_static_text("INFO_HEADLINE"); ?></div>
-        <form method="post" action="" url="editinfo.php" id="edit_info">
+        <form method="post" action="" url="edituserinfo.php" id="edit_info">
             <table style="width: 100%;">
                 <tr>
                     <td class="left-col">
@@ -66,7 +66,7 @@ $translationHandler = SessionKeyHandler::get_from_session("translation_handler",
                     <td class="left-col">
                     </td>
                     <td class="right-col">
-                        <input type="button" value="<?php echo $translationHandler->get_static_text("INFO_SUBMIT"); ?>" class="submit_edit_user_info pull-right material_design_button">
+                        <input type="button" name="submit" value="<?php echo $translationHandler->get_static_text("INFO_SUBMIT"); ?>" class="submit_edit_user_info pull-right material_design_button">
                     </td>
                 </tr>
             </table>

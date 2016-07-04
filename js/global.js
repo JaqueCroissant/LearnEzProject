@@ -26,7 +26,7 @@ $(document).ready(function () {
             alert(ajax_data.error);
         }, function() {
             location.reload();
-        })
+        });
    });
    
 
@@ -36,16 +36,18 @@ $(document).ready(function () {
             alert(ajax_data.error);
         }, function() {
             location.reload();
-        })
+        });
    });
    
     $(document).on("click", ".submit_edit_user_info", function(event){
-        event.preventDefault();
+        event.preventDefault
         initiate_submit_form($(this), function() {
             alert(ajax_data.error);
         }, function() {
-            location.reload();
-        })
+            alert("lol2");
+        });
+        alert("JEG ER TIL SIDST");
+        return false;
    });
 
     $(document).on("click", ".create_school", function(event){

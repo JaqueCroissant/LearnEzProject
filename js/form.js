@@ -7,9 +7,11 @@ function submit_form(form_id, url, element) {
         async: false,
         data: $("#" + form_id).serialize(),
         complete: function(data) {
+            alert(JSON.stringify(data));
             currently_submitting_form = false;
             $(element).removeAttr("clickable");
             ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+            alert("slut");
         }
     });
 }
@@ -18,10 +20,10 @@ function initiate_submit_form(element, fail_function, success_function) {
     if(currently_submitting_form === false && $(element).attr("clickable") !== "false") {
         $(element).attr("clickable", false);
         currently_submitting_form = true;
-
         form_id = $(element).closest("form").attr("id");
         url = $(element).closest("form").attr("url");
         submit_form(form_id, url, $(element));
+        alert(JSON.stringify(ajax_data));
         if(ajax_data.status_value === true) {
             success_function();
         } else {

@@ -363,7 +363,7 @@ class UserHandler extends Handler
         }
     }
 
-    public function edit_user_info($firstname, $surname, $email, $description, $image)
+    public function edit_user_info($firstname = null, $surname = null, $email = null, $description = null, $image = null)
     {
         try
         {
@@ -495,6 +495,7 @@ class UserHandler extends Handler
     private function get_multiple_users($ids)
     {
         $query = "SELECT * FROM users WHERE id IN (";
+
         for($i=0; $i<count($ids); $i++)
         {
             $user = $ids[$i];
@@ -535,8 +536,8 @@ class UserHandler extends Handler
 
     public function import_users($csv_file, $school_id)
     {
-        //try
-        //{
+        try
+        {
             $users = array();
             $offset = 0;
             $index = 0;
@@ -568,13 +569,12 @@ class UserHandler extends Handler
             $this->insert_csv_content($users);
             
             return true;
-        //}
-        /*catch(Exception $ex)
+        }
+        catch(Exception $ex)
         {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
-        }*/
-
+        }
     }
 
     private function insert_csv_content($users)

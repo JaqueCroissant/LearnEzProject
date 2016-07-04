@@ -6,6 +6,7 @@
 html {
     background-color: white;
     color: white;
+    color: 
 }
 
 @font-face {
@@ -60,10 +61,10 @@ html {
     display:block;
     border: none !important;
     border-bottom: 1px solid #cccccc !important;
-    -webkit-transition: all 0.25s ease;
-    -moz-transition: all 0.25s ease;
-    -o-transition: all 0.25s ease;
-    transition: all 250ms ease;
+    -webkit-transition: all 0.1s ease;
+    -moz-transition: all 0.1s ease;
+    -o-transition: all 0.1s ease;
+    transition: all 0.1s ease;
 }
 
 @keyframes material_design_input_animation {
@@ -71,7 +72,9 @@ html {
 }
 
 .material_design_input:focus {
-    border-bottom: 1px solid var(--material_design_color_1) !important;
+    border-bottom: 2px solid var(--material_design_color_1) !important;
+    padding-left: 7px;
+    padding-bottom: 12px;
 }
 
 select::-ms-expand {
@@ -115,10 +118,21 @@ select::-ms-expand {
 
 .material_design_button {
     border: none !important;
+    padding: 0.5em;
     color: var(--material_design_color_1);
     background-color: transparent;
     text-shadow: 0 0em 0.01em var(--material_design_color_1) !important;
     
+}
+
+.material_design_button:hover {
+    background-color: rgba(51, 189, 234, 0.12);
+    
+    
+}
+
+.material_design_button:active {
+    background-color: var(--material_design_color_2);
 }
 
 .material_design_header {

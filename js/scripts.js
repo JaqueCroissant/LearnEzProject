@@ -1,6 +1,9 @@
 jQuery(function ($) {
     $(document).ready(function () {
-        $('#notificationWindow').hide();
+        var currently_recieving_notifications = false;
+        var no_more_notifications = false;
+        
+        $('#notification_window').hide();
         $('#navBar').addClass("collapsed");
         $('#navBar .menu_text').hide();
         
@@ -8,10 +11,10 @@ jQuery(function ($) {
             $('.sidebar').addClass("hidden-sm hidden-xs collapsed");
         }
         
-        $("html").click(function () {
-            if (!$("#notificationWindow").is(":hidden")){
-                $("#notificationWindow").hide("fast");
-                $(".notificationUnseen").switchClass("notificationUnseen", "notificationSeen");
+        $("html").click(function (e) {
+            if (!$("#notification_window").is(":hidden") && !$(e.target).closest("#notification_window").length > 0){
+                $("#notification_window").hide("fast");
+                $(".notification_unseen").switchClass("notification_unseen", "notification_seen");
             }
             HideSidebarOnTablet();
         });
@@ -42,25 +45,56 @@ jQuery(function ($) {
         $('.sidebar').css("top", top);
         $('.content').css("padding-top", top + 10);
         $('.content').css("padding-left", left + 10);
-        $('#notificationWindow').css("top", top + 5);
-        $('#notificationWindow').css("right", 40);
+        $('#notification_window').css("top", top + 5);
+        $('#notification_window').css("right", 40);
 
 
         $('#notifications').click(function (event) {
             event.stopPropagation();
-            if ($('#notificationWindow').is(":hidden")) {
+            if ($('#notification_window').is(":hidden")) {
+                currently_recieving_notifications = true;
                 $.ajax({
                    type: "POST",
                    url: "include/ajax/notifications.php",
+                   dataType: "json",
                    data: {action: 'get_notifications'},
                    success: function (result) {
-                       $('#notificationWindow').html(result);
+                       $('#notification_data').html(result.notifications);
+                       no_more_notifications = false;
+                       currently_recieving_notifications = false;
                    }
                 });
-                $('#notificationWindow').show("fast");
+                $('#notification_window').show("fast");
                 $('#notification_counter').html("");
             } else {
-                $('#notificationWindow').hide("fast");
+                $('#notification_window').hide("fast");
+            }
+        });
+        
+        $('#notification_window').scroll(function() {
+            var notif = $("#notification_window");
+            if (!no_more_notifications && !currently_recieving_notifications && (notif.scrollTop() + notif.innerHeight() >= notif[0].scrollHeight - 1)) {
+                currently_recieving_notifications = true;
+                $("#notification_loading_image").show();
+                $.ajax({
+                   type: "POST",
+                   url: "include/ajax/notifications.php",
+                   dataType: "json",
+                   data: {action: 'get_more_notifications'},
+                   success: function (result) {
+                        if (result.status_value === true) {
+                            no_more_notifications = true;
+                        }
+                        $('#notification_data').append(result.notifications);
+                        currently_recieving_notifications = false;
+                        $("#notification_loading_image").hide();
+                   },
+                   error: function(result){
+                       console.log(result.error);
+                       currently_recieving_notifications = false;
+                       $("#notification_loading_image").hide();
+                   }
+                });
             }
         });
         

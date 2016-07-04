@@ -40,8 +40,11 @@ require_once 'include/extra/require.php';
             </div>
             
         </div>
-        <div id="notificationWindow">
-            
+        <div id="notification_window">
+            <div id="notification_data"></div>
+            <div id="notification_loading" class="centered">
+                <div id="notification_loading_image"></div>
+            </div>
         </div>
     </body>
 </html>

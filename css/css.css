@@ -350,7 +350,7 @@ a .menu_header {
     z-index: 1000;
 }
 
-#notificationWindow {
+#notification_window {
     border-width: 0.067em;
     border-color: black;
     border-radius: 0.125em;
@@ -358,10 +358,10 @@ a .menu_header {
     box-shadow: 0 0.375em 0.5em rgba(0, 0, 0, .25);
     -moz-box-shadow: 0 0.375em 0.5em rgba(0, 0, 0, .25);
     -webkit-box-shadow: 0 0.375em 0.5em rgba(0, 0, 0, .25);
-    padding: 0.375em;
+    padding: 0.375em 0 0.375em 0;
     width: 18em;
     min-height: 6em;
-    max-height: 25%;
+    max-height: 35%;
     position: fixed;
     z-index: 8000;
     overflow-y: scroll;
@@ -371,57 +371,89 @@ a .menu_header {
 
 .notification {
     width:100%;
-    margin: 1em 0 1em 0;
+    height:5em;
+    margin:0;
+    border-top: 1px solid black;
 }
 
-.notificationRead {
-    background-color: #e6f5ff;
+.notification:first-child{
+    margin-top:1em !important;
 }
 
-.notificationSeen {
-    background-color: #b3e0ff;
+.notification:last-child{
+    margin-bottom:0.375em;
+    border-bottom: 1px solid black;
 }
 
-.notificationUnseen {
+.notification_seen {
+    background-color: #ffffff;
+}
+
+.notification_unseen {
     background-color: #66c2ff;
 }
 
-.notificationRead:hover {
-    background-color: #ccebff;
+.notification_seen:hover {
+    background-color: #e6f5ff;
 }
 
-.notificationSeen:hover {
-    background-color: #99d6ff;
-}
-
-.notificationUnseen:hover {
+.notification_unseen:hover {
     background-color: #4db8ff;  
 }
 
 #notification_counter {
     z-index: 10000;
-    font-size: 1.2em;
+    font-size: 0.8em;
     color: white;
     font-weight: bold;
     position: fixed;
     margin-top: -0.4em; 
-    background-image: url(../assets/images/ic_account_box_black_24dp/web/ic_account_box_black_24dp_1x.png);
+    background-color: red;
 }
 
-.notificationGroup:first-child {
-    border-bottom: solid 1px black;
-    margin-bottom: 1em;
+.notification_text{
+    width:85%;
 }
 
-.notificationGroup a{
+.notification_button {
+    width:10%;
+    margin-right:5%;
+    height:100%;
+}
+
+.notification_button input {
+    vertical-align: middle;
+    line-height: 100%;
+    margin-top:100%;
+}
+
+#notification_read_all{
+    margin:0 0 0.3em 8em;
+}
+
+.notification_data a{
     text-decoration: none;
-    color: black;
-    
+    color: black;  
 }
 
-.notificationGroup a:hover{
+.notification_data a:hover{
     color: black;
-    
+}
+
+#notification_loading_image{
+    background-image: url('../assets/images/loading_page.GIF');
+    background-repeat: no-repeat;
+    align-content:center;
+    height:2.5em;
+    width:2.5em;
+    background-size: 2.5em;
+    margin:auto;
+}
+
+#notification_loading {
+    height:2.5em;
+    width:2.5em;   
+    margin:auto;
 }
 
 .hidden {

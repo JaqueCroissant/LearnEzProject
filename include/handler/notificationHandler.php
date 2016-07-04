@@ -9,23 +9,22 @@
         
         public function __construct() {
             parent::__construct();
+            $this->_notifications = array();
         }
         
-        public function update_notification_count($userId, $status){
+        public function update_seen_notification_count($userId){
             try {
                 $this->check_numeric($userId);
-                $this->check_status($status);
                 
                 $newCounter = DbHandler::get_instance()->count_query("SELECT notification_id "
                         . "FROM user_notifications "
                         . "WHERE user_id=:userId "
-                        . "AND is_read=:isRead", $userId, $status); 
+                        . "AND is_read=:isRead", $userId, 0); 
                 
                 if ($newCounter == 0) {
                     return false;
                 }
-                if ($status == 0) {$this->_unseen_notifications = $newCounter;}
-                else {$this->_unread_notifications = $newCounter;}
+                $this->_unseen_notifications = $newCounter;
                 $this->_load_notifications = true;
                 
                 return true;      
@@ -79,12 +78,7 @@
                 DbHandler::get_instance()->query("UPDATE user_notifications "
                         . "SET is_read=1 "
                         . "WHERE is_read=0 "
-                        . "AND user_id=:userId", $userId);
-                
-                foreach ($this->_notifications[0] as $not) {
-                    array_push($this->_notifications[1], $not);
-                }
-                $this->_notifications[0] = array();
+                        . "AND user_id=:userId", $userId);              
                 
                 return true;
                 
@@ -102,14 +96,21 @@
             return $this->_unseen_notifications;
         }
         
-        public function load_notifications($userId, $limit = 5){
+        public function load_notifications($userId, $offset, $limit = 5){
             try {
-//                if (!$this->_load_notifications) {
-//                    return false;
-//                }
+                $this->check_bool($offset);
+                if (!$this->_load_notifications && !$offset) {
+                    return false;
+                }
                 $this->_load_notifications = false;
                 $this->check_numeric($userId);
                 $this->check_numeric($limit);
+                
+                $offset_count = 0;
+                
+                if ($offset) {
+                    $offset_count = count($this->_notifications);
+                }
                 
                 $dbData = DbHandler::get_instance()->return_query("SELECT translation_notifications.title AS title, "
                         . "translation_notifications.text AS text, "
@@ -128,28 +129,19 @@
                         . "AND language_id = :languageId "
                         . "LIMIT 1),:languageId,notifications.default_language_id)) "
                         . "WHERE user_notifications.user_id = :userId "
-                        . "ORDER BY user_notifications.is_read, user_notifications.datetime DESC "
-                        . "LIMIT :limit"
-                        , TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $userId, $limit);
-                
+                        . "ORDER BY user_notifications.datetime DESC "
+                        . "LIMIT :limit OFFSET :offset"
+                        , TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $userId, $limit, $offset_count);
                 if (count($dbData) == 0) {
-                    $this->_notifications = array(array(), array(), array());
+                    $this->_notifications = array();
                     return true;
                 }
                 $fullArray = array();
-                if (count($dbData) == 1) {
-                    $fullArray = array(new Notification(reset($dbData)));
+                foreach ($dbData as $notification) {
+                    array_push($fullArray, new Notification($notification));
                 }
-                else{
-                    foreach ($dbData as $notification) {
-                        array_push($fullArray, new Notification($notification));
-                    }
-                }
-                $arr1 = array_filter($fullArray, function($value){return ($value->isRead == 0 ? true : false);});
-                $arr2 = array_filter($fullArray, function($value){return ($value->isRead == 1 ? true : false);});
-                $arr3 = array_filter($fullArray, function($value){return ($value->isRead == 2 ? true : false);});
-                $this->_notifications = array($arr1, $arr2, $arr3);
-                
+                $this->_notifications = $fullArray;
+                $this->seen_notifications($userId);
                 return true;
                 
             } catch (Exception $exc) {
@@ -292,7 +284,6 @@
         }
         
         private function check_bool($value){
-            $this->is_null_or_empty($value);
             if (!is_bool($value)) {
                 throw new Exception("NOTIFICATION_VALUE_NOT_BOOL");
             }

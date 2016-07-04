@@ -1,4 +1,12 @@
 <?php
+/*
+class TranslationHandler extends Handler {
+    private 
+    
+}
+
+ */
+
 class TranslationHandler
 {
     private static $_defaultLanguage = 1; 

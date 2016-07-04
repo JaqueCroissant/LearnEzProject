@@ -10,8 +10,25 @@ class SchoolHandler extends Handler {
         parent::__construct();
     }
     
-    public function get_school_types () {
-        
+    public function get_school_types() {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            $query = "SELECT * FROM school_type";
+            
+            $this->school_types = DbHandler::get_instance()->return_query($query);
+            
+            if (count($this->school_types) == 0) {
+                throw new Exception ("NO_SCHOOL_TYPES_FOUND");
+            } 
+            
+            return true;
+    } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
     }
     
     public function get_school_rights ($school_id) {
@@ -144,7 +161,7 @@ class SchoolHandler extends Handler {
             }
             $this->verify_school_exists($id);
             
-            $query = "SELECT * FROM school WHERE id = :id LIMIT 1";
+            $query = "SELECT * FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
             $this->school = new School(reset(DbHandler::get_instance()->return_query($query, $id)));
             return true;
         } catch (Exception $exc) {

@@ -38,6 +38,27 @@ $(document).ready(function () {
             location.reload();
         })
    });
+   
+    $(document).on("click", ".create_school", function(event){
+        event.preventDefault();
+        $("#create_school_step").val($("#create_school_step_one_button").attr("step"));
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error); // fail function
+        }, function() {
+            // start step 2 - success
+            // change div
+            alert("lol");
+        });
+    });
+    
+    function showDropDown(element){
+        var listElement = element.parentNode.getElementsByTagName('ul').item(0);
+        if(listElement.getAttribute('style')=="display:block;"){
+            listElement.setAttribute('style','display:none;');
+        }else{
+            listElement.setAttribute('style','display:block;');
+        }
+    }
     
     function preload(arrayOfImages) {
         $(arrayOfImages).each(function(){

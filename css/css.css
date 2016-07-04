@@ -1,12 +1,12 @@
 :root {
-    --material_design_color_1: #005885;
-    --material_design_color_2: #33bdea;
+    --material_design_color_primary_1: #005885;
+    --material_design_color_primary_2: #0080c0;
+    // 0080c0
 }
 
 html {
     background-color: white;
     color: white;
-    color: 
 }
 
 @font-face {
@@ -31,9 +31,9 @@ html {
     line-height: 40px;
     font-size: 25px;
     text-align: center;
-    text-shadow: 0 0em 0.25em var(--material_design_color_1) !important;
+    text-shadow: 0 0em 0.25em var(--material_design_color_primary_1) !important;
     color: white;
-    background-color: var(--material_design_color_2);
+    background-color: var(--material_design_color_primary_2);
     font-weight: bold;
 }
 
@@ -72,7 +72,7 @@ html {
 }
 
 .material_design_input:focus {
-    border-bottom: 2px solid var(--material_design_color_1) !important;
+    border-bottom: 2px solid var(--material_design_color_primary_1) !important;
     padding-left: 7px;
     padding-bottom: 12px;
 }
@@ -97,7 +97,7 @@ select::-ms-expand {
 }
 
 .material_design_select option:hover {
-    background-color: var(--material_design_color_1) !important;
+    background-color: var(--material_design_color_primary_1) !important;
 }
 
 .main_container {
@@ -121,7 +121,7 @@ select::-ms-expand {
     padding: 0.5em;
     color: var(--material_design_color_1);
     background-color: transparent;
-    text-shadow: 0 0em 0.01em var(--material_design_color_1) !important;
+    text-shadow: 0 0em 0.01em var(--material_design_color_primary_1) !important;
     
 }
 
@@ -132,13 +132,13 @@ select::-ms-expand {
 }
 
 .material_design_button:active {
-    background-color: var(--material_design_color_2);
+    background-color: var(--material_design_color_primary_2);
 }
 
 .material_design_header {
     font-size: 3em;
     font-weight: bold;
-    color: var(--material_design_color_1);
+    color: var(--material_design_color_primary_1);
 }
 
 .input-container {
@@ -208,21 +208,21 @@ select::-ms-expand {
 }
 
 .menu_header:hover {
-    -moz-box-shadow: 0 0 0.3em var(--material_design_color_1);
-    -webkit-box-shadow: 0 0 0.3em var(--material_design_color_1);
-    box-shadow: 0 -0.2em 0.3em var(--material_design_color_1) !important;
+    -moz-box-shadow: 0 0 0.3em var(--material_design_color_primary_1);
+    -webkit-box-shadow: 0 0 0.3em var(--material_design_color_primary_1);
+    box-shadow: 0 -0.2em 0.3em var(--material_design_color_primary_1) !important;
 }
 
 .menu_header:active {
-    box-shadow: inset 0 0em 0.2em var(--material_design_color_1) !important;
-    -moz-box-shadow:inset 0 0em 0.2em var(--material_design_color_1) !important;
-    -webkit-box-shadow: inset 0 0em 0.2em var(--material_design_color_1) !important;
+    box-shadow: inset 0 0em 0.2em var(--material_design_color_primary_1) !important;
+    -moz-box-shadow:inset 0 0em 0.2em var(--material_design_color_primary_1) !important;
+    -webkit-box-shadow: inset 0 0em 0.2em var(--material_design_color_primary_1) !important;
 }
 
 #navBar .menu_header:hover {
-    -moz-box-shadow: 0 0 0.3em var(--material_design_color_1);
-    -webkit-box-shadow: 0 0 0.3em var(--material_design_color_1);
-    box-shadow: -0.5em 0 0.3em var(--material_design_color_1) !important;
+    -moz-box-shadow: 0 0 0.3em var(--material_design_color_primary_1);
+    -webkit-box-shadow: 0 0 0.3em var(--material_design_color_primary_1);
+    box-shadow: -0.5em 0 0.3em var(--material_design_color_primary_1) !important;
 }
 
 a .menu_header {
@@ -282,26 +282,16 @@ a .menu_header {
     width: 12.5em;
 }
 
-/*#EZ {
-    color: white;
-    font-weight: bolder;
-}
-
-.menu_design {
-    background-color: #005885;
-}*/
-
 #EZ {
-    color: var(--material_design_color_1);
     font-weight: bolder;
 }
 
 .menu_design {
-    background-color: var(--material_design_color_2);
+    background-color: var(--material_design_color_primary_2);
 }
 
 .form-control:focus {
-    border-color: var(--material_design_color_2);
+    border-color: var(--material_design_color_primary_1);
 }
 
 .topbar {

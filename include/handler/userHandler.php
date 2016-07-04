@@ -1,7 +1,6 @@
 <?php
 class UserHandler extends Handler
 {
-    public $current_user;
     public $temp_user;
     public $temp_user_array;
 
@@ -425,13 +424,6 @@ class UserHandler extends Handler
             {
                 throw new Exception("DATABASE_UNKNOWN_ERROR");
             }
-
-            if(SessionKeyHandler::session_exists("user"))
-            {
-                SessionKeyHandler::remove_from_session("user");
-            }
-
-            SessionKeyHandler::add_to_session("user", $this->_user, true);
 
             return true;
         }

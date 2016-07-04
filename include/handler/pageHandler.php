@@ -241,16 +241,12 @@ class pageHandler extends Handler {
             if(!file_exists('../../include/pages/' . $pagename . '.php')) {
                 throw new Exception ("PAGE_DOES_NOT_EXIST");
             }
-            //echo $pagename;
-            //var_dump($this->_pages);
             $this->current_page = $this->_pages_raw[$pagename];
             $clone_array = array();
             foreach($this->_pages as $key => $value) {
                 $clone_array[$key] = clone $value;
             }
             $this->current_page_hierarchy = $this->get_page_hierarchy($clone_array, $pagename);
-            //var_dump($this->_pages);
-            //var_dump($this->current_page_hierarchy);
             return true;
         }
         catch (Exception $ex) 

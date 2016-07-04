@@ -1,12 +1,57 @@
 <?php
 /*
 class TranslationHandler extends Handler {
-    private 
+    private $_user_language_prefix;
+    private $_user_languages = array();
     
-}
-
- */
-
+    public function __construct() {
+        parent::__construct();
+        if (!SessionKeyHandler::session_exists("current_language")) {
+            $this->set_current_language($this->load_language_settings());
+        }
+    }
+    
+    private function get_browser_language() {
+        try
+        {
+            $user_language = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+            
+            if(empty($user_language)) {
+                throw new Exception("BROWSER_LANGUAGE_NOT_FOUND");
+            }
+            
+            $this->get_user_languages();
+            
+            
+            
+            if(count($data) < 1) {
+                throw new Exception("BROWSER_LANGUAGE_NOT_FOUND");
+            }
+	}
+	catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+	}
+    }
+    
+    private function get_user_languages() {
+        $language_data = DbHandler::get_instance()->Query("SELECT * FROM country");
+        
+        if(is_array($this->_user_languages) && count($this->_user_languages) > 0) {
+            return;
+        }
+        
+        if(!empty($language_data) && is_array($language_data) && count($language_data) > 0) {
+            
+            $array = array();
+            foreach($language_data as $key => $value) {
+                $array[$value['prefix']] = $value['language_id'];
+            } 
+            
+            $this->_user_languages = $array;
+        }
+    }
+}*/
 class TranslationHandler
 {
     private static $_defaultLanguage = 1; 

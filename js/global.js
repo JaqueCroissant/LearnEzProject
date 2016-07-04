@@ -44,10 +44,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function() {
             alert(ajax_data.error);
         }, function() {
-            alert("lol2");
         });
-        alert("JEG ER TIL SIDST");
-        return false;
    });
 
     $(document).on("click", ".create_school", function(event){

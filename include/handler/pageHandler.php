@@ -97,7 +97,6 @@ class pageHandler extends Handler {
             $this->_pages = $pageArray;
             
             $this->assign_page_children();
-            //var_dump($this->_pages);
             SessionKeyHandler::add_to_session("pages", $this->_pages, true);
         }
     }
@@ -202,6 +201,43 @@ class pageHandler extends Handler {
         return null;
     }
     
+    private function iterate_children(&$array, $parent) {
+        foreach($parent as $key => $value) {
+            $item = clone $value;
+            $item->children = null;
+            $array[] = $item;
+            
+            if(is_array($value->children) && count($value->children) > 0) {
+                $this->iterate_children($array, $value->children);
+            }
+        }
+    }
+    
+    private function clone_pages(&$array, $parent) {
+        foreach($parent as $key => $value) {
+            $item = clone $value;
+            
+            if(is_array($value->children) && count($value->children) > 0) {
+                $this->clone_children($item);
+            }
+            
+            $array[$key] = $item; 
+        }
+    }
+    
+    private function clone_children(&$parent) {
+        $children = array();
+        foreach($parent->children as $key => $value) {
+            
+            if(is_array($value->children) && count($value->children) > 0) {
+                $this->clone_children($value);
+            }
+            
+            $children[$key] = clone $value;
+        }
+        $parent->children = $children;
+    }
+    
     public function get_menu($position = 1) {
         if(!$this->menus_exists()) {
             return;
@@ -211,9 +247,15 @@ class pageHandler extends Handler {
             $this->_menu = SessionKeyHandler::get_from_session("menu", true);
         }
         
-        if(array_key_exists($position, $this->_menu)) {
-            return $this->_menu[$position];
+        if(!array_key_exists($position, $this->_menu)) {
+            return;
         }
+        $current_menu = $this->_menu[$position];
+        
+        $array = array();
+        $this->iterate_children($array, $current_menu);
+        
+        return $array;
     }
     
     public function has_rights($pagename) {
@@ -242,10 +284,9 @@ class pageHandler extends Handler {
                 throw new Exception ("PAGE_DOES_NOT_EXIST");
             }
             $this->current_page = $this->_pages_raw[$pagename];
+            setcookie("current_page", $this->current_page->pagename, time() + (86400 * 30), "/");
             $clone_array = array();
-            foreach($this->_pages as $key => $value) {
-                $clone_array[$key] = clone $value;
-            }
+            $this->clone_pages($clone_array, $this->_pages);
             $this->current_page_hierarchy = $this->get_page_hierarchy($clone_array, $pagename);
             return true;
         }

@@ -7,7 +7,7 @@ var ajax_data;
 $(document).ready(function () {
     
     // Load on startup.
-        change_page("front");
+    initial_page_load();
     // Load on startup.
     
     $(document).on("click", ".change_page", function(event){
@@ -25,7 +25,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function() {
             alert(ajax_data.error);
         }, function() {
-            location.reload();
+            reload_page();
         });
    });
    
@@ -35,12 +35,12 @@ $(document).ready(function () {
        initiate_submit_get($(this), "login.php?logout=true", function() {
             alert(ajax_data.error);
         }, function() {
-            location.reload();
+            reload_page();
         });
    });
    
     $(document).on("click", ".submit_edit_user_info", function(event){
-        event.preventDefault
+        event.preventDefault();
         initiate_submit_form($(this), function() {
             alert(ajax_data.error);
         }, function() {
@@ -56,7 +56,6 @@ $(document).ready(function () {
                     alert(ajax_data.error); // fail function
                 }, function() {
                     // start step 2 - success
-                    
                     $("#step_one").addClass("hidden");
                     $("#step_two").removeClass("hidden");
                     $( "#datepicker" ).datepicker();
@@ -82,6 +81,22 @@ $(document).ready(function () {
         $(arrayOfImages).each(function(){
             $('<img/>')[0].src = this;
         });
+    }
+    
+    function initial_page_load() {
+        var page_reload = $.cookie("page_reload");
+        $.removeCookie("page_reload");
+        
+        var pagename = page_reload === "true" ? "front" :  $.cookie("current_page") !== undefined ? $.cookie("current_page") : "front";
+        change_page(pagename);
+    }
+    
+    function reload_page() {
+        var date = new Date();
+        date.setTime(date.getTime() + (60 * 1000));
+        $.cookie("page_reload", "true", { expires: 10 });
+        $.removeCookie("current_page");
+        location.reload();
     }
 
     $(function() {

@@ -25,8 +25,7 @@ if(isset($_GET['logout'])) {
 
 if(isset($_POST)) {
     if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
-        TranslationHandler::reset_language();
-        TranslationHandler2::reset();
+        TranslationHandler::reset();
         $pageHandler->reset();
         SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
         $jsonArray['status_value'] = true;

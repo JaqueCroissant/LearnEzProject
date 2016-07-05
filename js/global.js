@@ -26,7 +26,7 @@ $(document).ready(function () {
             alert(ajax_data.error);
         }, function() {
             location.reload();
-        })
+        });
    });
    
    $(document).on("click", ".log_out", function(event){
@@ -35,29 +35,39 @@ $(document).ready(function () {
             alert(ajax_data.error);
         }, function() {
             location.reload();
-        })
+        });
    });
    
     $(document).on("click", ".create_school", function(event){
         event.preventDefault();
-        $("#create_school_step").val($("#create_school_step_one_button").attr("step"));
-        initiate_submit_form($(this), function() {
-            alert(ajax_data.error); // fail function
-        }, function() {
-            // start step 2 - success
-            // change div
-            alert("lol");
-        });
-    });
-    
-    function showDropDown(element){
-        var listElement = element.parentNode.getElementsByTagName('ul').item(0);
-        if(listElement.getAttribute('style')=="display:block;"){
-            listElement.setAttribute('style','display:none;');
-        }else{
-            listElement.setAttribute('style','display:block;');
+        switch ($(this).attr("step")) {
+            case "1": 
+                $("#create_school_step").val($(this).attr("step"));
+                initiate_submit_form($(this), function() {
+                    alert(ajax_data.error); // fail function
+                }, function() {
+                    // start step 2 - success
+                    
+                    $("#step_one").addClass("hidden");
+                    $("#step_two").removeClass("hidden");
+                    $( "#datepicker" ).datepicker();
+                });
+                break;
+            case "2":
+                $("#create_school_step_2").val($(this).attr("step"));
+                initiate_submit_form($(this), function() {
+                    alert(ajax_data.error); // fail function
+                }, function() {
+                    // start step 3 - success
+                    $("#step_two").addClass("hidden");
+                    $("#step_three").removeClass("hidden");
+                });
+                break;
         }
-    }
+        
+        
+        
+    });
     
     function preload(arrayOfImages) {
         $(arrayOfImages).each(function(){

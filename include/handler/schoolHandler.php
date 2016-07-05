@@ -280,8 +280,9 @@ class SchoolHandler extends Handler {
         }
         // checks if date is in future or not
         
-        $today = getdate();
-        if ($today > $d) {
+        $ds = strtotime($subscription_end);
+        $ts = strtotime(date($format));
+        if ($ts > $ds) {
             throw new Exception ("SUBSCRIPTION_END_INVALID");
         }
     }

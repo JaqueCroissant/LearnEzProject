@@ -8,6 +8,7 @@
 <script src="js/global.js" type="text/javascript"></script>
 <script src="js/navigation.js" type="text/javascript"></script>
 <script src="js/form.js" type="text/javascript"></script>
+<script src="js/notifications.js" type="text/javascript"></script>
 
 <?php        
 if (SessionKeyHandler::session_exists("user")) {

@@ -12,7 +12,7 @@
             $this->_notifications = array();
         }
         
-        public function update_seen_notification_count($userId){
+        public function update_unseen_notification_count($userId){
             try {
                 $this->check_numeric($userId);
                 
@@ -88,6 +88,22 @@
             }          
         }
         
+        public function delete_notification($notificationId, $userId){
+            try {
+                $this->check_numeric($notificationId);
+                $this->check_numeric($userId);
+                
+                DbHandler::get_instance()->query("DELETE FROM user_notifications "
+                        . "WHERE id=:notificationId "
+                        . "AND user_id=:userId", $notificationId, $userId);
+                return true;
+                
+            } catch (Exception $exc) {
+                $this->error = ErrorHandler::return_error($exc->getMessage());
+                return false;
+            }    
+        }
+        
         public function get_notifications(){
             return $this->_notifications;
         }
@@ -114,6 +130,7 @@
                 
                 $dbData = DbHandler::get_instance()->return_query("SELECT translation_notifications.title AS title, "
                         . "translation_notifications.text AS text, "
+                        . "user_notifications.id AS id, "
                         . "user_notifications.datetime AS datetime, "
                         . "user_notifications.is_read AS isRead "
                         . "FROM user_notifications "

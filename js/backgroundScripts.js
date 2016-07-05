@@ -12,12 +12,12 @@ function notification_beat(){
        dataType: "json",
        data: {action: 'get_new_notifications'},
        success: function (result) {
-           console.log(result.count);
             if (result !== null || result.count !== undefined) {
-                $('#notification_counter').html(result.count);
+                $('#notification_counter').html(result.count);                
             }
             else {
                 $('#notification_counter').html("");
+                
             }
        }
     });

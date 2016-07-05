@@ -2,6 +2,7 @@
 <link href="css/css.css" rel="stylesheet" type="text/css"/>
 <script src="js/jQuery.js" type="text/javascript"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="js/scripts.js" type="text/javascript"></script>
 <script src="js/global.js" type="text/javascript"></script>
 <script src="js/navigation.js" type="text/javascript"></script>

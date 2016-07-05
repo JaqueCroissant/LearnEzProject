@@ -11,7 +11,7 @@ $schoolHandler->get_school_types();
     <div class="input-container">
         <div id="step_one">
             <div class="material_design_header"><?php echo $translationHandler->get_static_text("SCHOOL_CREATE_NEW"); ?></div>
-            <form method="post" id="create_school_step_one" url="create_school.php">
+            <form method="post" id="create_school_step_one" action="" url="create_school.php">
                 <table style="width: 100%;">
                     <tr>
                         <td class="left-col">
@@ -67,12 +67,48 @@ $schoolHandler->get_school_types();
                         </td>
                         <td class="right-col">
                             <input type="hidden" name="step" id="create_school_step">
-                            <input type="button" id="create_school_step_one_button" step="1" value="<?php echo $translationHandler->get_static_text("SCHOOL_FINISH_STEP_ONE"); ?>" class="pull-right material_design_button create_school">   
+                            <input type="button" name="submit" id="create_school_step_one_button" step="1" value="<?php echo $translationHandler->get_static_text("SCHOOL_FINISH_STEP_ONE"); ?>" class="pull-right material_design_button create_school">   
                         </td>
                     </tr>
                 </table>
 
             </form>
+        </div>
+    
+        <div id="step_two" class="hidden">
+            <div class="material_design_header"><?php echo $translationHandler->get_static_text("SCHOOL_CREATE_NEW"); ?></div>
+            <form method="POST" id="create_school_step_two" action="" url="create_school.php">
+                <table style="width:100%">
+                    <tr>
+                        <td class="left-col">
+                            <?php echo $translationHandler->get_static_text("SCHOOL_MAX_STUDENTS"); ?>
+                        </td>
+                        <td class="right-col">
+                            <input class="material_design_input" name="school_max_students" placeholder="<?php echo $translationHandler->get_static_text("SCHOOL_MAX_STUDENTS"); ?>">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-col">
+                            <?php echo $translationHandler->get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>
+                        </td>
+                        <td class="right-col">
+                            <input name="school_subscription_end" class="material_design_input" type="text" id="datepicker">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="left-col">
+                        </td>
+                        <td class="right-col">
+                            <input type="hidden" name="step" id="create_school_step_2">
+                            <input type="button" name="submit" id="create_school_step_two_button" step="2" value="<?php echo $translationHandler->get_static_text("SCHOOL_FINISH_STEP_TWO"); ?>" class="pull-right material_design_button create_school">   
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    
+        <div id="step_three" class="hidden">
+            
         </div>
     </div>
     <div class="input-container">

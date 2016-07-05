@@ -6,6 +6,9 @@ function submit_form(form_id, url, element) {
         dataType: "json",
         async: false,
         data: $("#" + form_id).serialize(),
+        error: function(data) {
+            alert(JSON.stringify(data));
+        },
         complete: function(data) {
             currently_submitting_form = false;
             $(element).removeAttr("clickable");
@@ -21,7 +24,6 @@ function initiate_submit_form(element, fail_function, success_function) {
         form_id = $(element).closest("form").attr("id");
         url = $(element).closest("form").attr("url");
         submit_form(form_id, url, $(element));
-        
         if(ajax_data.status_value === true) {
             success_function();
         } else {

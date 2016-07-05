@@ -1,5 +1,5 @@
 <?php
-
+    echo "lol2";
     if(isset($_GET['id']) && isset($_GET['code']))
     {
         if(!$loginHandler->validate_reset_password($_GET['id'],$_GET['code']))

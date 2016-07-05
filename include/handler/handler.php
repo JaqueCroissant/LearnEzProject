@@ -1,6 +1,6 @@
 <?php
 class Handler {
-    protected $_user;
+    public $_user;
     public $error;
     
     public function __construct() {

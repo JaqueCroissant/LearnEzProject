@@ -21,7 +21,7 @@ function set_clickable(element) {
 }
 
 function change_page(pagename, args, element) {
-     currently_changing_page = true;
+    currently_changing_page = true;
     $("#content_container").html("");
     $("#content_breadcrumbs").html("");
     var startTime = new Date().getTime();

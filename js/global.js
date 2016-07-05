@@ -29,6 +29,7 @@ $(document).ready(function () {
         });
    });
    
+
    $(document).on("click", ".log_out", function(event){
        event.preventDefault();
        initiate_submit_get($(this), "login.php?logout=true", function() {
@@ -38,6 +39,14 @@ $(document).ready(function () {
         });
    });
    
+    $(document).on("click", ".submit_edit_user_info", function(event){
+        event.preventDefault
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+        });
+   });
+
     $(document).on("click", ".create_school", function(event){
         event.preventDefault();
         switch ($(this).attr("step")) {

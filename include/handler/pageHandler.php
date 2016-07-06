@@ -69,7 +69,7 @@ class pageHandler extends Handler {
     private function generate_pages() {
         if(empty($this->_pages) || count($this->_pages) < 1) {
             $user_type_id = $this->user_exists() ? $this->_user->user_type_id : 5;
-            $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.page_arguments, page.is_dropdown, page.image, page.display_text, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
+            $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.page_arguments, page.is_dropdown, page.icon_class, page.display_text, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
             
             if(count($pageData) < 1) {
                 return;
@@ -204,7 +204,7 @@ class pageHandler extends Handler {
     private function iterate_children(&$array, $parent) {
         foreach($parent as $key => $value) {
             $item = clone $value;
-            $item->children = null;
+//            $item->children = null;
             $array[] = $item;
             
             if(is_array($value->children) && count($value->children) > 0) {

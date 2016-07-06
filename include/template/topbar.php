@@ -1,35 +1,68 @@
-<a href="#" class="change_page" page="front" id="front">
-    <div class="pull-left title">
-        <img src="assets/images/LearnEZ-Maskot-hvid.png" class="title_icon">
-        <div class="headline">Learn<span id="EZ">EZ</span></div>
-    </div>
-</a>
+<div class="navbar-header pull-left">
+    <button class="hamburger visible-lg-inline-block hamburger--arrowalt is-active js-hamburger p-r-md fz-xl" type="button">
+        <span class="material_font">
+            <span class="zmdi-chevron-left"></span>
+        </span>
+    </button>
+    
+</div>
 
-<div class="pull-right col-xl-3 hidden-xs" style="height: 100%; margin-right: 0.5em;">
+<div class="navbar-header text-white pull-left">
+    <div id="content_breadcrumbs" class=""></div>
+</div>
+<div>
+    <ul id="top-nav" class="pull-right text-white">
     <?php
-        foreach($pageHandler->get_menu(2) as $menu) {
-            if($menu->display_menu) {
-                echo '<a ';
-                if(!$menu->is_dropdown) {
-                    echo ($menu->pagename == "logout") ? 'class="log_out"' : 'class="change_page"';
-                }
-                echo (!$menu->is_dropdown) ? 'class="change_page"' : '';
-                echo ' page="'. $menu->pagename .'" args="'. $menu->page_arguments . '"';
-                echo ' id="'.$menu->pagename.'" href="#">
-                        <div class="menu_header" style="display:inline-block">
-                            <div class="menu_text">
-                                <img src="assets/images/'. $menu->image .'" class="menu_icon"> ';
-                                if($menu->pagename == "notifications"){
-                                    echo "<div id='notification_counter'></div>";
-                                }
-                if($menu->display_text) {
-                    echo "<label style='margin-left:5px;cursor:pointer'> ". $menu->title ."</label>";
-                }
+    $last_page_submenu = false;
+    foreach ($pageHandler->get_menu(2) as $menu) {
+        if ($menu->display_menu) {
+            if(!empty($menu->master_page_id) && ((int)$menu->master_page_id) > 0) {
                 echo '
-                            </div>
-                        </div>
+                    <li>
+                        <a class="change_page text-black" page="'. $menu->pagename .'" args="' . $menu->page_arguments . '" id="' . $menu->pagename . '" href="javascript:void(0)">
+                            <i class="zmdi m-r-md zmdi-hc-lg '. $menu->icon_class .'"></i>
+                            '. $menu->title .'
+                        </a>
+                    </li>';
+                $last_page_submenu = true;
+            } else {
+                if($last_page_submenu) {
+                    echo '</ul>';
+                    $last_page_submenu = false;
+                }
+                
+                echo '<li name="' . $menu->title . '" class="nav-item text-black '; 
+
+                if($menu->is_dropdown) {
+                    echo 'dropdown';
+                } 
+                echo '">';
+
+                if($menu->is_dropdown) {
+                    echo '
+                    <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" href="javascript:void(0)">
+                        <i class="zmdi zmdi-hc-lg '. $menu->icon_class .'"></i>
+                    </a>
+                    <ul class="dropdown-menu animated flipInY">';
+                } else {
+                    echo '<a class="';
+                    if($menu->pagename == "logout") {
+                        echo "log_out";
+                    } elseif($menu->pagename != "notifications") {
+                        echo "change_page";
+                    }
+                    echo '" page="'. $menu->pagename .'" args="' . $menu->page_arguments . '" id="' . $menu->pagename . '" href="javascript:void(0)">
+                        <i class="zmdi zmdi-hc-lg '. $menu->icon_class .'"></i>
                     </a>';
+                }
+                echo '</li>';
             }
-        }    
+        }
+    }
+    if($last_page_submenu) {
+        echo '</ul>';
+        $last_page_submenu = false;
+    }
     ?>
+    </ul>
 </div>

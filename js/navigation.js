@@ -52,7 +52,7 @@ function change_page(pagename, args, element) {
                         }
                     });
                 } else {
-                    $("#content_container").load('pages/front.php', {'url': false}, function() {
+                    $("#content_container").load('include/pages/front.php', {'url': false}, function() {
                         var elapsedTime = (new Date().getTime()) - startTime;
                         if(elapsedTime < 700) {
                             setTimeout(function() { 
@@ -75,7 +75,7 @@ function change_page(pagename, args, element) {
             }
         });
     } else {
-        $("#content_container").load('pages/front.php', {'url': false}, function() {
+        $("#content_container").load('include/pages/front.php', {'url': false}, function() {
             var elapsedTime = (new Date().getTime()) - startTime;
             if(elapsedTime < 700) {
                 setTimeout(function() { 

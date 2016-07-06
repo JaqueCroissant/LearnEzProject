@@ -1,0 +1,60 @@
+//= Core Variables and mixins
+@import 'app-sass/variables';
+@import 'app-sass/mixins';
+
+//= Bootstrap Variables and mixins
+@import 'bootstrap-sass/bootstrap/variables';
+@import 'bootstrap-sass/bootstrap/mixins';
+
+//= external libraries
+@import 'libs-sass/libs';
+@import 'libs-sass/awesome-bootstrap-checkboxes/awesome-bootstrap-checkbox.scss';
+
+//= Core CSS
+@import 'app-sass/core/scaffolding';
+@import 'app-sass/core/type';
+@import 'app-sass/core/forms';
+@import 'app-sass/core/tables';
+@import 'app-sass/core/theme';
+@import 'app-sass/core/utilities';
+
+//= Building Blocks
+@import 'app-sass/blocks/aside.left';
+@import 'app-sass/blocks/aside.top';
+@import 'app-sass/blocks/navbar';
+@import 'app-sass/blocks/main';
+@import 'app-sass/blocks/footer';
+@import 'app-sass/blocks/side-panel';
+@import 'app-sass/blocks/action-panel';
+
+//= Components
+@import 'app-sass/components/dropdown-menus';
+@import 'app-sass/components/buttons';
+@import 'app-sass/components/alerts';
+@import 'app-sass/components/progress';
+@import 'app-sass/components/avatars';
+@import 'app-sass/components/cards';
+@import 'app-sass/components/icons';
+@import 'app-sass/components/widgets';
+@import 'app-sass/components/modals';
+@import 'app-sass/components/charts';
+@import 'app-sass/components/lists';
+@import 'app-sass/components/panels';
+@import 'app-sass/components/badges';
+@import 'app-sass/components/labels';
+@import 'app-sass/components/plugins';
+@import 'app-sass/components/customizer';
+@import 'app-sass/components/tabs_accordions';
+
+//= apps
+@import 'app-sass/apps/mail-app';
+@import 'app-sass/apps/fullcalendar';
+@import 'app-sass/apps/contacts';
+
+//= pages
+@import 'app-sass/pages/search';
+@import 'app-sass/pages/profile';
+@import 'app-sass/pages/gallery';
+@import 'app-sass/pages/invoice';
+@import 'app-sass/pages/prices';
+@import 'app-sass/pages/misc';

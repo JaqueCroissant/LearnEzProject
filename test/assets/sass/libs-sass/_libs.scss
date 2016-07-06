@@ -1,0 +1,16 @@
+@import 'libs-settings';
+@import 'hamburgers/hamburgers';
+@import 'dropzone/dropzone';
+@import 'PACE/default-theme';
+@import 'bootstrap-timepicker';
+
+//= hamburger lib specific styles
+.hamburger{
+	outline: none;
+	border: none;
+}
+
+//= dropzone lib specific styles
+.dropzone {
+	border: 2px dashed #188ae2;
+}

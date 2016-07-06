@@ -63,18 +63,18 @@ require_once 'include/extra/require.php';
         </div>
         
         
-        <script src="../libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
-        <script src="../libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
-        <script src="../libs/bower/superfish/dist/js/hoverIntent.js"></script>
-        <script src="../libs/bower/superfish/dist/js/superfish.js"></script>
-        <script src="../libs/bower/jquery-slimscroll/jquery.slimscroll.js"></script>
-        <script src="../libs/bower/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
-        <script src="../libs/bower/PACE/pace.min.js"></script>
-	<script src="../assets/js/library.js"></script>
-	<script src="../assets/js/plugins.js"></script>
-	<script src="../assets/js/app.js"></script>
-	<script src="../libs/bower/moment/moment.js"></script>
-	<script src="../libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
-	<script src="../assets/js/fullcalendar.js"></script>
+        <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
+        <script src="libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
+        <script src="libs/bower/superfish/dist/js/hoverIntent.js"></script>
+        <script src="libs/bower/superfish/dist/js/superfish.js"></script>
+        <script src="libs/bower/jquery-slimscroll/jquery.slimscroll.js"></script>
+        <script src="libs/bower/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
+        <script src="libs/bower/PACE/pace.min.js"></script>
+	<script src="assets/js/library.js"></script>
+	<script src="assets/js/plugins.js"></script>
+	<script src="assets/js/app.js"></script>
+	<script src="libs/bower/moment/moment.js"></script>
+	<script src="libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
+	<script src="assets/js/fullcalendar.js"></script>
     </body>
 </html>

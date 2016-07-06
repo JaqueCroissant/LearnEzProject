@@ -24,7 +24,7 @@
         <div class="media-left">
             <div class="avatar avatar-md avatar-circle">
                 <a href="javascript:void(0)">
-                    <img class="img-responsive" alt="avatar" src="../assets/images/221.jpg">
+                    <img class="img-responsive" alt="avatar" src="assets/images/221.jpg">
                 </a>
             </div>
         </div>
@@ -100,32 +100,3 @@
         <div class="slimScrollRail" style="width: 5px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51) none repeat scroll 0% 0%; opacity: 0.2; z-index: 90; right: 1px;"></div>
     </div>
 </div>
-
-<?php
-//foreach ($pageHandler->get_menu(1) as $menu) {
-//    if ($menu->display_menu) {
-//        echo '<a ';
-//        echo (!$menu->is_dropdown) ? 'class="change_page"' : '';
-//        echo ' page="' . $menu->pagename . '" args="' . $menu->page_arguments . '"';
-//        echo ' id="' . $menu->pagename . '" href="#">
-//            <div class="menu_header">
-//                <img class="menu_icon" src="assets/images/' . $menu->image . '">
-//                <div class="menu_text">' . $menu->title . '</div>
-//            </div>
-//        </a>';
-//
-//        if (isset($menu->children) && count($menu->children) > 0) {
-//            foreach ($menu->children as $child) {
-//                echo '<a sub_page="true"';
-//                echo (!$child->is_dropdown) ? 'class="change_page"' : '';
-//                echo ' page="' . $child->pagename . '" args="' . $child->page_arguments . '"';
-//                echo ' id="' . $child->pagename . '" href="#">
-//                    <div class="menu_header">
-//                        <img class="menu_icon" src="assets/images/' . $child->image . '">
-//                        <div class="menu_text">' . $child->title . '</div>
-//                    </div>
-//                </a>';
-//            }
-//        }
-//    }
-//}

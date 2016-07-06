@@ -8,6 +8,7 @@
 
 ?>
 
+<<<<<<< HEAD
 <header class="aside-header">
     <div class="animated">
         <a id="app-brand" class="app-brand change_page" page="front" href="javascript:void(0)">

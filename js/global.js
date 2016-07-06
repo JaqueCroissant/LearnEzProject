@@ -47,6 +47,15 @@ $(document).ready(function () {
         });
    });
 
+   $(document).on("click", ".reset_pass_submit_email2", function(event){
+        event.preventDefault
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+            location.reload();
+        });
+   });
+
     $(document).on("click", ".create_school", function(event){
         event.preventDefault();
         switch ($(this).attr("step")) {

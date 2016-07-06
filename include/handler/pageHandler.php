@@ -204,7 +204,7 @@ class pageHandler extends Handler {
     private function iterate_children(&$array, $parent) {
         foreach($parent as $key => $value) {
             $item = clone $value;
-            $item->children = null;
+            //$item->children = null;
             $array[] = $item;
             
             if(is_array($value->children) && count($value->children) > 0) {

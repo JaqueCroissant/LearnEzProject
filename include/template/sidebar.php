@@ -7,7 +7,7 @@ foreach($pageHandler->get_menu(1) as $menu) {
         echo ' page="'. $menu->pagename .'" args="'. $menu->page_arguments . '"';
         echo ' id="'.$menu->pagename.'" href="#">
             <div class="menu_header">
-                <img class="menu_icon" src="assets/images/'. $menu->image .'">
+                <img class="menu_icon" src="assets/images/'. $menu->icon_class .'">
                 <div class="menu_text">'. $menu->title .'</div>
             </div>
         </a>';

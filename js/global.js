@@ -47,6 +47,14 @@ $(document).ready(function () {
         });
    });
 
+   $(document).on("click", ".settings_submit_password", function(event){
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+        });
+   });
+
    $(document).on("click", ".reset_pass_submit_email2", function(event){
         event.preventDefault
         initiate_submit_form($(this), function() {

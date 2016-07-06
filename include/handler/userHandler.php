@@ -661,6 +661,8 @@ class UserHandler extends Handler
         $type = strtoupper($type);
         switch($type)
         {
+            case "SA":
+                return 1;
             case "A":
                 return 2;
                 break;

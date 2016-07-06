@@ -19,24 +19,32 @@
     </div>
 </header>
 
-<div class="aside-user">
-    <div class="media">
-        <div class="media-left">
-            <div class="avatar avatar-md avatar-circle">
-                <a href="javascript:void(0)">
-                    <img class="img-responsive" alt="avatar" src="assets/images/221.jpg">
-                </a>
+<?php
+    if (SessionKeyHandler::session_exists("user")) {
+?>
+    <div class="aside-user">
+        <div class="media">
+            <div class="media-left">
+                <div class="avatar avatar-md avatar-circle">
+                    <a href="javascript:void(0)">
+                        <img class="img-responsive" alt="avatar" src="assets/images/221.jpg">
+                    </a>
+                </div>
             </div>
-        </div>
-        <div class="media-body">
-            <div class="foldable">
-                <h5>
-                    <a class="username" href="javascript:void(0)">John Doe</a>
-                </h5>
+            <div class="media-body">
+                <div class="foldable">
+                    <h5>
+                        <a class="username" href="javascript:void(0)">
+                        <?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname; ?>
+                        </a>
+                    </h5>
+                </div>
             </div>
         </div>
     </div>
-</div>
+<?php
+    }
+?>
 
 <div class="aside-scroll">
     <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 709px;">

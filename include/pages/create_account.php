@@ -49,7 +49,6 @@
                                 }
                             ?>
                             <input type="text" id="surname" name="surname" placeholder="<?php echo $translationHandler->get_static_text("CLASS_NAME"); ?>"><br/>
-                            <input type="text" id="email" name="email" placeholder="<?php echo $translationHandler->get_static_text("INFO_EMAIL"); ?>"><br/>
                             <input type="button" id="submit" name="submit" value="<?php echo $translationHandler->get_static_text("CREATE_SUBMIT"); ?>" class="create_submit_info">
                         </form>
                     </div>

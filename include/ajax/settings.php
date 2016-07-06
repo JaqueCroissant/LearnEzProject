@@ -22,24 +22,27 @@
                 else 
                 {
                     $jsonArray['status_value'] = false;
-                    $jsonArray['error'] = $userHandler->error->title;
+                    echo $userHandler->error->title;
+                    //$jsonArray['error'] = $userHandler->error->title;
                 }
                 echo json_encode($jsonArray);
                 die();
             }
         break;
         
-        //VERIFICER EMAIL
+        //SKIFT PASSWORD
         case "2":
             if(isset($_POST))
             {
-                if(!$loginHandler->reset_password($_POST['email'])) 
+                if(!$userHandler->change_password($_POST['old_password'], $_POST['password'], $_POST['confirm_password']))
                 {
                     $jsonArray['status_value'] = false;
-                    $jsonArray['error'] = $loginHandler->error->title;
+                    $jsonArray['error'] = $userHandler->error->title;
                 } 
                 else 
                 {
+                    SessionKeyHandler::add_to_session("user", $userHandler->_user, true);
+                    SessionKeyHandler::add_to_session("user_handler", $userHandler, true);
                     $jsonArray['status_value'] = true;
                 }
                 echo json_encode($jsonArray);

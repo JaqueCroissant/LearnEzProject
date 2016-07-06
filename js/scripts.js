@@ -1,6 +1,7 @@
 jQuery(function ($) {
     $(document).ready(function () {
-        $('#notificationWindow').hide();
+        
+        $('#notification_window').hide();
         $('#navBar').addClass("collapsed");
         $('#navBar .menu_text').hide();
         
@@ -8,10 +9,10 @@ jQuery(function ($) {
             $('.sidebar').addClass("hidden-sm hidden-xs collapsed");
         }
         
-        $("html").click(function () {
-            if (!$("#notificationWindow").is(":hidden")){
-                $("#notificationWindow").hide("fast");
-                $(".notificationUnseen").switchClass("notificationUnseen", "notificationSeen");
+        $("html").click(function (e) {
+            if (!$("#notification_window").is(":hidden") && !$(e.target).closest("#notification_window").length > 0){
+                $("#notification_window").hide("fast");
+                $(".notification_unseen").switchClass("notification_unseen", "notification_seen");
             }
             HideSidebarOnTablet();
         });
@@ -42,27 +43,8 @@ jQuery(function ($) {
         $('.sidebar').css("top", top);
         $('.content').css("padding-top", top + 10);
         $('.content').css("padding-left", left + 10);
-        $('#notificationWindow').css("top", top + 5);
-        $('#notificationWindow').css("right", 40);
-
-
-        $('#notifications').click(function (event) {
-            event.stopPropagation();
-            if ($('#notificationWindow').is(":hidden")) {
-                $.ajax({
-                   type: "POST",
-                   url: "include/ajax/notifications.php",
-                   data: {action: 'get_notifications'},
-                   success: function (result) {
-                       $('#notificationWindow').html(result);
-                   }
-                });
-                $('#notificationWindow').show("fast");
-                $('#notification_counter').html("");
-            } else {
-                $('#notificationWindow').hide("fast");
-            }
-        });
+        $('#notification_window').css("top", top + 5);
+        $('#notification_window').css("right", 40);
         
         $('#sidebarButton').click(function (e) {
             e.stopPropagation();

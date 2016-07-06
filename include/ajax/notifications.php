@@ -13,7 +13,7 @@ if (isset($_POST["action"])) {
 
 function get_new_notifications(){
     $notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
-    if (SessionKeyHandler::session_exists("user") && $notificationHandler->update_notification_count(SessionKeyHandler::get_from_session("user", true)->id, 0)) {
+    if (SessionKeyHandler::session_exists("user") && $notificationHandler->update_unseen_notification_count(SessionKeyHandler::get_from_session("user", true)->id)) {
         SessionKeyHandler::add_to_session("notification_handler", $notificationHandler, true);
         $jsonArray['count'] = $notificationHandler->get_unseen_notifications_count();
         echo json_encode($jsonArray);
@@ -22,47 +22,62 @@ function get_new_notifications(){
 
 function get_notifications(){
     $notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
-    $update_session = false;
-    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, 5)) {
-        $update_session = true;
-    }
-    
-    $data = $notificationHandler->get_notifications();
-    echo "<div id='notificationData'>Nye" .
-            "<div class='notificationGroup'><br/>";     
-    if (count($data[0]) == 0 && count($data[1]) == 0) {
-        echo "<i>Ingen nye notifikationer</i><br/><br/>";
-    }
-    else {
-        foreach ($data[0] as $value) {
-            echo "<div class='notification notificationUnseen'>" .
-            $value->title . " | " . date("M-d H:i:s", strtotime($value->datetime)) . "<br/>" . 
-            $value->text . "</div>";
-        }
-    }
-    if (!count($data[1]) == 0) {
-        foreach ($data[1] as $value) {
-            echo "<div class='notification notificationSeen'>" .
-            $value->title . " | " . date("M-d H:i:s", strtotime($value->datetime)) . "<br/>" . 
-            $value->text . "</div>";
-        }
-    }
-    echo "</div>Gamle" .
-            "<div class='notificationGroup'><br/>";
-    if (count($data[2]) == 0) {
-        echo "<i>Ingen gamle notifikationer</i><br/><br/>";
-    }
-    else {
-        foreach ($data[2] as $value) {
-            echo "<div class='notification notificationRead'>" .
-            $value->title . " | " . date("M-d H:i:s", strtotime($value->datetime)) . "<br/>" . 
-            $value->text . "</div>";
-        }
-    }
-    
-    $notificationHandler->seen_notifications(SessionKeyHandler::get_from_session("user", true)->id);
-    
-    if ($update_session) {
+    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, false, 5)) {
         SessionKeyHandler::add_to_session("notification_handler", $notificationHandler, true);
     }
+    $data = $notificationHandler->get_notifications();
+    $json_array['notifications'] = "Notifikationer<input type='button' value='X' id='notification_read_all'>";     
+    if (count($data) == 0) {
+       $json_array['notifications'] .= "<i>Ingen notifikationer</i><br/><br/>";
+       $json_array["status_value"] = false;
+    }
+    else {
+        foreach ($data as $value) {
+            $json_array['notifications'] .= notification_setup($value);
+        }
+        $json_array["status_value"] = true;
+    }
+    echo json_encode($json_array);
+}
+
+function get_more_notifications(){
+    $notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
+    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, true, 5)) {
+        SessionKeyHandler::add_to_session("notification_handler", $notificationHandler, true);
+        $json_array["notifications"] = "";
+        foreach ($notificationHandler->get_notifications() as $not) {
+            $json_array["notifications"] .= notification_setup($not);
+        }
+        if (count($notificationHandler->get_notifications()) != 5) {
+            $json_array["notifications"] .= "Ikke flere notifikationer";
+            $json_array["status_value"] = true;
+        }
+        $json_array['error'] = $notificationHandler->error;
+        echo json_encode($json_array);
+    }
+}
+
+function notification_setup($value){
+    $final = "";
+    if ($value->isRead == 0) {$final .= "<div class='notification notification_unseen'>";}
+    else {$final .= "<div class='notification notification_seen'>";}
+    $final .= "<div class='notification_text pull-left'>" . $value->title . " | " . date("M-d H:i:s", strtotime($value->datetime)) . "<br/>" . 
+    $value->text . "</div><div class='notification_button pull-right'><input type='button' notif='" . $value->id . "' class='read_notification' value='X'></div></div>";
+    return $final;
+}
+
+function delete_notification(){
+    if (isset($_POST["notif_id"])) {
+        $notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
+        if($notificationHandler->delete_notification($_POST["notif_id"], SessionKeyHandler::get_from_session("user", true)->id)){
+            $json_array["status_value"] = true;
+        }
+        else {
+            $json_array["status_value"] = false;
+        }
+    }
+    else {
+        $json_array["status_value"] = false;
+    }
+    echo json_encode($json_array);
 }

@@ -236,11 +236,27 @@ class SchoolHandler extends Handler {
             $school->max_students = $max_students;
             $school->subscription_end = $subscription_end;
             
-            if ($this->create_school($school)) {
-                return true;
-            } else {
+            if (!$this->create_school($school)) {
                 throw new Exception ("SCHOOL_CREATION_FAILED_UNKNOWN_ERROR");
             }
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+    
+    public function create_school_step_three ($array_of_rights) {
+        try {
+            if (!$this->user_exists()) {
+                throw new Exception ("USER_NOT_LOGGED_IN");
+            }
+            $this->is_null_or_empty($array_of_rights);
+            
+            if ($this->assign_school_rights_by_school_id($this->school->id, $array_of_rights)) {
+                return true;
+            }
+            
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
@@ -264,8 +280,9 @@ class SchoolHandler extends Handler {
         }
         // checks if date is in future or not
         
-        $today = getdate();
-        if ($today > $d) {
+        $ds = strtotime($subscription_end);
+        $ts = strtotime(date($format));
+        if ($ts > $ds) {
             throw new Exception ("SUBSCRIPTION_END_INVALID");
         }
     }
@@ -301,11 +318,11 @@ class SchoolHandler extends Handler {
     }
     
     private function verify_address($address) {
-        $this->is_null_or_empty($school_type_id);
+        $this->is_null_or_empty($address);
     }
     
     private function verify_phone ($phone) {
-        $this->is_null_or_empty($school_type_id);
+        $this->is_null_or_empty($phone);
     }
     
     private function verify_email ($email) {
@@ -315,7 +332,7 @@ class SchoolHandler extends Handler {
     }
     
     private function verify_name ($name) {
-        $this->is_null_or_empty($school_type_id);
+        $this->is_null_or_empty($name);
     }
     
     private function is_null_or_empty($var) {
@@ -332,8 +349,11 @@ class SchoolHandler extends Handler {
         $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_end) "
                 . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end)";
         $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_end);
+        $this->school->id = DbHandler::get_instance()->last_inserted_id();
         if ($executedQuery) {
             return true;
+        } else {
+            
         }
     }
 }

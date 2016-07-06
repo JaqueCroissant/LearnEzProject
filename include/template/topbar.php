@@ -18,7 +18,7 @@
                 echo ' id="'.$menu->pagename.'" href="#">
                         <div class="menu_header" style="display:inline-block">
                             <div class="menu_text">
-                                <img src="assets/images/'. $menu->image .'" class="menu_icon"> ';
+                                <img src="assets/images/'. $menu->icon_class .'" class="menu_icon"> ';
                                 if($menu->pagename == "notifications"){
                                     echo "<div id='notification_counter'></div>";
                                 }

@@ -119,6 +119,7 @@
             catch (PDOException $ex) 
             {
                 $this->error = ErrorHandler::return_error($ex->getMessage());
+                echo $ex->getMessage();
             }
             return false;
         }

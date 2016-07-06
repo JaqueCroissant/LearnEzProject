@@ -14,7 +14,7 @@ class Page extends ORM {
     
     public $title;
     public $pagename;
-    public $image;
+    public $icon_class;
     
     public $children = array();
 }

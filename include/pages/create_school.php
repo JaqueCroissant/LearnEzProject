@@ -6,7 +6,11 @@ $schoolHandler->get_school_types();
 ?>
 
 <div class="col-md-12">
-    <div class="widget p-t-xl">
+    <div class="widget">
+        <header class="widget-header">
+            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("SCHOOL_CREATE_NEW"); ?></h4>
+        </header>
+        <hr class="widget-separator">
         <div class="widget-body">
             <form method="post" id="create_school_step_one" action="" class="form-horizontal" url="create_school.php">
                 <div class="form-group">

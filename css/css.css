@@ -16,7 +16,7 @@ html{
 }
 
 
-.progress-bar-success {
+/*.progress-bar-success {
     display: table;
     width: 33.3%;
     line-height: 40px;
@@ -26,7 +26,7 @@ html{
     color: white;
     background-color: var(--material_design_color_primary_2);
     font-weight: bold;
-}
+}*/
 
 .progress-bar-inactive {
   float: left;
@@ -51,10 +51,6 @@ html{
     right: 60%;
 }
 
-.container {
-    
-}
-
 .material_design_input, .material_design_select {
     font-family: "Lane", sans-serif;
     width: 100%;
@@ -73,18 +69,10 @@ html{
     transition: all 0.1s ease;
 }
 
-@keyframes material_design_input_animation {
-    
-}
-
 .material_design_input:focus {
     border-bottom: 2px solid var(--material_design_color_primary_1) !important;
     padding-left: 7px;
     padding-bottom: 12px;
-}
-
-select::-ms-expand {
-    display: none;
 }
 
 .material_design_select {
@@ -100,10 +88,6 @@ select::-ms-expand {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-}
-
-.material_design_select option:hover {
-    background-color: var(--material_design_color_primary_1) !important;
 }
 
 .main_container {
@@ -152,10 +136,6 @@ select::-ms-expand {
     overflow: auto;
 }
 
-.input-container form {
-    font-size: 20px;
-}
-
 .input-container:after {
     padding-bottom: 1.5%;
     display: block;
@@ -167,11 +147,11 @@ select::-ms-expand {
     margin: 0 auto;
     text-align: center;
 }
-
+/*
 .center .form-control {
     float: none;
     width: auto;
-}
+}*/
 
 .noPadding {
     padding: 0px !important;
@@ -332,15 +312,6 @@ a .menu_header {
     -webkit-box-shadow: 0 0.5em 0.625em rgba(0, 0, 0, .35);
     padding: 0.312em !important;
     display: block;
-}
-
-.collapsed {
-    width: 3.2em !important;
-    overflow: hidden;
-}
-
-.expanded {
-    width: 14em !important;
 }
 
 .content {

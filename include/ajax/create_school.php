@@ -4,7 +4,7 @@ require_once '../../include/ajax/require.php';
 require_once '../../include/handler/schoolHandler.php';
 
 $schoolHandler = SessionKeyHandler::get_from_session("school_handler", true);
-$format = "Y-m-d H:i:s";
+
 $data_array['step'] = $_POST['step'];
 
 switch ($_POST['step']) {
@@ -19,9 +19,7 @@ switch ($_POST['step']) {
         }
         break;
     case "2":
-        // case 2 is broken - datoen kan jeg ikke få konverteret korrekt til at min metode i schoolhandler kan håndtere den. 
-        // Muligvis skal verify_subscription_end i schoolhandler refaktoreres.
-        // 
+        $format = "m-d-Y"; // Formatet skal være i det format inputtet viser. etc. 01/20/2016 vil være m-d-Y
         $d = date_parse_from_format($format, $_POST['school_subscription_end']);
         $d_string = $d['year'] . '/' . $d['month'] . '/' . $d['day'];
         if ($schoolHandler->create_school_step_two($schoolHandler->school, (int) $_POST['school_max_students'], $d_string)) {
@@ -32,9 +30,6 @@ switch ($_POST['step']) {
             $data_array['status_msg'] = $schoolHandler->error->title;
             $data_array["status_value"] = false;
         }
-//        if (isset($_POST['school_subscription_end'])) {
-//    $data_array['date'] = date_parse_from_format($format, $_POST['school_subscription_end']);
-//}
         break;
 }
 echo json_encode($data_array);

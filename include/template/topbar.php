@@ -4,7 +4,11 @@
             <span class="zmdi-chevron-left"></span>
         </span>
     </button>
-    
+    <button id="aside-toggle" class="p-r-md hamburger hidden-lg hamburger--spin js-hamburger" type="button">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
 </div>
 
 <div class="navbar-header text-white pull-left">

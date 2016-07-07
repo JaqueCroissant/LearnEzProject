@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Infinity - Bootstrap Admin Template</title>
+	<meta name="description" content="Admin, Dashboard, Bootstrap" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" sizes="196x196" href="../assets/images/logo.png">
+	
+	<link rel="stylesheet" href="../libs/bower/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../libs/bower/material-design-iconic-font/dist/css/material-design-iconic-font.css">
+	<!-- build:css ../assets/css/app.min.css -->
+	<link rel="stylesheet" href="../libs/bower/animate.css/animate.min.css">
+	<link rel="stylesheet" href="../libs/bower/fullcalendar/dist/fullcalendar.min.css">
+	<link rel="stylesheet" href="../libs/bower/perfect-scrollbar/css/perfect-scrollbar.css">
+	<link rel="stylesheet" href="../assets/css/bootstrap.css">
+	<link rel="stylesheet" href="../assets/css/app.css">
+	<!-- endbuild -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800,900,300">
+</head>
+	{{> body}}
+
+	<!-- APP CUSTOMIZER -->
+	<div id="app-customizer" class="app-customizer">
+		<a href="javascript:void(0)" 
+			class="app-customizer-toggle theme-color" 
+			data-toggle="class" 
+			data-class="open"
+			data-active="false"
+			data-target="#app-customizer">
+			<i class="fa fa-gear"></i>
+		</a>
+		<div class="customizer-tabs">
+			<!-- tabs list -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#aside-customizer" aria-controls="stream" role="tab" data-toggle="tab">Sidebar</a></li>
+				<li role="presentation"><a href="#navbar-customizer" aria-controls="photos" role="tab" data-toggle="tab">Navbar</a></li>
+			</ul><!-- .nav-tabs -->
+
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane in active fade" id="aside-customizer">
+					<div class="hide-top-bar visible-lg-block">
+						<div class="m-b-md">
+							<label for="aside-fold">Fold Sidebar</label>
+							<div class="pull-right">
+								<input id="aside-fold-switch" type="checkbox" data-switchery data-size="small" />
+							</div>
+						</div>
+						<hr>
+					</div>
+					<div class="radio radio-default m-b-md">
+						<input type="radio" id="aside-light-theme" name="aside-theme" data-theme="light">
+						<label for="aside-light-theme">Light</label>
+					</div>
+					<div class="radio radio-inverse">
+						<input type="radio" id="aside-dark-theme" name="aside-theme" data-theme="dark">
+						<label for="aside-dark-theme">Dark</label>
+					</div>
+					<hr>
+					<div>
+						<button id="aside-reset-btn" class="btn btn-block btn-outline btn-primary">Reset</button>
+					</div>
+				</div><!-- .tab-pane -->
+				<div role="tabpanel" class="tab-pane fade" id="navbar-customizer">
+					<div class="radio radio-primary m-b-md">
+						<input type="radio" id="navbar-primary-theme" name="navbar-theme" data-theme="primary">
+						<label for="navbar-primary-theme" class="text-primary">Primary</label>
+					</div>
+					<div class="radio radio-success m-b-md">
+						<input type="radio" id="navbar-success-theme" name="navbar-theme" data-theme="success">
+						<label for="navbar-success-theme" class="text-success">Success</label>
+					</div>
+					<div class="radio radio-danger m-b-md">
+						<input type="radio" id="navbar-danger-theme" name="navbar-theme" data-theme="danger">
+						<label for="navbar-danger-theme" class="text-danger">Danger</label>
+					</div>
+					<div class="radio radio-warning m-b-md">
+						<input type="radio" id="navbar-warning-theme" name="navbar-theme" data-theme="warning">
+						<label for="navbar-warning-theme" class="text-warning">Orange</label>
+					</div>
+					<div class="radio radio-pink m-b-md">
+						<input type="radio" id="navbar-pink-theme" name="navbar-theme" data-theme="pink">
+						<label for="navbar-pink-theme" class="text-pink">Pink</label>
+					</div>
+					<div class="radio radio-purple m-b-md">
+						<input type="radio" id="navbar-purple-theme" name="navbar-theme" data-theme="purple">
+						<label for="navbar-purple-theme" class="text-purple">Purple</label>
+					</div>
+					<div class="radio radio-inverse m-b-md">
+						<input type="radio" id="navbar-inverse-theme" name="navbar-theme" data-theme="inverse">
+						<label for="navbar-inverse-theme" class="text-inverse">Inverse</label>
+					</div>
+					<div class="radio radio-dark">
+						<input type="radio" id="navbar-dark-theme" name="navbar-theme" data-theme="dark">
+						<label for="navbar-dark-theme" class="text-dark">Dark</label>
+					</div>
+					<hr>
+					<div>
+						<button id="navbar-reset-btn" class="btn btn-block btn-outline btn-primary">Reset</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /#app-customizer -->
+	
+	<!-- build:js ../assets/js/core.min.js -->
+	<script src="../libs/bower/jquery/dist/jquery.js"></script>
+	<script src="../libs/bower/jquery-ui/jquery-ui.min.js"></script>
+	<script src="../libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
+	<script src="../libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
+	<script src="../libs/bower/superfish/dist/js/hoverIntent.js"></script>
+	<script src="../libs/bower/superfish/dist/js/superfish.js"></script>
+	<script src="../libs/bower/jquery-slimscroll/jquery.slimscroll.js"></script>
+	<script src="../libs/bower/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
+	<script src="../libs/bower/PACE/pace.min.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js ../assets/js/app.min.js -->
+	<script src="../assets/js/library.js"></script>
+	<script src="../assets/js/plugins.js"></script>
+	<script src="../assets/js/app.js"></script>
+	<!-- endbuild -->
+	<script src="../libs/bower/moment/moment.js"></script>
+	<script src="../libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
+	<script src="../assets/js/fullcalendar.js"></script>
+</body>
+</html>

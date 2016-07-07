@@ -83,9 +83,9 @@ $translationHandler = SessionKeyHandler::get_from_session("translation_handler",
             <div class="col-xs-12"><?php echo $translationHandler->get_static_text("RESET_PASS_ENTER_MAIL"); ?></div>
                 <div class="col-xs-12">
                     <form method="POST" action="" id="settings_pass" url="settings.php?step=2" name="settings_pass">
-                        <input type="text" id="old_password" name="old_password" placeholder="<?php echo $translationHandler->get_static_text("OLD_PASSWORD"); ?>"><br/>
-                        <input type="text" id="password" name="password" placeholder="<?php echo $translationHandler->get_static_text("PASSWORD"); ?>"><br/>
-                        <input type="text" id="confirm_password" name="confirm_password" placeholder="<?php echo $translationHandler->get_static_text("CONFIRM_PASSWORD"); ?>"><br/>
+                        <input type="password" id="old_password" name="old_password" placeholder="<?php echo $translationHandler->get_static_text("OLD_PASSWORD"); ?>"><br/>
+                        <input type="password" id="password" name="password" placeholder="<?php echo $translationHandler->get_static_text("PASSWORD"); ?>"><br/>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="<?php echo $translationHandler->get_static_text("CONFIRM_PASSWORD"); ?>"><br/>
                         <input type="button" id="submit" name="submit" value="<?php echo $translationHandler->get_static_text("SET_PASS_SUBMIT"); ?>" class="settings_submit_password">
                     </form>
                     </br>

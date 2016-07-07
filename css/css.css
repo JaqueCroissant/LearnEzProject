@@ -5,6 +5,9 @@
     // 0080c0
 }
 
+html{
+    overflow-y: scroll;
+}
 
 @font-face {
     font-family: Lane;

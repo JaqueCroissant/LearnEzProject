@@ -1,6 +1,3 @@
-<!--<link href="css/bootstrap.css" rel="stylesheet" type="text/css"/>-->
-<!--<link href="css/css.css" rel="stylesheet" type="text/css"/>-->
-
 <script src="libs/bower/jquery/dist/jquery.js"></script>
 <script src="libs/bower/jquery-ui/jquery-ui.min.js"></script>
 <script src="js/cookie.js" type="text/javascript"></script>

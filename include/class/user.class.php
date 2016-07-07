@@ -16,6 +16,7 @@
         public $surname;
         public $email;
         public $description;
+        public $user_type;
 
         public $validation_code;
         public $last_password_request;

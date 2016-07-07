@@ -11,7 +11,7 @@ require_once 'include/extra/require.php';
         require_once 'include/template/head_include.php';
         ?>
     </head>
-    <body class="sb-left theme-primary pace-done">
+    <body class="sb-left theme-primary pace-done" style="overflow-y: scroll !important">
         <div class="pace pace-inactive">
             <div class="pace-progress" style="transform: translate3d(100%, 0px, 0px);" data-progress-text="100%" data-progress="99">
                 <div class="pace-progress-inner"></div>
@@ -42,19 +42,6 @@ require_once 'include/extra/require.php';
             </div>
         </main>
 
-        <!--        <div class='col-md-12 content'>
-                    
-                    <div id="loading_page" class="hidden">
-                        <img src="assets/images/loading_page.GIF" />
-                    </div>
-                    
-                    <div id="content_breadcrumbs">
-                    </div>
-                    
-                    <div id="content_container">
-                    </div>
-                    
-                </div>-->
         <div id="notification_window">
             <div id="notification_data"></div>
             <div id="notification_loading" class="centered">

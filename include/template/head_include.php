@@ -1,5 +1,4 @@
-<!--<link href="css/bootstrap.css" rel="stylesheet" type="text/css"/>-->
-<!--<link href="css/css.css" rel="stylesheet" type="text/css"/>-->
+
 
 <script src="libs/bower/jquery/dist/jquery.js"></script>
 <script src="libs/bower/jquery-ui/jquery-ui.min.js"></script>
@@ -18,6 +17,7 @@
 <link href="libs/bower/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet">
 <link href="assets/css/bootstrap.css" rel="stylesheet">
 <link href="assets/css/app.css" rel="stylesheet">
+<link href="css/css.css" rel="stylesheet" type="text/css"/>
 <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800,900,300" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="libs/misc/jvectormap/jquery-jvectormap.css">
 <link rel="stylesheet" type="text/css" href="libs/bower/switchery/dist/switchery.min.css">

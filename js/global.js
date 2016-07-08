@@ -35,6 +35,7 @@ $(document).ready(function () {
        initiate_submit_get($(this), "login.php?logout=true", function() {
             alert(ajax_data.error);
         }, function() {
+            $.removeCookie("current_page");
             reload_page();
         });
    });
@@ -119,11 +120,10 @@ $(document).ready(function () {
         $.removeCookie("current_page");
         location.reload();
     }
-
+    
     $(function() {
         preload([
             'assets/images/loading_page.GIF'
         ]);
     });
-    
 });

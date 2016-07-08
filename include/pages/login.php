@@ -1,7 +1,7 @@
 <?php
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/loginHandler.php';
-$loginHandler = SessionKeyHandler::get_from_session("login_handler", true);
+$loginHandler = new LoginHandler();
 ?>
 
 <div class="col-md-12">

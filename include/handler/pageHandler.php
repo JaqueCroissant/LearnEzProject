@@ -1,10 +1,8 @@
 <?php
-
 class pageHandler extends Handler {
     
     public $current_page;
     public $current_page_hierarchy;
-    
     
     private $_pages_raw = array();
     private $_pages = array();
@@ -23,10 +21,10 @@ class pageHandler extends Handler {
             return;
         }
         
-        if(SessionKeyHandler::session_exists("pages_raw")) {
-            $this->_pages_raw = SessionKeyHandler::get_from_session("pages_raw", true);
-            return;
-        }
+//        if(SessionKeyHandler::session_exists("pages_raw")) {
+//            $this->_pages_raw = SessionKeyHandler::get_from_session("pages_raw", true);
+//            return;
+//        }
         $this->generate_pages();
     }
     
@@ -35,10 +33,10 @@ class pageHandler extends Handler {
             return;
         }
         
-        if(SessionKeyHandler::session_exists("pages")) {
-            $this->_pages = SessionKeyHandler::get_from_session("pages", true);
-            return;
-        }
+//        if(SessionKeyHandler::session_exists("pages")) {
+//            $this->_pages = SessionKeyHandler::get_from_session("pages", true);
+//            return;
+//        }
         $this->assign_pages();
     }
     
@@ -47,10 +45,10 @@ class pageHandler extends Handler {
             return;
         }
         
-        if(SessionKeyHandler::session_exists("menu")) {
-            $this->_menu = SessionKeyHandler::get_from_session("menu", true);
-            return;
-        }
+//        if(SessionKeyHandler::session_exists("menu")) {
+//            $this->_menu = SessionKeyHandler::get_from_session("menu", true);
+//            return;
+//        }
         $this->generate_menu();
     }
     
@@ -79,7 +77,7 @@ class pageHandler extends Handler {
                 $this->_pages_raw[$page["pagename"]] = new Page($page);
             }
            
-            SessionKeyHandler::add_to_session("pages_raw", $this->_pages_raw, true);
+//            SessionKeyHandler::add_to_session("pages_raw", $this->_pages_raw, true);
         }
     }
     
@@ -97,7 +95,7 @@ class pageHandler extends Handler {
             $this->_pages = $pageArray;
             
             $this->assign_page_children();
-            SessionKeyHandler::add_to_session("pages", $this->_pages, true);
+//            SessionKeyHandler::add_to_session("pages", $this->_pages, true);
         }
     }
     
@@ -164,7 +162,7 @@ class pageHandler extends Handler {
                 $new_menu[$i] = $menu;
             }
             $this->_menu = $new_menu;
-            SessionKeyHandler::add_to_session("menu", $this->_menu, true);
+//            SessionKeyHandler::add_to_session("menu", $this->_menu, true);
         }
     }
 
@@ -239,13 +237,15 @@ class pageHandler extends Handler {
     }
     
     public function get_menu($position = 1) {
-        if(!$this->menus_exists()) {
-            return;
-        }
+//        if(!$this->menus_exists()) {
+//            return;
+//        }
         
-        if(SessionKeyHandler::session_exists("menu")) {
-            $this->_menu = SessionKeyHandler::get_from_session("menu", true);
-        }
+        $this->get_menus();
+        
+//        if(SessionKeyHandler::session_exists("menu")) {
+//            $this->_menu = SessionKeyHandler::get_from_session("menu", true);
+//        }
         
         if(!array_key_exists($position, $this->_menu)) {
             return;
@@ -287,6 +287,7 @@ class pageHandler extends Handler {
             setcookie("current_page", $this->current_page->pagename, time() + (86400 * 30), "/");
             $clone_array = array();
             $this->clone_pages($clone_array, $this->_pages);
+            
             $this->current_page_hierarchy = $this->get_page_hierarchy($clone_array, $pagename);
             return true;
         }
@@ -315,6 +316,18 @@ class pageHandler extends Handler {
         $this->generate_pages();
         $this->assign_pages();
         $this->generate_menu();
+    }
+    
+    public static function page_exists($page = null) {
+        if(empty($page) || !preg_match('/^[a-zA-Z_]+$/', $page)) {
+            return false;
+        }
+
+        if(!file_exists('../../include/pages/' . $page . '.php')) {
+            return false;
+        }
+        
+        return DbHandler::get_instance()->count_query("SELECT id FROM page WHERE pagename = :pagename", $page) > 0;
     }
 }
 

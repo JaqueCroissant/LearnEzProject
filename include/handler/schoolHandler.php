@@ -19,7 +19,7 @@ class SchoolHandler extends Handler {
             
             $query = "Select * from school INNER JOIN school_type ON school.school_type_id = school_type.id;";
             
-            $schools = reset(DbHandler::get_instance()->return_query($query));
+            $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {
                 $this->all_schools[] = new School($value);
             }

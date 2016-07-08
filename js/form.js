@@ -1,5 +1,6 @@
 function submit_form(form_id, url, element) {
-    $("#" + form_id).submit();
+    var hey = $("#" + form_id).submit();
+    alert($("#" + form_id).serialize());
     $.ajax({
         type: "POST",
         url: "include/ajax/" + url,

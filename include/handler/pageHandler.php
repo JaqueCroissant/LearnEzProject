@@ -74,7 +74,8 @@ class pageHandler extends Handler {
             }
             
             foreach($pageData as $page) {
-                $this->_pages_raw[$page["pagename"]] = new Page($page);
+                $key = $page["pagename"] . "" . $page["page_arguments"];
+                $this->_pages_raw[$key] = new Page($page);
             }
            
 //            SessionKeyHandler::add_to_session("pages_raw", $this->_pages_raw, true);
@@ -90,7 +91,8 @@ class pageHandler extends Handler {
             
             $pageArray = array();
             foreach($this->_pages_raw as $value) {
-                $pageArray[$value->pagename] = $value;
+                $key = $value->pagename . "" . $value->page_arguments;
+                $pageArray[$key] = $value;
             }
             $this->_pages = $pageArray;
             
@@ -127,7 +129,8 @@ class pageHandler extends Handler {
             }
             
             if($value->master_page_id == $id) {
-                $children[$value->pagename] = $value;
+                $combined_key = $value->pagename . "" . $value->page_arguments;
+                $children[$combined_key] = $value;
                 $keys[] = $key;
             }
         }

@@ -27,7 +27,7 @@ function change_page(pagename, args, element) {
     $("#content_breadcrumbs").html("");
     var startTime = new Date().getTime();
     loading_page(true);
-    var argument = args === undefined ? pagename : pagename + args;
+    var argument = args === undefined ? pagename : pagename + "&" + args;
     if (pagename != null) {
         var url = "include/ajax/change_page.php?page=" + argument;
         $.ajax({

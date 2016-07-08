@@ -21,10 +21,6 @@ class pageHandler extends Handler {
             return;
         }
         
-//        if(SessionKeyHandler::session_exists("pages_raw")) {
-//            $this->_pages_raw = SessionKeyHandler::get_from_session("pages_raw", true);
-//            return;
-//        }
         $this->generate_pages();
     }
     
@@ -33,10 +29,6 @@ class pageHandler extends Handler {
             return;
         }
         
-//        if(SessionKeyHandler::session_exists("pages")) {
-//            $this->_pages = SessionKeyHandler::get_from_session("pages", true);
-//            return;
-//        }
         $this->assign_pages();
     }
     
@@ -45,10 +37,6 @@ class pageHandler extends Handler {
             return;
         }
         
-//        if(SessionKeyHandler::session_exists("menu")) {
-//            $this->_menu = SessionKeyHandler::get_from_session("menu", true);
-//            return;
-//        }
         $this->generate_menu();
     }
     
@@ -290,6 +278,7 @@ class pageHandler extends Handler {
             
             $this->current_page = $this->_pages_raw[$page_index];
             setcookie("current_page", $this->current_page->pagename, time() + (86400 * 30), "/");
+            setcookie("current_page_arguments", $args, time() + (86400 * 30), "/");
             $clone_array = array();
             $this->clone_pages($clone_array, $this->_pages);
             
@@ -313,6 +302,24 @@ class pageHandler extends Handler {
         return $this->page_hierarchy_array;
     }
     
+    public function generate_breadcrumbs($array = array()) {
+        $breadcrumbs = "";
+        for($i = 0; $i < count($array); $i++) {
+            if($array[$i]->is_dropdown || $i+1 >= count($array)) {
+                $breadcrumbs .= '<span class="">' . $array[$i]->title . '</span>';    
+            } else {
+                $breadcrumbs .= '<a class="change_page text-white fw-600" ';
+                $breadcrumbs .= ' page="'. $array[$i]->pagename .'" args="'. $array[$i]->page_arguments . '"';
+                $breadcrumbs .= ' id="'.$array[$i]->pagename.'" href="#">'. $array[$i]->title .' </a>'; 
+            }
+            if ($i < count($array)-1) {
+                $breadcrumbs .= '<span class="material_font">
+                    <span class="zmdi-chevron-right p-v-xs"></span>
+                </span>';
+            } 
+        }
+        return $breadcrumbs;
+    }
     
     public function reset() {
         $this->_pages = array();
@@ -321,6 +328,15 @@ class pageHandler extends Handler {
         $this->generate_pages();
         $this->assign_pages();
         $this->generate_menu();
+    }
+    
+    public function generate_page($pagename = null, $page_arguments = null) {
+        $this->get_pages_raw();
+        
+        if(array_key_exists($pagename ."". $page_arguments, $this->_pages_raw)) {
+            return array($this->_pages_raw[$pagename ."" . $page_arguments]);
+        }
+        return array($this->_pages_raw["error"]);
     }
     
     public static function page_exists($page = null) {
@@ -334,5 +350,6 @@ class pageHandler extends Handler {
         
         return DbHandler::get_instance()->count_query("SELECT id FROM page WHERE pagename = :pagename", $page) > 0;
     }
+    
 }
 

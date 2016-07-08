@@ -69,16 +69,19 @@ $(document).ready(function () {
         event.preventDefault();
         switch ($(this).attr("step")) {
             case "1": 
-                $("#create_school_step").val($(this).attr("step"));
+                $("#create_school_step_1").attr("value", $(this).attr("step"));
+                alert($("#create_school_step_1").attr("value"));
+                alert($("#create_school").serialize());
                 initiate_submit_form($(this), function() {
                     alert(ajax_data.error); // fail function
                 }, function() {
                     // start step 2 - success
+                    
                     $("#step_one").addClass("hidden");
                     $("#step_two").removeClass("hidden");
                     $("#step_one_progress").addClass("progress-bar-success");
                     $("#step_two_progress").switchClass("progress-bar-inactive", "progress-bar");
-                    $( "#school_subscription_end" ).datepicker();
+                    $("#school_subscription_end").datepicker();
                 });
                 break;
             case "2":
@@ -94,9 +97,6 @@ $(document).ready(function () {
                 });
                 break;
         }
-        
-        
-        
     });
     
     function preload(arrayOfImages) {

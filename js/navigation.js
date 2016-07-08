@@ -8,10 +8,6 @@ function loading_page(is_loading) {
     }
 }
 
-function load_breadcrumbs(breadcrumbs) {
-    $("#content_breadcrumbs").html(breadcrumbs);
-}
-
 function set_clickable(element) {
     if(element !== undefined) {
        element.removeAttr("clickable"); 
@@ -21,10 +17,13 @@ function set_clickable(element) {
 function change_page(pagename, args, element) {
     cursor_wait();
     currently_changing_page = true;
-    $("#content_container").html("");
-    $("#content_breadcrumbs").html("");
+    
+    $("#content_container").add($("#content_breadcrumbs")).fadeOut(300).fadeOut(300, function() {
+        content_hidden = true;
+    });
+   
     var startTime = new Date().getTime();
-    loading_page(true);
+    
     pagename = pagename === undefined ? "front" : pagename;
     args = args === undefined ? "" : args;
     var url = "include/ajax/change_page.php?page=" + pagename + "&step=" + args;
@@ -35,25 +34,39 @@ function change_page(pagename, args, element) {
         async: true,
         success: function (data) {
             var page = "include/pages/" + data.pagename + ".php?step=" + args;
-            $("#content_container").load(page, {'url': false}, function() {
+            $.get(page, {'url': false}, function (e) {
                 var elapsedTime = (new Date().getTime()) - startTime;
                 if(elapsedTime < 700) {
                     setTimeout(function() { 
-                        loading_page(false);
-                        load_breadcrumbs(data.breadcrumbs);
                         set_clickable(element); 
                     }, (700-elapsedTime));
                 } else {
-                    loading_page(false);
-                    load_breadcrumbs(data.breadcrumbs);
                     set_clickable(element);
                 }
-                remove_cursor_wait();
+                append_content(e, data.breadcrumbs);
             });
+            
         },
         complete: function() {
             currently_changing_page = false;
             set_clickable(element);
         }
     });
+}
+
+var currentIteration = 0, totalIterations = 10;
+function append_content(content, breadcrumbs) {
+    if(content_hidden === true) {
+        currentIteration = 0;
+        content_hidden = false;
+        remove_cursor_wait();
+        $("#content_container").html(content);
+        $("#content_breadcrumbs").html(breadcrumbs);
+        $("#content_container").add($("#content_breadcrumbs")).fadeIn(300);
+        return;
+    }
+    currentIteration++;
+    if(currentIteration < totalIterations){
+        setTimeout(function() { append_content(content, breadcrumbs); }, 300 );
+    }
 }

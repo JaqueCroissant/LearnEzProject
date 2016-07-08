@@ -1,6 +1,7 @@
 var currently_changing_page = false;
 var currently_submitting_form = false;
 var currently_submitting_get = false;
+var content_hidden = false;
 
 var ajax_data;
 

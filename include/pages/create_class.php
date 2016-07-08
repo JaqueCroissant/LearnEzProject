@@ -68,7 +68,7 @@ $classHandler->get_year_and_year_prefix();
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label" for="class_end"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></label>
                         <div class="col-md-5">
-                            <input class="form-control input-sm" type="text" id="class_end" name="class_begin" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>">
+                            <input class="form-control input-sm" type="text" id="class_end" name="class_end" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>">
                         </div>
                     </div>
                     <div class="form-group">
@@ -104,4 +104,9 @@ $classHandler->get_year_and_year_prefix();
     </div>
 </div>
 
-<script>
+<script type="text/javascript">
+    $(document).ready( function () {
+        $("#class_begin").datepicker();
+        $("#class_end").datepicker();
+    });
+</script>

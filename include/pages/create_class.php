@@ -74,8 +74,8 @@ $classHandler->get_year_and_year_prefix();
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label"></label>
                         <div class="col-md-5">
-                            <input type="hidden" name="step" id="create_school_step">
-                            <input type="button" name="submit" id="create_school_step_one_button" step="1" 
+                            <input type="hidden" name="step" id="create_class_step">
+                            <input type="button" name="submit" id="create_class_step_one_button" step="1" 
                                    value="<?php echo TranslationHandler::get_static_text("CREATE_CLASS"); ?>" class="pull-right btn btn-default btn-sm create_school">   
                         </div>
                     </div>
@@ -94,8 +94,8 @@ $classHandler->get_year_and_year_prefix();
                 <div class="form-group">
                     <label class="col-sm-2 col-sm-offset-2 control-label"></label>
                     <div class="col-md-5">
-                        <input type="hidden" name="step" id="create_school_step">
-                        <input type="button" name="submit" id="create_school_step_one_button" step="1" 
+                        <input type="hidden" name="step" id="create_class_step_2">
+                        <input type="button" name="submit" id="create_class_step_two_button" step="2" 
                                value="<?php echo TranslationHandler::get_static_text("CREATE_CLASS"); ?>" class="pull-right btn btn-default btn-sm create_school">   
                     </div>
                 </div>

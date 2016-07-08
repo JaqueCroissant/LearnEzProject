@@ -63,7 +63,7 @@ Look at these words. Are they small words? And he referred to my words - if they
     <div class="col-md-3">
         <div class="widget">
             <header class="widget-header">
-                <h4 class="widget-title">Welcome to the front page motherfucker - this is a full width widget</h4>
+                <h4 class="widget-title">Welcome to the front page motherfucker</h4>
             </header>
             <hr class="widget-separator">
             <div class="widget-body">
@@ -76,7 +76,7 @@ Look at these words. Are they small words? And he referred to my words - if they
     <div class="col-md-9">
         <div class="widget">
             <header class="widget-header">
-                <h4 class="widget-title">Welcome to the front page motherfucker - this is a full width widget</h4>
+                <h4 class="widget-title">Welcome to the front page motherfucker</h4>
             </header>
             <hr class="widget-separator">
             <div class="widget-body">

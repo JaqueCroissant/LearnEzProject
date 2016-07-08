@@ -76,7 +76,9 @@ $(document).ready(function () {
                     // start step 2 - success
                     $("#step_one").addClass("hidden");
                     $("#step_two").removeClass("hidden");
-                    $( "#datepicker" ).datepicker();
+                    $("#step_one_progress").addClass("progress-bar-success");
+                    $("#step_two_progress").switchClass("progress-bar-inactive", "progress-bar");
+                    $( "#school_subscription_end" ).datepicker();
                 });
                 break;
             case "2":
@@ -87,6 +89,8 @@ $(document).ready(function () {
                     // start step 3 - success
                     $("#step_two").addClass("hidden");
                     $("#step_three").removeClass("hidden");
+                    $("#step_two_progress").addClass("progress-bar-success");
+                    $("#step_three_progress").switchClass("progress-bar-inactive", "progress-bar");
                 });
                 break;
         }

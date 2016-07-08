@@ -8,9 +8,10 @@ function loading_page(is_loading) {
     }
 }
 
-function load_breadcrumbs(display) {
+function load_breadcrumbs(display, pagename) {
     if(display === true) {
-        $("#content_breadcrumbs").load('include/template/breadcrumbs.php', {'url': false}, function() {} );
+        pagename = pagename === undefined ? "front" : pagename;
+        $("#content_breadcrumbs").load('include/template/breadcrumbs.php', {'url': false, 'pagename': pagename}, function() {} );
     }
 }
 
@@ -30,7 +31,7 @@ function change_page(pagename, args, element) {
     if (pagename != null) {
         var url = "include/ajax/change_page.php?page=" + argument;
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: url,
             dataType: 'json',
             async: false,
@@ -42,12 +43,12 @@ function change_page(pagename, args, element) {
                         if(elapsedTime < 700) {
                             setTimeout(function() { 
                                 loading_page(false); 
-                                load_breadcrumbs(true);
+                                load_breadcrumbs(true, data.pagename);
                                 set_clickable(element); 
                             }, (700-elapsedTime));
                         } else {
                             loading_page(false);
-                            load_breadcrumbs(true);
+                            load_breadcrumbs(true, data.pagename);
                             set_clickable(element);
                         }
                     });

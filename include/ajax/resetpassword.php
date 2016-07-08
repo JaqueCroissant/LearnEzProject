@@ -3,7 +3,7 @@
     require_once '../../include/handler/loginHandler.php';
     require_once '../../include/handler/userHandler.php';
 
-    $loginHandler = SessionKeyHandler::get_from_session("login_handler", true);
+    $loginHandler = new LoginHandler();
     $userHandler = SessionKeyHandler::get_from_session("user_handler", true);
 
     switch($_GET['step'])

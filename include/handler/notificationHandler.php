@@ -114,19 +114,9 @@
         
         public function load_notifications($userId, $offset, $limit = 5){
             try {
-                $this->check_bool($offset);
-                if (!$this->_load_notifications && !$offset) {
-                    return false;
-                }
-                $this->_load_notifications = false;
+                $this->check_numeric($offset);
                 $this->check_numeric($userId);
                 $this->check_numeric($limit);
-                
-                $offset_count = 0;
-                
-                if ($offset) {
-                    $offset_count = count($this->_notifications);
-                }
                 
                 $dbData = DbHandler::get_instance()->return_query("SELECT translation_notifications.title AS title, "
                         . "translation_notifications.text AS text, "
@@ -148,7 +138,7 @@
                         . "WHERE user_notifications.user_id = :userId "
                         . "ORDER BY user_notifications.datetime DESC "
                         . "LIMIT :limit OFFSET :offset"
-                        , TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $userId, $limit, $offset_count);
+                        , TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $userId, $limit, (int)$offset);
                 if (count($dbData) == 0) {
                     $this->_notifications = array();
                     return true;
@@ -342,7 +332,7 @@
             if (!isset($value)) {
                 throw new Exception("OBJECT_DOESNT_EXIST");
             }
-            if (empty($value)) {
+            if (empty($value) && $value != 0) {
                 throw new Exception("OBJECT_IS_EMPTY");
             }
         }

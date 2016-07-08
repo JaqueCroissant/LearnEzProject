@@ -34,7 +34,6 @@ require_once 'include/extra/require.php';
                 <img src="assets/images/loading_page.GIF" />
             </div>-->
             
-            
             <div class="wrap">
                 <section id="content_container" class="app-content">
                     

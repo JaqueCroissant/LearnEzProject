@@ -3,7 +3,6 @@
     {
         public function __construct() {
             parent::__construct();
-            $this->get_from_database();
         }
         
         private function get_from_database()

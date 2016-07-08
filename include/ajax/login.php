@@ -4,17 +4,13 @@ require_once '../../include/handler/loginHandler.php';
 require_once '../../include/handler/pageHandler.php';
 require_once '../../include/handler/rightsHandler.php';
 
-
-$loginHandler = SessionKeyHandler::get_from_session("login_handler", true);
-$pageHandler = SessionKeyHandler::get_from_session("page_handler", true);
-$rightsHandler = SessionKeyHandler::get_from_session("rights_handler", true);
+$loginHandler = new LoginHandler();
+$rightsHandler = new RightsHandler();
 
 if(isset($_GET['logout'])) {
     if($loginHandler->check_login()) {
         $loginHandler->log_out();
         $rightsHandler->reset_rights();
-        $pageHandler->reset();
-        SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
         $jsonArray['status_value'] = true;
     } else {
         $jsonArray['status_value'] = false;
@@ -26,8 +22,6 @@ if(isset($_GET['logout'])) {
 if(isset($_POST)) {
     if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
         TranslationHandler::reset();
-        $pageHandler->reset();
-        SessionKeyHandler::add_to_session("page_handler", $pageHandler, true);
         $jsonArray['status_value'] = true;
     } else {
         $jsonArray['status_value'] = false;

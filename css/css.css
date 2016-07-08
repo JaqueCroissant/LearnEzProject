@@ -5,10 +5,6 @@
     // 0080c0
 }
 
-html {
-    background-color: white;
-    color: white;
-}
 
 @font-face {
     font-family: Lane;
@@ -16,15 +12,6 @@ html {
     /*src: local(mixrfont), url('../font.ttf') ;*/
 }
 
-.progress span {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.progress {
-    display: block;
-    height: 40px;
-}
 
 .progress-bar-success {
     display: table;
@@ -37,6 +24,19 @@ html {
     background-color: var(--material_design_color_primary_2);
     font-weight: bold;
 }
+
+.progress-bar-inactive {
+  float: left;
+  width: 0%;
+  height: 100%;
+  font-size: 12px;
+  line-height: 20px;
+  color: #6a6c6f;
+  text-align: center;
+  background-color: transparent;
+  -webkit-transition: width 0.6s ease;
+  -o-transition: width 0.6s ease;
+  transition: width 0.6s ease; }
 
 .left-col {
     width: 40%;

@@ -12,38 +12,39 @@ if (isset($_POST["action"])) {
 }
 
 function get_new_notifications(){
-    $notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
+    $notificationHandler = new NotificationHandler();
     if (SessionKeyHandler::session_exists("user") && $notificationHandler->update_unseen_notification_count(SessionKeyHandler::get_from_session("user", true)->id)) {
-        SessionKeyHandler::add_to_session("notification_handler", $notificationHandler, true);
         $jsonArray['count'] = $notificationHandler->get_unseen_notifications_count();
         echo json_encode($jsonArray);
     }
 }
 
 function get_notifications(){
-    $notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
-    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, false, 5)) {
-        SessionKeyHandler::add_to_session("notification_handler", $notificationHandler, true);
+    $notificationHandler = new NotificationHandler();
+    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, 0, 5)) {
     }
     $data = $notificationHandler->get_notifications();
     $json_array['notifications'] = "Notifikationer<input type='button' value='X' id='notification_read_all'>";     
     if (count($data) == 0) {
        $json_array['notifications'] .= "<i>Ingen notifikationer</i><br/><br/>";
-       $json_array["status_value"] = false;
+       $json_array["status_value"] = true;
     }
     else {
         foreach ($data as $value) {
             $json_array['notifications'] .= notification_setup($value);
         }
-        $json_array["status_value"] = true;
+        $json_array["status_value"] = false;
+        if(count($data) < 5) {
+            $json_array['notifications'] .= "Ikke flere notifikationer";
+            $json_array["status_value"] = true;
+        }
     }
     echo json_encode($json_array);
 }
 
 function get_more_notifications(){
-    $notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
-    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, true, 5)) {
-        SessionKeyHandler::add_to_session("notification_handler", $notificationHandler, true);
+    $notificationHandler = new NotificationHandler();
+    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, isset($_POST['offset']) ? $_POST['offset'] : 0, 5)) {
         $json_array["notifications"] = "";
         foreach ($notificationHandler->get_notifications() as $not) {
             $json_array["notifications"] .= notification_setup($not);
@@ -68,7 +69,7 @@ function notification_setup($value){
 
 function delete_notification(){
     if (isset($_POST["notif_id"])) {
-        $notificationHandler = SessionKeyHandler::get_from_session("notification_handler", true);
+        $notificationHandler = new NotificationHandler();
         if($notificationHandler->delete_notification($_POST["notif_id"], SessionKeyHandler::get_from_session("user", true)->id)){
             $json_array["status_value"] = true;
         }

@@ -80,24 +80,17 @@ class TranslationHandler {
     }
     
     private static function set_static_texts() {
-        if(SessionKeyHandler::session_exists("static_text")) {
-            self::$_static_texts = SessionKeyHandler::get_from_session("static_text");
-            return;
-        }
-        
         $data = DbHandler::get_instance()->return_query("SELECT static_text.prefix, translation_static_text.text FROM translation_static_text INNER JOIN static_text ON static_text.id = translation_static_text.static_text_id WHERE language_id = :language_id", self::get_current_language());
-        
         $array = array();
         foreach ($data as $value) {
             $array[$value["prefix"]] = $value["text"];
         }
         
-        SessionKeyHandler::add_to_session("static_text", $array);
         self::$_static_texts = $array;
     }
     
     public static function get_static_text($key = null) {
-        if(empty(self::$_static_texts) || !is_array(self::$_static_texts) || count(self::$_static_texts)){
+        if(empty(self::$_static_texts) || !is_array(self::$_static_texts) || count(self::$_static_texts) < 1){
             self::set_static_texts();
         }
         
@@ -105,6 +98,14 @@ class TranslationHandler {
             return self::$_static_texts[$key];
         }
         return $key;
+    }
+    
+    public static function get_static_texts() {
+        if(empty(self::$_static_texts) || !is_array(self::$_static_texts) || count(self::$_static_texts)){
+            self::set_static_texts();
+        }
+        
+        return self::$_static_texts;
     }
     
     public static function get_current_language(){
@@ -137,7 +138,6 @@ class TranslationHandler {
     }
     
     public static function reset() {
-        SessionKeyHandler::remove_from_session("static_text");
         SessionKeyHandler::remove_from_session("current_language");
         SessionKeyHandler::remove_from_session("default_language");
         self::$_current_language_id = null;

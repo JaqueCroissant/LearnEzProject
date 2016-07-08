@@ -14,8 +14,8 @@ jQuery(function ($) {
                    dataType: "json",
                    data: {action: 'get_notifications'},
                    success: function (result) {
-                        if (result.status_value === false) {
-                            no_more_notifications = false;
+                        if (result.status_value === true) {
+                            no_more_notifications = true;
                         }
                         $('#notification_data').html(result.notifications);
                         currently_recieving_notifications = false;
@@ -54,7 +54,7 @@ jQuery(function ($) {
             }
         });
         
-        $('#notification_window').scroll(function() {
+        $('#notification_window').on("scroll", (function() {
             var notif = $("#notification_window");
             if (!no_more_notifications && !currently_recieving_notifications && (notif.scrollTop() + notif.innerHeight() >= notif[0].scrollHeight - 1)) {
                 currently_recieving_notifications = true;
@@ -63,7 +63,7 @@ jQuery(function ($) {
                    type: "POST",
                    url: "include/ajax/notifications.php",
                    dataType: "json",
-                   data: {action: 'get_more_notifications'},
+                   data: {action: 'get_more_notifications', offset: $('.notification').length},
                    success: function (result) {
                         if (result.status_value === true) {
                             no_more_notifications = true;
@@ -79,6 +79,6 @@ jQuery(function ($) {
                    }
                 });
             }
-        });
+        }));
     });
 });

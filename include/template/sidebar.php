@@ -70,7 +70,13 @@
                             } else {
                                 echo 'change_page';
                             }
-                            echo '" href="javascript:void(0)">';
+                            echo '" ';
+                            if(!$menu->is_dropdown) {
+                                echo '
+                                    page="'. $menu->pagename .'" args="'. $menu->page_arguments . '"
+                                    id="'.$menu->pagename.'"';
+                            }
+                            echo ' href="javascript:void(0)">';
                             echo '  <span class="menu-icon">
                                         <i class="zmdi '. $menu->icon_class .' zmdi-hc-lg"></i>
                                     </span>

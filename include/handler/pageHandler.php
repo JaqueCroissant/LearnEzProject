@@ -273,25 +273,27 @@ class pageHandler extends Handler {
         return true;
     }
     
-    public function get_page_from_name($pagename = null) {
+    public function get_page_from_name($pagename = null, $args = null) {
         try {
+            $page_index = $pagename . "" . $args;
             if(empty($pagename) || !preg_match('/^[a-zA-Z_]+$/', $pagename)) {
                 throw new Exception ("PAGE_INVALID");
             }
 
-            if(!$this->has_rights($pagename)) {
+            if(!$this->has_rights($page_index)) {
                 throw new Exception ("PAGE_NO_RIGHTS");
             }
 
             if(!file_exists('../../include/pages/' . $pagename . '.php')) {
                 throw new Exception ("PAGE_DOES_NOT_EXIST");
             }
-            $this->current_page = $this->_pages_raw[$pagename];
+            
+            $this->current_page = $this->_pages_raw[$page_index];
             setcookie("current_page", $this->current_page->pagename, time() + (86400 * 30), "/");
             $clone_array = array();
             $this->clone_pages($clone_array, $this->_pages);
             
-            $this->current_page_hierarchy = $this->get_page_hierarchy($clone_array, $pagename);
+            $this->current_page_hierarchy = $this->get_page_hierarchy($clone_array, $page_index);
             return true;
         }
         catch (Exception $ex) 

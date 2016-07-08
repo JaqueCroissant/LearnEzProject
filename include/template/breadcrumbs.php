@@ -3,7 +3,7 @@ require_once '../../include/ajax/require.php';
 require_once '../../include/handler/pageHandler.php';
 $pageHandler = new pageHandler();
 
-if($pageHandler->get_page_from_name($_POST['pagename'])) {
+if($pageHandler->get_page_from_name($_POST["pagename"], $_POST["page_arguments"])) {
     $breadcrumbs = $pageHandler->get_breadcrumbs_array();
     for($i = 0; $i < count($breadcrumbs); $i++) {
         if($breadcrumbs[$i]->is_dropdown || $i+1 >= count($breadcrumbs)) {

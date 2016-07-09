@@ -389,6 +389,22 @@ a .menu_header {
     margin:auto;
 }
 
+.four_oh_four_title {
+    text-align: center;
+    font-weight: 900;
+    font-size: 140px;
+    letter-spacing: 5px;
+}
+
+.four_oh_four_msg {
+    text-align: center;
+    font-size: 16px;
+}
+
+.cursor-wait {
+    cursor: wait !important;
+}
+
 .hidden {
     display:none;
 }

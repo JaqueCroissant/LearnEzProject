@@ -1,4 +1,5 @@
 function submit_form(form_id, url, element) {
+    alert("lol");
     var hey = $("#" + form_id).submit();
     alert($("#" + form_id).serialize());
     $.ajax({
@@ -24,6 +25,8 @@ function initiate_submit_form(element, fail_function, success_function) {
         currently_submitting_form = true;
         form_id = $(element).closest("form").attr("id");
         url = $(element).closest("form").attr("url");
+        alert(form_id);
+        alert($("#" + form_id).serialize());
         submit_form(form_id, url, $(element));
         if(ajax_data.status_value === true) {
             success_function();

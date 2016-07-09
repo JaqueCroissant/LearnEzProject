@@ -23,18 +23,8 @@ function initiate_submit_form(element, fail_function, success_function) {
         currently_submitting_form = true;
         form_id = $(element).closest("form").attr("id");
         url = $(element).closest("form").attr("url");
-<<<<<<< HEAD
-        alert(form_id);
-        alert($("#" + form_id).serialize());
-        submit_form(form_id, url, $(element));
-        if(ajax_data.status_value === true) {
-            success_function();
-        } else {
-            fail_function();
-        }
-=======
         submit_form(form_id, url, $(element), fail_function, success_function);
->>>>>>> 841b471c818087f9013840f1fbf864ea92b9d925
+
     }
 }
 

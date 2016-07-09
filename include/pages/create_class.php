@@ -13,7 +13,7 @@ $classHandler->get_year_and_year_prefix();
         <hr class="widget-separator">
         <div class="widget-body">
             <div id="step_one">
-                <form method="post" id="create_school_step_one" action="" class="form-horizontal" url="create_school.php">
+                <form method="post" id="create_class" name="create_class" action="" class="form-horizontal" url="create_school.php">
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label" for="class_title"><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></label>
                         <div class="col-md-5">

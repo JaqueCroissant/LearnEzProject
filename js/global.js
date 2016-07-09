@@ -70,7 +70,7 @@ $(document).ready(function () {
         event.preventDefault();
         switch ($(this).attr("step")) {
             case "1": 
-                $("#create_school_step_1").attr("value", $(this).attr("step"));
+                $("#create_school_hidden_field_step_1").attr("value", $(this).attr("step"));
                 initiate_submit_form($(this), function() {
                     alert(ajax_data.error); // fail function
                 }, function() {
@@ -83,7 +83,7 @@ $(document).ready(function () {
                 });
                 break;
             case "2":
-                $("#create_school_step_2").val($(this).attr("step"));
+                $("#create_school_hidden_field_step_2").val($(this).attr("step"));
                 initiate_submit_form($(this), function() {
                     alert(ajax_data.error); // fail function
                 }, function() {

@@ -89,22 +89,6 @@ html{
     appearance: none;
 }
 
-.main_container {
-    margin: 0 20%;
-    padding: 3% 0 0 0 ;
-    overflow: hidden;
-    position: relative;
-    background: #f8f8f8;
-    -moz-box-shadow: 0 0em 0.1em black !important;
-    -webkit-box-shadow: 0 0em 0.1em black !important;
-    box-shadow: 0 0em 0.1em black !important;
-    font-family: "Lane", sans-serif;
-}
-
-/*.material_design_select {
-    margin-top: -30px;
-}*/
-
 .material_design_button {
     border: none !important;
     padding: 0.5em;
@@ -146,11 +130,6 @@ html{
     margin: 0 auto;
     text-align: center;
 }
-/*
-.center .form-control {
-    float: none;
-    width: auto;
-}*/
 
 .noPadding {
     padding: 0px !important;
@@ -163,19 +142,6 @@ html{
 .visible {
     visibility: visible;
     float: left;
-}
-
-#navBar {
-    overflow: scroll;
-    -webkit-transition: all 0.25s ease;
-    -moz-transition: all 0.25s ease;
-    -o-transition: all 0.25s ease;
-    transition: all 250ms ease;
-    height: 200em;
-}
-
-#navBar {
-    padding-top: 1.4em !important;
 }
 
 .menu_header {

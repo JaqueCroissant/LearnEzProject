@@ -13,7 +13,7 @@ $schoolHandler->get_school_types();
             <hr class="widget-separator">
             <div class="widget-body">
                 <div id="step_one">
-                    <form method="post" id="create_school" action="" name="create_school" class="form-horizontal" url="create_school.php">
+                    <form method="post" id="create_school_step_one" action="" name="create_school_step_one" class="form-horizontal" url="create_school.php">
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_name"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
                             <div class="col-md-5">
@@ -53,7 +53,7 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label"></label>
                             <div class="col-md-5">
-                                <input type="hidden" name="step" id="create_school_step_1">
+                                <input type="hidden" name="step" id="create_school_hidden_field_step_1">
                                 <input type="button" name="submit" id="create_school_step_one_button" step="1" 
                                        value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_ONE"); ?>" class="pull-right btn btn-default btn-sm create_school">   
                             </div>
@@ -79,7 +79,7 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label"></label>
                             <div class="col-md-5">
-                                <input type="hidden" name="step" id="create_school_step_2">
+                                <input type="hidden" name="step" id="create_school_hidden_field_step_2">
                                 <input type="button" name="submit" id="create_school_step_two_button" step="2" 
                                        value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_TWO"); ?>" class="pull-right btn btn-default btn-sm create_school">     
                             </div>

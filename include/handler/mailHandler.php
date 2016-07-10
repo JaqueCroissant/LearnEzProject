@@ -2,26 +2,22 @@
 class MailHandler extends Handler
 {
     private $_current_folder_id;
-    
+
+    public $mails_removed;
+    public $current_folder;
     public $folders = array();
     public $mails = array();
     
-    public function __construct() {
+    public function __construct($current_page = null) {
         parent::__construct();
+        $this->assign_folders($current_page);
     }
     
     private function is_sender_folder($folder_id = 0) {
         return ($folder_id > 0 ? $folder_id : $this->_current_folder_id) == 3;
     }
     
-    private function get_folder_id($folder_prefix = 'inbox') {
-        switch($folder_prefix) {
-            default: return 1; case 'important': return 2; case 'sent': return 3; 
-            case 'drafts': return 4; case 'spam': return 5; case 'trash': return 6;
-        }
-    }
-    
-    public function get_folders() {
+    public function assign_folders($current_page = null) {
         try
         {
             if (!$this->user_exists()) {
@@ -35,8 +31,9 @@ class MailHandler extends Handler
             }
             
             foreach($data as $key => $value) {
-                $this->folders[$key] = new MailFolder($value);
+                $this->folders[$value["folder_name"]] = new MailFolder($value);
             }
+            $this->current_folder = array_key_exists($current_page, $this->folders) ? $this->folders[$current_page] : array_shift(array_values($this->folders)); ;
             
             return true;
 	}
@@ -47,20 +44,27 @@ class MailHandler extends Handler
         return false;
     }
 
-    public function get_mails($folder_prefix = null) {
+    public function get_mails($current_page_number = 0, $order_ascending = 0, $read_unread_all = 0) {
         try
         {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
             
-            $this->_current_folder_id = $this->get_folder_id($folder_prefix);
+            if (!is_numeric($order_ascending) || !is_numeric($read_unread_all)) {
+                throw new exception();
+            }
+
+            $this->_current_folder_id = $this->get_folder_id($this->current_folder->folder_name);
             
-            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id"
+            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
+                    . " INNER JOIN users ON users.id = ". ($this->is_sender_folder() ? "receiver_id" : "sender_id")
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.". ($this->is_sender_folder() ? "sender_folder_id" : "receiver_folder_id")
                     . " WHERE user_mail.". ($this->is_sender_folder() ? "sender_id" : "receiver_id") ." = :user_id ".(!$this->is_sender_folder() ? "AND user_mail.receiver_folder_id = :folder_id" : "");
             
+            $query .= !$this->is_sender_folder() ? ($read_unread_all == 1 ? " AND user_mail.is_read is false" : ($read_unread_all == 2 ? " AND user_mail.is_read is true" : "")) : "";
+            $query .= $order_ascending == 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
             $data = $this->is_sender_folder() ? DbHandler::get_instance()->return_query($query, $this->_user->id) : DbHandler::get_instance()->return_query($query, $this->_user->id, $this->_current_folder_id);
             
             if(empty($data) || !is_array($data) || count($data) < 1) {
@@ -77,6 +81,125 @@ class MailHandler extends Handler
         {
             $this->error = ErrorHandler::return_error($ex->getMessage());
 	}
+        return false;
+    }
+    
+    private function update_mail_folder($mails, $folder_id, $sender = false) {
+        $in_query = "";
+        for($i = 0; $i < count($mails); $i++) {
+
+            if(!is_numeric($mails[$i])) {
+                throw new exception("MAIL_INVALID_INPUT");
+            }
+
+            $in_query .= ($i > 0 ? "," : "") ." '". $mails[$i] ."'";
+        }
+        
+        $data = DbHandler::get_instance()->return_query("SELECT mail.id FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id WHERE mail.id IN (". $in_query .") AND user_mail." . ($sender ? "sender_id" : "receiver_id") ." = :user_id", $this->_user->id);
+                
+        if(empty($data) || count($data) != count($mails)) {
+            throw new exception("MAIL_INVALID_INPUT2");
+        }
+
+        $in_query = "";
+        for($i = 0; $i < count($data); $i++) {
+            $in_query .= ($i > 0 ? "," : "") ." '". $data[$i]["id"] ."'";
+        }
+
+        DbHandler::get_instance()->query("UPDATE user_mail SET " . ($sender ? "sender_folder_id" : "receiver_folder_id") ." = :folder_id WHERE id IN (". $in_query .")", $folder_id);
+                    
+    }
+    
+    public function assign_mail_folder($folder_prefix = null, $mails = array()) {
+        try
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if (empty($folder_prefix)) {
+                throw new exception("MAIL_INVALID_FOLDER");
+            }
+            
+            if(empty($mails) || !is_array($mails) || count($mails) < 1) {
+                throw new exception("MAIL_EMPTY_MAIL_ARRAY");
+            }
+
+            $folder_id = $this->get_folder_id($folder_prefix);
+            
+            if(!$this->check_folder_rights($this->current_folder->id, $folder_id)) {
+                throw new exception("MAIL_INVALID_INPUT");
+            }
+
+            switch($this->current_folder->id) {
+                case 1: case 2: case 5:
+                    $this->update_mail_folder($mails, $folder_id);
+                    break;
+                    
+                case 6:
+                    $this->update_mail_folder($mails, $folder_id);
+                    break;
+                
+                case 3:
+                    $this->update_mail_folder($mails, $folder_id, true);
+                    break;
+                    
+                case 4:
+                    $this->update_mail_folder($mails, $folder_id, true);
+                    break;
+            }
+            $this->mails_removed = $mails;
+            return true;
+	}
+	catch (Exception $ex) 
+        {
+            echo $ex->getMessage();
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+	}
+        return false;
+    }
+    
+    private function get_folder_id($folder_prefix = 'inbox') {
+        switch($folder_prefix) {
+            default: return 1; case 'important': return 2; case 'sent': return 3; 
+            case 'drafts': return 4; case 'spam': return 5; case 'trash': return 6;
+            case 'delete': return 7;
+        }
+    }
+    
+    private function check_folder_rights($folder_prefix, $target_id) {
+        switch($folder_prefix) {
+            case 1:
+                if($target_id == 2 || $target_id == 5 || $target_id == 6) {
+                    return true;
+                }
+                break;
+                
+            case 2:
+                if($target_id == 1 || $target_id == 5 || $target_id == 6) {
+                    return true;
+                }
+                break;
+                
+            case 3:
+            case 4:
+                if($target_id == 7) {
+                    return true;
+                }
+                break;
+                
+            case 5:
+                if($target_id == 1 || $target_id == 6) {
+                    return true;
+                }
+                break;
+                
+            case 6:
+                if($target_id == 1 || $target_id == 7) {
+                    return true;
+                }
+                break;
+        }
         return false;
     }
 }

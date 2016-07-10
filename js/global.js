@@ -6,21 +6,40 @@ var content_hidden = false;
 var ajax_data;
 
 $(document).ready(function () {
-    
     // Load on startup.
     initial_page_load();
     // Load on startup.
     
+    
+    // global functions
     $(document).on("click", ".change_page", function(event){
-        if(currently_changing_page === false && $(this).attr("clickable") !== "false") {
+        if(currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
             $(this).attr("clickable", false);
             event.preventDefault();
             var page = $(this).attr("page");
             var args = $(this).attr("args");
-            change_page(page, args, $(this));
+            var extra_args = $(this).attr("extra_args");
+            change_page(page, args, extra_args, $(this)); 
         }
     });
     
+    $(document).on("click", ".check_all", function(event){
+        event.preventDefault();
+        var form = $(this).attr("target_form");
+        var checkboxes = $("#" + form).find(':checkbox');
+        if($(this).attr("checked")) {
+            checkboxes.prop('checked', false);
+            $(this).removeAttr("checked");
+            $(this).find("i").first().toggleClass('fa-square-o fa-check-square-o');
+        } else {
+            checkboxes.prop('checked', true);
+            $(this).attr("checked", true);
+            $(this).find("i").first().toggleClass('fa-check-square-o fa-square-o');
+        }
+    });
+    //
+    
+    // login / logout
     $(document).on("click", ".submit_login", function(event){
         event.preventDefault();
         initiate_submit_form($(this), function() {
@@ -40,7 +59,26 @@ $(document).ready(function () {
             reload_page();
         });
    });
+   //
    
+   // mail
+   $(document).on("click", ".assign_mail_folder", function(event){
+        event.preventDefault();
+        if ($("#" + $(this).attr("target_form") + " input:checkbox:checked").length > 0) {
+            initiate_custom_submit_form($(this), function() {
+                alert(ajax_data.error);
+            }, function() {
+                if(ajax_data.mails_removed !== undefined) {
+                    ajax_data.mails_removed.forEach(function(entry) {
+                        $(".mail_number_" + entry).fadeOut(500);
+                    }); 
+                }
+            }, $(this).attr("args"), $(this).attr("target_form"));
+        }
+   });
+   //
+   
+   // edit user info
     $(document).on("click", ".submit_edit_user_info", function(event){
         event.preventDefault();
         initiate_submit_form($(this), function() {
@@ -65,7 +103,9 @@ $(document).ready(function () {
             location.reload();
         });
    });
+   //
 
+    // school
     $(document).on("click", ".create_school", function(event){
         event.preventDefault();
         switch ($(this).attr("step")) {
@@ -96,7 +136,10 @@ $(document).ready(function () {
                 break;
         }
     });
+    //
     
+    
+    // global functions
     function preload(arrayOfImages) {
         $(arrayOfImages).each(function(){
             $('<img/>')[0].src = this;
@@ -126,6 +169,7 @@ $(document).ready(function () {
             'assets/images/loading_page.GIF'
         ]);
     });
+    //
 });
 
 function cursor_wait()

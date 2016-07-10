@@ -6,7 +6,7 @@ class Page extends ORM {
     public $master_page_id;
     public $location_id;
     public $sort_order;
-    public $page_arguments;
+    public $step;
     
     public $is_dropdown;
     public $display_menu;

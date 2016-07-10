@@ -73,7 +73,7 @@
                                 echo '" ';
                                 if(!$menu->is_dropdown) {
                                     echo '
-                                        page="'. $menu->pagename .'" args="'. $menu->page_arguments . '"
+                                        page="'. $menu->pagename .'" step="'. $menu->step . '"
                                         id="'.$menu->pagename.'"';
                                 }
                                 echo ' href="javascript:void(0)">';
@@ -95,7 +95,7 @@
                         } else {
                             echo '  <li>
                                         <a class="change_page" 
-                                         page="'. $menu->pagename .'" args="'. $menu->page_arguments . '"'
+                                         page="'. $menu->pagename .'" step="'. $menu->step . '"'
                                     . ' id="'.$menu->pagename.'" href="javascript:void(0)">
                                     <i class="zmdi p-r-lg '. $menu->icon_class .' zmdi-hc-lg"></i>' . $menu->title . '</a>
                                     </li>';

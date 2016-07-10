@@ -1,13 +1,17 @@
 <?php
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/mailHandler.php';
-$current_step = isset($_GET["step"]) ? $_GET["step"] : null;
+
 if(isset($_POST)) {
-    $mailHandler = new MailHandler(isset($_POST["current_page"]) ? $_POST["current_page"] : null);
+    $current_step = isset($_GET["step"]) ? $_GET["step"] : null;
+    $current_page = (isset($_POST["current_page"]) ? $_POST["current_page"] : (isset($_GET["current_folder"]) ? $_GET["current_folder"] : null));
+    $mails = (isset($_POST["mail"]) ? $_POST["mail"] : (isset($_GET["mail_id"]) ? array($_GET["mail_id"]) : array()));
     
+    $mailHandler = new MailHandler($current_page);
+
     switch($current_step) {
         case 'sent':
-            if($mailHandler->assign_mail_folder($current_step, $_POST["mail"])) {
+            if($mailHandler->assign_mail_folder($current_step, $mails)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['mails_removed'] = $mailHandler->mails_removed;
             } else {
@@ -15,9 +19,9 @@ if(isset($_POST)) {
                 $jsonArray['error'] = $mailHandler->error->title;
             }
             break;
-        
+
         default:
-            if($mailHandler->assign_mail_folder($current_step, $_POST["mail"])) {
+            if($mailHandler->assign_mail_folder($current_step, $mails)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['mails_removed'] = $mailHandler->mails_removed;
             } else {

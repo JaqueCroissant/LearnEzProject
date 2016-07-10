@@ -14,7 +14,7 @@ function set_clickable(element) {
     }
 }
 
-function change_page(pagename, args, extra_args, element) {
+function change_page(pagename, step, args, element) {
     cursor_wait();
     currently_changing_page = true;
     
@@ -25,16 +25,16 @@ function change_page(pagename, args, extra_args, element) {
     var startTime = new Date().getTime();
     
     pagename = pagename === undefined ? "front" : pagename;
+    step = step === undefined ? "" : step;
     args = args === undefined ? "" : args;
-    extra_args = extra_args === undefined ? "" : extra_args;
-    var url = "include/ajax/change_page.php?page=" + pagename + "&step=" + args;
+    var url = "include/ajax/change_page.php?page=" + pagename + "&step=" + step + args;
     $.ajax({
         type: "POST",
         url: url,
         dataType: 'json',
         async: true,
         success: function (data) {
-            var page = "include/pages/" + data.pagename + ".php?step=" + args + extra_args;
+            var page = "include/pages/" + data.pagename + ".php?step=" + step + args;
             $.get(page, {'url': false}, function (e) {
                 var elapsedTime = (new Date().getTime()) - startTime;
                 if(elapsedTime < 700) {

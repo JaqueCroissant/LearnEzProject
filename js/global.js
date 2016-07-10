@@ -1,6 +1,7 @@
 var currently_changing_page = false;
 var currently_submitting_form = false;
 var currently_submitting_get = false;
+var content_hidden = false;
 
 var ajax_data;
 
@@ -69,7 +70,7 @@ $(document).ready(function () {
         event.preventDefault();
         switch ($(this).attr("step")) {
             case "1": 
-                $("#create_school_step_1").attr("value", $(this).attr("step"));
+                $("#create_school_hidden_field_step_1").attr("value", $(this).attr("step"));
                 initiate_submit_form($(this), function() {
                     alert(ajax_data.error); // fail function
                 }, function() {
@@ -82,7 +83,7 @@ $(document).ready(function () {
                 });
                 break;
             case "2":
-                $("#create_school_step_2").val($(this).attr("step"));
+                $("#create_school_hidden_field_step_2").val($(this).attr("step"));
                 initiate_submit_form($(this), function() {
                     alert(ajax_data.error); // fail function
                 }, function() {
@@ -107,7 +108,8 @@ $(document).ready(function () {
         $.removeCookie("page_reload");
         
         var pagename = page_reload === "true" ? "front" :  $.cookie("current_page") !== undefined ? $.cookie("current_page") : "front";
-        change_page(pagename);
+        var page_arguments = page_reload === "true" ? "" :  $.cookie("current_page_arguments") !== undefined ? $.cookie("current_page_arguments") : "";
+        change_page(pagename, page_arguments);
     }
     
     function reload_page() {
@@ -115,12 +117,30 @@ $(document).ready(function () {
         date.setTime(date.getTime() + (60 * 1000));
         $.cookie("page_reload", "true", { expires: 10 });
         $.removeCookie("current_page");
+        $.removeCookie("current_page_arguments");
         location.reload();
     }
-    
+
     $(function() {
         preload([
             'assets/images/loading_page.GIF'
         ]);
     });
 });
+
+function cursor_wait()
+{
+    var elements = $(':hover');
+    if (elements.length) {
+        elements.last().addClass('cursor-wait');
+    }
+    $('html').off('mouseover.cursorwait').on('mouseover.cursorwait', function(e) {
+        $(e.target).addClass('cursor-wait');
+    });
+}
+
+function remove_cursor_wait() {
+    $('html').off('mouseover.cursorwait');
+    $('.cursor-wait').removeClass('cursor-wait');
+}
+

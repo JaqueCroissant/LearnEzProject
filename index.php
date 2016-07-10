@@ -11,7 +11,7 @@ require_once 'include/extra/require.php';
         require_once 'include/template/head_include.php';
         ?>
     </head>
-    <body class="sb-left theme-primary pace-done" style="overflow-y: scroll !important">
+    <body class="sb-left theme-primary pace-done">
         <div class="pace pace-inactive">
             <div class="pace-progress" style="transform: translate3d(100%, 0px, 0px);" data-progress-text="100%" data-progress="99">
                 <div class="pace-progress-inner"></div>

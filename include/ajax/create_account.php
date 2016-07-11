@@ -2,7 +2,7 @@
     require_once '../../include/ajax/require.php';
     require_once '../../include/handler/userHandler.php';
 
-    $userHandler = SessionKeyHandler::get_from_session("user_handler", true);
+    $userHandler = new UserHandler();
 
     switch($_GET['step'])
     {
@@ -12,8 +12,6 @@
                 if($userHandler->create_new_profile($_POST["firstname"], $_POST["surname"], $_POST["email"],
                 $_POST["password"], $_POST["usertype"], $_POST["school_id"], $_POST["class_ids"]))
                 {
-                    SessionKeyHandler::add_to_session("user", $userHandler->_user, true);
-                    SessionKeyHandler::add_to_session("user_handler", $userHandler, true);
                     $jsonArray['status_value'] = true;
                 }
                 else
@@ -31,8 +29,6 @@
             {
                 if($userHandler->import_users($_POST["csv_file"], $_POST["school_id"]))
                 {
-                    SessionKeyHandler::add_to_session("user", $userHandler->_user, true);
-                    SessionKeyHandler::add_to_session("user_handler", $userHandler, true);
                     $jsonArray['status_value'] = true;
                 }
                 else

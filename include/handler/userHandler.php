@@ -1,7 +1,6 @@
 <?php
 class UserHandler extends Handler
 {
-    public $temp_user;
     public $temp_user_array;
 
 

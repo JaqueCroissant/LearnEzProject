@@ -3,6 +3,7 @@ var currently_submitting_form = false;
 var currently_submitting_get = false;
 var content_hidden = false;
 
+var school;
 var ajax_data;
 
 $(document).ready(function () {

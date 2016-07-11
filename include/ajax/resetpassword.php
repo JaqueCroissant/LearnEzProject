@@ -4,7 +4,7 @@
     require_once '../../include/handler/userHandler.php';
 
     $loginHandler = new LoginHandler();
-    $userHandler = SessionKeyHandler::get_from_session("user_handler", true);
+    $userHandler = new UserHandler();
 
     switch($_GET['step'])
     {

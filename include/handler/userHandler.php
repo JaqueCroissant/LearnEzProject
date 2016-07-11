@@ -1,7 +1,6 @@
 <?php
 class UserHandler extends Handler
 {
-    public $temp_user;
     public $temp_user_array;
 
 
@@ -13,7 +12,8 @@ class UserHandler extends Handler
     
     // old password, new password, new password copy
     // user id, validation_code, new password, new password copy
-    public function change_password() {
+    public function change_password()
+    {
         $user_id = null;
         $username = null;
         
@@ -92,80 +92,93 @@ class UserHandler extends Handler
         return preg_match('/^[a-zA-Z0-9ÆØÅæøå]+$/i', $string);
     }
 
-    public function validate_user_information($firstname, $surname, $email = null)
+    public function create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids)
     {
-        $new_user = new User();
-
         try
         {
-            if(empty($firstname) || empty($surname))
+            $this->validate_user_information($firstname, $surname, $email, $password);
+            $this->validate_user_affiliations($usertype, $school_id, $class_ids);
+
+            $new_user = new User();
+            $new_user->firstname = $firstname;
+            $new_user->surname = $surname;
+            $new_user->email = $email;
+            $new_user->usertype_id = $this->check_if_valid_type($usertype);
+            $new_user->class_ids = $class_ids;
+
+            if($this->_user->usertype_id > 1)
             {
-                throw new Exception("USER_EMPTY_USERNAME_INPUT");
+                $new_user->school_id = $this->_user->school_id;
+            }
+            else
+            {
+                $new_user->school_id = $school_id;
             }
 
-            $this->check_if_valid_string($firstname, false);
-            $this->check_if_valid_string($surname, false);
-
-            if(!empty($email))
+            if(!empty($password))
             {
-                $this->check_if_email($email);
-                $new_user->email = $email;
+                $new_user->unhashed_password = $password;
+                $this->create_user_with_password($new_user, false);
             }
+            else
+            {
+                $this->create_user($new_user, false);
+            }
+
+            return true;
         }
         catch(Exception $ex)
         {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
-
-        $new_user->firstname = $firstname;
-        $new_user->surname = $surname;
-        
-        return $new_user;
     }
 
-    public function validate_user_affiliations($user_object, $user_type, $school_id = null, $class_ids = null)
+    private function validate_user_information($firstname, $surname, $email = null, $password = null)
     {
-        try
+        if(empty($firstname) || empty($surname))
         {
-            if(!$this->user_exists())
-            {
-                throw new Exception("USER_DOESNT_EXIST");
-            }
+            throw new Exception("USER_EMPTY_USERNAME_INPUT");
+        }
 
-            if(!is_numeric($user_type) || $user_type < 1 || $user_type > 4)
-            {
-                throw new Exception("USER_INVALID_TYPE");
-            }
+        $this->check_if_valid_string($firstname, false);
+        $this->check_if_valid_string($surname, false);
 
-            if(!empty($school_id) && !is_numeric($school_id))
-            {
-                throw new Exception("USER_INVALID_SCHOOL_ID");
-            }
+        if(!empty($email))
+        {
+            $this->check_if_email($email);
+        }
 
-            if($user_type != 1 && empty($school_id))
+        if(!empty($password))
+        {
+            if(strlen($password) < 6)
             {
-                throw new Exception("USER_INVALID_SCHOOL_ID");
-            }
-
-            if(!empty($class_ids))
-            {
-                $this->verify_class_ids($class_ids);
-                $user_object->class_ids = $class_ids;
+                throw new Exception("IMPORT_INVALID_PASSWORD");
             }
         }
-        catch(Exception $ex)
+    }
+
+    public function validate_user_affiliations($user_type, $school_id = null, $class_ids = null)
+    {
+        if(!$this->user_exists())
         {
-            $this->error = ErrorHandler::return_error($ex->getMessage());
-            return false;
+            throw new Exception("USER_DOESNT_EXIST");
         }
-        
-        $user_object->user_type_id = $user_type;
-        $user_object->school_id = $school_id;
 
-        $this->create_user($user_object, false);
+        if(!is_numeric($user_type) || $user_type < 1 || $user_type > 4)
+        {
+            throw new Exception("USER_INVALID_TYPE");
+        }
 
-        return true;
+        if(!empty($school_id) && !is_numeric($school_id))
+        {
+            throw new Exception("USER_INVALID_SCHOOL_ID");
+        }
+
+        if(!empty($class_ids))
+        {
+            $this->verify_class_ids($class_ids);
+        }
     }
 
     private function verify_class_ids($class_ids)
@@ -530,6 +543,11 @@ class UserHandler extends Handler
     {
         try
         {
+            if($this->_user->usertype_id != 1)
+            {
+                $school_id = $this->_user->school_id;
+            }
+
             $users = array();
             $offset = 0;
             $index = 0;

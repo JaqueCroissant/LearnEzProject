@@ -5,8 +5,9 @@ $pageHandler = new PageHandler();
 
 $jsonArray['status_value'] = true;
 if(PageHandler::page_exists(isset($_GET['page']) ? $_GET['page'] : "front")) {
-    $jsonArray['page_arguments'] = isset($_GET['step']) ? $_GET['step'] : null;
-    if($pageHandler->get_page_from_name($_GET['page'], $jsonArray['page_arguments'])) {
+    $jsonArray['step'] = isset($_GET['step']) ? $_GET['step'] : null;
+    $args_string = generate_args_string($_GET);
+    if($pageHandler->get_page_from_name($_GET['page'], $jsonArray['step'], $args_string)) {
         $jsonArray['pagename'] = $_GET['page'];
         $breadcrumbs = $pageHandler->get_breadcrumbs_array();
     } else {
@@ -19,6 +20,15 @@ if(PageHandler::page_exists(isset($_GET['page']) ? $_GET['page'] : "front")) {
     $jsonArray['pagename'] = "error";
     $lol = $pageHandler->generate_page("error");
     $jsonArray['breadcrumbs'] = $pageHandler->generate_breadcrumbs($lol);
+}
+
+function generate_args_string($array = array()) {
+    unset($array["step"]); unset($array["page"]);
+    $args_string = "";
+    foreach($array as $key => $value) {
+        $args_string .= "&" . $key . "=" . $value;
+    }
+    return $args_string;
 }
 
 echo json_encode($jsonArray);

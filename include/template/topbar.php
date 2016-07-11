@@ -23,7 +23,7 @@
             if(!empty($menu->master_page_id) && ((int)$menu->master_page_id) > 0) {
                 echo '
                     <li>
-                        <a class="change_page text-black" page="'. $menu->pagename .'" args="' . $menu->page_arguments . '" id="' . $menu->pagename . '" href="javascript:void(0)">
+                        <a class="change_page text-black" page="'. $menu->pagename .'" step="' . $menu->step . '" id="' . $menu->pagename . '" href="javascript:void(0)">
                             <i class="zmdi m-r-md zmdi-hc-lg '. $menu->icon_class .'"></i>
                             '. $menu->title .'
                         </a>
@@ -55,7 +55,7 @@
                     } elseif($menu->pagename != "notifications") {
                         echo "change_page";
                     }
-                    echo '" page="'. $menu->pagename .'" args="' . $menu->page_arguments . '" id="' . $menu->pagename . '" href="javascript:void(0)">
+                    echo '" page="'. $menu->pagename .'" step="' . $menu->step . '" id="' . $menu->pagename . '" href="javascript:void(0)">
                         <i class="zmdi zmdi-hc-lg '. $menu->icon_class .'"></i>
                     </a>';
                 }

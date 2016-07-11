@@ -389,6 +389,28 @@ a .menu_header {
     margin:auto;
 }
 
+.mail_element_checkbox {
+    padding: 8px 16px 16px 16px; 
+    float:left;
+    height: 100px;
+    display: table;
+}
+
+.mail_element_content {
+    padding: 16px 16px 16px 0px; 
+    overflow: hidden; 
+    cursor:pointer;
+}
+
+.mail-item:hover,
+.mail-item-read:hover {
+    background: #e4e2e2 !important;
+}
+
+.mail-item-read {
+    background: #eceaea !important;
+}
+
 .four_oh_four_title {
     text-align: center;
     font-weight: 900;

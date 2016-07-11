@@ -6,21 +6,40 @@ var content_hidden = false;
 var ajax_data;
 
 $(document).ready(function () {
-    
     // Load on startup.
     initial_page_load();
     // Load on startup.
     
+    
+    // global functions
     $(document).on("click", ".change_page", function(event){
-        if(currently_changing_page === false && $(this).attr("clickable") !== "false") {
+        if(currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
             $(this).attr("clickable", false);
             event.preventDefault();
             var page = $(this).attr("page");
+            var step = $(this).attr("step");
             var args = $(this).attr("args");
-            change_page(page, args, $(this));
+            change_page(page, step, args, $(this)); 
         }
     });
     
+    $(document).on("click", ".check_all", function(event){
+        event.preventDefault();
+        var form = $(this).attr("target_form");
+        var checkboxes = $("#" + form).find(':checkbox');
+        if($(this).attr("checked")) {
+            checkboxes.prop('checked', false);
+            $(this).removeAttr("checked");
+            $(this).find("i").first().toggleClass('fa-square-o fa-check-square-o');
+        } else {
+            checkboxes.prop('checked', true);
+            $(this).attr("checked", true);
+            $(this).find("i").first().toggleClass('fa-check-square-o fa-square-o');
+        }
+    });
+    //
+    
+    // login / logout
     $(document).on("click", ".submit_login", function(event){
         event.preventDefault();
         initiate_submit_form($(this), function() {
@@ -40,7 +59,37 @@ $(document).ready(function () {
             reload_page();
         });
    });
+   //
    
+   // mail
+   $(document).on("click", ".assign_mail_folder", function(event){
+        event.preventDefault();
+        var current_page = $(this).attr("current_folder") === "inbox" ? "" : $(this).attr("current_folder");
+        if($(this).attr("mail_id") !== undefined && $(this).attr("step") !== undefined && $(this).attr("current_folder") !== undefined) {
+            submit_get("mail.php?step=" + $(this).attr("step") + "&mail_id=" + $(this).attr("mail_id") + "&current_folder=" + $(this).attr("current_folder"), $(this), function() {
+                alert(ajax_data.error);
+            }, function() {
+                change_page("mail", current_page); 
+            });
+        } else {
+            if ($("#" + $(this).attr("target_form") + " input:checkbox:checked").length > 0) {
+                initiate_custom_submit_form($(this), function() {
+                    alert(ajax_data.error);
+                }, function() {
+                    if(ajax_data.mails_removed !== undefined) {
+                        ajax_data.mails_removed.forEach(function(entry) {
+                            $(".mail_number_" + entry).fadeOut(500, function() {
+                                $(this).remove();
+                            });
+                        }); 
+                    }
+                }, $(this).attr("args"), $(this).attr("target_form"));
+            }
+        }
+   });
+   //
+   
+   // edit user info
     $(document).on("click", ".submit_edit_user_info", function(event){
         event.preventDefault();
         initiate_submit_form($(this), function() {
@@ -65,7 +114,9 @@ $(document).ready(function () {
             location.reload();
         });
    });
+   //
 
+    // school
     $(document).on("click", ".create_school", function(event){
         event.preventDefault();
         switch ($(this).attr("step")) {
@@ -96,7 +147,10 @@ $(document).ready(function () {
                 break;
         }
     });
+    //
     
+    
+    // global functions
     function preload(arrayOfImages) {
         $(arrayOfImages).each(function(){
             $('<img/>')[0].src = this;
@@ -108,8 +162,9 @@ $(document).ready(function () {
         $.removeCookie("page_reload");
         
         var pagename = page_reload === "true" ? "front" :  $.cookie("current_page") !== undefined ? $.cookie("current_page") : "front";
-        var page_arguments = page_reload === "true" ? "" :  $.cookie("current_page_arguments") !== undefined ? $.cookie("current_page_arguments") : "";
-        change_page(pagename, page_arguments);
+        var page_step = page_reload === "true" ? "" :  $.cookie("current_page_step") !== undefined ? $.cookie("current_page_step") : "";
+        var page_args = page_reload === "true" ? "" :  $.cookie("current_page_args") !== undefined ? $.cookie("current_page_args") : "";
+        change_page(pagename, page_step, page_args);
     }
     
     function reload_page() {
@@ -117,7 +172,8 @@ $(document).ready(function () {
         date.setTime(date.getTime() + (60 * 1000));
         $.cookie("page_reload", "true", { expires: 10 });
         $.removeCookie("current_page");
-        $.removeCookie("current_page_arguments");
+        $.removeCookie("current_page_step");
+        $.removeCookie("current_page_args");
         location.reload();
     }
 
@@ -126,6 +182,7 @@ $(document).ready(function () {
             'assets/images/loading_page.GIF'
         ]);
     });
+    //
 });
 
 function cursor_wait()

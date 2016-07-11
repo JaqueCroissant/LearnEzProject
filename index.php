@@ -3,7 +3,7 @@ session_start();
 require_once 'include/extra/require.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html style="overflow-y: scroll !important">
     <head>
         <meta charset="UTF-8">
         <title>LearnEZ</title>

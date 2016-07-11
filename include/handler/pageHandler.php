@@ -55,14 +55,14 @@ class pageHandler extends Handler {
     private function generate_pages() {
         if(empty($this->_pages) || count($this->_pages) < 1) {
             $user_type_id = $this->user_exists() ? $this->_user->user_type_id : 5;
-            $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.page_arguments, page.is_dropdown, page.icon_class, page.display_text, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
+            $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
             
             if(count($pageData) < 1) {
                 return;
             }
             
             foreach($pageData as $page) {
-                $key = $page["pagename"] . "" . $page["page_arguments"];
+                $key = $page["pagename"] . "" . $page["step"];
                 $this->_pages_raw[$key] = new Page($page);
             }
            
@@ -79,7 +79,7 @@ class pageHandler extends Handler {
             
             $pageArray = array();
             foreach($this->_pages_raw as $value) {
-                $key = $value->pagename . "" . $value->page_arguments;
+                $key = $value->pagename . "" . $value->step;
                 $pageArray[$key] = $value;
             }
             $this->_pages = $pageArray;
@@ -117,7 +117,7 @@ class pageHandler extends Handler {
             }
             
             if($value->master_page_id == $id) {
-                $combined_key = $value->pagename . "" . $value->page_arguments;
+                $combined_key = $value->pagename . "" . $value->step;
                 $children[$combined_key] = $value;
                 $keys[] = $key;
             }
@@ -261,9 +261,9 @@ class pageHandler extends Handler {
         return true;
     }
     
-    public function get_page_from_name($pagename = null, $args = null) {
+    public function get_page_from_name($pagename = null, $step = null, $args = null) {
         try {
-            $page_index = $pagename . "" . $args;
+            $page_index = $pagename . "" . $step;
             if(empty($pagename) || !preg_match('/^[a-zA-Z_]+$/', $pagename)) {
                 throw new Exception ("PAGE_INVALID");
             }
@@ -278,7 +278,8 @@ class pageHandler extends Handler {
             
             $this->current_page = $this->_pages_raw[$page_index];
             setcookie("current_page", $this->current_page->pagename, time() + (86400 * 30), "/");
-            setcookie("current_page_arguments", $args, time() + (86400 * 30), "/");
+            setcookie("current_page_step", $step, time() + (86400 * 30), "/");
+            setcookie("current_page_args", $args, time() + (86400 * 30), "/");
             $clone_array = array();
             $this->clone_pages($clone_array, $this->_pages);
             
@@ -309,7 +310,7 @@ class pageHandler extends Handler {
                 $breadcrumbs .= '<span class="">' . $array[$i]->title . '</span>';    
             } else {
                 $breadcrumbs .= '<a class="change_page text-white fw-600" ';
-                $breadcrumbs .= ' page="'. $array[$i]->pagename .'" args="'. $array[$i]->page_arguments . '"';
+                $breadcrumbs .= ' page="'. $array[$i]->pagename .'" step="'. $array[$i]->step . '"';
                 $breadcrumbs .= ' id="'.$array[$i]->pagename.'" href="#">'. $array[$i]->title .' </a>'; 
             }
             if ($i < count($array)-1) {
@@ -330,11 +331,11 @@ class pageHandler extends Handler {
         $this->generate_menu();
     }
     
-    public function generate_page($pagename = null, $page_arguments = null) {
+    public function generate_page($pagename = null, $step = null) {
         $this->get_pages_raw();
         
-        if(array_key_exists($pagename ."". $page_arguments, $this->_pages_raw)) {
-            return array($this->_pages_raw[$pagename ."" . $page_arguments]);
+        if(array_key_exists($pagename ."". $step, $this->_pages_raw)) {
+            return array($this->_pages_raw[$pagename ."" . $step]);
         }
         return array($this->_pages_raw["error"]);
     }

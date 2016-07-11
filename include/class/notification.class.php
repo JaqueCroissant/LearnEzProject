@@ -8,6 +8,7 @@ class Notification extends ORM
         public $language_id;
         public $datetime;
         public $isRead;
-        public $sender_name;
+        public $category;
+        public $icon;
     }
 

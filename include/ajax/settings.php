@@ -12,7 +12,9 @@
             {
                 if($userHandler->edit_user_info($_POST["firstname"], $_POST["surname"], $_POST["email"], $_POST["description"])) 
                 {
+                    
                     $jsonArray['status_value'] = true;
+                    $jsonArray['full_name'] = $userHandler->_user->firstname . " " . $userHandler->_user->surname;
                 } 
                 else 
                 {

@@ -6,11 +6,12 @@
 
     switch($_GET['step'])
     {
+
         case '1':
             if(isset($_POST))
             {
                 if($userHandler->create_new_profile($_POST["firstname"], $_POST["surname"], $_POST["email"],
-                $_POST["password"], $_POST["usertype"], $_POST["school_id"], $_POST["class_ids"]))
+                $_POST["password"], $_POST["usertype"], $_POST["school_name"], $_POST["class_name"]))
                 {
                     $jsonArray['status_value'] = true;
                 }
@@ -40,5 +41,12 @@
                 die();
             }
         break;
+
+        case 'get_classes':
+            echo $_POST["id"];
+            break;
+
+        default:
+            echo $_GET['step'];
     }
 ?>

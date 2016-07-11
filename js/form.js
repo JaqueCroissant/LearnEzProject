@@ -1,12 +1,25 @@
 function submit_form(form_id, url, element, fail_function, success_function) {
     cursor_wait();
     $("#" + form_id).submit();
+    var form_submit_data = $("#" + form_id).serialize();
+    if(ajax_data !== undefined) {
+        for (var key in ajax_data) {
+            if (typeof ajax_data[key] === "object") {
+                for (var nested_key in ajax_data[key]) {
+                    form_submit_data += "&" + nested_key + "=" + ajax_data[key][nested_key];
+                }
+            } else {
+                form_submit_data += "&" + key + "=" + ajax_data[key];
+            }
+        }
+    }
+    
     $.ajax({
         type: "POST",
         url: "include/ajax/" + url,
         dataType: "json",
         async: true,
-        data: $("#" + form_id).serialize(),
+        data: form_submit_data,
         complete: function(data) {
             currently_submitting_form = false;
             $(element).removeAttr("clickable");

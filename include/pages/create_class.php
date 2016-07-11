@@ -55,7 +55,8 @@ $classHandler->get_year_and_year_prefix();
                         <label class="col-sm-2 col-sm-offset-2 control-label" for="class_open"><?php echo TranslationHandler::get_static_text("CLASS_OPEN"); ?></label>
                         <div class="col-md-5">
                             <div class="checkbox">
-                                <input class="checkbox-circle checkbox-dark" checked="" style="opacity: 1;" type="checkbox" name="class_open" id="class_open">
+                                <input class="checkbox-circle checkbox-dark" checked="" type="checkbox" name="class_open" id="class_open">
+                                <label for="class_open"></label>
                             </div>
                         </div>
                     </div>

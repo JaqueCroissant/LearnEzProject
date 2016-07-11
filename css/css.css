@@ -126,7 +126,7 @@ html{
 }
 
 .center {
-    float: none;
+    float: none !important;
     margin: 0 auto;
     text-align: center;
 }

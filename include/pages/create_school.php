@@ -1,7 +1,7 @@
 <?php
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/schoolHandler.php';
-$schoolHandler = SessionKeyHandler::get_from_session("school_handler", true);
+$schoolHandler = new SchoolHandler();
 $schoolHandler->get_school_types();
 ?>
 <div class="row">
@@ -94,7 +94,7 @@ $schoolHandler->get_school_types();
                 </div>
 
                 <div class="input-container">
-                    <div class="col-md-7 center p-t-xl">        
+                    <div class="center col-md-7 p-t-xl">        
                         <div class="progress">
                             <div id="step_one_progress" class="progress-bar" style="width: 33.33%;"><span>Step 1</span></div>
                             <div id="step_two_progress" class="progress-bar-inactive" style="width: 33.33%;"><span>Step 2</span></div>

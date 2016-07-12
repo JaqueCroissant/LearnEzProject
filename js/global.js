@@ -153,8 +153,8 @@ $(document).ready(function () {
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id="+ $(this).find("option:selected").val(), function() {
                 alert(ajax_data.error);
             }, function() {
-                $(".create_select_class").html(ajax_data.classes);
-                $(".create_select_class").removeClass("hidden");
+                $("#select_class_name").html(ajax_data.classes);
+                $(".create_select_class").css("visibility", "visible")
             });
        }
    });

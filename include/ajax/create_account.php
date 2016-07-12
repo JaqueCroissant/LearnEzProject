@@ -12,8 +12,10 @@
         case '1':
             if(isset($_POST))
             {
+                $school_id = $userHandler->_user->user_type_id == 1 ? $_POST["school_id"] : $userHandler->_user->school_id;
+
                 if($userHandler->create_new_profile($_POST["firstname"], $_POST["surname"], $_POST["email"],
-                $_POST["password"], $_POST["usertype"], $_POST["school_id"], $_POST["class_name"]))
+                $_POST["password"], $_POST["usertype"], $school_id, $_POST["class_name"]))
                 {
                     $jsonArray['status_value'] = true;
                 }

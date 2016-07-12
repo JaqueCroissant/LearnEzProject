@@ -434,5 +434,5 @@ a .menu_header {
 }
 
 .hidden {
-    display:none;
+    visibility: hidden;
 }

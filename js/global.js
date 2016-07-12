@@ -87,15 +87,36 @@ $(document).ready(function () {
                 }, $(this).attr("args"), $(this).attr("target_form"));
             }
         }
+
     });
     //
-
-    // edit user info
-    $(document).on("click", ".submit_edit_user_info", function (event) {
+   
+   $(document).on("click", ".submit_create_mail", function(event){
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+        });
+   });
+   
+   $(document).on("click", ".submit_reply_mail", function(event){
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+            $(".reply_form").fadeOut(500);
+        });
+   });
+   //
+   
+   // edit user info
+    $(document).on("click", ".submit_edit_user_info", function(event){
         event.preventDefault();
         initiate_submit_form($(this), function () {
             alert(ajax_data.error);
-        }, function () {
+
+        }, function() {
+            $(".username").html(ajax_data.full_name);
         });
     });
 
@@ -107,15 +128,37 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on("click", ".reset_pass_submit_email2", function (event) {
-        event.preventDefault;
-        initiate_submit_form($(this), function () {
+   $(document).on("click", ".create_submit_info", function(event){
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+        });
+   });
+
+   $(document).on("click", ".reset_pass_submit_email2", function(event){
+        event.preventDefault
+        initiate_submit_form($(this), function() {
             alert(ajax_data.error);
         }, function () {
             location.reload();
         });
     });
-    //
+
+   $(document).on("change", ".create_select_school", function(event){
+       if($(this).find("option:selected").val() === "default") {
+            $(".create_select_class").addClass("hidden");
+       } else {
+            event.preventDefault
+            initiate_submit_get($(this), "create_account.php?step=get_classes&school_id="+ $(this).find("option:selected").val(), function() {
+                alert(ajax_data.error);
+            }, function() {
+                $(".create_select_class").html(ajax_data.classes);
+                $(".create_select_class").removeClass("hidden");
+            });
+       }
+   });
+   //
 
     // school
     $(document).on("click", ".create_school", function (event) {
@@ -157,6 +200,7 @@ $(document).ready(function () {
             alert(ajax_data.error);
         }, function () {
             location.reload();
+            alert("Class created - replace alert with snackbar");
         });
     });
 

@@ -45,7 +45,7 @@ class ClassHandler extends Handler {
             }
             $this->is_null_or_empty($school_id);
 
-            $query = "SELECT class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
+            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
                             class.start_date, class.end_date, class.open
                             FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
                             INNER JOIN class_year_prefix ON class.class_year_prefix_id = class_year_prefix.id
@@ -53,6 +53,8 @@ class ClassHandler extends Handler {
                             WHERE class.school_id = :class_id AND translation_class_year_prefix.language_id = :language_id";
 
             $array = DbHandler::get_instance()->return_query($query, $school_id, TranslationHandler::get_current_language());
+
+            $this->classes_in_school = array();
             foreach ($array as $value) {
                 $this->classes_in_school[] = new School_Class($value);
             }

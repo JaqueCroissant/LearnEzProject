@@ -292,12 +292,13 @@ a .menu_header {
     -moz-box-shadow: 0 0.375em 0.5em rgba(0, 0, 0, .25);
     -webkit-box-shadow: 0 0.375em 0.5em rgba(0, 0, 0, .25);
     padding: 0.375em 0 0.375em 0;
-    width: 18em;
+    width: 25em;
     min-height: 6em;
     max-height: 35%;
     position: fixed;
     z-index: 8000;
     overflow-y: scroll;
+    overflow-x:hidden;  
     display: block;
     background-color: white;
 }
@@ -318,19 +319,19 @@ a .menu_header {
     border-bottom: 1px solid black;
 }
 
-.notification_seen {
+.notification_read {
     background-color: #ffffff;
 }
 
-.notification_unseen {
+.notification_unread {
     background-color: #66c2ff;
 }
 
-.notification_seen:hover {
+.notification_read:hover {
     background-color: #e6f5ff;
 }
 
-.notification_unseen:hover {
+.notification_unread:hover {
     background-color: #4db8ff;  
 }
 
@@ -344,20 +345,21 @@ a .menu_header {
     background-color: red;
 }
 
+.notification_icon{
+    width:20%;
+}
+
 .notification_text{
-    width:85%;
+    width:72%;
 }
 
 .notification_button {
-    width:10%;
-    margin-right:5%;
-    height:100%;
+    width:5%;
+    margin:0 3% 0 0;
 }
 
 .notification_button input {
-    vertical-align: middle;
     line-height: 100%;
-    margin-top:100%;
 }
 
 #notification_read_all{
@@ -389,15 +391,19 @@ a .menu_header {
     margin:auto;
 }
 
-.mail_element_checkbox {
-    padding: 8px 16px 16px 16px; 
+.notif_element_checkbox {
     float:left;
-    height: 100px;
-    display: table;
+    margin-top:25px;
+    padding-right:1em;
+}
+
+.mail_element_checkbox {
+    margin-top:23px;
+    padding-right: 1em; 
+    float:left;
 }
 
 .mail_element_content {
-    padding: 16px 16px 16px 0px; 
     overflow: hidden; 
     cursor:pointer;
 }

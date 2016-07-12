@@ -97,16 +97,16 @@ class UserHandler extends Handler
         try
         {
             $this->validate_user_information($firstname, $surname, $email, $password);
-            $this->validate_user_affiliations($usertype, $school_id, $class_ids);
+            $this->validate_user_affiliations($this->check_if_valid_type($usertype), $school_id, $class_ids);
 
             $new_user = new User();
             $new_user->firstname = $firstname;
             $new_user->surname = $surname;
             $new_user->email = $email;
-            $new_user->usertype_id = $this->check_if_valid_type($usertype);
+            $new_user->user_type_id = $this->check_if_valid_type($usertype);
             $new_user->class_ids = $class_ids;
 
-            if($this->_user->usertype_id > 1)
+            if($this->_user->user_type_id > 1)
             {
                 $new_user->school_id = $this->_user->school_id;
             }
@@ -195,7 +195,7 @@ class UserHandler extends Handler
         }
         else
         {
-            if(!is_numeric($id))
+            if(!is_numeric($class_ids))
             {
                 throw new Exception("USER_INVALID_CLASS_ID");
             }
@@ -321,14 +321,15 @@ class UserHandler extends Handler
 
     private function create_user_with_password($user_object, $add_to_user_array)
     {
+
         $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
         $password = hash("sha256", $user_object->unhashed_password . " " . $user_object->username);
         try
         {
             if(!DbHandler::get_instance()->query("INSERT INTO users (username, user_type_id,
-                                            school_id, email, firstname, surname, password,time_created) VALUES
+                                            school_id, email, firstname, surname, password, time_created) VALUES
                                             (:username, :user_id, :school_id, :email, :firstname, :surname, :password, :time_created)",
-                                            $user_object->username, $user_object->user_type_id, 
+                                            $user_object->username, $user_object->user_type_id,
                                             $user_object->school_id, $user_object->email,
                                             $user_object->firstname, $user_object->surname, $password, date ("Y-m-d H:i:s")))
                                             {
@@ -437,6 +438,8 @@ class UserHandler extends Handler
             {
                 throw new Exception("DATABASE_UNKNOWN_ERROR");
             }
+            
+            SessionKeyHandler::add_to_session('user', $this->_user, true);
 
             return true;
         }
@@ -681,15 +684,16 @@ class UserHandler extends Handler
         {
             case "SA":
                 return 1;
+
             case "A":
                 return 2;
-                break;
+
             case "T":
                 return 3;
-                break;
+
             case "S":
                 return 4;
-                break;
+
             default:
                 throw new Exception("IMPORT_INVALID_TYPE");
         }

@@ -69,7 +69,14 @@ $paginationHandler = new PaginationHandler();
                                     
                                     <div class="form-group m-b-sm">
                                         <label for="mail_recipiants" class="control-label"><?php echo TranslationHandler::get_static_text("RECEIVER"); ?>:</label>
-                                        <input id="mail_recipiants" type="text" name="recipiants" class="form-control" placeholder="">
+                                        <select id="mail_recipiants" name="recipiants" class="form-control" data-plugin="select2" multiple>
+                                            
+                                            <?php
+                                            foreach($mailHandler->tags as $tag) {
+                                                echo '<option value="'.$tag->id.'">'.$tag->title.'</option>';
+                                            }
+                                            ?>
+                                        </select>
                                     </div>
                                     
                                     <div class="form-group m-b-sm">
@@ -378,7 +385,7 @@ $paginationHandler = new PaginationHandler();
                                                     $date_to_string = time_elapsed($value->date);
                                                     echo '
                                                         <div class="mail-item mail_number_'. $value->id.' '.($value->is_read ? 'mail-item-read' : "") .'" style="height:100px;">
-                                                            <div class="mail_element_checkbox">
+                                                            <div class="mail_element_checkbox checkbox-resize">
                                                                 <div>
                                                                     <div class="checkbox">
                                                                         <input type="checkbox" id="checkbox-enable-reply" name="mail[]" value="'.$value->id.'"><label for="checkbox-enable-reply"></label>
@@ -431,5 +438,6 @@ $paginationHandler = new PaginationHandler();
         ?>
     </div>
 </div>
-<script src="assets/js/library.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/include_library.js" type="text/javascript"></script>
+<script src="assets/js/include_app.js" type="text/javascript"></script>
+<script src="/js/subpageGlobal.js" type="text/javascript"></script>

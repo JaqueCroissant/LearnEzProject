@@ -3,6 +3,7 @@ require_once '../../include/ajax/require.php';
 require_once '../handler/notificationHandler.php';
 $not_handler = new NotificationHandler();
 ?>
+<script src="js/subpageGlobal.js" type="text/javascript"></script>
 
 <div class="row">
     <div class="col-md-2">
@@ -43,29 +44,74 @@ $not_handler = new NotificationHandler();
             <div class="col-md-12">
                 <div class="table-responsive">
                     <form method="POST" action="" id="notification_form" url="" name="notif">
-                        <table class="table notification_list">
+                        <table class="table mail-list">
                             <tr>
                                 <td>
-                                    <div class="mail-item" style="height:100px;">
-                                        <div class="notif_element_checkbox">
+                                    <div class="mail-item" style="min-height:100px;">
+                                        <div class="notif_element_checkbox checkbox-resize">
                                             <div class="checkbox">
                                                 <input type="checkbox" id="checkbox-enable-reply" name="notifications[]" value="<?php ?>"><label for="checkbox-enable-reply"></label>
                                             </div>
                                         </div>
                                         <table class="notification-container">
                                             <tr>
-                                                <td>
-                                                    <div class="avatar avatar-lg avatar-circle">
-                                                        <a href="#"><img src="assets/images/208.jpg" alt="sender photo"></a>
-                                                    </div>
-                                                </td>
+                                                
                                                 <td>
                                                     <div class="mail-item-header">
-                                                        <h4 class="mail-item-title"><a href="mail-view.html" class="title-color">Welcome To Dashboard</a></h4>
-                                                        <a href="#"><span class="label label-success">client</span></a>                                                      
-                                                        <a href="#"><span class="label label-primary">work</span></a>
+                                                        <h4 class="mail-item-title">Title</h4>
+                                                        <span class="label label-success">Lektier</span>
                                                     </div>
-                                                    <p class="mail-item-excerpt">Welcome To your dashboard. here you can manage and coordinate any activities</p>
+                                                    <p class="mail-item-excerpt">Welcome To your dashboard. here you can manage and coordinate any activities. ekstra lang tekst ekstra lang tekst ekstra lang tekst ekstra lang tekst ekstra lang tekst ekstra lang tekst ekstra lang tekst </p>
+                                                </td>
+                                                <td class="mail-right">
+                                                    <p class="mail-item-date">2 hours ago</p>
+                                                    <p class="mail-item-star starred">
+                                                        <a href="#"><i class="zmdi zmdi-star"></i></a>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </table>			
+                                    </div>
+                                    <div class="mail-item" style="min-height:100px;">
+                                        <div class="notif_element_checkbox checkbox-resize">
+                                            <div class="checkbox">
+                                                <input type="checkbox" id="checkbox-enable-reply" name="notifications[]" value="<?php ?>"><label for="checkbox-enable-reply"></label>
+                                            </div>
+                                        </div>
+                                        <table class="notification-container">
+                                            <tr>
+                                                
+                                                <td>
+                                                    <div class="mail-item-header">
+                                                        <h4 class="mail-item-title">Title</h4>
+                                                        <span class="label label-success">Lektier</span>
+                                                    </div>
+                                                    <p class="mail-item-excerpt">Welcome To your dashboard. here you can manage and coordinate any activities. ekstra lang tekst ekstra lang tekst ekstra lang tekst ekstra lang tekst ekstra lang tekst ekstra lang tekst ekstra lang tekst </p>
+                                                </td>
+                                                <td class="mail-right">
+                                                    <p class="mail-item-date">2 hours ago</p>
+                                                    <p class="mail-item-star starred">
+                                                        <a href="#"><i class="zmdi zmdi-star"></i></a>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </table>			
+                                    </div>
+                                    <div class="mail-item" style="min-height:100px;">
+                                        <div class="notif_element_checkbox checkbox-resize">
+                                            <div class="checkbox">
+                                                <input type="checkbox" id="checkbox-enable-reply" name="notifications[]" value="<?php ?>"><label for="checkbox-enable-reply"></label>
+                                            </div>
+                                        </div>
+                                        <table class="notification-container">
+                                            <tr>
+                                                
+                                                <td>
+                                                    <div class="mail-item-header">
+                                                        <h4 class="mail-item-title">Title</h4>
+                                                        <span class="label label-success">Lektier</span>
+                                                    </div>
+                                                    <p class="mail-item-excerpt">Welcome To your dashboard. here you can manage and coordinate any activities.</p>
                                                 </td>
                                                 <td class="mail-right">
                                                     <p class="mail-item-date">2 hours ago</p>

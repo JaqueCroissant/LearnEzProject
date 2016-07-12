@@ -113,10 +113,19 @@ $(document).ready(function () {
         initiate_submit_form($(this), function() {
             alert(ajax_data.error);
         }, function() {
+            $(".username").html(ajax_data.full_name);
         });
    });
 
    $(document).on("click", ".settings_submit_password", function(event){
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+        });
+   });
+
+   $(document).on("click", ".create_submit_info", function(event){
         event.preventDefault();
         initiate_submit_form($(this), function() {
             alert(ajax_data.error);
@@ -131,6 +140,20 @@ $(document).ready(function () {
         }, function() {
             location.reload();
         });
+   });
+
+   $(document).on("change", ".create_select_school", function(event){
+       if($(this).find("option:selected").val() === "default") {
+            $(".create_select_class").addClass("hidden");
+       } else {
+            event.preventDefault
+            initiate_submit_get($(this), "create_account.php?step=get_classes&school_id="+ $(this).find("option:selected").val(), function() {
+                alert(ajax_data.error);
+            }, function() {
+                $(".create_select_class").html(ajax_data.classes);
+                $(".create_select_class").removeClass("hidden");
+            });
+       }
    });
    //
 

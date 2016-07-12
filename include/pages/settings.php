@@ -66,7 +66,7 @@ $userHandler = new UserHandler();
                             <td class="left-col">
                             </td>
                             <td class="right-col">
-                                <input type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="submit_edit_user_info pull-right material_design_button">
+                                <input type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="submit_edit_user_info">
                             </td>
                         </tr>
                     </table>

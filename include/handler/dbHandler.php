@@ -134,7 +134,7 @@
                 if($this->_prepare->rowCount() > 0) {
                     return $this->_prepare->fetchall(PDO::FETCH_ASSOC);
                 }
-                return null;
+                return array();
             }
             catch (PDOException $ex) 
             {

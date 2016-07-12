@@ -27,77 +27,91 @@
 								<div class="widget-body">
 
                                     <form method="POST" action="" id="create_single" url="create_account.php?step=1" name="create_single_user">
-                                        <div class="form-group">
                                             <div class="col-md-6">
                                                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("CREATE_BASIC_INFO"); ?></h4></br>
-                                                <input type="text" id="firstname" name="firstname" placeholder="<?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?>" class="form-control"><br/>
-                                                <input type="text" id="surname" name="surname" placeholder="<?php echo TranslationHandler::get_static_text("INFO_SURNAME"); ?>" class="form-control"><br/>
-                                                <input type="text" id="email" name="email" placeholder="<?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?>" class="form-control"><br/>
-                                                <input type="password" id="password" name="password" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>" class="form-control"><br/>
-                                            </div>
+
+                                                <div class="form-group m-b-sm">
+                                                    <label for="firstname_input"><?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?></label>
+                                                    <input type="text" id="firstname_input" name="firstname" placeholder="<?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?>" class="form-control">
+                                                </div>
+
+                                                <div class="form-group m-b-sm">
+                                                    <label for="surname_input"><?php echo TranslationHandler::get_static_text("INFO_SURNAME"); ?></label>
+                                                    <input type="text" id="surname_input" name="surname" placeholder="<?php echo TranslationHandler::get_static_text("INFO_SURNAME"); ?>" class="form-control">
+                                                </div>
+
+                                                <div class="form-group m-b-sm">
+                                                    <label for="email_input"><?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?></label>
+                                                    <input type="text" id="email_input" name="email" placeholder="<?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?>" class="form-control">
+                                                </div>
+
+                                                <div class="form-group m-b-sm">
+                                                    <label for="password_input"><?php echo TranslationHandler::get_static_text("PASSWORD")  . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                    <input type="password" id="password_input" name="password" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD") ; ?>" class="form-control">
+                                                </div>
                                         </div>
 
-                                        <div class="form-group">
+
                                             <div class="col-md-6">
-                                                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("CREATE_AFFILIATIONS"); ?></h4></br>
-                                                <select id="user_type" name ="usertype" class="create_select_usertype form-control">
-                                                    <?php
-                                                        if($userHandler->_user->user_type_id==1)
-                                                        {
-                                                            echo '<option value="SA">' . TranslationHandler::get_static_text("SUPER_ADMIN") . '</option>';
-                                                            echo '<option value="A">' . TranslationHandler::get_static_text("ADMIN") . '</option>';
-                                                        }
-                                                    ?>
-                                                    <option value="T"><?php echo TranslationHandler::get_static_text("TEACHER"); ?></option>'
-                                                    <option value="S"><?php echo TranslationHandler::get_static_text("STUDENT"); ?></option>'
-                                                </select>
-                                                </br>
+                                                <div class="form-group m-b-sm">
+                                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("CREATE_AFFILIATIONS"); ?></h4></br>
 
-                                                <?php
-                                                if($userHandler->_user->user_type_id==1)
-                                                {?>
-
-                                                    <select id="select1" name="school_id" class="create_select_school form-control" data-plugin="select2">
-                                                        <option value="default"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
+                                                    <label for="user_type"><?php echo TranslationHandler::get_static_text("CREATE_USERTYPE"); ?></label>
+                                                    <select id="user_type" name ="usertype" class="create_select_usertype form-control">
                                                         <?php
-                                                            $schoolHandler->get_all_schools();
-                                                            foreach($schoolHandler->all_schools as $school)
+                                                            if($userHandler->_user->user_type_id==1)
                                                             {
-                                                                echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
+                                                                echo '<option value="SA">' . TranslationHandler::get_static_text("SUPER_ADMIN") . '</option>';
+                                                                echo '<option value="A">' . TranslationHandler::get_static_text("ADMIN") . '</option>';
                                                             }
                                                         ?>
-
+                                                        <option value="T"><?php echo TranslationHandler::get_static_text("TEACHER"); ?></option>'
+                                                        <option value="S"><?php echo TranslationHandler::get_static_text("STUDENT"); ?></option>'
                                                     </select>
-                                                    </br>
-                                                <?php }
+                                                </div>
 
-                                                    if($userHandler->_user->user_type_id == 1)
-                                                    {   ?>
-                                                        <select id="select1" name="class_name" class="create_select_class form-control hidden" data-plugin="select2"></select>
-                                                    <?php }
-                                                    else
+                                                <div class="form-group m-b-sm">
+                                                    <?php
+                                                    if($userHandler->_user->user_type_id==1)
                                                     {?>
+                                                        <label for="select1" class="control-label"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                        <select id="select1" name="school_id" class="create_select_school form-control" data-plugin="select2">
 
-                                                        <select id="select1" name="class_name" class="create_select_class form-control" data-plugin="select2">
-                                                            <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS"); ?></option>
                                                             <?php
+                                                                $schoolHandler->get_all_schools();
+                                                                foreach($schoolHandler->all_schools as $school)
+                                                                {
+                                                                    echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
+                                                                }
+                                                            }
+                                                            ?>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group m-b-sm">
+                                                    <div class="create_select_class
+                                                    <?php
+                                                        if($userHandler->_user->user_type_id == 1)
+                                                        {
+                                                            echo '" style="visibility:hidden;';
+                                                        }
+                                                    ?>
+                                                    ">
+                                                        <label for="select_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                        <select id="select_class_name" name="class_name" class="form-control" data-plugin="select2" multiple>
+                                                            <?php
+                                                            if($userHandler->_user->user_type_id > 1) {
                                                                 $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
                                                                 foreach($classHandler->classes_in_school as $class)
                                                                 {
                                                                     echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
                                                                 }
-                                                            ?>
-
+                                                            }
+                                                        ?>
                                                         </select>
-                                                        </br>
-                                                    <?php
+                                                    </div>
+                                                </div>
 
-                                                    }
-                                                ?>
-
-
-                                                    </br>
-                                            </div>
                                         </div>
 
                                         <div style="clear:both;"></div>
@@ -158,3 +172,6 @@
 				</div><!-- .widget -->
 			</div>
         </div>
+
+        <script src="assets/js/include_library.js" type="text/javascript"></script>
+<script src="assets/js/include_app.js" type="text/javascript"></script>

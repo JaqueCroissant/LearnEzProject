@@ -293,7 +293,7 @@ class UserHandler extends Handler
 
     private function create_class_affiliation($classes)
     {
-        $user_id = DbHandler::last_insterted_id();
+        $user_id = DbHandler::get_instance()->last_inserted_id();
         $query = "INSERT INTO user_class (users_id, class_id) VALUES ";
 
         for($i = 0; $i < count($classes); $i++)

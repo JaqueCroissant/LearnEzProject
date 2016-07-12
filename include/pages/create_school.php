@@ -41,7 +41,7 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
                             <div class="col-md-5">
-                                <select name="school_type_id" class="form-control ">
+                                <select name="school_type_id" class="form-control" data-plugin="select2">
                                     <?php
                                     foreach ($schoolHandler->school_types as $value) {
                                         echo '<option value="' . $value['id'] . '">' . $value['title'] . '</option>';
@@ -94,7 +94,7 @@ $schoolHandler->get_school_types();
                 </div>
 
                 <div class="input-container">
-                    <div class="center col-md-7 p-t-xl">        
+                    <div class="center col-md-7 p-t-xl">
                         <div class="progress">
                             <div id="step_one_progress" class="progress-bar" style="width: 33.33%;"><span>Step 1</span></div>
                             <div id="step_two_progress" class="progress-bar-inactive" style="width: 33.33%;"><span>Step 2</span></div>
@@ -106,3 +106,5 @@ $schoolHandler->get_school_types();
         </div>
     </div>
 </div>
+<script src="assets/js/include_library.js" type="text/javascript"></script>
+<script src="assets/js/include_app.js" type="text/javascript"></script>

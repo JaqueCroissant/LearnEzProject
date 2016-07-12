@@ -6,6 +6,7 @@ class ClassHandler extends Handler {
     public $classes_in_school;
     public $years;
     public $year_prefixes;
+    private $format = "Y-m-d H:i:s";
 
     public function __construct() {
         parent::__construct();
@@ -93,29 +94,25 @@ class ClassHandler extends Handler {
         }
     }
 
-    public function create_class($title, $description, $year, $year_prefix, $school_id, $class_open, $class_start = null, $class_end = null) {
+    public function create_class($title, $school_id, $class_end, $description = null, $class_open = 1, $class_start = null) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            
             $this->is_null_or_empty($title);
-            $this->is_null_or_empty($year);
-            $this->is_null_or_empty($year_prefix);
             $this->is_null_or_empty($school_id);
-            $this->is_null_or_empty($class_open);
-            if (!is_bool($class_open)) {
-                throw new Exception("ARGUMENT_NOT_BOOL");
-            }
             if ($class_start == null) {
-                $class_start = date("Y-m-d H:i:s");
+                $class_start = date($this->format);
+            } else {
+                $class_start = $class_start['year'] . '/' . $class_start['month'] . "/" . $class_start['day'];
             }
-            $year_id = $this->get_year_id($year);
-            $year_prefix_id = $this->get_year_prefix_id($year_prefix);
-
-            $query = "INSERT INTO class (title, description, class_year_id, class_year_prefix_id, school_id, start_date, end_date, open)
-                        VALUES (:title, :description, :class_year, :class_year_prefix, :school_id, :start_date, :end_date, :open)";
-
-            if (DbHandler::get_instance()->query($query, $title, $description, $year_id, $year_prefix_id, $school_id, $class_start, $class_end, $class_open)) {
+            $year_id = $this->get_year_id($class_end);
+            $class_end_string = $class_end['year'] . '/' . $class_end['month'] . '/' . $class_end['day'];
+            $this->verify_class_end_is_greater($class_end_string, $class_start);
+            $query = "INSERT INTO class (title, description, class_year_id, school_id, start_date, end_date, open)
+                        VALUES (:title, :description, :class_year_id, :school_id, :start_date, :end_date, :open)";
+            if (DbHandler::get_instance()->query($query, $title, $description, $year_id, $school_id, $class_start, $class_end_string, $class_open)) {
                 return true;
             }
             return false;
@@ -204,7 +201,8 @@ class ClassHandler extends Handler {
         return $year_prefix_id_array['id'];
     }
 
-    private function get_year_id($year) {
+    private function get_year_id($date) {
+        $year = $date['year'];
         $year_id_array = reset(DbHandler::get_instance()->return_query("SELECT id FROM class_year WHERE year = :year LIMIT 1", $year));
         if (empty($year_id_array)) {
             throw new Exception("OBJECT_IS_EMPTY");
@@ -244,4 +242,12 @@ class ClassHandler extends Handler {
         }
     }
 
+    private function verify_class_end_is_greater($class_end, $class_start) {
+        $es = strtotime($class_end);
+        $ss = strtotime($class_start);
+        
+        if ($es < $ss) {
+            throw new Exception ("CLASS_END_IS_WRONG");
+        } 
+    }
 }

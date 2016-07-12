@@ -47,8 +47,8 @@
 ?>
 
 <div class="aside-scroll">
-    <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 709px;">
-        <div id="aside-scroll-inner" class="aside-scroll-inner" style="overflow: hidden; width: auto; height: 709px;">
+    <div class="slimScrollDiv">
+        <div id="aside-scroll-inner" class="aside-scroll-inner">
             <ul class="aside-menu aside-left-menu"><?php
                 $last_page_submenu = false;
                 foreach ($pageHandler->get_menu(1) as $menu) {
@@ -109,9 +109,8 @@
                 }
                 ?></ul>
             <hr>
-            <footer id="aside-footer">
         </div>
-        <div class="slimScrollBar" style="background: rgb(152, 166, 173) none repeat scroll 0% 0%; width: 5px; position: absolute; top: 0px; opacity: 0.4; display: none; border-radius: 7px; z-index: 99; right: 1px; height: 687.662px; visibility: visible;"></div>
-        <div class="slimScrollRail" style="width: 5px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 7px; background: rgb(51, 51, 51) none repeat scroll 0% 0%; opacity: 0.2; z-index: 90; right: 1px;"></div>
+        <div class="slimScrollBar"></div>
+        <div class="slimScrollRail"></div>
     </div>
 </div>

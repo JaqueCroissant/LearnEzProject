@@ -195,7 +195,7 @@ class UserHandler extends Handler
         }
         else
         {
-            if(!is_numeric($id))
+            if(!is_numeric($class_ids))
             {
                 throw new Exception("USER_INVALID_CLASS_ID");
             }

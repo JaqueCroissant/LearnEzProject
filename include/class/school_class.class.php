@@ -1,6 +1,7 @@
 <?php
 
 class School_Class extends ORM{
+    public $id;
     public $title;
     public $description;
     public $class_year;

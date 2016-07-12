@@ -81,6 +81,7 @@ function submit_get(url, element, fail_function, success_function) {
         dataType: "json",
         async: true,
         complete: function(data) {
+
             currently_submitting_get = false;
             $(element).removeAttr("clickable");
             ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));

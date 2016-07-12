@@ -4,6 +4,10 @@ jQuery(function ($) {
         var no_more_notifications = false;
         var currently_clicked_button = false;
         
+        $('#notification_data').on("click", ".notification_load_window", function(){
+            $('#notification_window').hide("fast");
+        });
+        
         $('#notifications').click(function (event) {
             event.stopPropagation();
             if ($('#notification_window').is(":hidden")) {

@@ -24,7 +24,7 @@ function get_notifications(){
     if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, 0, 5)) {
     }
     $data = $notificationHandler->get_notifications();
-    $json_array['notifications'] = "Notifikationer<input type='button' value='X' id='notification_read_all'>";     
+    $json_array['notifications'] = "Notifikationer<a href='javascript:void(0)' class='change_page notification_load_window' page='notifications' id='notifications' step='homework'>Se alle</a>";     
     if (count($data) == 0) {
        $json_array['notifications'] .= "<i>Ingen notifikationer</i><br/><br/>";
        $json_array["status_value"] = true;
@@ -60,10 +60,11 @@ function get_more_notifications(){
 
 function notification_setup($value){
     $final = "";
-    if ($value->isRead == 0) {$final .= "<div class='notification notification_unseen'>";}
-    else {$final .= "<div class='notification notification_seen'>";}
-    $final .= "<div class='notification_text pull-left'>" . $value->title . " | " . date("M-d H:i:s", strtotime($value->datetime)) . "<br/>" . 
-    $value->text . "</div><div class='notification_button pull-right'><input type='button' notif='" . $value->id . "' class='read_notification' value='X'></div></div>";
+    if ($value->isRead != 2) {$final .= "<div class='notification notification_unread'>";}
+    else {$final .= "<div class='notification notification_read'>";}
+    $final .= "<div class='notification_icon pull-left'><img src='" . $value->icon . "' alt='missing' /></div>"
+            . "<div class='notification_button pull-right'><input type='button' notif='" . $value->id . "' class='read_notification' value='X'></div>"
+            . "<div class='notification_text pull-right'>" . $value->text . "<br/><i>" . $value->datetime . "</i></div></div>";
     return $final;
 }
 

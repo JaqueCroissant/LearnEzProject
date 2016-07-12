@@ -147,15 +147,25 @@ $(document).ready(function () {
 
    $(document).on("change", ".create_select_school", function(event){
        if($(this).find("option:selected").val() === "default") {
-            $(".create_select_class").addClass("hidden");
+             $(".create_select_class").css("visibility", "hidden");
        } else {
             event.preventDefault
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id="+ $(this).find("option:selected").val(), function() {
                 alert(ajax_data.error);
             }, function() {
                 $("#select_class_name").html(ajax_data.classes);
-                $(".create_select_class").css("visibility", "visible")
+                 $(".create_select_class").css("visibility", "visible");
             });
+       }
+   });
+
+   $(document).on("change", ".create_select_usertype", function(event){
+       if($(this).find("option:selected").val() === "SA") {
+            $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_school").css("visibility", "hidden");
+       } else {
+            event.preventDefault
+            $(".create_select_school").css("visibility", "visible");
        }
    });
    //

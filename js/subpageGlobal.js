@@ -8,17 +8,13 @@ jQuery(function ($) {
     });
     
     function relocateCheckboxes(){
-        $('.mail-item').each(function(index, value){
+        $('.checkbox-resize').each(function(index, value){
             relocateCheckbox(value);
         });
     }
 
     function relocateCheckbox(value){
-        var size = $(value).height();
-        console.log(size);
-        $($(value).children('.checkbox-resize')).css("margin-top", size / 2 - 10);
-    }
-    
-    
+        var size = $(value).closest('.mail-item').height();
+        $(value).css("margin-top", size / 2 - 10);
+    } 
 });
-

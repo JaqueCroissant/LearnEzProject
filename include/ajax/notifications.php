@@ -24,7 +24,7 @@ function get_notifications(){
     if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, 0, 5)) {
     }
     $data = $notificationHandler->get_notifications();
-    $json_array['notifications'] = "Notifikationer<a href='javascript:void(0)' class='change_page notification_load_window' page='notifications' id='notifications' step='homework'>Se alle</a>";     
+    $json_array['notifications'] = "Notifikationer<a href='javascript:void(0)' class='change_page notification_load_window' page='notifications' id='notifications' step=''>Se alle</a>";     
     if (count($data) == 0) {
        $json_array['notifications'] .= "<i>Ingen notifikationer</i><br/><br/>";
        $json_array["status_value"] = true;

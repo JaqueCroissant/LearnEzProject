@@ -1,8 +1,8 @@
 function start_notification_beat(timerInSeconds){
-    setInterval(function(){
-        console.log("running notification beat");
-        notification_beat();
-    }, timerInSeconds * 1000);
+//    setInterval(function(){
+//        console.log("running notification beat");
+//        notification_beat();
+//    }, timerInSeconds * 1000);
 }
 
 function notification_beat(){

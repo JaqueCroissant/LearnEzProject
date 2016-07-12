@@ -8,13 +8,40 @@ class MailHandler extends Handler
     public $current_mail;
     public $folders = array();
     public $mails = array();
+    public $tags = array();
     
     public function __construct($current_page = null) {
         parent::__construct();
         $this->initialize_folders($current_page);
+        $this->get_tags();
     }
     
-    public function initialize_folders($current_page = null) {
+    private function get_tags() {
+        try
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            $data = DbHandler::get_instance()->return_query("SELECT mail_tags.id, translation_mail_tags.title FROM mail_tags INNER JOIN translation_mail_tags ON translation_mail_tags.mail_tag_id = mail_tags.id  WHERE translation_mail_tags.language_id = :language_id", TranslationHandler::get_current_language());
+            
+            if(empty($data) || !is_array($data) || count($data) < 1) {
+                throw new exception();
+            }
+            
+            foreach($data as $key => $value) {
+                $this->tags[] = new MailTag($value);
+            }
+            return true;
+	}
+	catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+	}
+        return false;
+    }
+    
+    private function initialize_folders($current_page = null) {
         try
         {
             if (!$this->user_exists()) {
@@ -177,6 +204,67 @@ class MailHandler extends Handler
                     break;
             }
             $this->mails_removed = $mails;
+            return true;
+	}
+	catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+	}
+        return false;
+    }
+    
+    public function send_mail($title = null, $message = null, $recipiants = array(), $disable_reply = false, $tags = array()) {
+        try
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if (empty($title)) {
+                throw new exception("MAIL_MUST_FILL_TITLE");
+            }
+            
+            if (empty($message)) {
+                throw new exception("MAIL_MUST_FILL_MESSAGE");
+            }
+            
+            if(empty($recipiants) || !is_array($recipiants) || count($recipiants) < 1) {
+                throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+            }
+            
+            foreach($recipiants as $value) {
+                if(!is_numeric($value) || $value == $this->_user->id) {
+                    throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                }
+            }
+            
+            DbHandler::get_instance()->query("INSERT INTO mail (date, title, text, disable_reply) VALUES (:date, :title, :text, :disable_reply)", date("Y-m-d H:i:s"), $title, $message, $disable_reply);
+            $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
+            DbHandler::get_instance()->query("INSERT INTO user_mail (mail_id, sender_id, receiver_id, sender_folder_id, receiver_folder_id) VALUES (:last_inserted_id, :sender_id, :receiver_id, :sender_folder_id, :receiver_folder_id)", $last_inserted_id, $this->_user->id, reset($recipiants), 3, 1);
+            
+            if(is_array($tags) && count($tags) > 0) {
+                $data = DbHandler::get_instance()->return_query("SELECT id FROM mail_tags");
+                
+                foreach($tags as $value) {
+                    if(!is_numeric($value)) {
+                        continue;
+                    }
+                    
+                    $isset = false;
+                    foreach($data as $data_value) {
+                        if($data_value["id"] == $value) {
+                            $isset = true;
+                            break;
+                        }
+                    }
+                    
+                    if(!$isset) {
+                       continue;
+                    }
+                    
+                    DbHandler::get_instance()->query("INSERT INTO user_mail_tags (mail_id, mail_tag_id) VALUES (:mail_id, :mail_tag_id)", $last_inserted_id, $value);
+                }
+            }
             return true;
 	}
 	catch (Exception $ex) 

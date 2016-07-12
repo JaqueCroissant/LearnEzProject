@@ -1714,7 +1714,7 @@ div.dataTables_wrapper div.dataTables_filter input {
     .select2-selection.select2-selection--single .select2-selection__rendered {
       line-height: 38px !important; }
   .select2-selection .select2-selection__choice {
-    margin-top: 8px !important; }
+    margin-top: 3px !important; }
   .select2-selection .select2-selection__arrow {
     height: 38px !important; }
 

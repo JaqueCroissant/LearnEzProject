@@ -393,8 +393,15 @@ a .menu_header {
 
 .notif_element_checkbox {
     float:left;
-    margin-top:25px;
     padding-right:1em;
+}
+
+.checkbox label {
+    padding:0 !important;
+}
+
+.checkbox input:hover {  
+    cursor: pointer !important;
 }
 
 .mail_element_checkbox {

@@ -17,7 +17,7 @@ class SchoolHandler extends Handler {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
             
-            $query = "Select * from school INNER JOIN school_type ON school.school_type_id = school_type.id;";
+            $query = "Select school.id as id, school.name as name, school.address, school.school_type_id, school.phone, school.email, school.max_students, school.subscription_end, school_type.title from school INNER JOIN school_type ON school.school_type_id = school_type.id;";
             
             $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {

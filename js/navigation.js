@@ -18,7 +18,7 @@ function change_page(pagename, step, args, element) {
     cursor_wait();
     currently_changing_page = true;
     
-    $("#content_container").add($("#content_breadcrumbs")).fadeOut(300).fadeOut(300, function() {
+    $("#content_container").add($("#content_breadcrumbs")).fadeTo(300, 0, function() {
         content_hidden = true;
     });
    
@@ -63,7 +63,7 @@ function append_content(content, breadcrumbs) {
         remove_cursor_wait();
         $("#content_container").html(content);
         $("#content_breadcrumbs").html(breadcrumbs);
-        $("#content_container").add($("#content_breadcrumbs")).fadeIn(300);
+        $("#content_container").add($("#content_breadcrumbs")).fadeTo(300, 1);
         return;
     }
     currentIteration++;

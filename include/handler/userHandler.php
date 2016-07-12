@@ -291,6 +291,24 @@ class UserHandler extends Handler
         }
     }
 
+    private function create_class_affiliation($classes)
+    {
+        $user_id = DbHandler::get_instance()->last_inserted_id();
+        $query = "INSERT INTO user_class (users_id, class_id) VALUES ";
+
+        for($i = 0; $i < count($classes); $i++)
+        {
+            if($i > 0 && $i < count($classes)-1)
+            {
+                $query .= ", ";
+            }
+
+            $query .= "(" . $user_id . ", " . $classes[$i] . ")";
+        }
+
+        DbHandler::get_instance()->query($query);
+    }
+
     private function create_user($user_object, $add_to_user_array)
     {
         $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
@@ -305,6 +323,8 @@ class UserHandler extends Handler
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
+
+            $this->create_class_affiliation($user_object->class_ids);
 
             if($add_to_user_array)
             {
@@ -337,6 +357,8 @@ class UserHandler extends Handler
                                             }
             $user_object->unhashed_password = "";
             
+            $this->create_class_affiliation($user_object->class_ids);
+
             if($add_to_user_array)
             {
                 $temp_user_array[] = $user_object;

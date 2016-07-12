@@ -405,14 +405,12 @@ a .menu_header {
 }
 
 .mail_element_checkbox {
-    padding: 8px 16px 16px 16px; 
+    margin-top:23px;
+    padding-right: 1em; 
     float:left;
-    height: 100px;
-    display: table;
 }
 
 .mail_element_content {
-    padding: 16px 16px 16px 0px; 
     overflow: hidden; 
     cursor:pointer;
 }
@@ -443,5 +441,5 @@ a .menu_header {
 }
 
 .hidden {
-    display:none;
+    visibility: hidden;
 }

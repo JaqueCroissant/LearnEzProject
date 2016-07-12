@@ -18,8 +18,7 @@ if(PageHandler::page_exists(isset($_GET['page']) ? $_GET['page'] : "front")) {
 
 } else {
     $jsonArray['pagename'] = "error";
-    $lol = $pageHandler->generate_page("error");
-    $jsonArray['breadcrumbs'] = $pageHandler->generate_breadcrumbs($lol);
+    $jsonArray['breadcrumbs'] = $pageHandler->generate_breadcrumbs($pageHandler->generate_page("error"));
 }
 
 function generate_args_string($array = array()) {

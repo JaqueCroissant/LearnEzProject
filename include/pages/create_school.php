@@ -17,31 +17,31 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_name"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control input-sm" type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
+                                <input class="form-control " type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_address"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control input-sm" type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
+                                <input class="form-control " type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control input-sm" type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
+                                <input class="form-control " type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_email"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control input-sm" type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
+                                <input class="form-control " type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
                             <div class="col-md-5">
-                                <select name="school_type_id" class="form-control input-sm">
+                                <select name="school_type_id" class="form-control" data-plugin="select2">
                                     <?php
                                     foreach ($schoolHandler->school_types as $value) {
                                         echo '<option value="' . $value['id'] . '">' . $value['title'] . '</option>';
@@ -67,13 +67,13 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_max_students"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control input-sm" type="text" name="school_max_students" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?>">
+                                <input class="form-control " type="text" name="school_max_students" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?>">
                             </div>
                         </div>
                         <div class="form-group" >
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control input-sm" id="school_subscription_end" type="text"  name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
+                                <input class="form-control " id="school_subscription_end" type="text"  name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
@@ -94,7 +94,7 @@ $schoolHandler->get_school_types();
                 </div>
 
                 <div class="input-container">
-                    <div class="center col-md-7 p-t-xl">        
+                    <div class="center col-md-7 p-t-xl">
                         <div class="progress">
                             <div id="step_one_progress" class="progress-bar" style="width: 33.33%;"><span>Step 1</span></div>
                             <div id="step_two_progress" class="progress-bar-inactive" style="width: 33.33%;"><span>Step 2</span></div>
@@ -106,3 +106,5 @@ $schoolHandler->get_school_types();
         </div>
     </div>
 </div>
+<script src="assets/js/include_library.js" type="text/javascript"></script>
+<script src="assets/js/include_app.js" type="text/javascript"></script>

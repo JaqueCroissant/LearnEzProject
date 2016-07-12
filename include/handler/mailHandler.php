@@ -296,8 +296,8 @@ class MailHandler extends Handler
         for($i = 0; $i < count($data); $i++) {
             $in_query .= ($i > 0 ? "," : "") ." '". $data[$i]["id"] ."'";
         }
-
-        DbHandler::get_instance()->query("UPDATE user_mail SET " . ($sender ? "sender_folder_id" : "receiver_folder_id") ." = :folder_id WHERE id IN (". $in_query .")", $folder_id);
+        //echo "UPDATE user_mail SET " . ($sender ? "sender_folder_id" : "receiver_folder_id") ." = :". $folder_id . " WHERE id IN (". $in_query .")";
+        DbHandler::get_instance()->query("UPDATE user_mail SET " . ($sender ? "sender_folder_id" : "receiver_folder_id") ." = :folder_id WHERE mail_id IN (". $in_query .")", $folder_id);
                     
     }
     

@@ -67,26 +67,33 @@ $paginationHandler = new PaginationHandler();
                             <form method="POST" action="" id="create_mail_form" url="mail.php?step=create_mail" name="create_mail">
                                 <div class="panel-body">
                                     <div class="form-group">
-                                        <input type="text" name="recipiants" class="form-control input-sm" placeholder="<?php echo TranslationHandler::get_static_text("RECEIVER"); ?>">
+                                        <input type="text" name="recipiants" class="form-control" placeholder="<?php echo TranslationHandler::get_static_text("RECEIVER"); ?>">
                                     </div>
                                     
                                     <div class="form-group">
-                                        <input type="text" name="title" class="form-control input-sm" placeholder="<?php echo TranslationHandler::get_static_text("SUBJECT"); ?>">
+                                        <input type="text" name="title" class="form-control" placeholder="<?php echo TranslationHandler::get_static_text("SUBJECT"); ?>">
                                     </div>
                                     
+                                    
                                     <div class="form-group">
-                                        <select id="" class="form-control" data-plugin="select2" multiple>
+                                        <div style="float:left;margin-right:20px;padding-top:4px;padding-left:5px;">
+                                            <label for="select_mail_tags" class="control-label"><?php echo TranslationHandler::get_static_text("MAIL_TAG"); ?>:</label>
+                                        </div>
+                                        <div style="overflow:hidden">
+                                        <select id="select_mail_tags" name="mail_tags[]" class="form-control" data-plugin="select2" multiple>
                                             <?php
                                             foreach($mailHandler->tags as $tag) {
                                                 echo '<option value="'.$tag->id.'">'.$tag->title.'</option>';
                                             }
                                             ?>
                                         </select>
+                                        </div>
+                                        <div style="clear:both;"></div>
                                     </div>
                                     
                                     <div class="form-group" style="margin: -10px 0px 0px 0px !important;">
                                         <div class="checkbox" style="float:left;">
-                                            <input name="disable_reply" class="input-lg" type="checkbox" id="checkbox-enable-reply" checked > <label for="checkbox-enable-reply"></label>
+                                            <input name="disable_reply" class="form-control" type="checkbox" id="checkbox-enable-reply" checked > <label for="checkbox-enable-reply"></label>
                                         </div>
                                         <div><?php echo TranslationHandler::get_static_text("MAIL_ARROW_RECEIVER_TO_REPLY"); ?></div>
                                         <div style="clear:both;"></div>

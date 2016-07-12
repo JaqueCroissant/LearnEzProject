@@ -87,6 +87,23 @@ $(document).ready(function () {
             }
         }
    });
+   
+   $(document).on("click", ".submit_create_mail", function(event){
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+        });
+   });
+   
+   $(document).on("click", ".submit_reply_mail", function(event){
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+            $(".reply_form").fadeOut(500);
+        });
+   });
    //
    
    // edit user info

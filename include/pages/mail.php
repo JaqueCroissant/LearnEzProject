@@ -64,33 +64,42 @@ $paginationHandler = new PaginationHandler();
             <div class="row">
                 <div class="col-md-12">
                         <div class="panel panel-default new-message">						
-                            <form action="#">
+                            <form method="POST" action="" id="create_mail_form" url="mail.php?step=create_mail" name="create_mail">
                                 <div class="panel-body">
                                     <div class="form-group">
-                                        <input type="text" class="form-control input-sm" placeholder="<?php echo TranslationHandler::get_static_text("RECEIVER"); ?>">
+                                        <input type="text" name="recipiants" class="form-control input-sm" placeholder="<?php echo TranslationHandler::get_static_text("RECEIVER"); ?>">
                                     </div>
                                     
                                     <div class="form-group">
-                                        <input type="text" class="form-control input-sm" placeholder="<?php echo TranslationHandler::get_static_text("SUBJECT"); ?>">
+                                        <input type="text" name="title" class="form-control input-sm" placeholder="<?php echo TranslationHandler::get_static_text("SUBJECT"); ?>">
                                     </div>
                                     
+                                    <div class="form-group">
+                                        <select id="" class="form-control" data-plugin="select2" multiple>
+                                            <?php
+                                            foreach($mailHandler->tags as $tag) {
+                                                echo '<option value="'.$tag->id.'">'.$tag->title.'</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
                                     
                                     <div class="form-group" style="margin: -10px 0px 0px 0px !important;">
                                         <div class="checkbox" style="float:left;">
-                                            <input class="input-lg" type="checkbox" id="checkbox-enable-reply" checked> <label for="checkbox-enable-reply"></label>
+                                            <input name="disable_reply" class="input-lg" type="checkbox" id="checkbox-enable-reply" checked > <label for="checkbox-enable-reply"></label>
                                         </div>
                                         <div><?php echo TranslationHandler::get_static_text("MAIL_ARROW_RECEIVER_TO_REPLY"); ?></div>
                                         <div style="clear:both;"></div>
                                     </div>
                                         
 
-                                    <textarea name="new_message_body" class="form-control input-sm full-wysiwyg"></textarea>
+                                    <textarea name="message" class="form-control input-sm full-wysiwyg"></textarea>
                                 </div>
 
                                 <div class="panel-footer clearfix">
                                     <div class="pull-right">
                                         <button type="button" class="btn btn-success"><i class="fa fa-save"></i></button>
-                                        <button type="button" class="btn btn-primary"><?php echo TranslationHandler::get_static_text("SEND"); ?> <i class="fa fa-send" style="margin-left:3px;"></i></button>
+                                        <button type="button" name="submit" id="submit_button" class="submit_create_mail btn btn-primary"><?php echo TranslationHandler::get_static_text("SEND"); ?> <i class="fa fa-send" style="margin-left:3px;"></i></button>
                                     </div>
                                 </div>
                             </form>
@@ -150,7 +159,7 @@ $paginationHandler = new PaginationHandler();
                                     switch($current_mail->folder_name) {  
                                         case 'important':
                                         echo '<a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="inbox" title="Remove from important"><i class="fa fa-reply"></i></a>
-                                                <a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="spam" title="Spam"><i class="fa fa-exclamation-circle"></i></a>
+                                                <a href="javascript:void(0)"  class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="spam" title="Spam"><i class="fa fa-exclamation-circle"></i></a>
                                                 <a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="trash" title="Trash"><i class="fa fa-trash"></i></a>';
                                             break;
 
@@ -227,19 +236,23 @@ $paginationHandler = new PaginationHandler();
                                 <div style="text-align:center;">'. TranslationHandler::get_static_text("MAIL_CANT_RESPOND_TO_MAIL") . '</div>';
                         } else {
                         ?>
-                            <div class="row">
+                            <div class="row reply_form">
                                 <div class="col-md-12">
                                     <div class="panel panel-default new-message">
-                                        <div class="panel-heading text-muted" style="padding: 16px 16px 8px 16px !important;">
-                                            <?php echo TranslationHandler::get_static_text("RECEIVER") . ": " . $current_mail->firstname . " " . $current_mail->surname; ?>
-                                        </div>								
-                                        <div class="panel-body p-0">
-                                            <textarea name="new_message_body" id="new-message-body" style="padding: 8px 16px 16px 16px !important;" placeholder="<?php echo TranslationHandler::get_static_text("WRITE_YOUR_ANSWER"); ?>"></textarea>
-                                        </div>
-                                        <div class="panel-footer">
-                                            <button type="button" class="btn btn-primary pull-right"><?php echo TranslationHandler::get_static_text("REPLY"); ?> <i class="fa fa-send" style="margin-left:3px;"></i></button>
-                                            <div style="clear:both;"></div>
-                                        </div>
+                                        <form method="POST" action="" id="create_mail_form" url="mail.php?step=create_mail" name="create_mail">
+                                            <input type="hidden" name="recipiants" value="<?php echo $current_mail->sender_id; ?>">
+                                            <input type="hidden" name="title" value="RE: <?php echo $current_mail->title; ?>">
+                                            <div class="panel-heading text-muted" style="padding: 16px 16px 8px 16px !important;">
+                                                <?php echo TranslationHandler::get_static_text("RECEIVER") . ": " . $current_mail->firstname . " " . $current_mail->surname; ?>
+                                            </div>								
+                                            <div class="panel-body p-0">
+                                                <textarea name="message" id="new-message-body" style="padding: 8px 16px 16px 16px !important;" placeholder="<?php echo TranslationHandler::get_static_text("WRITE_YOUR_ANSWER"); ?>"></textarea>
+                                            </div>
+                                            <div class="panel-footer">
+                                                <button type="button" name="submit" id="submit_button" class="submit_reply_mail btn btn-primary pull-right"><?php echo TranslationHandler::get_static_text("REPLY"); ?> <i class="fa fa-send" style="margin-left:3px;"></i></button>
+                                                <div style="clear:both;"></div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -353,9 +366,9 @@ $paginationHandler = new PaginationHandler();
                                                 foreach($mails as $value) {
                                                     $date_to_string = time_elapsed($value->date);
                                                     echo '
-                                                        <div class="mail-item mail_number_'. $value->id.' '.($value->is_read ? 'mail-item-read' : "") .'" style="padding: 0px !important;">
+                                                        <div class="mail-item mail_number_'. $value->id.' '.($value->is_read ? 'mail-item-read' : "") .'" style="height:100px;">
                                                             <div class="mail_element_checkbox">
-                                                                <div style="display:table-cell;vertical-align:middle;height:100%;padding:0px 16px">
+                                                                <div>
                                                                     <div class="checkbox">
                                                                         <input type="checkbox" id="checkbox-enable-reply" name="mail[]" value="'.$value->id.'"><label for="checkbox-enable-reply"></label>
                                                                     </div>
@@ -374,7 +387,11 @@ $paginationHandler = new PaginationHandler();
                                                                             <div>
                                                                                 <p class="mail-item-date" style="float:right;margin-top:-6px;">' . $date_to_string["value"] . ' ' . TranslationHandler::get_static_text($date_to_string["prefix"]) .' ' . TranslationHandler::get_static_text("DATE_AGO") . '</p>
                                                                                 <div class="mail-item-header">
-                                                                                    <h4 class="mail-item-title"><p class="title-color">' . $value->title .'</p></h4>
+                                                                                    <h4 class="mail-item-title"><p class="title-color">' . $value->title .'</p></h4>';
+                                                                                    foreach($value->mail_tags as $mail_tag) {
+                                                                                       echo '<span class="label '. $mail_tag->color_class .'" style="margin-right: 5px !important;">'. $mail_tag->title .'</span>';
+                                                                                    }
+                                                                                    echo '
                                                                                 </div>
                                                                                 <div class="mail-item-excerpt">' . (strlen($value->text) > 100 ? substr($value->text, 0, 100) . '...' : $value->text) .'</p>
                                                                             </div>                                                            
@@ -403,3 +420,5 @@ $paginationHandler = new PaginationHandler();
         ?>
     </div>
 </div>
+<script src="assets/js/library.js"></script>
+<script src="assets/js/app.js"></script>

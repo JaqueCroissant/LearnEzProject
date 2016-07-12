@@ -19,6 +19,15 @@ if(isset($_POST)) {
                 $jsonArray['error'] = $mailHandler->error->title;
             }
             break;
+            
+        case "create_mail":
+            if($mailHandler->send_mail(isset($_POST["title"]) ? $_POST["title"] : null, isset($_POST["message"]) ? $_POST["message"] : null, isset($_POST["recipiants"]) ? array($_POST["recipiants"]) : array(), isset($_POST["disable_reply"]) ? $_POST["disable_reply"] : false)) {
+                $jsonArray['status_value'] = true;
+            } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $mailHandler->error->title;
+            }
+            break;
 
         default:
             if($mailHandler->assign_mail_folder($current_step, $mails)) {
@@ -29,6 +38,7 @@ if(isset($_POST)) {
                 $jsonArray['error'] = $mailHandler->error->title;
             }
             break;
+            
     }
     echo json_encode($jsonArray);
 }

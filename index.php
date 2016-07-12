@@ -48,7 +48,6 @@ require_once 'include/extra/require.php';
             </div>
         </div>
         
-        
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
         <script src="libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
         <script src="libs/bower/superfish/dist/js/hoverIntent.js"></script>
@@ -62,5 +61,6 @@ require_once 'include/extra/require.php';
 	<script src="libs/bower/moment/moment.js"></script>
 	<script src="libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
 	<script src="assets/js/fullcalendar.js"></script>
+        
     </body>
 </html>

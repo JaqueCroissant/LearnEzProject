@@ -49,7 +49,7 @@
                                                     <label for="password_input"><?php echo TranslationHandler::get_static_text("PASSWORD")  . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
                                                     <input type="password" id="password_input" name="password" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD") ; ?>" class="form-control">
                                                 </div>
-                                        </div>
+                                            </div>
 
 
                                             <div class="col-md-6">
@@ -123,42 +123,46 @@
 
 
 
+
+
+
+
+
 							<div role="tabpanel" class="tab-pane fade" id="tab-2">
                                 <div class="widget-body">
-                                    <form method="POST" action="" id="create_import" url="createprofile.php" name="create_import" class="form-horizontal">
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-md-offset-3">
-                                                <?php
-                                                if($userHandler->_user->user_type_id==1)
-                                                {?>
+                                    <form method="POST" action="" id="create_import" url="createprofile.php" name="create_import">
+                                                <div class="form-group m-b-sm">
 
-                                                    <select id="select1" name="school_id" class="form-control" data-plugin="select2">
-                                                        <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
+                                                    <div class="create_select_school <?php echo ($userHandler->_user->user_type_id != 1 ? '" style="visibility:hidden;' : ''); ?> ">
                                                         <?php
-                                                            $schoolHandler->get_all_schools();
-                                                            foreach($schoolHandler->all_schools as $school)
-                                                            {
-                                                                echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
-                                                            }
+                                                        if($userHandler->_user->user_type_id==1)
+                                                        {?>
+                                                            <label for="select1"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></label>
+                                                            <select id="select1" name="school_id" class="form-control" data-plugin="select2">
+                                                                <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
+                                                                <?php
+                                                                    $schoolHandler->get_all_schools();
+                                                                    foreach($schoolHandler->all_schools as $school)
+                                                                    {
+                                                                        echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
+                                                                    }
+                                                                ?>
+
+                                                            </select>
+                                                        <?php }
                                                         ?>
+                                                    </div>
 
-                                                    </select>
-                                                    </br>
-                                                <?php }
-                                                ?>
-
-                                                <div class="form-group">
-                                                    <input type="file" id="csv_file_dialog" name="csv_file" accept=".csv" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_NAME"); ?>" class="btn btn-default btn-sm"><br/>
                                                 </div>
-                                            </div>
 
-                                            <div style="clear:both;"></div>
-                                            <div class="form-group">
-                                                <div class="col-md-6 col-md-offset-3">
-                                                    <input type="button" id="submit" name="submit" value="<?php echo TranslationHandler::get_static_text("CREATE_IMPORT"); ?>" class="btn btn-default btn-sm create_import_profiles">
+
+                                                <div class="form-group m-b-sm">
+                                                    <input type="file" id="csv_file_dialog" name="csv_file" accept=".csv" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_NAME"); ?>" class="form-control btn btn-default btn-sm">
                                                 </div>
-                                            </div>
-                                        </div>
+
+                                                <div class="form-group m-b-sm">
+                                                        <input type="button" id="submit" name="submit" value="<?php echo TranslationHandler::get_static_text("CREATE_IMPORT"); ?>" class="btn btn-default btn-sm create_import_profiles">
+                                                </div>
                                     </form>
                                 </div >
                             </div><!-- .tab-pane  -->
@@ -167,6 +171,7 @@
 				</div><!-- .widget -->
 			</div>
         </div>
+
 
         <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>

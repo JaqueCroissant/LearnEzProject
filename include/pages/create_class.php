@@ -4,7 +4,7 @@ require_once '../../include/handler/classHandler.php';
 require_once '../../include/handler/schoolHandler.php';
 $schoolHandler = new SchoolHandler();
 $schoolHandler->get_all_schools();
-$classHandler = SessionKeyHandler::get_from_session("class_handler", true);
+$classHandler = new ClassHandler();
 ?>
 <div class="row">
     <div class="col-md-12">
@@ -110,6 +110,8 @@ $classHandler = SessionKeyHandler::get_from_session("class_handler", true);
 </div>
 </div>
 </div>
+<script src="assets/js/include_library.js" type="text/javascript"></script>
+<script src="assets/js/include_app.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#class_begin").datepicker();
@@ -117,5 +119,3 @@ $classHandler = SessionKeyHandler::get_from_session("class_handler", true);
     });
 </script>
 
-<script src="assets/js/include_library.js" type="text/javascript"></script>
-<script src="assets/js/include_app.js" type="text/javascript"></script>

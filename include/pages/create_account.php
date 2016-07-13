@@ -102,7 +102,7 @@
                                                             <?php
                                                             if($userHandler->_user->user_type_id > 1) {
                                                                 $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
-                                                                foreach($classHandler->classes_in_school as $class)
+                                                                foreach($classHandler->classes as $class)
                                                                 {
                                                                     echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
                                                                 }

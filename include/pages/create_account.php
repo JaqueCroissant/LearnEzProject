@@ -49,7 +49,7 @@
                                                     <label for="password_input"><?php echo TranslationHandler::get_static_text("PASSWORD")  . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
                                                     <input type="password" id="password_input" name="password" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD") ; ?>" class="form-control">
                                                 </div>
-                                        </div>
+                                            </div>
 
 
                                             <div class="col-md-6">
@@ -123,43 +123,61 @@
 
 
 
+
+
+
+
+
 							<div role="tabpanel" class="tab-pane fade" id="tab-2">
                                 <div class="widget-body">
-                                    <form method="POST" action="" id="create_import" url="createprofile.php" name="create_import" class="form-horizontal">
-                                        <div class="form-group">
-                                            <div class="col-md-6 col-md-offset-3">
-                                                <?php
-                                                if($userHandler->_user->user_type_id==1)
-                                                {?>
 
-                                                    <select id="select1" name="school_id" class="form-control" data-plugin="select2">
-                                                        <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
-                                                        <?php
-                                                            $schoolHandler->get_all_schools();
-                                                            foreach($schoolHandler->all_schools as $school)
-                                                            {
-                                                                echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
-                                                            }
-                                                        ?>
+                                    <form method="post" id="create_school_step_one" action="" name="create_school_step_one" class="form-horizontal" url="create_school.php">
+                        <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label" for="school_name"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
+                            <div class="col-md-5">
+                                <input class="form-control " type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label" for="school_address"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></label>
+                            <div class="col-md-5">
+                                <input class="form-control " type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></label>
+                            <div class="col-md-5">
+                                <input class="form-control " type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label" for="school_email"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></label>
+                            <div class="col-md-5">
+                                <input class="form-control " type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
+                            <div class="col-md-5">
+                                <select name="school_type_id" class="form-control" data-plugin="select2">
+                                    <?php
+                                    foreach ($schoolHandler->school_types as $value) {
+                                        echo '<option value="' . $value['id'] . '">' . $value['title'] . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label"></label>
+                            <div class="col-md-5">
+                                <input type="hidden" name="step" id="create_school_hidden_field_step_1">
+                                <input type="button" name="submit" id="create_school_step_one_button" step="1"
+                                       value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_ONE"); ?>" class="pull-right btn btn-default btn-sm create_school">
+                            </div>
+                        </div>
+                    </form>
 
-                                                    </select>
-                                                    </br>
-                                                <?php }
-                                                ?>
-
-                                                <div class="form-group">
-                                                    <input type="file" id="csv_file_dialog" name="csv_file" accept=".csv" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_NAME"); ?>" class="btn btn-default btn-sm"><br/>
-                                                </div>
-                                            </div>
-
-                                            <div style="clear:both;"></div>
-                                            <div class="form-group">
-                                                <div class="col-md-6 col-md-offset-3">
-                                                    <input type="button" id="submit" name="submit" value="<?php echo TranslationHandler::get_static_text("CREATE_IMPORT"); ?>" class="btn btn-default btn-sm create_import_profiles">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
                                 </div >
                             </div><!-- .tab-pane  -->
 						</div><!-- .tab-content  -->
@@ -167,6 +185,7 @@
 				</div><!-- .widget -->
 			</div>
         </div>
+
 
         <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>

@@ -3644,7 +3644,7 @@ tbody.collapse.in {
       border-bottom-color: #edf0f5; } }
 
 .tab-content > .tab-pane {
-  visibility: collapse;
+  visibility: hidden;
   height:0px;
   }
 

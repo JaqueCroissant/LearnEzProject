@@ -14,8 +14,9 @@
         
         public function get_notification_categories(){
             try {
-                return DbHandler::get_instance()->return_query("SELECT notifications_category.icon_class AS icon, "
-                        . "translation_notifications_category.name AS title "
+                return DbHandler::get_instance()->return_query("SELECT notifications_category.icon_class, "
+                        . "notifications_category.category_name, "
+                        . "translation_notifications_category.name "
                         . "FROM notifications_category "
                         . "INNER JOIN translation_notifications_category "
                         . "ON translation_notifications_category.notifications_category_id = notifications_category.id "
@@ -140,6 +141,7 @@
                         . "user_notifications.datetime AS datetime, "
                         . "user_notifications.is_read AS isRead, "
                         . "notifications_category.icon_class AS icon, "
+                        . "notifications_category.label_class AS label, "
                         . "translation_notifications_category.name AS category "
                         . "FROM user_notifications "
                         . "INNER JOIN notifications "
@@ -159,7 +161,67 @@
                         . "WHERE user_notifications.user_id = :userId "
                         . "ORDER BY user_notifications.datetime DESC "
                         . "LIMIT :limit OFFSET :offset"
-                        , $langId, $langId, $langId, $userId, $limit, (int)$offset);
+                        , $langId, $langId, $langId, $userId, $limit, $offset);
+                if (count($dbData) == 0) {
+                    $this->_notifications = array();
+                    return true;
+                }
+                $fullArray = array();
+                foreach ($dbData as $notification) {
+                    array_push($fullArray, new Notification($notification));
+                }
+                $this->_notifications = $fullArray;
+                $this->seen_notifications($userId);
+                return true;
+                
+            } catch (Exception $exc) {
+                $this->error = ErrorHandler::return_error($exc->getMessage());
+                return false;
+            }
+        }
+        
+        public function load_notifications_from_category($userId, $offset, $category, $limit = 5){
+            try {
+                $this->check_numeric($offset);
+                $this->check_numeric($userId);
+                $this->check_numeric($limit);
+                $this->is_null_or_empty($category);
+                
+                $langId = TranslationHandler::get_current_language();
+                
+                $catId = DbHandler::get_instance()->return_query("SELECT id "
+                        . "FROM notifications_category "
+                        . "WHERE category_name = :name"
+                        , $category);
+                
+                $dbData = DbHandler::get_instance()->return_query("SELECT translation_notifications.title AS title, "
+                        . "translation_notifications.text AS text, "
+                        . "user_notifications.id AS id, "
+                        . "user_notifications.datetime AS datetime, "
+                        . "user_notifications.is_read AS isRead, "
+                        . "notifications_category.icon_class AS icon, "
+                        . "notifications_category.label_class AS label, "
+                        . "translation_notifications_category.name AS category "
+                        . "FROM user_notifications "
+                        . "INNER JOIN notifications "
+                        . "ON notifications.id = user_notifications.notification_id "
+                        . "AND notifications.notifications_category_id = :catId "
+                        . "INNER JOIN notifications_category "
+                        . "ON notifications_category.id = notifications.notifications_category_id "
+                        . "INNER JOIN translation_notifications_category "
+                        . "ON translation_notifications_category.notifications_category_id = notifications_category.id "
+                        . "AND translation_notifications_category.translation_language_id = :languageId "
+                        . "INNER JOIN translation_notifications "
+                        . "ON translation_notifications.notification_id = notifications.id "
+                        . "AND translation_notifications.language_id = "
+                        . "(IF ((SELECT notifications.id FROM translation_notifications "
+                        . "WHERE notification_id = notifications.id "
+                        . "AND language_id = :languageId "
+                        . "LIMIT 1),:languageId,notifications.default_language_id)) "
+                        . "WHERE user_notifications.user_id = :userId "
+                        . "ORDER BY user_notifications.datetime DESC "
+                        . "LIMIT :limit OFFSET :offset"
+                        , reset($catId)["id"], $langId, $langId, $langId, $userId, $limit, $offset);
                 if (count($dbData) == 0) {
                     $this->_notifications = array();
                     return true;

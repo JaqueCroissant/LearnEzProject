@@ -71,32 +71,27 @@
                                                 </div>
 
                                                 <div class="form-group m-b-sm">
-                                                    <?php
-                                                    if($userHandler->_user->user_type_id==1)
-                                                    {?>
-                                                        <label for="select1" class="control-label"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
-                                                        <select id="select1" name="school_id" class="create_select_school form-control" data-plugin="select2">
+                                                    <div class="create_select_school <?php echo ($userHandler->_user->user_type_id == 1 ? '" style="visibility:hidden;' : ''); ?> ">
+                                                        <?php
+                                                        if($userHandler->_user->user_type_id==1)
+                                                        {?>
+                                                            <label for="select1" class="control-label"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                            <select id="select1" name="school_id" class="create_select_school form-control" data-plugin="select2">
 
-                                                            <?php
-                                                                $schoolHandler->get_all_schools();
-                                                                foreach($schoolHandler->all_schools as $school)
-                                                                {
-                                                                    echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
+                                                                <?php
+                                                                    $schoolHandler->get_all_schools();
+                                                                    foreach($schoolHandler->all_schools as $school)
+                                                                    {
+                                                                        echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
+                                                                    }
                                                                 }
-                                                            }
-                                                            ?>
-                                                    </select>
+                                                                ?>
+                                                        </select>
+                                                    </div>
                                                 </div>
 
                                                 <div class="form-group m-b-sm">
-                                                    <div class="create_select_class
-                                                    <?php
-                                                        if($userHandler->_user->user_type_id == 1)
-                                                        {
-                                                            echo '" style="visibility:hidden;';
-                                                        }
-                                                    ?>
-                                                    ">
+                                                    <div class="create_select_class <?php echo ($userHandler->_user->user_type_id == 1 ? '" style="visibility:hidden;' : ''); ?>">
                                                         <label for="select_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
                                                         <select id="select_class_name" name="class_name" class="form-control" data-plugin="select2" multiple>
                                                             <?php

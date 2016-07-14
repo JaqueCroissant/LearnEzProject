@@ -10,11 +10,12 @@
         case "1":
             if(isset($_POST)) 
             {
-                if($userHandler->edit_user_info($_POST["firstname"], $_POST["surname"], $_POST["email"], $_POST["description"])) 
+                if($userHandler->edit_user_info($_POST["firstname"], $_POST["surname"], $_POST["email"], $_POST["description"], $_POST["avatar_hidden_id"]))
                 {
                     
                     $jsonArray['status_value'] = true;
                     $jsonArray['full_name'] = $userHandler->_user->firstname . " " . $userHandler->_user->surname;
+                    $jsonArray['avatar_id'] = $userHandler->_user->image_id;
                 } 
                 else 
                 {

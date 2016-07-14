@@ -723,7 +723,7 @@ class UserHandler extends Handler
 
     public function get_profile_images()
     {
-        $this->profile_images = DbHandler::get_instance()->return_query("SELECT * FROM image WHERE id != :id", $this->_user->image_id);
+        $this->profile_images = DbHandler::get_instance()->return_query("SELECT * FROM image");
     }
 }
 ?>

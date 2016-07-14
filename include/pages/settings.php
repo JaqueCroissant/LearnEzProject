@@ -23,7 +23,8 @@ $userHandler = new UserHandler();
 						<div class="tab-content p-md">
 							<div role="tabpanel" class="tab-pane fade active in" id="tab-1">
 								<div class="widget-body">
-                                                                        <form method="post" action="" url="settings.php?step=1" id="edit_info">
+                                                                        <form method="post" action="" url="settings.php?step=1" id="edit_info_form" name="edit_info">
+                                                                            <input name="avatar_hidden_id" id="avatar_hidden_id" class="input_avatar_id" type="hidden" value="<?php echo $userHandler->_user->image_id;?>" />
                                                                         <div class="col-md-6">
 
                                                                             <div class="form-group m-b-sm">
@@ -61,7 +62,7 @@ $userHandler = new UserHandler();
                                                                                         <div class="media">
                                                                                                 <div class="media-left">
                                                                                                         <div class="avatar avatar-lg avatar-circle">
-                                                                                                                <a href="javascript:void(0)"><img src="assets/images/profile_images/<?php echo $userHandler->_user->image_id;?>.png" alt=""></a>
+                                                                                                                <img class="current-avatar" src="assets/images/profile_images/<?php echo $userHandler->_user->image_id;?>.png" alt="">
                                                                                                         </div>
                                                                                                 </div>
                                                                                                 <div class="media-body">
@@ -86,7 +87,7 @@ $userHandler = new UserHandler();
                                                                                                                 $userHandler->get_profile_images();
                                                                                                                 foreach($userHandler->profile_images as $image)
                                                                                                                 {
-                                                                                                                    echo '<div class="avatar avatar-xl avatar-circle avatar-hover"><img src="assets/images/profile_images/' . $image['id'] . '.png"/></div>';
+                                                                                                                    echo '<div class="avatar avatar-xl avatar-circle avatar-hover" avatar_id="' . $image['id'] . '"><img src="assets/images/profile_images/' . $image['id'] . '.png"/></div>';
                                                                                                                 }
                                                                                                             ?>
                                                                                                     </div>
@@ -103,7 +104,7 @@ $userHandler = new UserHandler();
                                         <div class="form-group">
                                             <div class="col-md-12">
 
-                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-left btn btn-default btn-sm create_submit_info">
+                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-left btn btn-default btn-sm submit_edit_user_info">
                                             </div>
                                         </div>
                                     </form>
@@ -114,7 +115,7 @@ $userHandler = new UserHandler();
 			<div role="tabpanel" class="tab-pane fade" id="tab-2">
 
                             <div class="widget-body">
-                                <form method="POST" action="" id="settings_pass" url="settings.php?step=2" name="settings_pass">
+                                 <form method="POST" action="" id="settings_pass" url="settings.php?step=2" name="settings_pass">
                                                                         <div class="">
 
                                                                             <div class="form-group m-b-sm">
@@ -141,7 +142,7 @@ $userHandler = new UserHandler();
 
 
                                     </form>
-                                </div>
+                            </div>
 
 
                         </div><!-- .tab-pane  -->

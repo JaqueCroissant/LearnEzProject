@@ -7,6 +7,10 @@ var LIBS = {
         "libs/bower/select2/dist/css/select2.min.css",
         "libs/bower/select2/dist/js/select2.full.min.js"
     ],
+    DataTable: [
+        "libs/misc/datatables/datatables.min.css",
+        "libs/misc/datatables/datatables.min.js"
+    ],
     tagsinput: [
         "libs/bower/bootstrap-tagsinput/dist/bootstrap-tagsinput.css",
         "libs/bower/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js",

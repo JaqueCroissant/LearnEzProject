@@ -43,21 +43,18 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            
-            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
+
+            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
                             class.start_date, class.end_date, class.open
-                            FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
-                            INNER JOIN class_year_prefix ON class.class_year_prefix_id = class_year_prefix.id
-                            INNER JOIN translation_class_year_prefix ON class_year_prefix.id = translation_class_year_prefix.class_year_prefix_id
-                            WHERE translation_class_year_prefix.language_id = :language_id";
-            
-            $array = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language());
-            
+                            FROM class INNER JOIN class_year ON class.class_year_id = class_year.id";
+
+            $array = DbHandler::get_instance()->return_query($query);
+
             $this->classes = array();
             foreach ($array as $value) {
                 $this->classes[] = new School_Class($value);
             }
-            
+
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -144,6 +141,30 @@ class ClassHandler extends Handler {
                 return true;
             }
             return false;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function update_class_open($class_id, $open_int) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            $this->verify_class_exists($class_id);
+            
+//            if (!is_int($open_int)) {
+//                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+//            }
+            
+            $query = "UPDATE class SET open=:open WHERE id=:id";
+            
+            if (!DbHandler::get_instance()->query($query, $open_int, $class_id)) {
+                throw new Exception("DEFAULT");
+            }
+            
+            return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;

@@ -137,11 +137,34 @@ $(document).ready(function () {
    });
 
    $(document).on("click", ".reset_pass_submit_email2", function(event){
-        event.preventDefault
+        event.preventDefault;
         initiate_submit_form($(this), function() {
             alert(ajax_data.error);
         }, function () {
             location.reload();
+        });
+    });
+    
+    $(document).on("click", ".btn_class_open", function(event){
+        event.preventDefault;
+        form_id = $(this).closest("form").attr("id");
+        hidden_id = $("#" + form_id + "_hidden").attr("id");
+        hidden_value = $("#" + hidden_id).val();
+        if (hidden_value === "1") {
+            $("#" + hidden_id).val(0);
+        } else {
+            $("#" + hidden_id).val(1);
+        }
+        div_id = $(this).closest("div").attr("id");
+        
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function () {
+            if (hidden_value === "1") {
+                
+            } else {
+                
+            }
         });
     });
 
@@ -149,7 +172,7 @@ $(document).ready(function () {
        if($(this).find("option:selected").val() === "default") {
              $(".create_select_class").css("visibility", "hidden");
        } else {
-            event.preventDefault
+            event.preventDefault;
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id="+ $(this).find("option:selected").val(), function() {
                 alert(ajax_data.error);
             }, function() {
@@ -164,7 +187,7 @@ $(document).ready(function () {
             $(".create_select_class").css("visibility", "hidden");
             $(".create_select_school").css("visibility", "hidden");
        } else {
-            event.preventDefault
+            event.preventDefault;
             $(".create_select_school").css("visibility", "visible");
        }
    });

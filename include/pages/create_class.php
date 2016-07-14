@@ -38,11 +38,6 @@ $classHandler = new ClassHandler();
                             </select>
                             </div>
                             </div>
-
-
-
-
-
                 <?php
             } else {
                 echo '<input type="hidden" name="school_id" value="' . $classHandler->_user->school_id . '">';
@@ -50,7 +45,7 @@ $classHandler = new ClassHandler();
             ?>
 
             <div class="form-group">
-                <label class="col-sm-2 col-sm-offset-2 control-label" for="class_open"><?php echo TranslationHandler::get_static_text("CLASS_OPEN"); ?></label>
+                <label class="col-sm-2 col-sm-offset-2 control-label" for="class_open"><?php echo TranslationHandler::get_static_text("OPEN"); ?></label>
                 <div class="col-md-5">
                     <div class="checkbox">
                         <input class="checkbox-circle checkbox-dark" checked="" type="checkbox" name="class_open" id="class_open">

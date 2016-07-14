@@ -443,3 +443,9 @@ a .menu_header {
 .hidden {
     visibility: hidden;
 }
+
+.avatar-hover:hover
+{
+    background-color: lightskyblue !important;
+    cursor: pointer !important;
+}

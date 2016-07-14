@@ -136,6 +136,29 @@ $(document).ready(function () {
         });
    });
 
+   $(document).on("click", ".create_submit_csv", function(event){
+       var formData = new FormData($(this)[0]);
+
+        $.ajax({
+            url: 'include/ajax/create_account.php?step=2',
+            type: 'POST',
+            data: formData,
+            async: false,
+            complete: function (data) {
+                alert(data)
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+        });
+   });
+
    $(document).on("click", ".reset_pass_submit_email2", function(event){
         event.preventDefault
         initiate_submit_form($(this), function() {

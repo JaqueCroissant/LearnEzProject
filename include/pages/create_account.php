@@ -11,7 +11,7 @@
     ?>
         <!--GRUNDLÆGGENDE INFO + TILHØRSFORHOLD FOR OPRETTELSE AF ENKELT BRUGER-->
 
-        <div class="row">   
+        <div class="row">
             <div class="col-md-12">
 				<div class="widget">
 					<div class="m-b-lg nav-tabs-horizontal">
@@ -118,65 +118,46 @@
                                             </div>
                                         </div>
                                     </form>
-                                </div style="clear:both;">
-							</div><!-- .tab-pane  -->
+                                </div>
+			</div><!-- .tab-pane  -->
 
 
 
 
+			<div role="tabpanel" class="tab-pane fade" id="tab-2">
+                            <div class="widget-body">
+
+                                    <form method="POST" action="" id="create_import_form" url="create_account.php?step=2" name="create_import">
+                                                <div class="form-group m-b-sm">
+                                                    <div class="<?php echo ($userHandler->_user->user_type_id != 1 ? ' style="visibility:hidden;' : ''); ?>">
+
+                                                            <label for="select1"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></label>
+                                                            <select id="select1" name="school_id" class="form-control" data-plugin="select2">
+                                                                <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
+                                                                <?php
+                                                                    $schoolHandler->get_all_schools();
+                                                                    foreach($schoolHandler->all_schools as $school)
+                                                                    {
+                                                                        echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
+                                                                    }
+                                                                ?>
+
+                                                            </select>
+                                                    </div>
+                                                    <br/>
 
 
 
+                                                <div class="form-group m-b-sm">
+                                                    <label for="csv_file_dialog"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_FILE"); ?></label>
+                                                    <input type="file" id="csv_file_dialog" name="csv_file" accept=".csv" class="form-control btn btn-default btn-sm">
+                                                </div>
 
-							<div role="tabpanel" class="tab-pane fade" id="tab-2">
-                                <div class="widget-body">
-
-                                    <form method="post" id="create_school_step_one" action="" name="create_school_step_one" class="form-horizontal" url="create_school.php">
-                        <div class="form-group">
-                            <label class="col-md-2 col-md-offset-2 control-label" for="school_name"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
-                            <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 col-md-offset-2 control-label" for="school_address"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></label>
-                            <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></label>
-                            <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 col-md-offset-2 control-label" for="school_email"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></label>
-                            <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 col-md-offset-2 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
-                            <div class="col-md-5">
-                                <select name="school_type_id" class="form-control" data-plugin="select2">
-                                    <?php
-                                    foreach ($schoolHandler->school_types as $value) {
-                                        echo '<option value="' . $value['id'] . '">' . $value['title'] . '</option>';
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 col-md-offset-2 control-label"></label>
-                            <div class="col-md-5">
-                                <input type="hidden" name="step" id="create_school_hidden_field_step_1">
-                                <input type="button" name="submit" id="create_school_step_one_button" step="1"
-                                       value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_ONE"); ?>" class="pull-right btn btn-default btn-sm create_school">
-                            </div>
-                        </div>
-                    </form>
+                                                <div class="form-group m-b-sm">
+                                                    <input type="button" id="create_import_submit" name="submit" value="<?php echo TranslationHandler::get_static_text("CREATE_IMPORT"); ?>" class="btn btn-default btn-sm create_submit_csv">
+                                                </div>
+                                            </div>
+                                    </form>
 
                                 </div >
                             </div><!-- .tab-pane  -->

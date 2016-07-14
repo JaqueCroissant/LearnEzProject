@@ -156,13 +156,23 @@ $(document).ready(function () {
         event.preventDefault();
         initiate_submit_form($(this), function () {
             alert(ajax_data.error);
-
         }, function () {
             $(".username").html(ajax_data.full_name);
+            $(".current-avatar-image").attr("src", "assets/images/profile_images/" + ajax_data.avatar_id + ".png");
         });
     });
 
+    $(document).on("click", ".avatar-hover", function(event){
+            event.preventDefault();
 
+            var avatar_id = $(this).attr("avatar_id");
+            if(avatar_id === undefined) {
+                return;
+            }
+            $(".current-avatar").attr("src", "assets/images/profile_images/" + avatar_id + ".png");
+            $(".input_avatar_id").val(avatar_id);
+
+    });
 
     $(document).on("click", ".settings_submit_password", function (event) {
         event.preventDefault();

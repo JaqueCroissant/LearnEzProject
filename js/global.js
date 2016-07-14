@@ -89,7 +89,6 @@ $(document).ready(function () {
         }
 
     });
-    //
    
    $(document).on("click", ".submit_create_mail", function(event){
         event.preventDefault();
@@ -108,6 +107,15 @@ $(document).ready(function () {
         });
    });
    //
+   
+   // rights
+   $(document).on("click", ".submit_change_rights", function(event){
+        event.preventDefault();
+        initiate_submit_form($(this), function() {
+            alert(ajax_data.error);
+        }, function() {
+        });
+   });
    
    // edit user info
     $(document).on("click", ".submit_edit_user_info", function(event){

@@ -443,3 +443,15 @@ a .menu_header {
 .hidden {
     visibility: hidden;
 }
+
+.treeview {
+  margin: 0px;
+}
+
+.treeview ul { 
+  list-style: none;
+}
+
+.treeview li {
+  padding: 2px 0 2px 40px;
+}

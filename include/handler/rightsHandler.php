@@ -1,11 +1,9 @@
 <?php
-    class RightsHandler extends Handler
+    class RightsHandler
     {
-        public function __construct() {
-            parent::__construct();
-        }
+        public static $error;
         
-        private function get_from_database()
+        private static function get_from_database()
         {
             if($this->user_exists()) {
                 $userRights = DbHandler::get_instance()->return_query("SELECT rights.id, rights.prefix, rights.sort_order, translation_rights.title
@@ -32,7 +30,7 @@
             return false;
         }
 
-        public function right_exists($prefix)
+        public static function right_exists($prefix)
         {
             if(!SessionKeyHandler::session_exists("rights"))
             {
@@ -50,12 +48,39 @@
             return false;
         }
 
-        public function reset_rights()
+        public static function reset_rights()
         {
             SessionKeyHandler::remove_from_session("rights");
         }
+        
+        public static function update_page_rights($user_type = 1, $page_rights = array()) {
+            try {
+                if(empty($user_type) || !is_numeric($user_type)) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+                
+                if(empty($page_rights) || !is_array($page_rights) ) {
+                   throw new Exception("INVALID_PAGE_RIGHTS");
+                }
+                
+                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND b.hide_in_backend != 1", $user_type);
+                
+                foreach($page_rights as $key => $value) {
+                    if(empty($value) || !is_numeric($value)) {
+                        continue;
+                    }
+                    DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id) VALUES (:page_id, :user_type_id)", $value, $user_type);
+                }
+                
+                return true;
+            } catch (Exception $ex) {
+                echo $ex->getMessage();
+                self::$error = ErrorHandler::return_error($ex->getMessage());
+            }
+            return false;
+        }
 
-        public function update_type_rights($user_type, $rights_array)
+        public static function update_type_rights($user_type, $rights_array)
         {
             if(is_int($user_type) && $user_type < 5 && $user_type > 0)
             {

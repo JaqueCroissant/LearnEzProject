@@ -17,7 +17,6 @@
     require_once 'include/handler/classHandler.php';
     
     $loginHandler = new LoginHandler();
-    $rightsHandler = new RightsHandler();
     $userHandler = new UserHandler();
     $pageHandler = new PageHandler();
     $schoolHandler = new SchoolHandler();

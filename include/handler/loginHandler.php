@@ -78,7 +78,7 @@ class LoginHandler
         }
         
         
-        $user = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE email = :email", $this->_email);
+        $user = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE email = :email", $this->_email);
            
         if(empty($user)) {
             return false;
@@ -93,7 +93,7 @@ class LoginHandler
             return false;
         }
         
-        $userData = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username));
+        $userData = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username));
         
         if(empty($userData)) {
              return false;

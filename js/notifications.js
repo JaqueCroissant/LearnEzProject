@@ -4,12 +4,23 @@ jQuery(function ($) {
         var no_more_notifications = false;
         var currently_clicked_button = false;
         
+        var win = $('#notifications');
+        win.attr("aria-expanded", "false");
+        win.attr("aria-haspopup", "true");
+        win.attr("data-toggle", "dropdown");
+        win.addClass("dropdown-toggle");
+        $(win.closest("li")).addClass("dropdown");
+        $(win.closest("li")).append("<ul class='dropdown-menu animated flipInY'>" +
+                "<li><div id='notification_window'>" + 
+                "<div id='notification_data'></div>" + 
+                "<div id='notification_loading' class='centered'>" + 
+                "<div id='notification_loading_image'></div></div></div></li></ul>");
+        
         $('#notification_data').on("click", ".notification_load_window", function(){
             $('#notification_window').hide("fast");
         });
         
         $('#notifications').click(function (event) {
-            event.stopPropagation();
             if ($('#notification_window').is(":hidden")) {
                 currently_recieving_notifications = true;
                 $.ajax({

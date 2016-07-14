@@ -38,6 +38,8 @@
                         <?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname; ?>
                         </a>
                     </h5>
+                    
+                    <small><?php echo $userHandler->_user->user_type_title; ?></small>
                 </div>
             </div>
         </div>

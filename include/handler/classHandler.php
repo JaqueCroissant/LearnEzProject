@@ -3,7 +3,7 @@
 class ClassHandler extends Handler {
 
     public $school_class;
-    public $classes_in_school;
+    public $classes;
     public $years;
     public $year_prefixes;
     private $format = "Y-m-d H:i:s";
@@ -38,6 +38,30 @@ class ClassHandler extends Handler {
         }
     }
 
+    public function get_all_classes() {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
+                            class.start_date, class.end_date, class.open
+                            FROM class INNER JOIN class_year ON class.class_year_id = class_year.id";
+
+            $array = DbHandler::get_instance()->return_query($query);
+
+            $this->classes = array();
+            foreach ($array as $value) {
+                $this->classes[] = new School_Class($value);
+            }
+
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
     public function get_classes_by_school_id($school_id) {
         try {
             if (!$this->user_exists()) {
@@ -54,9 +78,9 @@ class ClassHandler extends Handler {
 
             $array = DbHandler::get_instance()->return_query($query, $school_id, TranslationHandler::get_current_language());
 
-            $this->classes_in_school = array();
+            $this->classes = array();
             foreach ($array as $value) {
-                $this->classes_in_school[] = new School_Class($value);
+                $this->classes[] = new School_Class($value);
             }
 
             return true;
@@ -83,8 +107,9 @@ class ClassHandler extends Handler {
                             WHERE user_class.users_id = :user_id AND translation_class_year_prefix.language_id = :language_id";
 
             $array = DbHandler::get_instance()->return_query($query, $user_id, TranslationHandler::get_current_language());
+            $this->classes = array();
             foreach ($array as $value) {
-                $this->classes_in_school[] = new School_Class($value);
+                $this->classes[] = new School_Class($value);
             }
 
             return true;
@@ -99,7 +124,7 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            
+
             $this->is_null_or_empty($title);
             $this->is_null_or_empty($school_id);
             if ($class_start == null) {
@@ -116,6 +141,30 @@ class ClassHandler extends Handler {
                 return true;
             }
             return false;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function update_class_open($class_id, $open_int) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            $this->verify_class_exists($class_id);
+            
+//            if (!is_int($open_int)) {
+//                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+//            }
+            
+            $query = "UPDATE class SET open=:open WHERE id=:id";
+            
+            if (!DbHandler::get_instance()->query($query, $open_int, $class_id)) {
+                throw new Exception("DEFAULT");
+            }
+            
+            return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
@@ -245,9 +294,10 @@ class ClassHandler extends Handler {
     private function verify_class_end_is_greater($class_end, $class_start) {
         $es = strtotime($class_end);
         $ss = strtotime($class_start);
-        
+
         if ($es < $ss) {
-            throw new Exception ("CLASS_END_IS_WRONG");
-        } 
+            throw new Exception("CLASS_END_IS_WRONG");
+        }
     }
+
 }

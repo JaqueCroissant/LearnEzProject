@@ -58,7 +58,7 @@
                 $jsonArray["classes"] = "";
 
                 if($classHandler->get_classes_by_school_id($_GET["school_id"])) {
-                    foreach($classHandler->classes_in_school as $class)
+                    foreach($classHandler->classes as $class)
                     {
                         $jsonArray["classes"] .= '<option value="' . $class->id . '">' . $class->title . '</option>'; 
                     }

@@ -90,6 +90,38 @@ $(document).ready(function () {
 
     });
     //
+    
+    //notifications
+    $(document).on("click", ".notifs_button", function(event){
+       event.preventDefault();
+       var action = $(this).attr("action");
+       if ($("#" + $(this).attr("target_form") + " input:checkbox:checked").length > 0) {
+            initiate_custom_submit_form($(this), function(){
+                alert(ajax_data.error);
+            }, function(){
+                if (ajax_data.status_value !== undefined) {
+                    if (ajax_data.status_value === true) {
+                        if (action === "delete") {
+                            ajax_data.affected_notifs.forEach(function(o){
+                                $(".notif_count_" + o).fadeOut(500, function () {
+                                    $(this).remove();
+                                });
+                            });
+                        }
+                        else if(action === "read") {
+                            ajax_data.affected_notifs.forEach(function(o){
+                                $(".notif_count_" + o).addClass("notif_read");
+                            });
+                        }
+                    }
+                    else {
+                        alert(ajax_data.error);
+                    }
+                }
+            }, $(this).attr("args"), $(this).attr("target_form"));
+       }
+    });
+    //
    
    $(document).on("click", ".submit_create_mail", function(event){
         event.preventDefault();

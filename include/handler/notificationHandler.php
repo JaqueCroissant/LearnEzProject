@@ -50,22 +50,30 @@
             }
         }
         
-        public function read_notification($notificationId, $userId){
+        public function read_notifications($notifs_array){
             try {
-                $this->check_numeric($notificationId);
-                $this->check_numeric($userId);
+                if (!$this->user_exists()) {
+                    throw new Exception("USER_NOT_LOGGED_IN");
+                }
+                if (count($notifs_array) < 1) {
+                    throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
+                }
+                $values = "";
                 
+                for ($i = 0; $i < count($notifs_array); $i++){
+                    $values .= ($i != 0 ? "," : "") . $notifs_array[$i];
+                }
                 DbHandler::get_instance()->query("UPDATE user_notifications "
                         . "SET is_read=2 "
-                        . "WHERE id=:notificationId "
-                        . "AND user_id=:userId", $notificationId, $userId);               
+                        . "WHERE id IN (" . $values .") "
+                        . "AND user_id=:userId", $this->_user->id);
                 
                 return true;
                 
-            } catch (Exception $exc) {
-                $this->error = ErrorHandler::return_error($exc->getMessage());
+            } catch (Exception $ex) {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
                 return false;
-            }        
+            }      
         }
         
         public function seen_notification($notificationId, $userId){
@@ -103,20 +111,29 @@
             }          
         }
         
-        public function delete_notification($notificationId, $userId){
+        public function delete_notifications($notifs_array){
             try {
-                $this->check_numeric($notificationId);
-                $this->check_numeric($userId);
+                if (!$this->user_exists()) {
+                    throw new Exception("USER_NOT_LOGGED_IN");
+                }
+                if (count($notifs_array) < 1) {
+                    throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
+                }
+                $values = "";
                 
+                for ($i = 0; $i < count($notifs_array); $i++){
+                    $values .= ($i != 0 ? "," : "") . $notifs_array[$i];
+                }
                 DbHandler::get_instance()->query("DELETE FROM user_notifications "
-                        . "WHERE id=:notificationId "
-                        . "AND user_id=:userId", $notificationId, $userId);
+                        . "WHERE id IN (" . $values . ") "
+                        . "AND user_id=:userId", $this->_user->id);
+                
                 return true;
                 
-            } catch (Exception $exc) {
-                $this->error = ErrorHandler::return_error($exc->getMessage());
+            } catch (Exception $ex) {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
                 return false;
-            }    
+            }
         }
         
         public function get_notifications(){

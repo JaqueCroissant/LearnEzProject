@@ -440,4 +440,4 @@ $paginationHandler = new PaginationHandler();
 </div>
 <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
-<script src="/js/subpageGlobal.js" type="text/javascript"></script>
+<script src="js/subpageGlobal.js" type="text/javascript"></script>

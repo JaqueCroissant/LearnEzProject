@@ -48,12 +48,7 @@ foreach($data as $lol) {
             </div>
         </main>
 
-        <div id="notification_window">
-            <div id="notification_data"></div>
-            <div id="notification_loading" class="centered">
-                <div id="notification_loading_image"></div>
-            </div>
-        </div>
+        
         
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
         <script src="libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>

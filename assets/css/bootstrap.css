@@ -3644,10 +3644,14 @@ tbody.collapse.in {
       border-bottom-color: #edf0f5; } }
 
 .tab-content > .tab-pane {
-  display: none; }
+  visibility: hidden;
+  height:0px;
+  }
+
 
 .tab-content > .active {
-  display: block; }
+  visibility: visible;
+  height: auto !important; }
 
 .nav-tabs .dropdown-menu {
   margin-top: -1px;

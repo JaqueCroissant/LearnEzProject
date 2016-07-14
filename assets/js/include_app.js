@@ -1,8 +1,8 @@
 +function($, window){ 'use strict';
-	var app = {
-		name: 'Infinity',
-		version: '1.0.0'
-	};
+//	var app = {
+//		name: 'Infinity',
+//		version: '1.0.0'
+//	};
 //
 //	app.defaults = {
 //		sidebar: {
@@ -16,10 +16,10 @@
 //		}
 //	};
 
-	app.$body = $('body');
+//	app.$body = $('body');
 //	app.$sidebar = $('#app-aside');
 //	app.$navbar = $('#app-navbar');
-	app.$main = $('#app-main');
+//	app.$main = $('#app-main');
 
 //	app.settings = app.defaults;
 
@@ -48,7 +48,7 @@
 //		&& $('#aside-fold').removeClass('is-active');
 
 	// initialize main
-	app.$main.addClass('in');
+//	app.$main.addClass('in');
 	
 	app.init = function() {
 
@@ -76,7 +76,7 @@
 //		});
 	};
 
-	window.app = app;
+//	window.app = app;
 }(jQuery, window);
 
 +function($, window) { 'use strict';

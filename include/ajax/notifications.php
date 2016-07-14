@@ -3,9 +3,10 @@ require_once '../../include/ajax/require.php';
 require_once '../../include/handler/notificationHandler.php';
 
 
-if (isset($_POST["action"])) {
+$action = (isset($_POST["action"]) ? $_POST["action"] : (isset($_GET["action"]) ? $_GET["action"] : null));
+if ($action) {
     try {
-        call_user_func($_POST["action"]);
+        call_user_func($action);
     } catch (Exception $exc) {
         echo ErrorHandler::return_error($exc->getMessage());
     }
@@ -24,7 +25,7 @@ function get_notifications(){
     if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, 0, 5)) {
     }
     $data = $notificationHandler->get_notifications();
-    $json_array['notifications'] = "Notifikationer<a href='javascript:void(0)' class='change_page notification_load_window' page='notifications' id='notifications' step=''>Se alle</a>";     
+    $json_array['notifications'] = "Notifikationer<a href='javascript:void(0)' class='change_page notification_load_window' page='notifications' id='notifications' step='all'>Se alle</a>";     
     if (count($data) == 0) {
        $json_array['notifications'] .= "<i>Ingen notifikationer</i><br/><br/>";
        $json_array["status_value"] = true;
@@ -68,18 +69,44 @@ function notification_setup($value){
     return $final;
 }
 
-function delete_notification(){
-    if (isset($_POST["notif_id"])) {
+function delete(){
+    $notifs = isset($_POST["notifications"]) ? $_POST["notifications"] : null;
+    
+    if (isset($notifs)) {
         $notificationHandler = new NotificationHandler();
-        if($notificationHandler->delete_notification($_POST["notif_id"], SessionKeyHandler::get_from_session("user", true)->id)){
+        if($notificationHandler->delete_notifications($notifs)) {
             $json_array["status_value"] = true;
+            $json_array["affected_notifs"] = $notifs;
         }
         else {
             $json_array["status_value"] = false;
+            $json_array["error"] = $notificationHandler->error;
         }
     }
     else {
         $json_array["status_value"] = false;
+        $json_array["error"] = ErrorHandler::return_error("DATABASE_UNKNOWN_ERROR");
+    }
+    echo json_encode($json_array);
+}
+
+function read(){
+    $notifs = isset($_POST["notifications"]) ? $_POST["notifications"] : null;
+    
+    if (isset($notifs)) {
+        $notificationHandler = new NotificationHandler();
+        if($notificationHandler->read_notifications($notifs)) {
+            $json_array["status_value"] = true;
+            $json_array["affected_notifs"] = $notifs;
+        }
+        else {
+            $json_array["status_value"] = false;
+            $json_array["error"] = $notificationHandler->error;
+        }
+    }
+    else {
+        $json_array["status_value"] = false;
+        $json_array["error"] = ErrorHandler::return_error("DATABASE_UNKNOWN_ERROR");
     }
     echo json_encode($json_array);
 }

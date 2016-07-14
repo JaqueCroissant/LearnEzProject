@@ -66,7 +66,7 @@ $userHandler = new UserHandler();
                                                                                                 </div>
                                                                                                 <div class="media-body">
                                                                                                         <h5 class="media-heading"><a href="javascript:void(0)" class="title-color"><?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname;?></a></h5>
-                                                                                                        <small class="media-meta">Web Developer</small>
+                                                                                                        <small class="media-meta"><?php echo $userHandler->_user->user_type_title;?></small>
                                                                                                 </div>
                                                                                         </div>
                                                                                 </div>
@@ -76,7 +76,7 @@ $userHandler = new UserHandler();
                                                                                     <div class="panel panel-default">
                                                                                             <div class="panel-heading" role="tab" id="heading-1">
                                                                                                     <a class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-1" aria-expanded="false" aria-controls="collapse-1">
-                                                                                                            <h4 class="panel-title">How Much the service cost ?</h4>
+                                                                                                            <label for="textarea1"><?php echo TranslationHandler::get_static_text("INFO_CHANGE_IMAGE"); ?></label>
                                                                                                             <i class="fa acc-switch"></i>
                                                                                                     </a>
                                                                                             </div>
@@ -103,7 +103,7 @@ $userHandler = new UserHandler();
                                         <div class="form-group">
                                             <div class="col-md-12">
 
-                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm create_submit_info">
+                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-left btn btn-default btn-sm create_submit_info">
                                             </div>
                                         </div>
                                     </form>
@@ -115,7 +115,7 @@ $userHandler = new UserHandler();
 
                             <div class="widget-body">
                                 <form method="POST" action="" id="settings_pass" url="settings.php?step=2" name="settings_pass">
-                                                                        <div class="col-md-6">
+                                                                        <div class="">
 
                                                                             <div class="form-group m-b-sm">
                                                                                 <label for="firstname_input"><?php echo TranslationHandler::get_static_text("OLD_PASSWORD"); ?></label>
@@ -131,16 +131,15 @@ $userHandler = new UserHandler();
                                                                                 <label for="email_input"><?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?></label>
                                                                                 <input type="password" id="confirm_password" name="confirm_password" placeholder="<?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?>" class="form-control">
                                                                             </div>
+
+                                                                            <div class="form-group m-b-sm">
+                                                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default btn-sm create_submit_info" >
+                                                                            </div>
                                                                         </div>
 
-                                        <div style="clear:both;"></div>
 
-                                        <div class="form-group">
-                                            <div class="col-md-12">
 
-                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm create_submit_info">
-                                            </div>
-                                        </div>
+
                                     </form>
                                 </div>
 

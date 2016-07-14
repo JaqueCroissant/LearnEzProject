@@ -15,6 +15,24 @@ html{
     /*src: local(mixrfont), url('../font.ttf') ;*/
 }
 
+.clickable_row {
+    cursor: pointer;
+}
+
+.clickable_row:hover {
+    background-color: #edf0f5 !important;
+}
+
+.alert_panel {
+    z-index: 9000;
+    position: absolute;
+    width: 400px;
+    display: block;
+    right: 50px;
+    border: 1px solid #CCC !important;
+    box-shadow: 0 1px 2px #ccc;
+}
+
 /*.progress-bar-success {
     display: table;
     width: 33.3%;

@@ -319,7 +319,6 @@ a .menu_header {
     overflow-x:hidden;  
     display: block;
     background-color: white;
-    color: black;
 }
 
 .notification {
@@ -412,11 +411,7 @@ a .menu_header {
 
 .notif_element_checkbox {
     float:left;
-    padding-right:0.5em;
-}
-
-.notif_read {
-    background-color: #e4e2e2 !important;
+    padding-right:1em;
 }
 
 .checkbox label {
@@ -465,4 +460,10 @@ a .menu_header {
 
 .hidden {
     visibility: hidden;
+}
+
+.avatar-hover:hover
+{
+    background-color: lightskyblue !important;
+    cursor: pointer !important;
 }

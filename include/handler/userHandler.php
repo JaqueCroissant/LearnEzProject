@@ -2,7 +2,7 @@
 class UserHandler extends Handler
 {
     public $temp_user_array;
-
+    public $profile_images;
 
     public function __construct() {
         parent::__construct();
@@ -568,7 +568,7 @@ class UserHandler extends Handler
     {
         try
         {
-            if($this->_user->usertype_id != 1)
+            if($this->_user->user_type_id != 1)
             {
                 $school_id = $this->_user->school_id;
             }
@@ -719,6 +719,11 @@ class UserHandler extends Handler
             default:
                 throw new Exception("IMPORT_INVALID_TYPE");
         }
+    }
+
+    public function get_profile_images()
+    {
+        $this->profile_images = DbHandler::get_instance()->return_query("SELECT * FROM image WHERE id != :id", $this->_user->image_id);
     }
 }
 ?>

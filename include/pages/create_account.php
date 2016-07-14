@@ -114,7 +114,7 @@
                                         <div class="form-group">
                                             <div class="col-md-12">
 
-                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("CREATE_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm create_submit_info">
+                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("CREATE_SUBMIT"); ?>" class="pull-left btn btn-default btn-sm create_submit_info">
                                             </div>
                                         </div>
                                     </form>

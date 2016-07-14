@@ -29,12 +29,12 @@ $userHandler = new UserHandler();
 
                                                                             <div class="form-group m-b-sm">
                                                                                 <label for="firstname_input"><?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?></label>
-                                                                                <input type="text" id="firstname_input" name="firstname" value="<?php echo $userHandler->_user->firstname; ?>" class="form-control">
+                                                                                <input type="text" id="firstname_input" name="firstname" value="<?php echo $userHandler->_user->firstname; ?>" class="form-control input_change input_firstname">
                                                                             </div>
 
                                                                             <div class="form-group m-b-sm">
                                                                                 <label for="surname_input"><?php echo TranslationHandler::get_static_text("INFO_SURNAME"); ?></label>
-                                                                                <input type="text" id="surname_input" name="surname" value="<?php echo $userHandler->_user->surname; ?>" class="form-control">
+                                                                                <input type="text" id="surname_input" name="surname" value="<?php echo $userHandler->_user->surname; ?>" class="form-control input_change input_surname">
                                                                             </div>
 
                                                                             <div class="form-group m-b-sm">
@@ -66,7 +66,7 @@ $userHandler = new UserHandler();
                                                                                                         </div>
                                                                                                 </div>
                                                                                                 <div class="media-body">
-                                                                                                        <h5 class="media-heading"><a href="javascript:void(0)" class="title-color"><?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname;?></a></h5>
+                                                                                                        <h5 class="media-heading"><a href="javascript:void(0)" class="title-color user_full_name"><?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname;?></a></h5>
                                                                                                         <small class="media-meta"><?php echo $userHandler->_user->user_type_title;?></small>
                                                                                                 </div>
                                                                                         </div>

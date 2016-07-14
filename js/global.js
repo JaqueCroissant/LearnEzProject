@@ -174,6 +174,11 @@ $(document).ready(function () {
 
     });
 
+    $(document).on("input", "input.input_change", function(event){
+            event.preventDefault();
+            $(".user_full_name").html($(".input_firstname").val() + " " + $(".input_surname").val());
+    });
+
     $(document).on("click", ".settings_submit_password", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {

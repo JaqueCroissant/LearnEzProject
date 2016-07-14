@@ -20,8 +20,12 @@ $pageHandler = new PageHandler(true);
                         <?php
                             if($pageHandler->get_page_rights(1)) {
                         ?>
-
-                        <div class="">
+                        <header class="widget-header">
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PAGE_RIGHTS"); ?></h4>
+                        </header>
+                        <hr class="widget-separator">
+                        <div class="widget-body">
+                        
                             <form method="POST" action="" id="rights_form_1" url="rights.php" class="" name="rights">
                             <input type="hidden" name="user_type_id" value="1">
                             <div style="display: inline-block; vertical-align: top; min-width:200px;">
@@ -79,22 +83,34 @@ $pageHandler = new PageHandler(true);
                         </ul>
                         </div>
                         <div style="clear:both;"></div>
-                        <input type="button" id="submit_button" name="submit" class="submit_change_rights" value="change">   
+                        
+                        
+                        </div>
+                        <header class="widget-header">
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_RIGHTS"); ?></h4>
+                        </header>
+                        <hr class="widget-separator">
+                        <div class="widget-body">
+
+                        <input type="button" id="submit_button" name="submit" class="submit_change_rights" value="change"> 
+                        </div>
                         </form>
                         
-
                         <?php
                             }
                         ?>
-                    </div>
                     </div>
 
                     <div role="tabpanel" class="tab-pane fade" id="tab-2">
                         <?php
                             if($pageHandler->get_page_rights(2)) {
                         ?>
-
-                        <div class="">
+                        <header class="widget-header">
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PAGE_RIGHTS"); ?></h4>
+                        </header>
+                        <hr class="widget-separator">
+                        <div class="widget-body">
+                        
                             <form method="POST" action="" id="rights_form_2" url="rights.php" class="" name="rights">
                             <input type="hidden" name="user_type_id" value="2">
                             <div style="display: inline-block; vertical-align: top; min-width:200px;">
@@ -152,22 +168,34 @@ $pageHandler = new PageHandler(true);
                         </ul>
                         </div>
                         <div style="clear:both;"></div>
-                        <input type="button" id="submit_button" name="submit" class="submit_change_rights" value="change">   
+                        
+                        
+                        </div>
+                        <header class="widget-header">
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_RIGHTS"); ?></h4>
+                        </header>
+                        <hr class="widget-separator">
+                        <div class="widget-body">
+
+                        <input type="button" id="submit_button" name="submit" class="submit_change_rights" value="change"> 
+                        </div>
                         </form>
                         
-
                         <?php
                             }
                         ?>
                     </div>
-                    </div>
-
+                    
                     <div role="tabpanel" class="tab-pane fade" id="tab-3">
                         <?php
                             if($pageHandler->get_page_rights(3)) {
                         ?>
-
-                        <div class="">
+                        <header class="widget-header">
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PAGE_RIGHTS"); ?></h4>
+                        </header>
+                        <hr class="widget-separator">
+                        <div class="widget-body">
+                        
                             <form method="POST" action="" id="rights_form_3" url="rights.php" class="" name="rights">
                             <input type="hidden" name="user_type_id" value="3">
                             <div style="display: inline-block; vertical-align: top; min-width:200px;">
@@ -225,22 +253,34 @@ $pageHandler = new PageHandler(true);
                         </ul>
                         </div>
                         <div style="clear:both;"></div>
-                        <input type="button" id="submit_button" name="submit" class="submit_change_rights" value="change">   
+                        
+                        
+                        </div>
+                        <header class="widget-header">
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_RIGHTS"); ?></h4>
+                        </header>
+                        <hr class="widget-separator">
+                        <div class="widget-body">
+
+                        <input type="button" id="submit_button" name="submit" class="submit_change_rights" value="change"> 
+                        </div>
                         </form>
                         
-
                         <?php
                             }
                         ?>
-                    </div>
                     </div>
                     
                     <div role="tabpanel" class="tab-pane fade" id="tab-4">
                         <?php
                             if($pageHandler->get_page_rights(4)) {
                         ?>
-
-                        <div class="">
+                        <header class="widget-header">
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PAGE_RIGHTS"); ?></h4>
+                        </header>
+                        <hr class="widget-separator">
+                        <div class="widget-body">
+                        
                             <form method="POST" action="" id="rights_form_4" url="rights.php" class="" name="rights">
                             <input type="hidden" name="user_type_id" value="4">
                             <div style="display: inline-block; vertical-align: top; min-width:200px;">
@@ -298,14 +338,22 @@ $pageHandler = new PageHandler(true);
                         </ul>
                         </div>
                         <div style="clear:both;"></div>
-                        <input type="button" id="submit_button" name="submit" class="submit_change_rights" value="change">   
+                        
+                        
+                        </div>
+                        <header class="widget-header">
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_RIGHTS"); ?></h4>
+                        </header>
+                        <hr class="widget-separator">
+                        <div class="widget-body">
+
+                        <input type="button" id="submit_button" name="submit" class="submit_change_rights" value="change"> 
+                        </div>
                         </form>
                         
-
                         <?php
                             }
                         ?>
-                    </div>
                     </div>
                 </div>
             </div>

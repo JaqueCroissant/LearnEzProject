@@ -449,3 +449,11 @@ a .menu_header {
     background-color: lightskyblue !important;
     cursor: pointer !important;
 }
+
+.treeview ul {
+    list-style: none;
+}
+
+.treeview li {
+    padding: 0px 0px 0px 20px;
+}

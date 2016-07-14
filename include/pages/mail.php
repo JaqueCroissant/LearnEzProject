@@ -210,7 +210,7 @@ $paginationHandler = new PaginationHandler();
                             <div class="media">
                                 <div class="media-left">
                                     <div class="avatar avatar-lg avatar-circle">
-                                        <img class="img-responsive" src="assets/images/221.jpg" alt="avatar">
+                                        <img class="img-responsive" src="assets/images/profile_images/<?php echo $current_mail->user_image_id; ?>.png" alt="avatar">
                                     </div>
                                 </div>
 
@@ -398,7 +398,7 @@ $paginationHandler = new PaginationHandler();
 
                                                                         <td class="mail-left">
                                                                             <div class="avatar avatar-lg avatar-circle">
-                                                                                <img src="assets/images/221.jpg" alt="' . $value->firstname . ' ' . $value->surname .'" title="' . $value->firstname . ' ' . $value->surname .'">
+                                                                                <img src="assets/images/profile_images/'.$value->user_image_id.'.png" alt="' . $value->firstname . ' ' . $value->surname .'" title="' . $value->firstname . ' ' . $value->surname .'">
                                                                             </div>
                                                                         </td>
                                                                         <td>

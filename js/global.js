@@ -215,6 +215,13 @@ $(document).ready(function () {
 
     $(document).on("click", ".btn_class_open", function (event) {
         event.preventDefault;
+        
+        if ($(this).val() === "on") {
+            alert("on");
+        } else if ($(this).val() === "off") {
+            alert("off");
+        }
+        $("td input[type='checkbox']").attr("disabled", true);
         position = $(this).offset();
         height = $("#close_class_alert").height();
         $("#close_class_alert").css("top", position["top"] - height - 20);
@@ -228,19 +235,23 @@ $(document).ready(function () {
         hidden_value = $("#" + hidden_id).val();
         if (hidden_value === "1") {
             $("#" + hidden_id).val(0);
+            $("#" + clicked_checkbox_id).val("off");
         } else {
             $("#" + hidden_id).val(1);
+            $("#" + clicked_checkbox_id).val("on");
         }
         initiate_submit_form($("#" + clicked_checkbox_id), function () {
             alert(ajax_data.error);
         }, function () {
             $("#close_class_alert").attr("hidden", true);
+            $("td input[type='checkbox']").removeAttr("disabled");
         });
     });
 
     $(document).on("click", "#cancel_close_class_btn", function (event) {
         $("#" + clicked_checkbox_id).prop("checked", true);
         $("#close_class_alert").attr("hidden", true);
+        $("td input[type='checkbox']").removeAttr("disabled");
     });
 
     $(document).on("click", ".clickable_row .click_me", function (event) {

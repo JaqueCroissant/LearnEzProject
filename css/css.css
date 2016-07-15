@@ -15,6 +15,24 @@ html{
     /*src: local(mixrfont), url('../font.ttf') ;*/
 }
 
+.clickable_row {
+    cursor: pointer;
+}
+
+.clickable_row:hover {
+    background-color: #edf0f5 !important;
+}
+
+.alert_panel {
+    z-index: 9000;
+    position: absolute;
+    width: 400px;
+    display: block;
+    right: 50px;
+    border: 1px solid #CCC !important;
+    box-shadow: 0 1px 2px #ccc;
+}
+
 /*.progress-bar-success {
     display: table;
     width: 33.3%;
@@ -288,9 +306,10 @@ a .menu_header {
     min-height: 1em;
     max-height: 25em;
     overflow-y: scroll;
-    overflow-x:hidden;  
+    overflow-x:hidden;
     display: none;
     color: black;
+    background-color: white;
 }
 
 #notification_top{
@@ -353,6 +372,7 @@ a .menu_header {
 
 .mail-item .notif_unread:hover, .mail-item .notif_read:hover {
     background-color: #e4e2e2 !important;
+    padding-right:1em;
 }
 
 .notif_read {
@@ -410,4 +430,18 @@ a .menu_header {
 
 .hidden {
     visibility: hidden;
+}
+
+.avatar-hover:hover
+{
+    background-color: lightskyblue !important;
+    cursor: pointer !important;
+}
+
+.treeview ul {
+    list-style: none;
+}
+
+.treeview li {
+    padding: 0px 0px 0px 20px;
 }

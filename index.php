@@ -1,6 +1,13 @@
 <?php
 session_start();
 require_once 'include/extra/require.php';
+/*
+$data = DbHandler::get_instance()->return_query("SELECT * FROM page");
+
+DbHandler::get_instance()->query("DELETE FROM user_type_page WHERE user_type_id = :lol", 1);
+foreach($data as $lol) {
+    DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id) VALUES (:page_id, :user_type_id)", $lol["id"], 1);
+}*/
 ?>
 <!DOCTYPE html>
 <html style="overflow-y: scroll !important">

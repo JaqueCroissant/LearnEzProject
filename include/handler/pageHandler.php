@@ -3,25 +3,27 @@ class pageHandler extends Handler {
     
     public $current_page;
     public $current_page_hierarchy;
+    public $ordered_pages = array();
+    public $page_rights = array();
     
     private $_pages_raw = array();
     private $_pages = array();
     private $_menu = array();
     private $page_hierarchy_array = array();
    
-    public function __construct() {
+    public function __construct($all_user_types = false) {
         parent::__construct();
-        $this->get_pages_raw();
+        $this->get_pages_raw($all_user_types);
         $this->get_pages();
         $this->get_menus();
     }
     
-    private function get_pages_raw() {
+    private function get_pages_raw($all_user_types = false) {
         if($this->raw_pages_exists()) {
             return;
         }
         
-        $this->generate_pages();
+        $this->generate_pages($all_user_types);
     }
     
     private function get_pages() {
@@ -40,6 +42,14 @@ class pageHandler extends Handler {
         $this->generate_menu();
     }
     
+    private function get_ordered_pages() {
+       if($this->ordered_pages_exists()) {
+            return;
+        }
+        
+        $this->generate_ordered_pages();
+    }
+    
     private function raw_pages_exists() {
         return !empty($this->_pages_raw) && is_array($this->_pages_raw) && count($this->_pages_raw) > 0;
     }
@@ -52,10 +62,19 @@ class pageHandler extends Handler {
         return !empty($this->_menu) && is_array($this->_menu) && count($this->_menu) > 0;
     }
     
-    private function generate_pages() {
+    private function ordered_pages_exists() {
+        return !empty($this->ordered_pages) && is_array($this->ordered_pages) && count($this->ordered_pages) > 0;
+    }
+    
+    private function generate_pages($all_user_types = false) {
         if(empty($this->_pages) || count($this->_pages) < 1) {
             $user_type_id = $this->user_exists() ? $this->_user->user_type_id : 5;
-            $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
+            if($all_user_types) {
+               $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id WHERE translation_page.language_id = :language_id ORDER BY page.backend_sort_order ASC", TranslationHandler::get_current_language());
+            } else {
+               $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
+             
+            }
             
             if(count($pageData) < 1) {
                 return;
@@ -65,8 +84,6 @@ class pageHandler extends Handler {
                 $key = $page["pagename"] . "" . $page["step"];
                 $this->_pages_raw[$key] = new Page($page);
             }
-           
-//            SessionKeyHandler::add_to_session("pages_raw", $this->_pages_raw, true);
         }
     }
     
@@ -85,7 +102,6 @@ class pageHandler extends Handler {
             $this->_pages = $pageArray;
             
             $this->assign_page_children();
-//            SessionKeyHandler::add_to_session("pages", $this->_pages, true);
         }
     }
     
@@ -153,7 +169,27 @@ class pageHandler extends Handler {
                 $new_menu[$i] = $menu;
             }
             $this->_menu = $new_menu;
-//            SessionKeyHandler::add_to_session("menu", $this->_menu, true);
+        }
+    }
+    
+    private function generate_ordered_pages() {
+        if(empty($this->ordered_pages) || count($this->ordered_pages) < 1) {
+            
+            if(!is_array($this->_pages) || empty($this->_pages)) {
+                return;
+            }
+
+            $ordered_pages = array();
+            foreach($this->_pages as $key => $value) {
+
+                if($value->master_page_id > 0) {
+                    continue;
+                }
+
+                array_push($ordered_pages, clone $value);
+            }
+
+            $this->ordered_pages = $ordered_pages;
         }
     }
 
@@ -193,11 +229,27 @@ class pageHandler extends Handler {
     private function iterate_children(&$array, $parent) {
         foreach($parent as $key => $value) {
             $item = clone $value;
-
-            $array[] = $item;
             
+            $array[] = $item;
+
             if(is_array($value->children) && count($value->children) > 0) {
                 $this->iterate_children($array, $value->children);
+            }
+        }
+    }
+    
+    private function iterate_children_remove_children(&$array, $parent) {
+        foreach($parent as $key => $value) {
+            $item = clone $value;
+
+            if($value->hide_in_backend) {
+                continue;
+            }
+            
+            $array[$value->pagename . '' . $value->step] = $item;
+
+            if(is_array($value->children) && count($value->children) > 0) {
+                $this->iterate_children_remove_children($array, $value->children);
             }
         }
     }
@@ -228,15 +280,7 @@ class pageHandler extends Handler {
     }
     
     public function get_menu($position = 1) {
-//        if(!$this->menus_exists()) {
-//            return;
-//        }
-        
         $this->get_menus();
-        
-//        if(SessionKeyHandler::session_exists("menu")) {
-//            $this->_menu = SessionKeyHandler::get_from_session("menu", true);
-//        }
         
         if(!array_key_exists($position, $this->_menu)) {
             return;
@@ -247,6 +291,31 @@ class pageHandler extends Handler {
         $this->iterate_children($array, $current_menu);
         
         return $array;
+    }
+    
+    public function fetch_ordered_pages() {
+        $this->get_ordered_pages();
+        
+        $current = $this->ordered_pages;
+        
+        $array = array();
+        $this->iterate_children_remove_children($array, $current);
+        
+       
+        $new_array = array();
+        foreach($array as $key => $value) {
+            if(!(count($value->children) > 0)) {
+                $new_array[$key] = $value;
+            }
+            
+            foreach($value->children as $c_key => $c_value) {
+                if(!array_key_exists($c_key, $array)) {
+                    unset($value->children[$c_key]);
+                }
+            }
+            $new_array[$key] = $value;
+        }
+        return $new_array;
     }
     
     public function has_rights($pagename) {
@@ -338,6 +407,39 @@ class pageHandler extends Handler {
             return array($this->_pages_raw[$pagename ."" . $step]);
         }
         return array($this->_pages_raw["error"]);
+    }
+    
+    public function get_page_rights($user_type_id = 1) {
+        try 
+        {
+            if(!is_numeric($user_type_id)) {
+                throw new Exception("INVALID_USER_TYPE");
+            }
+            
+            if($user_type_id > 5 || $user_type_id < 1) {
+                throw new Exception("INVALID_USER_TYPE");
+            }
+            
+            $data = DbHandler::get_instance()->return_query("SELECT user_type_page.id, user_type_page.user_type_id, user_type_page.page_id FROM user_type_page INNER JOIN page ON page.id = user_type_page.page_id WHERE user_type_id = :user_type_id AND page.hide_in_backend != 1", $user_type_id);
+            
+            if(count($data) < 1) {
+                return true;
+            }
+            
+            $array = array();
+            
+            foreach($data as $page) {
+                $array[$page["page_id"]] = $page["page_id"];
+            }
+            
+            $this->page_rights = $array;
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+	}
+        return false;
     }
     
     public static function page_exists($page = null) {

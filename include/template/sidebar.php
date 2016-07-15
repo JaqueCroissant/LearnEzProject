@@ -27,7 +27,7 @@
             <div class="media-left">
                 <div class="avatar avatar-md avatar-circle">
                     <a href="javascript:void(0)">
-                        <img class="img-responsive" alt="avatar" src="assets/images/221.jpg">
+                        <img class="img-responsive current-avatar-image" alt="avatar" src="assets/images/profile_images/<?php echo $userHandler->_user->image_id; ?>.png">
                     </a>
                 </div>
             </div>
@@ -38,6 +38,8 @@
                         <?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname; ?>
                         </a>
                     </h5>
+                    
+                    <small><?php echo $userHandler->_user->user_type_title; ?></small>
                 </div>
             </div>
         </div>

@@ -11,6 +11,8 @@ class Page extends ORM {
     public $is_dropdown;
     public $display_menu;
     public $display_text;
+    public $hide_in_backend;
+    public $backend_sort_order;
     
     public $title;
     public $pagename;

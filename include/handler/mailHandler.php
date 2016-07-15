@@ -104,7 +104,7 @@ class MailHandler extends Handler
                 throw new exception("MAIL_INVALID_MAIL_ID");
             }
             
-            $query = "SELECT mail_folder.id as folder_id, mail_folder.folder_name, users.firstname, users.surname FROM user_mail
+            $query = "SELECT mail_folder.id as folder_id, mail_folder.folder_name, users.firstname, users.surname, users.image_id as user_image_id FROM user_mail
                 INNER JOIN mail_folder ON mail_folder.id = user_mail.". ($this->is_sender_folder() ? "sender_folder_id" : "receiver_folder_id") ."
                 INNER JOIN users ON users.id = user_mail.". ($this->is_sender_folder() ? "receiver_id" : "sender_id") ."
                 WHERE user_mail.mail_id = :mail_id AND user_mail.". ($this->is_sender_folder() ? "sender_id" : "receiver_id") ." = :user_id LIMIT 1";
@@ -138,7 +138,7 @@ class MailHandler extends Handler
 
             $this->_current_folder_id = $this->get_folder_id($this->current_folder->folder_name);
             
-            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname"
+            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
                     . " INNER JOIN users ON users.id = ". ($this->is_sender_folder() ? "receiver_id" : "sender_id")
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.". ($this->is_sender_folder() ? "sender_folder_id" : "receiver_folder_id")

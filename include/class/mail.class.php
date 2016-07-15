@@ -14,6 +14,7 @@ class Mail extends ORM {
     
     public $firstname;
     public $surname;
+    public $user_image_id;
     public $sender_id;
     public $receiver_id;
     

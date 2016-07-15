@@ -32,18 +32,24 @@
         case '2':
             if(isset($_POST))
             {
-                if($userHandler->import_users($_POST["csv_file"], $_POST["school_id"]))
+                $school_id = $userHandler->_user->user_type_id == 1 ? $_POST["school_id"] : $userHandler->_user->school_id;
+
+                var_dump($_POST);
+                if($userHandler->import_users($_FILES["csv_file"], $school_id))
                 {
+                    echo "JA!";
                     $jsonArray['status_value'] = true;
                 }
                 else
                 {
+                    echo "NEJ!";
                     $jsonArray['status_value'] = false;
                     $jsonArray['error'] = $userHandler->error->title;
                 }
                 echo json_encode($jsonArray);
                 die();
             }
+
         break;
 
         case 'get_classes':
@@ -52,7 +58,7 @@
                 $jsonArray["classes"] = "";
 
                 if($classHandler->get_classes_by_school_id($_GET["school_id"])) {
-                    foreach($classHandler->classes_in_school as $class)
+                    foreach($classHandler->classes as $class)
                     {
                         $jsonArray["classes"] .= '<option value="' . $class->id . '">' . $class->title . '</option>'; 
                     }

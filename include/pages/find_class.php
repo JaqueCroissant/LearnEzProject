@@ -14,13 +14,13 @@ if ($classHandler->_user->user_type_id != 1) {
             <div class="m-b-lg nav-tabs-horizontal">
                 <!-- tabs list -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#tab-1" data-toggle="tab"><?php echo TranslationHandler::get_static_text("FIND_CLASS"); ?></a></li>
-                    <li role="presentation" class=""><a href="#tab-2" data-toggle="tab"><?php echo TranslationHandler::get_static_text("EDIT_CLASS_GENERIC"); ?></a></li>
+                    <li role="presentation" id="lol" class="active"><a href="#tab-1" class="my_tab_header" data-toggle="tab"><?php echo TranslationHandler::get_static_text("FIND_CLASS"); ?></a></li>
+                    <li role="presentation" id="notlol" class=""><a href="#tab-2" class="my_tab_header" data-toggle="tab"><?php echo TranslationHandler::get_static_text("EDIT_CLASS_GENERIC"); ?></a></li>
                 </ul><!-- .nav-tabs -->
 
                 <!-- Tab panes -->
                 <div class="my_tab_content">
-                    <div class="my_tab" id="tab-1">
+                    <div class="my_fade my_tab in" id="tab-1">
                         <div class="widget-body">
                             <table id="default-datatable" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
                                    aria-describedby="default-datatable_info">
@@ -81,41 +81,41 @@ if ($classHandler->_user->user_type_id != 1) {
                         </div>
                     </div>
 
-                    <div role="tabpanel" class="tab-pane fade" id="tab-2">
+                    <div class="my_fade my_tab" id="tab-2">
                         <div class="widget-body">
-                            <form method="post" id="create_class_form" name="create_class" action="" url="create_class.php">
-                                <div class="">
-                                    <label class="control-label" for="class_title"><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></label>
-                                    <div class="">
-                                        <input class="form-control" type="text" name="class_title" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?>">
+                            <form method="post" id="create_class_form" name="update_class" action="" class="form-horizontal" url="create_class.php">
+                                <div class="form-group">
+                                    <label class="col-sm-2 col-sm-offset-3 control-label" for="class_title"><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></label>
+                                    <div class="col-md-4">
+                                        <input class="form-control " type="text" name="class_title" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?>">
                                     </div>
                                 </div>
                                 <?php
-//                                if ($classHandler->_user->user_type_id == 1) {
+                                if ($classHandler->_user->user_type_id == 1) {
                                     ?>
-<!--                                    <div class="form-group">
-                                        <label class="col-sm-2 col-sm-offset-2 control-label" for="school_id">//////<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
-                                        <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 col-sm-offset-3 control-label" for="school_id"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
+                                        <div class="col-md-4">
                                             <select id="select_school" name="school_id" class="form-control" data-plugin="select2">
                                                 <?php
-//                                                if (count($schoolHandler->all_schools) > 0) {
-//                                                    foreach ($schoolHandler->all_schools as $value) {
-//                                                        echo '<option value="' . $value->id . '">' . $value->name . '</option>';
-//                                                    }
-//                                                }
-//                                                ?>
+                                                if (count($schoolHandler->all_schools) > 0) {
+                                                    foreach ($schoolHandler->all_schools as $value) {
+                                                        echo '<option value="' . $value->id . '">' . $value->name . '</option>';
+                                                    }
+                                                }
+                                                ?>
                                             </select>
                                         </div>
-                                    </div>-->
+                                    </div>
                                     <?php
-//                                } else {
-//                                    echo '<input type="hidden" name="school_id" value="' . $classHandler->_user->school_id . '">';
-//                                }
-//                                ?>
+                                } else {
+                                    echo '<input type="hidden" name="school_id" value="' . $classHandler->_user->school_id . '">';
+                                }
+                                ?>
 
-<!--                                <div class="form-group">
-                                    <label class="col-sm-2 col-sm-offset-2 control-label" for="class_open">////<?php echo TranslationHandler::get_static_text("OPEN"); ?></label>
-                                    <div class="col-md-5">
+                                <div class="form-group">
+                                    <label class="col-sm-2 col-sm-offset-3 control-label" for="class_open"><?php echo TranslationHandler::get_static_text("OPEN"); ?></label>
+                                    <div class="col-md-4">
                                         <div class="checkbox">
                                             <input class="checkbox-circle checkbox-dark" checked="" type="checkbox" name="class_open" id="class_open">
                                             <label for="class_open"></label>
@@ -123,35 +123,33 @@ if ($classHandler->_user->user_type_id != 1) {
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 col-sm-offset-2 control-label" for="class_begin">////<?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control " type="text" id="class_begin" name="class_begin" placeholder="////<?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?>">
+                                    <label class="col-sm-2 col-sm-offset-3 control-label" for="class_begin"><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></label>
+                                    <div class="col-md-4">
+                                        <input class="form-control " type="text" id="class_begin" name="class_begin" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?>">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 col-sm-offset-2 control-label" for="class_end">////<?php echo TranslationHandler::get_static_text("CLASS_END"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control " type="text" id="class_end" name="class_end" placeholder="////<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>">
+                                    <label class="col-sm-2 col-sm-offset-3 control-label" for="class_end"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></label>
+                                    <div class="col-md-4">
+                                        <input class="form-control " type="text" id="class_end" name="class_end" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 col-sm-offset-2 control-label" for="class_description">////<?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></label>
-                                    <div class="col-md-5">
-                                        <textarea form="create_class" class="form-control " type="text" id="class_description" name="class_description" placeholder="////<?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?>"></textarea>
+                                    <label class="col-sm-2 col-sm-offset-3 control-label" for="class_description"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></label>
+                                    <div class="col-md-4">
+                                        <textarea form="update_class" class="form-control " type="text" id="class_description" name="class_description" placeholder="<?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?>"></textarea>
 
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 col-sm-offset-2 control-label"></label>
-                                    <div class="col-md-5">
-                                        <input type="hidden" name="step" id="create_class_step">
-                                        <input type="button" name="submit" id="create_class_step_one_button" step="1"
-                                               value="////<?php echo TranslationHandler::get_static_text("CREATE_CLASS"); ?>" class="btn btn-default btn-sm create_class">   
+                                    <label class="col-sm-2 col-sm-offset-3 control-label"></label>
+                                    <div class="col-md-4">
+                                        <input type="button" name="submit" id="update_class"
+                                               value="<?php echo TranslationHandler::get_static_text("CREATE_CLASS"); ?>" class="pull-right btn btn-default btn-sm create_class">   
                                     </div>
-                                </div>-->
+                                </div>
 
                             </form>
-<!--lolllll-->
                         </div>
                     </div>
                 </div>
@@ -190,3 +188,4 @@ if ($classHandler->_user->user_type_id != 1) {
 
 <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script src="js/my_tab.js" type="text/javascript"></script>

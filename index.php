@@ -40,7 +40,6 @@ require_once 'include/extra/require.php';
                 </section>
             </div>
         </main>
-
         
         
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>

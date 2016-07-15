@@ -19,7 +19,10 @@ if(isset($_GET['logout'])) {
 }
 
 if(isset($_POST)) {
-    if($loginHandler->check_login($_POST["username"], $_POST["password"], $_POST["token"])) {
+    $username = isset($_POST["username"]) ? $_POST["username"] : null;
+    $password = isset($_POST["password"]) ? $_POST["password"] : null;
+    $token = isset($_POST["token"]) ? $_POST["token"] : null;
+    if($loginHandler->check_login($username, $password, $token)) {
         TranslationHandler::reset();
         $jsonArray['status_value'] = true;
     } else {

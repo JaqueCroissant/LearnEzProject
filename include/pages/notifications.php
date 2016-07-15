@@ -68,7 +68,7 @@ $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), 
                                             foreach ($notifs as $notif) {
                                                 $timeString = time_elapsed($notif->datetime);
                                                 echo '
-                                                <div class="mail-item notif_count_' . $notif->id . ($notif->isRead == 2 ? ' notif_read' : '') . '" style="min-height:100px;">
+                                                <div class="mail-item notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? 'notif_read' : 'notif_unread') . '" style="min-height:100px;">
                                                     <table class="mail-container">
                                                         <tr>
                                                             <td class="mail-left">

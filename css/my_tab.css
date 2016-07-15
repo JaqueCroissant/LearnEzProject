@@ -1,0 +1,14 @@
+.my_fade {
+    opacity: 0;
+    height: 0;
+}
+.my_fade.in {
+    opacity: 1;
+    height: auto; 
+}
+
+.widget-body {
+    height: inherit;
+    overflow: hidden;
+}
+

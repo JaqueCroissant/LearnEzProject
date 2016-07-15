@@ -12,10 +12,21 @@
         case '1':
             if(isset($_POST))
             {
-                $school_id = $userHandler->_user->user_type_id == 1 ? $_POST["school_id"] : $userHandler->_user->school_id;
 
-                if($userHandler->create_new_profile($_POST["firstname"], $_POST["surname"], $_POST["email"],
-                $_POST["password"], $_POST["usertype"], $school_id, $_POST["class_name"]))
+
+                $firstname = isset($_POST["firstname"]) ? $_POST["firstname"] : "";
+                $surname = isset($_POST["surname"]) ? $_POST["surname"] : "";
+                $email = isset($_POST["email"]) ? $_POST["email"] : "";
+                $password = isset($_POST["password"]) ? $_POST["password"] : "";
+                $usertype = isset($_POST["usertype"]) ? $_POST["usertype"] : "";
+
+                $temp_school_id = $usertype == 'SA' ? "" : (isset($_POST["school_id"]) ? $_POST["school_id"] : "");
+                $school_id = $userHandler->_user->user_type_id == 1 ? $temp_school_id : $userHandler->_user->school_id;
+
+                $class_ids = $usertype == 'SA' || $usertype == 'A'  ? array() : (isset($_POST["class_name"]) ? $_POST["class_name"] : array());
+
+                if($userHandler->create_new_profile($firstname, $surname, $email,
+                $password, $usertype, $school_id, $class_ids))
                 {
                     $jsonArray['status_value'] = true;
                 }

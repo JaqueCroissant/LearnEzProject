@@ -298,14 +298,13 @@ class UserHandler extends Handler
 
         for($i = 0; $i < count($classes); $i++)
         {
-            if($i > 0 && $i < count($classes)-1)
+            if($i > 0 && $i < count($classes))
             {
                 $query .= ", ";
             }
 
             $query .= "(" . $user_id . ", " . $classes[$i] . ")";
         }
-
         DbHandler::get_instance()->query($query);
     }
 

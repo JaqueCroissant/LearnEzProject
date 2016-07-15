@@ -93,7 +93,7 @@
                                                 <div class="form-group m-b-sm">
                                                     <div class="create_select_class <?php echo ($userHandler->_user->user_type_id == 1 ? '" style="visibility:hidden;' : ''); ?>">
                                                         <label for="select_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
-                                                        <select id="select_class_name" name="class_name" class="form-control" data-plugin="select2" multiple>
+                                                        <select id="select_class_name" name="class_name[]" class="form-control" data-plugin="select2" multiple>
                                                             <?php
                                                             if($userHandler->_user->user_type_id > 1) {
                                                                 $classHandler->get_classes_by_school_id($userHandler->_user->school_id);

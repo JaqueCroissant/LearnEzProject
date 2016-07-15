@@ -4,24 +4,30 @@ jQuery(function ($) {
         var no_more_notifications = false;
         var currently_clicked_button = false;
         
+        //init window
         var win = $('#notifications');
         win.attr("aria-expanded", "false");
-        win.attr("aria-haspopup", "true");
         win.attr("data-toggle", "dropdown");
-        win.addClass("dropdown-toggle");
-        $(win.closest("li")).addClass("dropdown");
-        $(win.closest("li")).append("<ul class='dropdown-menu animated flipInY'>" +
-                "<li><div id='notification_window'>" + 
-                "<div id='notification_data'></div>" + 
-                "<div id='notification_loading' class='centered'>" + 
-                "<div id='notification_loading_image'></div></div></div></li></ul>");
+        $(win.closest("li")).append("<div class='dropdown-menu animated flipInY' style='width:auto;'>" +
+                "<div id='notification_window' class='hidden-sm hidden-xs'>" + 
+                "<div id='notification_top' class='col-md-12'>" +
+                "<div class='col-md-6 pull-left'><h4>Notifikationer</h4></div>" +
+                "<div class='col-md-2 pull-right' style='margin-top:8px;'>" +
+                "<a href='javascript:void(0)' class='change_page notification_load_window' page='notifications' id='notifications' step='all'>Se alle</a></div></div>" +
+                "<div id='notification_data' class='col-md-12'></div>" +    
+                "<div id='notification_loading' class='col-md-12'>" +   
+                "<div id='notification_loading_image'></div></div></div>");
         
+        //close on notification click
         $('#notification_data').on("click", ".notification_load_window", function(){
             $('#notification_window').hide("fast");
         });
         
-        $('#notifications').click(function (event) {
+        //window open
+        $('#notifications').click(function (event) {          
             if ($('#notification_window').is(":hidden")) {
+                $('#notification_loading').show();
+                $("#notification_loading_image").show();
                 currently_recieving_notifications = true;
                 $.ajax({
                    type: "POST",
@@ -29,10 +35,12 @@ jQuery(function ($) {
                    dataType: "json",
                    data: {action: 'get_notifications'},
                    success: function (result) {
-                        if (result.status_value === true) {
-                            no_more_notifications = true;
-                        }
                         $('#notification_data').html(result.notifications);
+                        if (result.status_text !== undefined) {
+                            no_more_notifications = true;
+                            $('#notification_loading').hide();
+                            $('#notification_data').append(result.status_text);
+                        }
                         currently_recieving_notifications = false;
                         $("#notification_loading_image").hide();
                    }
@@ -44,6 +52,7 @@ jQuery(function ($) {
             }
         });
         
+        //delete
         $("#notification_data").on("click", ".notification .notification_button .read_notification", function(event){
             if (!currently_clicked_button) {
                 currently_clicked_button = true;
@@ -69,10 +78,12 @@ jQuery(function ($) {
             }
         });
         
+        //scroll load
         $('#notification_window').on("scroll", (function() {
             var notif = $("#notification_window");
-            if (!no_more_notifications && !currently_recieving_notifications && (notif.scrollTop() + notif.innerHeight() >= notif[0].scrollHeight - 1)) {
+            if (!no_more_notifications && !currently_recieving_notifications && (notif.scrollTop() + notif.innerHeight() >= notif[0].scrollHeight - 10)) {
                 currently_recieving_notifications = true;
+                console.log("running");
                 $("#notification_loading_image").show();
                 $.ajax({
                    type: "POST",
@@ -80,15 +91,17 @@ jQuery(function ($) {
                    dataType: "json",
                    data: {action: 'get_more_notifications', offset: $('.notification').length},
                    success: function (result) {
-                        if (result.status_value === true) {
-                            no_more_notifications = true;
-                        }
+                        
                         $('#notification_data').append(result.notifications);
+                        if (result.status_text !== undefined) {
+                            no_more_notifications = true;
+                            $('#notification_loading').hide();
+                            $('#notification_data').append(result.status_text);
+                        }
                         currently_recieving_notifications = false;
                         $("#notification_loading_image").hide();
                    },
                    error: function(result){
-                       console.log(result.error);
                        currently_recieving_notifications = false;
                        $("#notification_loading_image").hide();
                    }

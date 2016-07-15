@@ -34,7 +34,11 @@ function change_page(pagename, step, args, element) {
         dataType: 'json',
         async: true,
         success: function (data) {
-            var page = "include/pages/" + data.pagename + ".php?step=" + step + args;
+            if(data.error_code !== undefined) {
+                var page = "include/pages/" + data.pagename + ".php?step=" + data.error_code;
+            } else {
+                var page = "include/pages/" + data.pagename + ".php?step=" + step + args;
+            }
             $.get(page, {'url': false}, function (e) {
                 var elapsedTime = (new Date().getTime()) - startTime;
                 if(elapsedTime < 700) {

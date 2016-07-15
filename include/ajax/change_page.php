@@ -11,6 +11,7 @@ if(PageHandler::page_exists(isset($_GET['page']) ? $_GET['page'] : "front")) {
         $jsonArray['pagename'] = $_GET['page'];
         $breadcrumbs = $pageHandler->get_breadcrumbs_array();
     } else {
+        $jsonArray['error_code'] = $pageHandler->error->code;
         $jsonArray['pagename'] = "error";
         $breadcrumbs = $pageHandler->generate_page("error");
     }

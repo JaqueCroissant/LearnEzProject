@@ -64,7 +64,7 @@ $pageHandler = new PageHandler(true);
                                 }
                                 
                                 if($has_subpage) {
-                                    if(empty($last_page_subpage_level) && $counter > 8) {
+                                    if(empty($last_page_subpage_level) && $counter > 9) {
                                        echo '</ul></div><div style="display: inline-block; vertical-align: top;  min-width:200px;"><ul class="treeview">';
                                        $counter = 0; 
                                     }
@@ -76,7 +76,7 @@ $pageHandler = new PageHandler(true);
                                     <li>
                                         <div class="checkbox" '. ($has_subpage ? 'style="margin-top:0px"' : '') .'>
                                             <input type="checkbox" name="page_rights[]" value="'. $page->id .'" id="page_'.$page->pagename.''.$page->step.'" '. (array_key_exists($page->id, $pageHandler->page_rights) ? 'checked' : '') .'>
-                                            <label for="page_'.$page->pagename.''.$page->step.'">'. ($has_subpage || !($page->master_page_id > 0) ? '<b>' : '') .''.$page->title.''. ($has_subpage || !($page->master_page_id > 0) ? '</b>' : '') .'</label>
+                                            <label for="page_'.$page->pagename.''.$page->step.'">'. (($has_subpage && count($last_page_subpage_level) < 2) || !($page->master_page_id > 0) ? '<b>' : '') .''.$page->title.''. (($has_subpage && count($last_page_subpage_level) < 2) || !($page->master_page_id > 0) ? '</b>' : '') .'</label>
                                         </div>';
                                 echo $has_subpage ? '<ul>' : '</li>';
                             }

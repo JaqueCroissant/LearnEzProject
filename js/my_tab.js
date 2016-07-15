@@ -7,6 +7,7 @@ $(document).ready(function () {
     } else {
         current_tab = "#" + $(".my_tab").first().attr("id");
     }
+    $(current_tab).addClass("in");
     
     $(document).on("click", ".my_tab_header", function (event) {
         event.preventDefault();

@@ -20,7 +20,7 @@ if ($classHandler->_user->user_type_id != 1) {
 
                 <!-- Tab panes -->
                 <div class="my_tab_content">
-                    <div class="my_fade my_tab in" id="tab-1">
+                    <div class="my_fade my_tab" id="tab-1">
                         <div class="widget-body">
                             <table id="default-datatable" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
                                    aria-describedby="default-datatable_info">

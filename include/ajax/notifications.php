@@ -22,22 +22,19 @@ function get_new_notifications(){
 
 function get_notifications(){
     $notificationHandler = new NotificationHandler();
-    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, 0, 5)) {
+    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, 0, 7)) {
     }
     $data = $notificationHandler->get_notifications();
-    $json_array['notifications'] = "Notifikationer<a href='javascript:void(0)' class='change_page notification_load_window' page='notifications' id='notifications' step='all'>Se alle</a>";     
+    $json_array['notifications'] = "";     
     if (count($data) == 0) {
-       $json_array['notifications'] .= "<i>Ingen notifikationer</i><br/><br/>";
-       $json_array["status_value"] = true;
+       $json_array["status_text"] = "<div class='col-md-12' style='text-align:center;font-style:italic;padding:6px 0 6px 0;'>" . TranslationHandler::get_static_text("NO_NOTIFICATIONS") . "</div>";
     }
     else {
         foreach ($data as $value) {
             $json_array['notifications'] .= notification_setup($value);
         }
-        $json_array["status_value"] = false;
-        if(count($data) < 5) {
-            $json_array['notifications'] .= "Ikke flere notifikationer";
-            $json_array["status_value"] = true;
+        if(count($data) < 7) {
+            $json_array["status_text"] = "<div class='col-md-12' style='text-align:center;font-style:italic;padding:6px 0 6px 0;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
         }
     }
     echo json_encode($json_array);
@@ -51,8 +48,7 @@ function get_more_notifications(){
             $json_array["notifications"] .= notification_setup($not);
         }
         if (count($notificationHandler->get_notifications()) != 5) {
-            $json_array["notifications"] .= "Ikke flere notifikationer";
-            $json_array["status_value"] = true;
+            $json_array["status_text"] = "<div class='col-md-12' style='text-align:center;font-style:italic;padding:6px 0 6px 0;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
         }
         $json_array['error'] = $notificationHandler->error;
         echo json_encode($json_array);
@@ -60,12 +56,11 @@ function get_more_notifications(){
 }
 
 function notification_setup($value){
-    $final = "";
-    if ($value->isRead != 2) {$final .= "<div class='notification notification_unread'>";}
-    else {$final .= "<div class='notification notification_read'>";}
-    $final .= "<div class='notification_icon pull-left'><img src='" . $value->icon . "' alt='missing' /></div>"
-            . "<div class='notification_button pull-right'><input type='button' notif='" . $value->id . "' class='read_notification' value='X'></div>"
-            . "<div class='notification_text pull-right'>" . $value->text . "<br/><i>" . $value->datetime . "</i></div></div>";
+    $time = time_elapsed($value->datetime);
+    $final = "<div class='notification col-md-12 " . ($value->isRead == 0 ? "notification_unseen" : ($value->isRead == 1 ? "notification_unread" : "notification_read"))
+            . "'><div class='col-md-1 notifcation_content'><div class='fa " . $value->icon . "' style='font-size:1.5em'></div></div>"
+            . "<div class='col-md-10 fz-sm notifcation_content'>" . $value->text . "<br/><i class='fz-sm' style='width:100% !important;'>" . $time["value"] . " " . TranslationHandler::get_static_text($time["prefix"]) . " " . TranslationHandler::get_static_text("DATE_AGO") . "</i></div>"
+            . "<div class='col-md-1 notification_button notifcation_content zmdi zmdi-close-circle' notif='" . $value->id . "'></div></div>";
     return $final;
 }
 

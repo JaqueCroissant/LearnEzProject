@@ -47,7 +47,6 @@ foreach($data as $lol) {
                 </section>
             </div>
         </main>
-
         
         
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>

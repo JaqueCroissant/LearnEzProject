@@ -84,12 +84,17 @@ class UserHandler extends Handler
 
     private function is_valid_input($string)
     {
-        return preg_match('/^[a-zA-ZÆØÅæøå]+$/i', $string);
+        return preg_match("/^[a-zA-ZÆØÅæøå '-]+$/i", $string);
     }
 
     private function is_valid_input_with_num($string)
     {
-        return preg_match('/^[a-zA-Z0-9ÆØÅæøå]+$/i', $string);
+        return preg_match("/^[a-zA-Z0-9ÆØÅæøå '-]+$/i", $string);
+    }
+
+    private function clean($string)
+    {
+        return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
     }
 
     public function create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids)
@@ -204,8 +209,9 @@ class UserHandler extends Handler
 
     public function generate_username($firstname, $surname)
     {
-        $firstname = strtolower($firstname);
-        $surname = strtolower($surname);
+
+        $firstname = $this->clean(strtolower($firstname));
+        $surname = $this->clean(strtolower($surname));
         $new_username = "";
         $conc_name = "";
 

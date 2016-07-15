@@ -5,5 +5,6 @@
         public $sort_order;
         public $prefix;
         public $title;
+        public $page_category_id;
     }
 ?>

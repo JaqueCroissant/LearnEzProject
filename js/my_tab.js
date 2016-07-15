@@ -1,5 +1,6 @@
 var current_tab;
 var clicked = true;
+var ready_to_change = true;
 
 $(document).ready(function () {
     var page_args = getURLParameters(location.href);
@@ -38,6 +39,7 @@ $(document).ready(function () {
                 }
             });
             $(tab).addClass("in", 300);
+            current_tab = tab;
         }
         $(this).closest("ul").children().each(function (e) {            
             console.log($(this).children().attr("class"));

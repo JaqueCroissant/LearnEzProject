@@ -14,15 +14,15 @@ if ($classHandler->_user->user_type_id != 1) {
             <div class="m-b-lg nav-tabs-horizontal">
                 <!-- tabs list -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#find-school-tab-1" role="tab" data-toggle="tab" 
+                    <li role="presentation" class="active"><a href="#tab-1" role="tab" data-toggle="tab" 
                                                               aria-expanded="true"><?php echo TranslationHandler::get_static_text("FIND_CLASS"); ?></a></li>
-                    <li role="presentation" class=""><a href="#find-school-tab-2" role="tab" data-toggle="tab" 
+                    <li role="presentation" class=""><a href="#tab-2" role="tab" data-toggle="tab" 
                                                         aria-expanded="false"><?php echo TranslationHandler::get_static_text("EDIT_CLASS_GENERIC"); ?></a></li>
                 </ul><!-- .nav-tabs -->
 
                 <!-- Tab panes -->
-                <div class="tab-content p-md">
-                    <div role="tabpanel" class="tab-pane fade active in" id="find-school-tab-1">
+                <div class="my_tab_content">
+                    <div class="my_tab" id="tab-1">
                         <div class="widget-body">
                             <table id="default-datatable" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
                                    aria-describedby="default-datatable_info">

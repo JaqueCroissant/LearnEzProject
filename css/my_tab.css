@@ -12,3 +12,9 @@
     overflow: hidden;
 }
 
+.nav-tabs-horizontal .nav-tabs > li a.my_active {
+    border-style: none none solid;
+    border-width: medium medium 2px;
+    border-bottom-color: #0080c0;
+    cursor: default;
+}

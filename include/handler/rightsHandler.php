@@ -1,7 +1,6 @@
 <?php
-    class RightsHandler
+    class RightsHandler extends Handler
     {
-        public static $error;
         
         private static function get_from_database()
         {
@@ -53,7 +52,7 @@
             SessionKeyHandler::remove_from_session("rights");
         }
         
-        public static function update_page_rights($user_type = 1, $page_rights = array()) {
+        public function update_page_rights($user_type = 1, $page_rights = array()) {
             try {
                 if(empty($user_type) || !is_numeric($user_type)) {
                     throw new Exception("INVALID_USER_TYPE");
@@ -74,11 +73,31 @@
                 
                 return true;
             } catch (Exception $ex) {
-                echo $ex->getMessage();
-                self::$error = ErrorHandler::return_error($ex->getMessage());
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
             return false;
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        ////////////////////
+        ////////////////////
+        ////////////////////
 
         public static function update_type_rights($user_type, $rights_array)
         {

@@ -178,7 +178,7 @@
                         . "WHERE user_notifications.user_id = :userId "
                         . "ORDER BY user_notifications.datetime DESC "
                         . "LIMIT :limit OFFSET :offset"
-                        , $langId, $langId, $langId, $userId, $limit, $offset);
+                        , $langId, $langId, $langId, $userId, $limit, (int)$offset);
                 if (count($dbData) == 0) {
                     $this->_notifications = array();
                     return true;

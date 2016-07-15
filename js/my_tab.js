@@ -1,4 +1,5 @@
 var current_tab;
+var ready_to_change = true;
 
 $(document).ready(function () {
     var page_args = getURLParameters(location.href);
@@ -25,10 +26,10 @@ $(document).ready(function () {
         if (tab !== (current_tab)) {
             $(".my_tab").each(function (e) {
                 if ($(this).hasClass("in")) {
-                    $(this).removeClass("in", 350);
+                    $(this).removeClass("in");
                 }
             });
-            $(tab).addClass("in", 350);
+            $(tab).addClass("in", 300);
             current_tab = tab;
         }
     });

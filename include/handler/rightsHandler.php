@@ -1,6 +1,101 @@
 <?php
     class RightsHandler extends Handler
     {
+        public $rights = array();
+        public $category_rights = array();
+        
+        public function update_page_rights($user_type = 1, $page_rights = array()) {
+            try {
+                if(empty($user_type) || !is_numeric($user_type)) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+                
+                if(empty($page_rights) || !is_array($page_rights) ) {
+                   throw new Exception("INVALID_PAGE_RIGHTS");
+                }
+                
+                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND b.hide_in_backend != 1", $user_type);
+                
+                foreach($page_rights as $key => $value) {
+                    if(empty($value) || !is_numeric($value)) {
+                        continue;
+                    }
+                    DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id) VALUES (:page_id, :user_type_id)", $value, $user_type);
+                }
+                
+                return true;
+            } catch (Exception $ex) {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
+            return false;
+        }
+        
+        public function get_all_rights() {
+            try 
+            {
+                if (!$this->user_exists()) {
+                    throw new exception("USER_NOT_LOGGED_IN");
+                }
+
+                $data = DbHandler::get_instance()->return_query("SELECT rights.id, rights.sort_order, rights.page_category_id, translation_rights.title FROM rights INNER JOIN translation_rights ON translation_rights.rights_id = rights.id WHERE page_right_id = '0' AND translation_rights.language_id = :language_id ORDER BY rights.sort_order ASC", TranslationHandler::get_current_language());
+
+                if(count($data) < 1) {
+                    return true;
+                }
+
+                $array = array();
+                $category_array = array();
+
+                foreach($data as $rights) {
+                    $right = new Rights($rights);
+                    $array[$right->id] = $right;
+                    $category_array[$right->page_category_id][] = $right;
+                }
+                $this->rights = $array;
+                $this->category_rights = $category_array;
+
+                return true;
+            }
+            catch (Exception $ex) 
+            {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
+            return false;
+        }
+        
+        public function get_rights($user_type_id = 1) {
+            try 
+            {
+                if(!is_numeric($user_type_id)) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+
+                if($user_type_id > 5 || $user_type_id < 1) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+
+                $data = DbHandler::get_instance()->return_query("SELECT user_type_page.id, user_type_page.user_type_id, user_type_page.page_id FROM user_type_page INNER JOIN page ON page.id = user_type_page.page_id WHERE user_type_id = :user_type_id AND page.hide_in_backend != 1", $user_type_id);
+
+                if(count($data) < 1) {
+                    return true;
+                }
+
+                $array = array();
+
+                foreach($data as $page) {
+                    $array[$page["page_id"]] = $page["page_id"];
+                }
+
+                $this->page_rights = $array;
+                return true;
+            }
+            catch (Exception $ex) 
+            {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
+            return false;
+        }
+        
         
         private static function get_from_database()
         {
@@ -50,32 +145,6 @@
         public static function reset_rights()
         {
             SessionKeyHandler::remove_from_session("rights");
-        }
-        
-        public function update_page_rights($user_type = 1, $page_rights = array()) {
-            try {
-                if(empty($user_type) || !is_numeric($user_type)) {
-                    throw new Exception("INVALID_USER_TYPE");
-                }
-                
-                if(empty($page_rights) || !is_array($page_rights) ) {
-                   throw new Exception("INVALID_PAGE_RIGHTS");
-                }
-                
-                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND b.hide_in_backend != 1", $user_type);
-                
-                foreach($page_rights as $key => $value) {
-                    if(empty($value) || !is_numeric($value)) {
-                        continue;
-                    }
-                    DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id) VALUES (:page_id, :user_type_id)", $value, $user_type);
-                }
-                
-                return true;
-            } catch (Exception $ex) {
-                $this->error = ErrorHandler::return_error($ex->getMessage());
-            }
-            return false;
         }
         
         

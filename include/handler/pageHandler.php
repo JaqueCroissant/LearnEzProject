@@ -70,9 +70,9 @@ class pageHandler extends Handler {
         if(empty($this->_pages) || count($this->_pages) < 1) {
             $user_type_id = $this->user_exists() ? $this->_user->user_type_id : 5;
             if($all_user_types) {
-               $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id WHERE translation_page.language_id = :language_id ORDER BY page.backend_sort_order ASC, page.sort_order ASC", TranslationHandler::get_current_language());
+               $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, page.backend_category, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id WHERE translation_page.language_id = :language_id ORDER BY page.backend_sort_order ASC, page.sort_order ASC", TranslationHandler::get_current_language());
             } else {
-               $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
+               $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, page.backend_category, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
              
             }
             
@@ -239,6 +239,7 @@ class pageHandler extends Handler {
     }
     
     private function iterate_children_remove_children(&$array, $parent) {
+        $total_children = 0;
         foreach($parent as $key => $value) {
             $item = clone $value;
 
@@ -247,11 +248,20 @@ class pageHandler extends Handler {
             }
             
             $array[$value->pagename . '' . $value->step] = $item;
+            
+            $child_count = 0;
+            foreach($value->children as $child) {
+               if(!$child->hide_in_backend) {
+                    $child_count++;
+               } 
+            }
 
             if(is_array($value->children) && count($value->children) > 0) {
-                $this->iterate_children_remove_children($array, $value->children);
+                $total_children = $child_count + $this->iterate_children_remove_children($array, $value->children);
             }
+            $array[$value->pagename . '' . $value->step]->total_children = $array[$value->pagename . '' . $value->step]->total_children + $total_children;
         }
+        return $total_children;
     }
     
     private function clone_pages(&$array, $parent) {
@@ -307,7 +317,7 @@ class pageHandler extends Handler {
             if(!(count($value->children) > 0)) {
                 $new_array[$key] = $value;
             }
-            
+
             foreach($value->children as $c_key => $c_value) {
                 if(!array_key_exists($c_key, $array)) {
                     unset($value->children[$c_key]);
@@ -316,6 +326,19 @@ class pageHandler extends Handler {
             $new_array[$key] = $value;
         }
         return $new_array;
+    }
+    
+    public function fetch_rights_page_categories() {
+        $this->get_pages_raw();
+        
+        $array = array();
+        foreach($this->_pages_raw as $key => $value) {
+            if($value->backend_category) {
+                $array[$key] = clone $value;
+            }
+        }
+        
+        return $array;
     }
     
     public function has_rights($pagename) {

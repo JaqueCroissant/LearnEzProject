@@ -39,6 +39,18 @@ $(document).ready(function () {
             $(this).find("i").first().toggleClass('fa-check-square-o fa-square-o');
         }
     });
+    
+    $(document).on("change", ".check_all_specific", function (event) {
+        event.preventDefault();
+        var checkbox_id = $(this).attr("checkbox_id");
+        var form = $(this).closest("form").attr("id");
+        var checkboxes = $("#" + form).find('.master_check_box_' + checkbox_id);
+        if ($(this).is(":checked")) {
+            checkboxes.prop('checked', true);
+        } else {
+            checkboxes.prop('checked', false);
+        }
+    });
     //
 
     // login / logout

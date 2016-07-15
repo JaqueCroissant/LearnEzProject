@@ -227,15 +227,26 @@ $(document).ready(function () {
             location.reload();
         });
     });
+    
+    $(document).on("click", ".update_class", function (event) {
+        event.preventDefault;
+        if ($("#class_open").val() === "on") {
+            $("#class_open_hidden").val(1);
+        } else {
+            $("#class_open_hidden").val(0);
+        }
+        
+        $("#hidden_description").val($("#class_description").val());
+        initiate_submit_form($(this), function () {
+            alert(ajax_data.error);
+        }, function () {
+            location.reload();
+        });
+    });
 
     $(document).on("click", ".btn_class_open", function (event) {
         event.preventDefault;
         
-        if ($(this).val() === "on") {
-            alert("on");
-        } else if ($(this).val() === "off") {
-            alert("off");
-        }
         $("td input[type='checkbox']").attr("disabled", true);
         position = $(this).offset();
         height = $("#close_class_alert").height();
@@ -270,7 +281,11 @@ $(document).ready(function () {
     });
 
     $(document).on("click", ".clickable_row .click_me", function (event) {
-        alert("fuck yeah - Metoden skal hive dataen ud af clicked row og levere til rediger klasse siden.");
+        var row = $(this).parent();
+        row.children().each(function (e) {
+            $("#" + $(this).attr("target")).val($(this).attr("title"));
+        });
+        $("#edit_class_a").click();
     });
 
     $(document).on("change", ".create_select_school", function (event) {
@@ -334,11 +349,11 @@ $(document).ready(function () {
     // class
     $(document).on("click", ".create_class", function (event) {
         event.preventDefault;
+        $("#hidden_description").val($("#class_description").val());
         initiate_submit_form($(this), function () {
             alert(ajax_data.error);
         }, function () {
             location.reload();
-            alert("Class created - replace alert with snackbar");
         });
     });
 

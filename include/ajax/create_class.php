@@ -4,7 +4,7 @@ require_once '../../include/ajax/require.php';
 require_once '../../include/handler/classHandler.php';
 
 $classHandler = new ClassHandler();
-$format = "m-d-Y";
+$format = "Y-m-d";
 if (isset($_POST['class_begin'])) {
     $class_begin = date_parse_from_format($format, $_POST['class_begin']);
 } else {

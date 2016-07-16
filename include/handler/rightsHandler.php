@@ -47,11 +47,11 @@
                     throw new Exception("INVALID_USER_TYPE");
                 }
                 
-                if(empty($user_rights) || !is_array($user_rights) ) {
-                   throw new Exception("INVALID_FORM_DATA");
-                }
-                
                 DbHandler::get_instance()->query("DELETE a.* FROM user_type_rights as a INNER JOIN rights as b ON b.id = a.rights_id WHERE a.user_type_id = :user_type_id AND b.page_right_id = '0'", $user_type);
+                
+                if(empty($user_rights) || !is_array($user_rights) ) {
+                   return true;
+                }
                 
                 foreach($user_rights as $key => $value) {
                     if(empty($value) || !is_numeric($value)) {
@@ -134,48 +134,95 @@
         }
         
         
-        private static function get_from_database()
+        private static function set_rights()
         {
-            if($this->user_exists()) {
-                $userRights = DbHandler::get_instance()->return_query("SELECT rights.id, rights.prefix, rights.sort_order, translation_rights.title
-                                                        FROM rights INNER JOIN translation_rights ON rights.id = translation_rights.rights_id 
-                                                        INNER JOIN user_type_rights ON rights.id = user_type_rights.rights_id
-                                                        WHERE user_type_rights.user_type_id = :type AND translation_rights.language_id = :lang", 
-                                                        $this->_user->user_type_id, TranslationHandler::get_current_language());
-
-                if(count($userRights)<1)
-                {
-                    return false;
-                }                
-                
-                $rightArray = array();
-                foreach($userRights as $right)
-                {
-                    $new_right = new Rights($right);
-                    $rightArray[$new_right->prefix] = $new_right;
+            try 
+            {
+                $current_user = null;
+                if (SessionKeyHandler::session_exists("user")) {
+                    $current_user = SessionKeyHandler::get_from_session("user", true);
                 }
                 
-                SessionKeyHandler::add_to_session('rights', $rightArray, true);
+                $page_rights = DbHandler::get_instance()->return_query("SELECT page.pagename, page.step FROM page
+                                                        INNER JOIN user_type_page ON user_type_page.page_id = page.id
+                                                        WHERE user_type_page.user_type_id = :user_type_id", ($current_user != null ? $current_user->user_type_id : 5));
+                
+                if(count($page_rights) < 1) {
+                    throw new Exception();
+                }   
+                
+                $array = array();
+                foreach($page_rights as $right) {
+                    $prefix = (!empty($right["pagename"]) ? strtoupper($right["pagename"]) : "") ."". (!empty($right["step"]) ? "_".strtoupper($right["step"]) : "");
+                    $array["PAGE_".$prefix] = true;
+                }
+                
+                if($current_user == null) {
+                    SessionKeyHandler::add_to_session('rights', $array, true);
+                    return true;
+                }
+                
+                $user_rights = DbHandler::get_instance()->return_query("SELECT rights.id, rights.prefix, rights.sort_order  FROM rights
+                                                        LEFT JOIN user_type_rights ON rights.id = user_type_rights.rights_id
+                                                        LEFT JOIN page ON page.id = rights.page_right_id
+                                                        LEFT JOIN user_type_page ON user_type_page.page_id = rights.page_right_id
+                                                        WHERE user_type_rights.user_type_id = :user_type_id OR user_type_page.user_type_id = :user_type_id", 
+                                                        $current_user->user_type_id, $current_user->user_type_id);
+
+                if(count($user_rights) < 1) {
+                    throw new Exception();
+                }                
+
+                foreach($user_rights as $right) {
+                    $array["RIGHT_".strtoupper($right["prefix"])] = true;
+                }
+                
+                SessionKeyHandler::add_to_session('rights', $array, true);
                 return true;
+
+            }
+            catch (Exception $ex) 
+            {
+                echo $ex->getMessage();
             }
             return false;
         }
-
-        public static function right_exists($prefix)
-        {
+        
+        private static function fetch_rights_session() {
             if(!SessionKeyHandler::session_exists("rights"))
             {
-                if(!$this->get_from_database())
+                if(!self::set_rights())
                 {
                     return false;
                 }
+                return true;
+            }
+            return true;
+        }
+
+        public static function has_user_right($prefix)
+        {
+            if(!self::fetch_rights_session()) {
+                return false;
             }
 
             if(is_string($prefix) && !empty($prefix))
             {
-                return array_key_exists($prefix, SessionKeyHandler::get_from_session("rights", true));
+                return array_key_exists("RIGHT_".strtoupper($prefix), SessionKeyHandler::get_from_session("rights", true));
             }
-            
+            return false;
+        }
+        
+        public static function has_page_right($prefix)
+        {
+            if(!self::fetch_rights_session()) {
+                return false;
+            }
+
+            if(is_string($prefix) && !empty($prefix))
+            {
+                return array_key_exists("PAGE_".strtoupper($prefix), SessionKeyHandler::get_from_session("rights", true));
+            }
             return false;
         }
 
@@ -183,6 +230,5 @@
         {
             SessionKeyHandler::remove_from_session("rights");
         }
-
     }
 ?>

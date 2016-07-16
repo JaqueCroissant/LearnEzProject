@@ -1,5 +1,5 @@
 <?php
-require_once '../../include/ajax/require.php';
+require_once 'require.php';
 
     if(isset($_GET['id']) && isset($_GET['code']) && $loginHandler->validate_reset_password($_GET['id'],$_GET['code']))
     {

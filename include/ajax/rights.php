@@ -5,7 +5,6 @@ $rightsHandler = new RightsHandler();
 if(isset($_POST)) {
     $user_type_id = (isset($_POST["user_type_id"]) ? $_POST["user_type_id"] : 0);
     
-    
     if(isset($_POST["rights_type"])) {
         $rights = (isset($_POST["rights"]) ? $_POST["rights"] : null);
 

@@ -1,5 +1,5 @@
 <?php
-require_once '../../include/ajax/require.php';
+require_once 'require.php';
 require_once '../../include/handler/userHandler.php';
 $userHandler = SessionKeyHandler::get_from_session("user_handler", true);
 ?>

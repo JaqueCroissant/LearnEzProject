@@ -24,6 +24,7 @@ if(isset($_POST)) {
     $token = isset($_POST["token"]) ? $_POST["token"] : null;
     if($loginHandler->check_login($username, $password, $token)) {
         TranslationHandler::reset();
+        RightsHandler::reset();
         $jsonArray['status_value'] = true;
     } else {
         $jsonArray['status_value'] = false;

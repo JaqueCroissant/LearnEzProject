@@ -1,5 +1,5 @@
 <?php
-require_once '../../include/ajax/require.php';
+require_once 'require.php';
 require_once '../../include/handler/schoolHandler.php';
 $schoolHandler = new SchoolHandler();
 $schoolHandler->get_school_types();

@@ -2,16 +2,22 @@
     class RightsHandler extends Handler
     {
         public $rights = array();
+        public $user_type_rights = array();
         public $category_rights = array();
         
         public function update_page_rights($user_type = 1, $page_rights = array()) {
             try {
+                
+                if (!$this->user_exists()) {
+                    throw new exception("USER_NOT_LOGGED_IN");
+                }
+                
                 if(empty($user_type) || !is_numeric($user_type)) {
                     throw new Exception("INVALID_USER_TYPE");
                 }
                 
                 if(empty($page_rights) || !is_array($page_rights) ) {
-                   throw new Exception("INVALID_PAGE_RIGHTS");
+                   throw new Exception("INVALID_FORM_DATA");
                 }
                 
                 DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND b.hide_in_backend != 1", $user_type);
@@ -21,6 +27,37 @@
                         continue;
                     }
                     DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id) VALUES (:page_id, :user_type_id)", $value, $user_type);
+                }
+                
+                return true;
+            } catch (Exception $ex) {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
+            return false;
+        }
+        
+        public function update_rights($user_type = 1, $user_rights = array()) {
+            try {
+                
+                if (!$this->user_exists()) {
+                    throw new exception("USER_NOT_LOGGED_IN");
+                }
+                
+                if(empty($user_type) || !is_numeric($user_type)) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+                
+                if(empty($user_rights) || !is_array($user_rights) ) {
+                   throw new Exception("INVALID_FORM_DATA");
+                }
+                
+                DbHandler::get_instance()->query("DELETE a.* FROM user_type_rights as a INNER JOIN rights as b ON b.id = a.rights_id WHERE a.user_type_id = :user_type_id AND b.page_right_id = '0'", $user_type);
+                
+                foreach($user_rights as $key => $value) {
+                    if(empty($value) || !is_numeric($value)) {
+                        continue;
+                    }
+                    DbHandler::get_instance()->query("INSERT INTO user_type_rights (rights_id, user_type_id) VALUES (:rights_id, :user_type_id)", $value, $user_type);
                 }
                 
                 return true;
@@ -63,7 +100,7 @@
             return false;
         }
         
-        public function get_rights($user_type_id = 1) {
+        public function get_user_type_rights($user_type_id = 1) {
             try 
             {
                 if(!is_numeric($user_type_id)) {
@@ -74,7 +111,7 @@
                     throw new Exception("INVALID_USER_TYPE");
                 }
 
-                $data = DbHandler::get_instance()->return_query("SELECT user_type_page.id, user_type_page.user_type_id, user_type_page.page_id FROM user_type_page INNER JOIN page ON page.id = user_type_page.page_id WHERE user_type_id = :user_type_id AND page.hide_in_backend != 1", $user_type_id);
+                $data = DbHandler::get_instance()->return_query("SELECT user_type_rights.id, user_type_rights.user_type_id, user_type_rights.rights_id FROM user_type_rights WHERE user_type_id = :user_type_id", $user_type_id);
 
                 if(count($data) < 1) {
                     return true;
@@ -82,11 +119,11 @@
 
                 $array = array();
 
-                foreach($data as $page) {
-                    $array[$page["page_id"]] = $page["page_id"];
+                foreach($data as $right) {
+                    $array[$right["rights_id"]] = $right["rights_id"];
                 }
 
-                $this->page_rights = $array;
+                $this->user_type_rights = $array;
                 return true;
             }
             catch (Exception $ex) 
@@ -142,67 +179,10 @@
             return false;
         }
 
-        public static function reset_rights()
+        public static function reset()
         {
             SessionKeyHandler::remove_from_session("rights");
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        ////////////////////
-        ////////////////////
-        ////////////////////
 
-        public static function update_type_rights($user_type, $rights_array)
-        {
-            if(is_int($user_type) && $user_type < 5 && $user_type > 0)
-            {
-                DbHandler::get_instance()->query("DELETE FROM user_type_rights WHERE user_type_id = :id", $user_type);
-                $rights = DbHandler::get_instance()->return_query("SELECT * FROM rights");
-                
-                $new_rights = array();
-                foreach($rights as $right)
-                {
-                    if(in_array($right['prefix'], $rights_array))
-                    {
-                        array_push($new_rights, $right);
-                    }
-                }
-
-                $right_count = count($new_rights);
-                $insert_values = "";
-                
-                for($i=0; $i<$right_count; $i++)
-                {
-                    if($i != 0 && $i!=$right_count)
-                    {
-                        $insert_values .= ", ";
-                    }
-
-                    $right = $new_rights[$i];
-                    $insert_values .= "(" . $user_type . ", " . $right['id'] . ")";
-                }
-
-                DbHandler::get_instance()->query("INSERT INTO user_type_rights (user_type_id, rights_id) VALUES " . $insert_values);
-
-                return true;
-            }
-            return false;
-        }
     }
 ?>

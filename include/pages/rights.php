@@ -26,7 +26,7 @@ $rightsHandler->get_all_rights();
                     ?>
                     <div class="my_fade my_tab" id="tab-<?php echo $i; ?>">
                         <?php
-                        if ($pageHandler->get_page_rights($i)) {
+                        if ($pageHandler->get_page_rights($i) && $rightsHandler->get_user_type_rights($i)) {
                             ?>
                             
                                 <header class="widget-header">
@@ -104,6 +104,7 @@ $rightsHandler->get_all_rights();
                                 <div class="widget-body">
                                     <form method="POST" action="" id="rights_form_<?php echo $i; ?>" url="rights.php" class="" name="rights">
                                         <input type="hidden" name="user_type_id" value="<?php echo $i; ?>">
+                                        <input type="hidden" name="rights_type" value="1">
                                         <div style="display: inline-block; vertical-align: top; min-width:230px;">
                                             <ul class="treeview">
                                                 <?php
@@ -116,7 +117,7 @@ $rightsHandler->get_all_rights();
                                                             $counter = 0;
                                                         }
                                                         echo '<li><div class="checkbox">
-                                                                <input type="checkbox" id="rights_category_'.$category->id.'">
+                                                                <input type="checkbox" id="rights_category_'.$category->id.'" checked>
                                                                 <label for="rights_category_' . $category->id .'"><b>'.$category->title.'</b></label>
                                                               </div></li>';
                                                         continue;
@@ -128,20 +129,24 @@ $rightsHandler->get_all_rights();
                                                         echo '</ul></div><div style="display: inline-block; vertical-align: top;  min-width:230px;"><ul class="treeview">';
                                                         $counter = 0;
                                                     }
+                                                    
+                                                    $all_checked = true;
+                                                    $display_rights = "";
+                                                    foreach($rightsHandler->category_rights[$category->id] as $right) {
+                                                        if(!array_key_exists($right->id, $rightsHandler->user_type_rights)) {
+                                                            $all_checked = false;
+                                                        }
+                                                        $display_rights .= '<li><div class="checkbox">
+                                                                                <input type="checkbox" class="master_check_box_'.$category->id.'" name="rights[]" value="' . $right->id . '" id="right_' . $right->id . '" '. (array_key_exists($right->id, $rightsHandler->user_type_rights) ? 'checked' : '').'>
+                                                                                <label for="right_' . $right->id . '">'. $right->title .'</label>
+                                                                            </div>';
+                                                    }
                                                     echo '<li><div class="checkbox">
-                                                            <input type="checkbox" class="check_all_specific" checkbox_id="'.$category->id.'" id="rights_category_'.$category->id.'">
+                                                            <input type="checkbox" class="check_all_specific" checkbox_id="'.$category->id.'" id="rights_category_'.$category->id.'" '. ($all_checked ? 'checked' : '').'>
                                                             <label for="rights_category_' . $category->id .'"><b>'.$category->title.'</b></label>
                                                           </div><ul>';
-                                                    
-
-                                                    foreach($rightsHandler->category_rights[$category->id] as $right) {
-                                                        echo '<li>
-                                                            <div class="checkbox">
-                                                                <input type="checkbox" class="master_check_box_'.$category->id.'" name="rights[]" value="' . $right->id . '" id="right_' . $right->id . '">
-                                                                <label for="right_' . $right->id . '">'. $right->title .'</label>
-                                                            </div>';
-                                                    }
-                                                    echo '</ul><div style="height:34px"></div>';
+                                                    echo $display_rights;
+                                                    echo '</ul><div style="height:20px"></div>';
                                                 }
                                                 ?>
                                             </ul>

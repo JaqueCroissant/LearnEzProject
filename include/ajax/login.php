@@ -9,7 +9,7 @@ $loginHandler = new LoginHandler();
 if(isset($_GET['logout'])) {
     if($loginHandler->check_login()) {
         $loginHandler->log_out();
-        RightsHandler::reset_rights();
+        RightsHandler::reset();
         $jsonArray['status_value'] = true;
     } else {
         $jsonArray['status_value'] = false;

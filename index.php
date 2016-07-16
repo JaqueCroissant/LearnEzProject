@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once 'include/extra/require.php';
+TranslationHandler::reset();
+RightsHandler::reset();
 ?>
 <!DOCTYPE html>
 <html style="overflow-y: scroll !important">

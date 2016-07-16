@@ -112,7 +112,7 @@ $rightsHandler->get_all_rights();
                                                 foreach ($rights_categories as $category) {
                                                     if(!isset($rightsHandler->category_rights[$category->id]) || !is_array($rightsHandler->category_rights[$category->id]) || count($rightsHandler->category_rights[$category->id]) < 1) {
                                                         $counter = $counter + 1;
-                                                        if ($counter > 9) {
+                                                        if ($counter > 11) {
                                                             echo '</ul></div><div style="display: inline-block; vertical-align: top;  min-width:230px;"><ul class="treeview">';
                                                             $counter = 0;
                                                         }
@@ -124,10 +124,9 @@ $rightsHandler->get_all_rights();
                                                     }
 
                                                     $counter = $counter + 1 + count($rightsHandler->category_rights[$category->id]);
-
-                                                    if ($counter > 9) {
+                                                    if ($counter > 11) {
                                                         echo '</ul></div><div style="display: inline-block; vertical-align: top;  min-width:230px;"><ul class="treeview">';
-                                                        $counter = 0;
+                                                        $counter = 1 + count($rightsHandler->category_rights[$category->id]);
                                                     }
                                                     
                                                     $all_checked = true;

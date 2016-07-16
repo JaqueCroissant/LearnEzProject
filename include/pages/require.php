@@ -27,5 +27,6 @@ if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 }
 
 if(!isset($_GET["redirect_token"]) || !RightsHandler::has_page_right($_GET["redirect_token"])) {
-    die("Access not permitted.");
+    include("../../include/pages/error.php");
+    die();
 }

@@ -36,7 +36,7 @@ function change_page(pagename, step, args, element) {
         async: true,
         success: function (data) {
             if(data.error_code !== undefined) {
-                var page = "include/pages/" + data.pagename + ".php?redirect_token="+redirect_token+"&step=" + data.error_code;
+                var page = "include/pages/" + data.pagename + ".php?redirect_token="+data.pagename+"&step=" + data.error_code;
             } else {
                 var page = "include/pages/" + data.pagename + ".php?redirect_token="+redirect_token+"&step=" + step + args;
             }

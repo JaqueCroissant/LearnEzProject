@@ -197,7 +197,10 @@ $(document).ready(function () {
 
 
    $(document).on("click", ".create_submit_csv", function(event){
-       var formData = new FormData($(this)[0]);
+       var file_data = $("csv_file").prop("files")[0];
+       var formData = new FormData();
+       formData.append("file", file_data);
+       alert(formData);
 
         $.ajax({
             url: 'include/ajax/create_account.php?step=2',

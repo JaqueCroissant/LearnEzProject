@@ -41,12 +41,17 @@
         break;
 
         case '2':
+
+            var_dump($_FILES);
             if(isset($_POST))
             {
-                $school_id = $userHandler->_user->user_type_id == 1 ? $_POST["school_id"] : $userHandler->_user->school_id;
 
-                var_dump($_POST);
-                if($userHandler->import_users($_FILES["csv_file"], $school_id))
+                $temp_id = isset($_POST["school_id"]) ? $_POST["school_id"] : "";
+                $school_id = $userHandler->_user->user_type_id == 1 ? $temp_id : $userHandler->_user->school_id;
+
+                $file = isset($_FILES["csv_file"]) ? $_FILES["csv_file"] : "";
+
+                if($userHandler->import_users($file, $school_id))
                 {
                     echo "JA!";
                     $jsonArray['status_value'] = true;

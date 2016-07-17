@@ -153,17 +153,17 @@ class ClassHandler extends Handler {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
             $this->verify_class_exists($class_id);
-            
+
 //            if (!is_int($open_int)) {
 //                throw new Exception("INVALID_INPUT_IS_NOT_INT");
 //            }
-            
+
             $query = "UPDATE class SET open=:open WHERE id=:id";
-            
+
             if (!DbHandler::get_instance()->query($query, $open_int, $class_id)) {
                 throw new Exception("DEFAULT");
             }
-            
+
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -171,29 +171,29 @@ class ClassHandler extends Handler {
         }
     }
 
-    public function update_class($class_id, $title, $description, $year, $year_prefix, $school_id, $class_open, $class_start, $class_end = null) {
+    public function update_class($class_id, $title, $description, $class_open, $class_end, $class_start) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
             $this->verify_class_exists($class_id);
             $this->is_null_or_empty($title);
-            $this->is_null_or_empty($year);
-            $this->is_null_or_empty($year_prefix);
-            $this->is_null_or_empty($school_id);
+            $this->is_null_or_empty($class_end);
+            $this->is_null_or_empty($class_start);
             $this->is_null_or_empty($class_open);
             if (!is_bool($class_open)) {
                 throw new Exception("ARGUMENT_NOT_BOOL");
             }
 
-            $year_id = $this->get_year_id($year);
-            $year_prefix_id = $this->get_year_prefix_id($year_prefix);
+            $class_start = $class_start['year'] . '/' . $class_start['month'] . "/" . $class_start['day'];
+
+            $year_id = $this->get_year_id($class_end);
+            $class_end_string = $class_end['year'] . '/' . $class_end['month'] . '/' . $class_end['day'];
 
             $query = "UPDATE class SET title=:title, description=:description, class_year_id=:year_id,
-                        class_year_prefix_id=:year_prefix_id, school_id=:school_id, open=:open, 
-                        start_date=:start_date, end_date=:end_date WHERE id = :id";
+                        open=:open, start_date=:start_date, end_date=:end_date WHERE id = :id";
 
-            if (!DbHandler::get_instance()->query($query, $title, $description, $year_id, $year_prefix_id, $school_id, $class_open, $class_start, $class_end, $class_id)) {
+            if (!DbHandler::get_instance()->query($query, $title, $description, $year_id, $class_open, $class_start, $class_end_string, $class_id)) {
                 throw new Exception("DEFAULT");
             }
             return true;

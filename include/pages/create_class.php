@@ -1,5 +1,5 @@
 <?php
-require_once '../../include/ajax/require.php';
+require_once 'require.php';
 require_once '../../include/handler/classHandler.php';
 require_once '../../include/handler/schoolHandler.php';
 $schoolHandler = new SchoolHandler();
@@ -69,6 +69,7 @@ $classHandler = new ClassHandler();
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-2 control-label" for="class_description"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></label>
                             <div class="col-md-5">
+                                <input type="hidden" id="hidden_description" name="class_description">
                                 <textarea form="create_class" class="form-control " type="text" id="class_description" name="class_description" placeholder="<?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?>"></textarea>
 
                             </div>
@@ -110,8 +111,12 @@ $classHandler = new ClassHandler();
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#class_begin").datepicker();
-        $("#class_end").datepicker();
+        $("#class_begin").datepicker({
+            dateFormat: dateFormat: "yy-mm-dd"
+        });
+        $("#class_end").datepicker({
+            dateFormat: dateFormat: "yy-mm-dd"
+        });
     });
 </script>
 

@@ -19,11 +19,4 @@
     $loginHandler = new LoginHandler();
     $userHandler = new UserHandler();
     $pageHandler = new PageHandler();
-    $schoolHandler = new SchoolHandler();
-    $classHandler = new ClassHandler();
-    
-    
-    SessionKeyHandler::add_to_session("user_handler", $userHandler, true);
-    SessionKeyHandler::add_to_session("school_handler", $schoolHandler, true);
-    SessionKeyHandler::add_to_session("class_handler", $classHandler, true);
 ?>

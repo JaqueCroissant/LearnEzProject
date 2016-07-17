@@ -2,6 +2,7 @@ var currently_changing_page = false;
 var currently_submitting_form = false;
 var currently_submitting_get = false;
 var content_hidden = false;
+var status_bar_timeout;
 
 var clicked_checkbox_id;
 var school;
@@ -39,13 +40,25 @@ $(document).ready(function () {
             $(this).find("i").first().toggleClass('fa-check-square-o fa-square-o');
         }
     });
+    
+    $(document).on("change", ".check_all_specific", function (event) {
+        event.preventDefault();
+        var checkbox_id = $(this).attr("checkbox_id");
+        var form = $(this).closest("form").attr("id");
+        var checkboxes = $("#" + form).find('.master_check_box_' + checkbox_id);
+        if ($(this).is(":checked")) {
+            checkboxes.prop('checked', true);
+        } else {
+            checkboxes.prop('checked', false);
+        }
+    });
     //
 
     // login / logout
     $(document).on("click", ".submit_login", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
             reload_page();
         });
@@ -55,7 +68,7 @@ $(document).ready(function () {
     $(document).on("click", ".log_out", function (event) {
         event.preventDefault();
         initiate_submit_get($(this), "login.php?logout=true", function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
             $.removeCookie("current_page");
             reload_page();
@@ -69,14 +82,14 @@ $(document).ready(function () {
         var current_page = $(this).attr("current_folder") === "inbox" ? "" : $(this).attr("current_folder");
         if ($(this).attr("mail_id") !== undefined && $(this).attr("step") !== undefined && $(this).attr("current_folder") !== undefined) {
             submit_get("mail.php?step=" + $(this).attr("step") + "&mail_id=" + $(this).attr("mail_id") + "&current_folder=" + $(this).attr("current_folder"), $(this), function () {
-                alert(ajax_data.error);
+                show_status_bar("error", ajax_data.error);
             }, function () {
                 change_page("mail", current_page);
             });
         } else {
             if ($("#" + $(this).attr("target_form") + " input:checkbox:checked").length > 0) {
                 initiate_custom_submit_form($(this), function () {
-                    alert(ajax_data.error);
+                    show_status_bar("error", ajax_data.error);
                 }, function () {
                     if (ajax_data.mails_removed !== undefined) {
                         ajax_data.mails_removed.forEach(function (entry) {
@@ -127,7 +140,7 @@ $(document).ready(function () {
     $(document).on("click", ".submit_create_mail", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
         });
     });
@@ -135,7 +148,7 @@ $(document).ready(function () {
     $(document).on("click", ".submit_reply_mail", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
             $(".reply_form").fadeOut(500);
         });
@@ -146,7 +159,7 @@ $(document).ready(function () {
    $(document).on("click", ".submit_change_rights", function(event){
         event.preventDefault();
         initiate_submit_form($(this), function() {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function() {
         });
    });
@@ -155,7 +168,7 @@ $(document).ready(function () {
     $(document).on("click", ".submit_edit_user_info", function(event){
         event.preventDefault();
         initiate_submit_form($(this), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
             $(".username").html(ajax_data.full_name);
             $(".current-avatar-image").attr("src", "assets/images/profile_images/" + ajax_data.avatar_id + ".png");
@@ -182,7 +195,7 @@ $(document).ready(function () {
     $(document).on("click", ".settings_submit_password", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
         });
     });
@@ -190,7 +203,7 @@ $(document).ready(function () {
     $(document).on("click", ".create_submit_info", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
         });
     });
@@ -225,7 +238,23 @@ $(document).ready(function () {
    $(document).on("click", ".reset_pass_submit_email2", function(event){
         event.preventDefault;
         initiate_submit_form($(this), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            location.reload();
+        });
+    });
+    
+    $(document).on("click", ".update_class", function (event) {
+        event.preventDefault;
+        if ($("#class_open").val() === "on") {
+            $("#class_open_hidden").val(1);
+        } else {
+            $("#class_open_hidden").val(0);
+        }
+        
+        $("#hidden_description").val($("#class_description").val());
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
         }, function () {
             location.reload();
         });
@@ -234,11 +263,6 @@ $(document).ready(function () {
     $(document).on("click", ".btn_class_open", function (event) {
         event.preventDefault;
         
-        if ($(this).val() === "on") {
-            alert("on");
-        } else if ($(this).val() === "off") {
-            alert("off");
-        }
         $("td input[type='checkbox']").attr("disabled", true);
         position = $(this).offset();
         height = $("#close_class_alert").height();
@@ -259,7 +283,7 @@ $(document).ready(function () {
             $("#" + clicked_checkbox_id).val("on");
         }
         initiate_submit_form($("#" + clicked_checkbox_id), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
             $("#close_class_alert").attr("hidden", true);
             $("td input[type='checkbox']").removeAttr("disabled");
@@ -273,7 +297,11 @@ $(document).ready(function () {
     });
 
     $(document).on("click", ".clickable_row .click_me", function (event) {
-        alert("fuck yeah - Metoden skal hive dataen ud af clicked row og levere til rediger klasse siden.");
+        var row = $(this).parent();
+        row.children().each(function (e) {
+            $("#" + $(this).attr("target")).val($(this).attr("title"));
+        });
+        $("#edit_class_a").click();
     });
 
     $(document).on("change", ".create_select_school", function (event) {
@@ -282,7 +310,7 @@ $(document).ready(function () {
         } else {
             event.preventDefault;
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
-                alert(ajax_data.error);
+                show_status_bar("error", ajax_data.error);
             }, function () {
                 $("#select_class_name").html(ajax_data.classes);
                 $(".create_select_class").css("visibility", "visible");
@@ -308,7 +336,7 @@ $(document).ready(function () {
             case "1":
                 $("#create_school_hidden_field_step_1").attr("value", $(this).attr("step"));
                 initiate_submit_form($(this), function () {
-                    alert(ajax_data.error); // fail function
+                    show_status_bar("error", ajax_data.error);
                 }, function () {
                     // start step 2 - success
                     $("#step_one").addClass("hidden");
@@ -321,7 +349,7 @@ $(document).ready(function () {
             case "2":
                 $("#create_school_hidden_field_step_2").val($(this).attr("step"));
                 initiate_submit_form($(this), function () {
-                    alert(ajax_data.error); // fail function
+                    show_status_bar("error", ajax_data.error);
                 }, function () {
                     // start step 3 - success
                     $("#step_two").addClass("hidden");
@@ -337,11 +365,11 @@ $(document).ready(function () {
     // class
     $(document).on("click", ".create_class", function (event) {
         event.preventDefault;
+        $("#hidden_description").val($("#class_description").val());
         initiate_submit_form($(this), function () {
-            alert(ajax_data.error);
+            show_status_bar("error", ajax_data.error);
         }, function () {
             location.reload();
-            alert("Class created - replace alert with snackbar");
         });
     });
 
@@ -377,6 +405,44 @@ $(document).ready(function () {
             'assets/images/loading_page.GIF'
         ]);
     });
+    
+    $(document).on("click", ".close_status_bar", function (event) {
+        event.preventDefault;
+        $(this).closest('div.alert').css("opacity", 0);
+        $('#status_container').css("bottom", 0);
+    });
+    
+    function show_status_bar(status_type, message, custom_fade_out) {
+        clearTimeout(status_bar_timeout);
+        $('div.alert').each(function(e) {
+            $(this).attr("style", "display: none; opacity: 0");
+        });
+        
+        var current_element;
+        switch(status_type) {
+            default:
+                current_element = $('.status_bar.alert-danger');
+                break;
+                
+            case "success":
+                current_element = $('.status_bar.alert-success')
+                break;
+                
+            case "warning":
+                current_element = $('.status_bar.alert-warning')
+                break;
+        }
+        current_element.find("span.status_bar_message").html(message);
+        current_element.css("display", "inline-block");
+        current_element.fadeTo(300, 1);
+                
+        $('#status_container').css("bottom", 0);
+        $('#status_container').animate({ bottom: 50 }, 300);
+        var fade_out = custom_fade_out === undefined ? 3000 : custom_fade_out;
+        if(fade_out !== 0) {
+           status_bar_timeout = setTimeout(function() { current_element.fadeTo(300, 0); }, fade_out ); 
+        }
+    }
     //
 });
 

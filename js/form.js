@@ -37,7 +37,6 @@ function initiate_submit_form(element, fail_function, success_function) {
         form_id = $(element).closest("form").attr("id");
         url = $(element).closest("form").attr("url");
         submit_form(form_id, url, $(element), fail_function, success_function);
-
     }
 }
 

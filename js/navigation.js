@@ -28,6 +28,7 @@ function change_page(pagename, step, args, element) {
     step = step === undefined ? "" : step;
     args = args === undefined ? "" : args;
     var url = "include/ajax/change_page.php?page=" + pagename + "&step=" + step + args;
+    var redirect_token = pagename + (step !== "" ? "_" + step : "");
     $.ajax({
         type: "POST",
         url: url,
@@ -35,9 +36,9 @@ function change_page(pagename, step, args, element) {
         async: true,
         success: function (data) {
             if(data.error_code !== undefined) {
-                var page = "include/pages/" + data.pagename + ".php?step=" + data.error_code;
+                var page = "include/pages/" + data.pagename + ".php?redirect_token="+data.pagename+"&step=" + data.error_code;
             } else {
-                var page = "include/pages/" + data.pagename + ".php?step=" + step + args;
+                var page = "include/pages/" + data.pagename + ".php?redirect_token="+redirect_token+"&step=" + step + args;
             }
             $.get(page, {'url': false}, function (e) {
                 var elapsedTime = (new Date().getTime()) - startTime;

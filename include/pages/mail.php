@@ -1,5 +1,5 @@
 <?php
-require_once '../../include/ajax/require.php';
+require_once 'require.php';
 require_once '../../include/handler/pageHandler.php';
 require_once '../../include/handler/mailHandler.php';
 
@@ -25,7 +25,7 @@ $paginationHandler = new PaginationHandler();
             ?>
             
             <div class="m-b-lg">
-                <a href="javascript:void(0)" type="button" data-toggle="modal" data-target="#composeModal" class="change_page btn action-panel-btn btn-default btn-block" page="mail" step="create_mail" id="mail"><?php echo TranslationHandler::get_static_text("WRITE_NEW"); ?></a>
+                <a href="javascript:void(0)" type="button" data-toggle="modal" data-target="#composeModal" class="change_page btn action-panel-btn btn-default btn-block <?php echo !RightsHandler::has_user_right("MAIL_CREATE") ? 'disabled' : ''; ?>" page="mail" step="create_mail" id="mail"><?php echo TranslationHandler::get_static_text("WRITE_NEW"); ?></a>
             </div>
             <hr class="m-0 m-b-md" style="border-color: #ddd;">
             
@@ -44,7 +44,9 @@ $paginationHandler = new PaginationHandler();
                 
                 <hr class="m-0 m-b-md" style="border-color: #ddd;">
                 <div class="list-group">
+                    <?php if(RightsHandler::has_user_right("MAIL_SEARCH")) { ?>
                     <a href="javascript:void(0)" class="change_page text-color list-group-item" page="mail" step="search" id="mail"><i class="m-r-sm fa fa-search"></i><?php echo TranslationHandler::get_static_text("SEARCH"); ?></a>
+                    <?php } ?>
                     <a href="javascript:void(0)" class="change_page text-color list-group-item" page="settings" step="preferences" id="settings"><i class="m-r-sm fa fa-gear"></i><?php echo TranslationHandler::get_static_text("SETTINGS"); ?></a>
                 </div>
 
@@ -69,8 +71,8 @@ $paginationHandler = new PaginationHandler();
                                     
                                     <div class="form-group m-b-sm">
                                         <label for="mail_recipiants" class="control-label"><?php echo TranslationHandler::get_static_text("RECEIVER"); ?>:</label>
-                                        <select id="mail_recipiants" name="recipiants" class="form-control" data-plugin="select2" multiple>
-                                            
+                                        <select id="mail_recipiants" name="recipiants" class="form-control" data-plugin="select2" <?php echo RightsHandler::has_user_right("MAIL_MULTIPLE_RECEIVERS") ? 'multiple' : ''; ?>>
+                                        <?php echo !RightsHandler::has_user_right("MAIL_MULTIPLE_RECEIVERS") ? '<option value="">'.TranslationHandler::get_static_text("RECEIVER").'</option>' : ''; ?>
                                             <?php
                                             foreach($mailHandler->tags as $tag) {
                                                 echo '<option value="'.$tag->id.'">'.$tag->title.'</option>';
@@ -96,6 +98,7 @@ $paginationHandler = new PaginationHandler();
                                         </select>
                                     </div>
                                     
+                                    <?php if(RightsHandler::has_user_right("MAIL_DISABLE_REPLY")) { ?>
                                     <div class="form-group" style="margin: -10px 0px 0px 0px !important;">
                                         <div class="checkbox" style="float:left;">
                                             <input name="disable_reply" class="form-control" type="checkbox" id="checkbox-enable-reply" checked > <label for="checkbox-enable-reply"></label>
@@ -103,6 +106,7 @@ $paginationHandler = new PaginationHandler();
                                         <div><?php echo TranslationHandler::get_static_text("MAIL_ARROW_RECEIVER_TO_REPLY"); ?></div>
                                         <div style="clear:both;"></div>
                                     </div>
+                                    <?php } ?>
                                         
 
                                     <textarea name="message" class="form-control input-sm full-wysiwyg" style="min-height:150px !important;"></textarea>
@@ -242,7 +246,7 @@ $paginationHandler = new PaginationHandler();
                         </div>
 
                         <?php
-                        if($current_mail->folder_id == 3) {
+                        if($current_mail->folder_id == 3 || !RightsHandler::has_user_right("MAIL_CREATE")) {
                             echo '
                                 <div class="divid"></div>
                                 <div style="text-align:center;">'. TranslationHandler::get_static_text("MAIL_CANT_RESPOND_TO_MAIL") . '</div>';

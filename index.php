@@ -1,13 +1,8 @@
 <?php
 session_start();
 require_once 'include/extra/require.php';
-/*
-$data = DbHandler::get_instance()->return_query("SELECT * FROM page");
-
-DbHandler::get_instance()->query("DELETE FROM user_type_page WHERE user_type_id = :lol", 1);
-foreach($data as $lol) {
-    DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id) VALUES (:page_id, :user_type_id)", $lol["id"], 1);
-}*/
+TranslationHandler::reset();
+RightsHandler::reset();
 ?>
 <!DOCTYPE html>
 <html style="overflow-y: scroll !important">
@@ -47,6 +42,12 @@ foreach($data as $lol) {
                 </section>
             </div>
         </main>
+        
+        <div id="status_container">
+            <?php
+            include 'include/template/statusbar.php';
+            ?>
+        </div>
         
         
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>

@@ -1,5 +1,5 @@
 <?php
-require_once '../../include/ajax/require.php';
+require_once 'require.php';
 ?>
 <div class="row">
     <div class="col-md-12">

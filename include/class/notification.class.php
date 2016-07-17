@@ -10,6 +10,7 @@ class Notification extends ORM
         public $isRead;
         public $category;
         public $icon;
-        public $label;
+        public $page;
+        public $step;
     }
 

@@ -158,7 +158,8 @@
                         . "user_notifications.datetime AS datetime, "
                         . "user_notifications.is_read AS isRead, "
                         . "notifications_category.icon_class AS icon, "
-                        . "notifications_category.label_class AS label, "
+                        . "notifications_category.link_page AS page, "
+                        . "notifications_category.link_step AS step, "
                         . "translation_notifications_category.name AS category "
                         . "FROM user_notifications "
                         . "INNER JOIN notifications "
@@ -217,7 +218,8 @@
                         . "user_notifications.datetime AS datetime, "
                         . "user_notifications.is_read AS isRead, "
                         . "notifications_category.icon_class AS icon, "
-                        . "notifications_category.label_class AS label, "
+                        . "notifications_category.link_page AS page, "
+                        . "notifications_category.link_step AS step, "
                         . "translation_notifications_category.name AS category "
                         . "FROM user_notifications "
                         . "INNER JOIN notifications "
@@ -254,6 +256,26 @@
             } catch (Exception $exc) {
                 $this->error = ErrorHandler::return_error($exc->getMessage());
                 return false;
+            }
+        }
+        
+        public function get_arguments($notif_id) {
+            try {
+                $this->check_numeric($notif_id);
+                
+                $dbData = DbHandler::get_instance()->return_query("SELECT name, value "
+                        . "FROM user_notifications_arguments "
+                        . "WHERE user_notifications_id = :notif", $notif_id);
+                
+                $final = array();
+                foreach ($dbData as $value) {
+                    $final[$value["name"]] = $value["value"];
+                }
+                
+                return $final;
+                
+            } catch (Exception $ex) {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
         

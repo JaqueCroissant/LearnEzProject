@@ -127,7 +127,7 @@
 			<div role="tabpanel" class="tab-pane fade" id="tab-2">
                             <div class="widget-body">
 
-                                    <form method="POST" action="" id="create_import_form" url="create_account.php?step=2" name="create_import">
+                                    <form method="POST" action="" id="create_import_form" url="create_account.php?step=2" name="create_import" enctype="multipart/form-data">
                                                 <div class="form-group m-b-sm">
                                                     <div class="<?php echo ($userHandler->_user->user_type_id != 1 ? ' style="visibility:hidden;' : ''); ?>">
 

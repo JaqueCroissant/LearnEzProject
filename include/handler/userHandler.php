@@ -571,6 +571,9 @@ class UserHandler extends Handler
 
     public function import_users($csv_file, $school_id)
     {
+        $uploaded_file;
+        $dir = '../../temp_files/';
+
         try
         {
             if($this->_user->user_type_id != 1)
@@ -583,8 +586,10 @@ class UserHandler extends Handler
             $index = 0;
 
             $this->check_if_csv($csv_file);
-            $file = fopen($csv_file,"r");
-            $fp = file($csv_file, FILE_SKIP_EMPTY_LINES);
+            $uploaded_file = $dir . $this->upload_csv($csv_file, $dir);
+
+            $file = fopen($uploaded_file,"r");
+            $fp = file($uploaded_file, FILE_SKIP_EMPTY_LINES);
             $count = count($fp);
             
             while(!feof($file))
@@ -615,6 +620,25 @@ class UserHandler extends Handler
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
+        finally
+        {
+            if(file_exists($uploaded_file))
+            {
+                unlink($uploaded_file);
+            }
+        }
+    }
+
+    private function upload_csv($file, $directory)
+    {
+        $new_file_name = $this->_user->username . "_" . date("Y-m-d_H-i-s") . ".csv";
+
+        if(move_uploaded_file($file['tmp_name'], $directory . $new_file_name))
+        {
+            return $new_file_name;
+        }
+
+        throw new Exception("IMPORT_FAILED_UPLOAD");
     }
 
     private function insert_csv_content($users)
@@ -697,7 +721,7 @@ class UserHandler extends Handler
 
     private function check_if_csv($file)
     {
-        $info = pathinfo($file);
+        $info = pathinfo($file['name']);
         if($info['extension']!="csv")
         {
             throw new Exception("IMPORT_INVALID_FORMAT");

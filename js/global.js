@@ -210,11 +210,8 @@ $(document).ready(function () {
 
 
    $(document).on("click", ".create_submit_csv", function(event){
-       var file_data = $("csv_file").prop("files")[0];
-       var formData = new FormData();
-       formData.append("file", file_data);
-       alert(formData);
 
+       var formData = new FormData($('#create_import_form')[0]);
         $.ajax({
             url: 'include/ajax/create_account.php?step=2',
             type: 'POST',
@@ -229,10 +226,7 @@ $(document).ready(function () {
         });
 
         event.preventDefault();
-        initiate_submit_form($(this), function() {
-            alert(ajax_data.error);
-        }, function() {
-        });
+
    });
 
    $(document).on("click", ".reset_pass_submit_email2", function(event){

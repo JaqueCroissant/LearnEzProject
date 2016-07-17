@@ -66,10 +66,11 @@ $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), 
                                     <?php
                                         if (count($not_handler->get_notifications()) > 0) {
                                             foreach ($notifs as $notif) {
+                                                $args = $not_handler->get_arguments($notif->id);
                                                 $timeString = time_elapsed($notif->datetime);
                                                 echo '
                                                 <div class="mail-item notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? 'notif_read' : 'notif_unread') . '" style="min-height:100px;">
-                                                    <table class="mail-container">
+                                                    <table class="mail-container mail_element_content">
                                                         <tr>
                                                             <td class="mail-left">
                                                                 <div class="notif_element_checkbox checkbox-resize">
@@ -77,13 +78,13 @@ $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), 
                                                                         <input type="checkbox" id="checkbox-enable-reply" name="notifications[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>
                                                                     </div>
                                                                 </div>
-                                                            </td>     
-                                                            <td class="mail-center">
+                                                            </td>  
+                                                            <td class="change_page mail-center">
                                                                 <div class="mail-item-header">
                                                                     <h4 class="mail-item-title">' . $notif->title . '</h4>
                                                                     <i class="fa ' . $notif->icon . '"></i>
                                                                 </div>
-                                                                <p class="mail-item-excerpt">' . $notif->text . '</p>
+                                                                <p class="mail-item-excerpt">' . $notif->text . " " . (isset($args["sender"]) ? $args["sender"] : "") . '</p>
                                                             </td>
                                                             <td class="mail-right">
                                                                 <p class="mail-item-date">' . $timeString["value"] . ' ' . TranslationHandler::get_static_text($timeString["prefix"]) . ' ' . TranslationHandler::get_static_text("DATE_AGO") . '</p>

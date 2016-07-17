@@ -43,6 +43,12 @@ RightsHandler::reset();
             </div>
         </main>
         
+        <div id="status_container">
+            <?php
+            include 'include/template/statusbar.php';
+            ?>
+        </div>
+        
         
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
         <script src="libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>

@@ -12,6 +12,10 @@
                     throw new exception("USER_NOT_LOGGED_IN");
                 }
                 
+                if (!RightsHandler::has_user_right("RIGHTS")) {
+                    throw new exception("INSUFFICIENT_RIGHTS");
+                }
+                
                 if(empty($user_type) || !is_numeric($user_type)) {
                     throw new Exception("INVALID_USER_TYPE");
                 }
@@ -41,6 +45,10 @@
                 
                 if (!$this->user_exists()) {
                     throw new exception("USER_NOT_LOGGED_IN");
+                }
+                
+                if (!RightsHandler::has_user_right("RIGHTS")) {
+                    throw new exception("INSUFFICIENT_RIGHTS");
                 }
                 
                 if(empty($user_type) || !is_numeric($user_type)) {

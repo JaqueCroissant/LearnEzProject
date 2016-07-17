@@ -246,7 +246,7 @@ $paginationHandler = new PaginationHandler();
                         </div>
 
                         <?php
-                        if($current_mail->folder_id == 3) {
+                        if($current_mail->folder_id == 3 || !RightsHandler::has_user_right("MAIL_CREATE")) {
                             echo '
                                 <div class="divid"></div>
                                 <div style="text-align:center;">'. TranslationHandler::get_static_text("MAIL_CANT_RESPOND_TO_MAIL") . '</div>';

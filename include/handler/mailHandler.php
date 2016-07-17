@@ -172,6 +172,10 @@ class MailHandler extends Handler
                 throw new exception("USER_NOT_LOGGED_IN");
             }
             
+            if (!RightsHandler::has_page_right("MAIL")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+            
             if (empty($folder_prefix)) {
                 throw new exception("MAIL_INVALID_FOLDER");
             }
@@ -183,7 +187,7 @@ class MailHandler extends Handler
             $folder_id = $this->get_folder_id($folder_prefix);
             
             if(!$this->check_folder_rights($this->current_folder->id, $folder_id)) {
-                throw new exception("MAIL_INVALID_INPUT2");
+                throw new exception("MAIL_INVALID_INPUT");
             }
 
             switch($this->current_folder->id) {
@@ -218,6 +222,10 @@ class MailHandler extends Handler
         {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if (!RightsHandler::has_user_right("MAIL_CREATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
             }
             
             if (empty($title)) {
@@ -269,7 +277,6 @@ class MailHandler extends Handler
 	}
 	catch (Exception $ex) 
         {
-            echo $ex->getMessage();
             $this->error = ErrorHandler::return_error($ex->getMessage());
 	}
         return false;

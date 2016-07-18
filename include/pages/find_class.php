@@ -60,7 +60,7 @@ if ($classHandler->_user->user_type_id != 1) {
                                             <td class="click_me" target="class_year" title="<?php echo $value->class_year; ?>"><?php echo $value->class_year; ?></td>
                                             <td class="click_me" target="class_begin" title="<?php echo $value->start_date; ?>"><?php echo $value->start_date; ?></td>
                                             <td class="click_me" target="class_end" title="<?php echo $value->end_date; ?>"><?php echo $value->end_date; ?></td>
-                                            <td hidden target="update_class_id" title="<?php echo $value->id; ?>"></td>
+                                            <!--<td hidden target="update_class_id" title="<?php echo $value->id; ?>"></td>-->
                                             <td class="" target="open" title="<?php echo $value->open; ?>">
                                                 <form method="post" id="class_open_<?php echo $i; ?>" action="" url="find_class.php">
                                                     <div class="checkbox" id="class_open_<?php echo $i; ?>_div">
@@ -167,9 +167,10 @@ if ($classHandler->_user->user_type_id != 1) {
         </p>
     </div>
 </div>
-<script src="js/my_tab.js" type="text/javascript"></script>
+
 <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script src="js/my_tab.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(".datepickers").datepicker({
         dateFormat: "yy-mm-dd"

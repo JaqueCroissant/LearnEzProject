@@ -2,9 +2,11 @@
     require_once '../../include/ajax/require.php';
     require_once '../../include/handler/userHandler.php';
     require_once '../../include/handler/classHandler.php';
+    require_once '../../include/handler/schoolHandler.php';
 
     $userHandler = new UserHandler();
     $classHandler = new ClassHandler();
+    $schoolHandler = new SchoolHandler();
 
     switch($_GET['step'])
     {
@@ -44,10 +46,11 @@
 
                 $temp_id = isset($_POST["school_id"]) ? $_POST["school_id"] : "";
                 $school_id = $userHandler->_user->user_type_id == 1 ? $temp_id : $userHandler->_user->school_id;
+                $class_ids = isset($_POST["class_name"]) ? $_POST["class_name"] : array();
 
                 $file = isset($_FILES["csv_file"]) ? $_FILES["csv_file"] : array();
 
-                if($userHandler->import_users($file, $school_id))
+                if($userHandler->import_users($file, $school_id, $class_ids))
                 {
                     $jsonArray['status_value'] = true;
                 }

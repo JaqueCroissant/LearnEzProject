@@ -10,8 +10,8 @@ $current_page_number = isset($_GET['p']) && !empty($_GET['p']) ? $_GET['p'] : 1;
 
 
 $current_page != "all" ? 
-    $not_handler->load_notifications_from_category($not_handler->_user->id, 0, $current_page, 100) : 
-    $not_handler->load_notifications($not_handler->_user->id, 0, 100);
+    $not_handler->load_notifications_from_category(0, $current_page, 100) : 
+    $not_handler->load_notifications(0, 100);
 $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), $current_page_number, 5);
 ?>
 <script src="js/subpageGlobal.js" type="text/javascript"></script>
@@ -66,31 +66,31 @@ $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), 
                                     <?php
                                         if (count($not_handler->get_notifications()) > 0) {
                                             foreach ($notifs as $notif) {
-                                                $args = $not_handler->get_arguments($notif->id);
+                                                $args = $not_handler->get_arguments($notif->arg_id);
                                                 $timeString = time_elapsed($notif->datetime);
                                                 echo '
-                                                <div class="mail-item notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? 'notif_read' : 'notif_unread') . '" style="min-height:100px;">
-                                                    <table class="mail-container mail_element_content">
-                                                        <tr>
-                                                            <td class="mail-left">
-                                                                <div class="notif_element_checkbox checkbox-resize">
-                                                                    <div class="checkbox">
-                                                                        <input type="checkbox" id="checkbox-enable-reply" name="notifications[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>
+                                                <div class="mail-item notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? 'notif_read' : 'notif_unread') . '" style="padding:0;">
+                                                    <div class="notif_element_checkbox checkbox-resize" style="padding:0 16px 15px 16px;">
+                                                        <div class="checkbox">
+                                                            <input type="checkbox" id="checkbox-enable-reply" name="notifications[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="change_page mail_element_content" page="' . $notif->page . '" id="'. $notif->page . '" step="' . $notif->step .'" args="&mail_id=' . (isset($args["link_id"]) ? $args["link_id"] : "") . '" style="min-height:100px;">
+                                                        <table class="mail-container" style="margin-top:16px;">
+                                                            <tr> 
+                                                                <td class="mail-center">
+                                                                    <div class="mail-item-header">
+                                                                        <h4 class="mail-item-title">' . $notif->title . '</h4>
+                                                                        <i class="fa ' . $notif->icon . '"></i>
                                                                     </div>
-                                                                </div>
-                                                            </td>  
-                                                            <td class="change_page mail-center">
-                                                                <div class="mail-item-header">
-                                                                    <h4 class="mail-item-title">' . $notif->title . '</h4>
-                                                                    <i class="fa ' . $notif->icon . '"></i>
-                                                                </div>
-                                                                <p class="mail-item-excerpt">' . $notif->text . " " . (isset($args["sender"]) ? $args["sender"] : "") . '</p>
-                                                            </td>
-                                                            <td class="mail-right">
-                                                                <p class="mail-item-date">' . $timeString["value"] . ' ' . TranslationHandler::get_static_text($timeString["prefix"]) . ' ' . TranslationHandler::get_static_text("DATE_AGO") . '</p>
-                                                            </td>
-                                                        </tr>
-                                                    </table>			
+                                                                    <p class="mail-item-excerpt">' . NotificationHandler::parse_text($notif->text, $args) . '</p>
+                                                                </td>
+                                                                <td class="mail-right">
+                                                                    <p class="mail-item-date">' . $timeString["value"] . ' ' . TranslationHandler::get_static_text($timeString["prefix"]) . ' ' . TranslationHandler::get_static_text("DATE_AGO") . '</p>
+                                                                </td>
+                                                            </tr>
+                                                        </table>	
+                                                    </div>
                                                 </div>';
                                             }
                                         }

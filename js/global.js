@@ -306,8 +306,24 @@ $(document).ready(function () {
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
                 show_status_bar("error", ajax_data.error);
             }, function () {
+                $(".create_select_class").find(".select2-selection__rendered").empty();
                 $("#select_class_name").html(ajax_data.classes);
                 $(".create_select_class").css("visibility", "visible");
+            });
+        }
+    });
+
+    $(document).on("change", ".import_select_school", function (event) {
+        if ($(this).find("option:selected").val() === "default") {
+            $(".import_select_class").css("visibility", "hidden");
+        } else {
+            event.preventDefault;
+            initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
+                show_status_bar("error", ajax_data.error);
+            }, function () {
+                $(".import_select_class").find(".select2-selection__rendered").empty();
+                $("#import_class_name").html(ajax_data.classes);
+                $(".import_select_class").css("visibility", "visible");
             });
         }
     });

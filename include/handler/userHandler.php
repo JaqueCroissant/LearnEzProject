@@ -97,6 +97,14 @@ class UserHandler extends Handler
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
     }
 
+    private function make_html_compatible($string)
+    {
+        $chars_to_replace = array('Æ','Ø','Å','æ','ø','å');
+        $replacement_chars = array('&AElig;', '&Oslash;', '&Aring;','&aelig;', '&oslash;', '&aring;');
+
+        return str_replace($chars_to_replace, $replacement_chars, $string);
+    }
+
     public function create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids)
     {
         try
@@ -302,16 +310,19 @@ class UserHandler extends Handler
         $user_id = DbHandler::get_instance()->last_inserted_id();
         $query = "INSERT INTO user_class (users_id, class_id) VALUES ";
 
-        for($i = 0; $i < count($classes); $i++)
+        if(count($classes)>0)
         {
-            if($i > 0 && $i < count($classes))
+            for($i = 0; $i < count($classes); $i++)
             {
-                $query .= ", ";
-            }
+                if($i > 0 && $i < count($classes))
+                {
+                    $query .= ", ";
+                }
 
-            $query .= "(" . $user_id . ", " . $classes[$i] . ")";
+                $query .= "(" . $user_id . ", " . $classes[$i] . ")";
+            }
+            DbHandler::get_instance()->query($query);
         }
-        DbHandler::get_instance()->query($query);
     }
 
     private function create_user($user_object, $add_to_user_array)
@@ -320,11 +331,11 @@ class UserHandler extends Handler
         try
         {
             if(!DbHandler::get_instance()->query("INSERT INTO users (username, user_type_id,
-                                            school_id, email, firstname, surname, time_created) VALUES
-                                            (:username, :user_id, :school_id, :email, :firstname, :surname, :time_created)",
+                                            school_id, email, firstname, surname, time_created, open) VALUES
+                                            (:username, :user_id, :school_id, :email, :firstname, :surname, :time_created, :open)",
                                             $user_object->username, $user_object->user_type_id, 
                                             $user_object->school_id, $user_object->email,
-                                            $user_object->firstname, $user_object->surname, date ("Y-m-d H:i:s")))
+                                            $user_object->firstname, $user_object->surname, date ("Y-m-d H:i:s"), 0))
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
@@ -352,11 +363,11 @@ class UserHandler extends Handler
         try
         {
             if(!DbHandler::get_instance()->query("INSERT INTO users (username, user_type_id,
-                                            school_id, email, firstname, surname, password, time_created) VALUES
-                                            (:username, :user_id, :school_id, :email, :firstname, :surname, :password, :time_created)",
+                                            school_id, email, firstname, surname, password, time_created, open) VALUES
+                                            (:username, :user_id, :school_id, :email, :firstname, :surname, :password, :time_created, :open)",
                                             $user_object->username, $user_object->user_type_id,
                                             $user_object->school_id, $user_object->email,
-                                            $user_object->firstname, $user_object->surname, $password, date ("Y-m-d H:i:s")))
+                                            $user_object->firstname, $user_object->surname, $password, date ("Y-m-d H:i:s"), 1))
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
@@ -487,13 +498,11 @@ class UserHandler extends Handler
 
     private function check_if_valid_string($string, $allow_special_characters)
     {
-        if(!$allow_special_characters)
-        {
             if(!$this->is_valid_input($string))
             {
                 throw new Exception("USER_INVALID_USERNAME_INPUT");
             }
-        }
+
 
         if(!is_string($string))
         {
@@ -569,7 +578,7 @@ class UserHandler extends Handler
         $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
     }
 
-    public function import_users($csv_file, $school_id)
+    public function import_users($csv_file, $school_id, $class_ids)
     {
         $uploaded_file;
         $dir = '../../temp_files/';
@@ -599,7 +608,8 @@ class UserHandler extends Handler
                 {
                     if($index > 0)
                     {
-                        $users[] = $this->validate_csv_content($row, $offset, $school_id);
+
+                        $users[] = $this->validate_csv_content($row, $offset, $school_id, $class_ids);
                     }
                     else
                     {
@@ -658,38 +668,49 @@ class UserHandler extends Handler
         }
     }
 
-    private function validate_csv_content($row, $offset, $school_id)
+    private function validate_csv_content($row, $offset, $school_id, $class_ids)
     {
-        $user = new User();
-
         if(empty($row[0+$offset]) || empty($row[1+$offset]) || empty($row[2+$offset]))
         {
             throw new Exception("IMPORT_MISSING_VALUE");
         }
 
-        $this->check_if_valid_string($row[0+$offset], false);
-        $this->check_if_valid_string($row[1+$offset], false);
-        $user->user_type_id = $this->check_if_valid_type($row[2+$offset]);
+        $user = new User();
 
-        $user->firstname = $row[0+$offset];
-        $user->surname = $row[1+$offset];
+        $firstname = utf8_encode($row[0+$offset]);
+        $surname = utf8_encode($row[1+$offset]);
+        $type = utf8_encode($row[2+$offset]);
+        $email = utf8_encode($row[3+$offset]);
+        $password = utf8_encode($row[4+$offset]);
 
-        if(!empty($row[3+$offset]))
+        $this->check_if_valid_string($firstname, false);
+        $this->check_if_valid_string($surname, false);
+        $this->verify_class_ids($class_ids);
+
+        $user->user_type_id = $this->check_if_valid_type($type);
+        //$user->firstname = $this->make_html_compatible($row[0+$offset]);
+        //$user->surname = $this->make_html_compatible($row[1+$offset]);
+        $user->firstname = $firstname;
+        $user->surname = $surname;
+        $user->class_ids = $class_ids;
+
+        if(!empty($email))
         {
-            $this->check_if_email($row[3+$offset]);
-            $user->email = $row[3+$offset];
+            $this->check_if_email($email);
+            $user->email = $email;
         }
 
-        if(!empty($row[4+$offset]))
+        if(!empty($password))
         {
-            if(strlen($row[4+$offset]) < 6)
+            if(strlen($password) < 6)
             {
                 throw new Exception("IMPORT_INVALID_PASSWORD");
             }
-            $user->unhashed_password = $row[4+$offset];
+            $user->unhashed_password = $password;
         }
 
         $user->school_id = $school_id;
+
         return $user;
     }
 

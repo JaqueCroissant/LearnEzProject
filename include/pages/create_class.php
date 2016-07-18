@@ -112,10 +112,10 @@ $classHandler = new ClassHandler();
 <script type="text/javascript">
     $(document).ready(function () {
         $("#class_begin").datepicker({
-            dateFormat: dateFormat: "yy-mm-dd"
+            dateFormat: "yy-mm-dd"
         });
         $("#class_end").datepicker({
-            dateFormat: dateFormat: "yy-mm-dd"
+            dateFormat: "yy-mm-dd"
         });
     });
 </script>

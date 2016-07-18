@@ -6,6 +6,7 @@ class SchoolHandler extends Handler {
     public $all_schools;
     public $this_school_rights;
     public $school_types;
+    public $open_slots;
 
     public function __construct() {
         parent::__construct();
@@ -282,6 +283,45 @@ class SchoolHandler extends Handler {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
+    }
+
+    public function can_add_students($school_id)
+    {
+        try
+        {
+            $this->student_slots_open($school_id);
+
+            if($this->open_slots < 1)
+            {
+                throw new Exception("SCHOOL_NO_SLOTS");
+            }
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    public function student_slots_open($school_id)
+    {
+        try
+        {
+            $this->verify_school_exists($school_id);
+            $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
+            $max_students = DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE school_id = :school", $school_id);
+            $this->open_slots = $max_students - $active_students;
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+
     }
 
     private function verify_array_contains_strings($array_of_strings) {

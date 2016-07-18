@@ -27,6 +27,7 @@ if (isset($_POST['class_description'])) {
 }
 
 if ($classHandler->create_class($title, $school_id, $class_end, $class_description, $class_open, $class_begin)) {
+    $data_array['success'] = TranslationHandler::get_static_text("CLASS_CREATED");
     $data_array['status_value'] = true;
 } else {
     $data_array['error'] = $classHandler->error->title;

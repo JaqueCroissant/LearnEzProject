@@ -7,6 +7,7 @@ switch ($_POST['step']) {
     case "1":
         if ($schoolHandler->create_school_step_one($_POST['school_name'], $_POST['school_phone'], $_POST['school_address'], $_POST['school_email'], (int) $_POST['school_type_id'])) {
             $data_array["school"] = $schoolHandler->school;
+            $data_array['success'] = TranslationHandler::get_static_text("STEP_ONE_COMPLETED");
             $data_array['status_value'] = true;
         } else {
             $data_array["status_value"] = false;
@@ -25,6 +26,7 @@ switch ($_POST['step']) {
         
         if ($schoolHandler->create_school_step_two($schoolHandler->school, (int) $_POST['school_max_students'], $d_string)) {
             $data_array["school"] = $schoolHandler->school;
+            $data_array['success'] = TranslationHandler::get_static_text("SCHOOL_CREATED");
             $data_array['status_value'] = true;
         } else {
             $data_array['error'] = $schoolHandler->error->title;

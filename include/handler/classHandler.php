@@ -171,12 +171,16 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
+            
+            if (!RightsHandler::has_user_right("EDIT_CLASS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            if (!is_int($open_int)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+            $this->is_null_or_empty($class_id);
             $this->verify_class_exists($class_id);
-
-//            if (!is_int($open_int)) {
-//                throw new Exception("INVALID_INPUT_IS_NOT_INT");
-//            }
-
+            
             $query = "UPDATE class SET open=:open WHERE id=:id";
 
             if (!DbHandler::get_instance()->query($query, $open_int, $class_id)) {
@@ -194,6 +198,10 @@ class ClassHandler extends Handler {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if (!RightsHandler::has_user_right("EDIT_CLASS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_class_exists($class_id);
             $this->is_null_or_empty($title);

@@ -45,16 +45,14 @@ try {
                 } else {
                     $class_desc = $_POST['class_description'];
                 }
-                
+
                 if (!isset($_POST['school_id'])) {
-                    throw new Exception ("School id is not set");
+                    throw new Exception("School id is not set");
                 }
 
                 if ($classHandler->update_class((int) $_POST['class_id'], $_POST['class_title'], $class_desc, $class_open, $class_end, $class_begin, (int) $_POST['school_id'])) {
                     $array['success'] = TranslationHandler::get_static_text("CLASS_UPDATED");
                     $array['status_value'] = true;
-                    echo json_encode($array);
-                    die();
                 } else {
                     throw new Exception($classHandler->error->title);
                 }
@@ -76,11 +74,9 @@ try {
                     throw new Exception("class id is not set");
                 }
                 if (isset($_POST['delete_class']) && $_POST['delete_class'] == "1") {
-                    if ($classHandler->delete_class_by_id((int)$_POST['class_id'])) {
+                    if ($classHandler->delete_class_by_id((int) $_POST['class_id'])) {
                         $array['success'] = TranslationHandler::get_static_text("CLASS_DELETED");
                         $array["status_value"] = true;
-                        echo json_encode($array);
-                        die();
                     } else {
                         throw new Exception($classHandler->error->title);
                     }
@@ -94,8 +90,6 @@ try {
         if ($classHandler->get_class_by_id((int) $_GET['class_id'])) {
             $array['class'] = $classHandler->school_class;
             $array['status_value'] = true;
-            echo json_encode($array);
-            die();
         } else {
             throw new Exception($classHandler->error->title);
         }
@@ -103,7 +97,7 @@ try {
 } catch (Exception $exc) {
     $array['error'] = $exc->getMessage();
     $array["status_value"] = false;
-    echo json_encode($array);
-    die();
 }
+echo json_encode($array);
+die();
 

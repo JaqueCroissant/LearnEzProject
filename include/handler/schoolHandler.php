@@ -18,7 +18,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("GET_ALL_SCHOOLS")) {
+            if (!RightsHandler::has_user_right("SCHOOL_FIND")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $query = "SELECT school.id as id, school.name as name, school.address, school.school_type_id, school.phone, 

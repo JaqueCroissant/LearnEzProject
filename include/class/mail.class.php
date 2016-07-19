@@ -6,6 +6,7 @@ class Mail extends ORM {
     public $folder_id;
     public $folder_name;
     public $is_read;
+    public $disable_reply;
     
     public $date;
     public $title;

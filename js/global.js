@@ -14,7 +14,6 @@ $(document).ready(function () {
     initial_page_load();
     // Load on startup.
 
-
     // global functions
     $(document).on("click", ".change_page", function (event) {
         if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
@@ -77,35 +76,6 @@ $(document).ready(function () {
     });
     //
 
-    // mail
-    $(document).on("click", ".assign_mail_folder", function (event) {
-        event.preventDefault();
-        var current_page = $(this).attr("current_folder") === "inbox" ? "" : $(this).attr("current_folder");
-        if ($(this).attr("mail_id") !== undefined && $(this).attr("step") !== undefined && $(this).attr("current_folder") !== undefined) {
-            submit_get("mail.php?step=" + $(this).attr("step") + "&mail_id=" + $(this).attr("mail_id") + "&current_folder=" + $(this).attr("current_folder"), $(this), function () {
-                show_status_bar("error", ajax_data.error);
-            }, function () {
-                change_page("mail", current_page);
-            });
-        } else {
-            if ($("#" + $(this).attr("target_form") + " input:checkbox:checked").length > 0) {
-                initiate_custom_submit_form($(this), function () {
-                    show_status_bar("error", ajax_data.error);
-                }, function () {
-                    if (ajax_data.mails_removed !== undefined) {
-                        ajax_data.mails_removed.forEach(function (entry) {
-                            $(".mail_number_" + entry).fadeOut(500, function () {
-                                $(this).remove();
-                            });
-                        });
-                    }
-                }, $(this).attr("args"), $(this).attr("target_form"));
-            }
-        }
-
-    });
-    //
-
     //notifications
     $(document).on("click", ".notifs_button", function (event) {
         event.preventDefault();
@@ -133,24 +103,6 @@ $(document).ready(function () {
                 }
             }, $(this).attr("args"), $(this).attr("target_form"));
         }
-    });
-    //
-
-    $(document).on("click", ".submit_create_mail", function (event) {
-        event.preventDefault();
-        initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-        });
-    });
-
-    $(document).on("click", ".submit_reply_mail", function (event) {
-        event.preventDefault();
-        initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            $(".reply_form").fadeOut(500);
-        });
     });
     //
 
@@ -359,44 +311,44 @@ $(document).ready(function () {
         $('#status_container').css("bottom", 0);
         $('#status_container').addClass("hidden");
     });
-
-    function show_status_bar(status_type, message, custom_fade_out) {
-        clearTimeout(status_bar_timeout);
-        $('#status_container').removeClass("hidden");
-        $('div.alert').each(function (e) {
-            $(this).attr("style", "display: none; opacity: 0");
-        });
-
-        var current_element;
-        switch (status_type) {
-            default:
-                current_element = $('.status_bar.alert-danger');
-                break;
-
-            case "success":
-                current_element = $('.status_bar.alert-success')
-                break;
-
-            case "warning":
-                current_element = $('.status_bar.alert-warning')
-                break;
-        }
-        current_element.find("span.status_bar_message").html(message);
-        current_element.css("display", "inline-block");
-        current_element.fadeTo(300, 1);
-
-        $('#status_container').css("bottom", 0);
-        $('#status_container').animate({bottom: 50}, 300);
-        var fade_out = custom_fade_out === undefined ? 3000 : custom_fade_out;
-        if (fade_out !== 0) {
-            status_bar_timeout = setTimeout(function () {
-                current_element.fadeTo(300, 0);
-                $('#status_container').addClass("hidden");
-            }, fade_out);
-        }
-    }
     //
 });
+
+function show_status_bar(status_type, message, custom_fade_out) {
+    clearTimeout(status_bar_timeout);
+    $('#status_container').removeClass("hidden");
+    $('div.alert').each(function (e) {
+        $(this).attr("style", "display: none; opacity: 0");
+    });
+
+    var current_element;
+    switch (status_type) {
+        default:
+            current_element = $('.status_bar.alert-danger');
+            break;
+
+        case "success":
+            current_element = $('.status_bar.alert-success')
+            break;
+
+        case "warning":
+            current_element = $('.status_bar.alert-warning')
+            break;
+    }
+    current_element.find("span.status_bar_message").html(message);
+    current_element.css("display", "inline-block");
+    current_element.fadeTo(300, 1);
+
+    $('#status_container').css("bottom", 0);
+    $('#status_container').animate({bottom: 50}, 300);
+    var fade_out = custom_fade_out === undefined ? 3000 : custom_fade_out;
+    if (fade_out !== 0) {
+        status_bar_timeout = setTimeout(function () {
+            current_element.fadeTo(300, 0);
+            $('#status_container').addClass("hidden");
+        }, fade_out);
+    }
+}
 
 function cursor_wait()
 {

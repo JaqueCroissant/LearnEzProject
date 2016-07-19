@@ -21,8 +21,9 @@ if(isset($_POST)) {
             break;
             
         case "create_mail":
-            if($mailHandler->send_mail(isset($_POST["title"]) ? $_POST["title"] : null, isset($_POST["message"]) ? $_POST["message"] : null, isset($_POST["recipiants"]) ? array($_POST["recipiants"]) : array(), isset($_POST["disable_reply"]) ? $_POST["disable_reply"] : false, isset($_POST["mail_tags"]) ? $_POST["mail_tags"] : array())) {
+            if($mailHandler->send_mail(isset($_POST["title"]) ? $_POST["title"] : null, isset($_POST["message"]) ? $_POST["message"] : null, isset($_POST["recipiants"]) ? array($_POST["recipiants"]) : array(), isset($_POST["disable_reply"]) ? true : false, isset($_POST["mail_tags"]) ? $_POST["mail_tags"] : array())) {
                 $jsonArray['status_value'] = true;
+                $jsonArray['success'] = TranslationHandler::get_static_text("MAIL_SENT");
             } else {
                 $jsonArray['status_value'] = false;
                 $jsonArray['error'] = $mailHandler->error->title;

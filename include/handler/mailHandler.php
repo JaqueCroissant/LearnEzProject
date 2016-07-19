@@ -80,7 +80,7 @@ class MailHandler extends Handler
             }
             
             
-            $query = "SELECT mail.id, mail.date, mail.title, mail.text, user_mail.receiver_id, user_mail.sender_id, user_mail.receiver_folder_id, user_mail.sender_folder_id"
+            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail.disable_reply, user_mail.id as user_mail_id, user_mail.receiver_id, user_mail.sender_id, user_mail.receiver_folder_id, user_mail.sender_folder_id"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
                     . " WHERE mail.id = :mail_id AND (user_mail.receiver_id = :user_id OR user_mail.sender_id = :user_id) LIMIT 1";
             
@@ -113,6 +113,10 @@ class MailHandler extends Handler
             
             if(empty($new_data) || !is_array($new_data) || count($new_data) < 1) {
                 throw new exception("MAIL_INVALID_MAIL_ID");
+            }
+            
+            if(!$this->is_sender_folder()) {
+                DbHandler::get_instance()->query("UPDATE user_mail SET is_read = '1' WHERE id = :id", $data["user_mail_id"]);
             }
             
             $this->current_mail = new Mail(array_merge($data, $new_data));
@@ -236,19 +240,57 @@ class MailHandler extends Handler
                 throw new exception("MAIL_MUST_FILL_MESSAGE");
             }
             
+            if (!is_bool($disable_reply)) {
+                throw new exception("MAIL_INVALID_INPUT");
+            }
+            
+            $disable_reply = !$disable_reply;
+            
             if(empty($recipiants) || !is_array($recipiants) || count($recipiants) < 1) {
                 throw new exception("MAIL_MUST_FILL_RECIPIANTS");
             }
             
-            foreach($recipiants as $value) {
-                if(!is_numeric($value) || $value == $this->_user->id) {
-                    throw new exception("MAIL_MUST_FILL_RECIPIANTS");
-                }
+            $recipiants = reset($recipiants);
+            
+            if(count($recipiants) > 1 && !RightsHandler::has_user_right("MAIL_MULTIPLE_RECEIVERS")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
             }
             
+            $users = array();
+            foreach($recipiants as $value) {
+                
+                if(!is_string($value)) {
+                    throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                }
+                
+                $explode = explode("_", $value);
+                
+                if(count($explode) != 3 || !is_numeric($explode[2])) {
+                    throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                }
+                
+                $explode_types = array(
+                    "SCHOOL" => array("ADMIN" => true, "TEACHER" => true, "STUDENT" => true), 
+                    "CLASS" => array("TEACHER" => true, "STUDENT" => true),
+                    "USER" => array("ANY" => true));
+                
+                if(!array_key_exists($explode[0], $explode_types) || !array_key_exists($explode[1], $explode_types[$explode[0]])) {
+                    throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                }
+                
+                $users[$explode[0]."_".$explode[1]][] = $explode[2];
+            }
+            
+            $user_ids = array();
+            $this->iterate_receiptian_array($user_ids, $users);
+            
+            $final_user_ids = DbHandler::get_instance()->return_query("SELECT id FROM users WHERE id IN (". $this->generate_in_query($user_ids) .")");
             DbHandler::get_instance()->query("INSERT INTO mail (date, title, text, disable_reply) VALUES (:date, :title, :text, :disable_reply)", date("Y-m-d H:i:s"), $title, $message, $disable_reply);
             $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
-            DbHandler::get_instance()->query("INSERT INTO user_mail (mail_id, sender_id, receiver_id, sender_folder_id, receiver_folder_id) VALUES (:last_inserted_id, :sender_id, :receiver_id, :sender_folder_id, :receiver_folder_id)", $last_inserted_id, $this->_user->id, reset($recipiants), 3, 1);
+            
+            foreach($final_user_ids as $value) {
+                DbHandler::get_instance()->query("INSERT INTO user_mail (mail_id, sender_id, receiver_id, sender_folder_id, receiver_folder_id) VALUES (:last_inserted_id, :sender_id, :receiver_id, :sender_folder_id, :receiver_folder_id)", $last_inserted_id, $this->_user->id, $value["id"], 3, 1);
+            }
             
             if(is_array($tags) && count($tags) > 0) {
                 $data = DbHandler::get_instance()->return_query("SELECT id FROM mail_tags");
@@ -280,6 +322,146 @@ class MailHandler extends Handler
             $this->error = ErrorHandler::return_error($ex->getMessage());
 	}
         return false;
+    }
+    
+    private function iterate_receiptian_array(&$array = array(), $users = array()) {
+        foreach($users as $key => $value) {
+            switch($key) {
+                case "SCHOOL_ADMIN":
+                    if(!RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
+                        throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                    }
+
+                    $data = DbHandler::get_instance()->return_query("SELECT id FROM users WHERE school_id IN (". $this->generate_in_query($value) .") AND user_type_id = :user_type_id", 2);
+                    foreach($data as $user) {
+                        $array[] = $user["id"];
+                    }
+                    break;
+
+                case "SCHOOL_TEACHER":
+                    if(!RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
+                        throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                    }
+
+                    $data = DbHandler::get_instance()->return_query("SELECT id FROM users WHERE school_id IN (". $this->generate_in_query($value) .") AND user_type_id = :user_type_id", 3);
+                    foreach($data as $user) {
+                        $array[] = $user["id"];
+                    }
+                    break;
+
+                case "SCHOOL_STUDENT":
+                    if(!RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
+                        throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                    }
+
+                    $data = DbHandler::get_instance()->return_query("SELECT id FROM users WHERE school_id IN (". $this->generate_in_query($value) .") AND user_type_id = :user_type_id", 4);
+                    foreach($data as $user) {
+                        $array[] = $user["id"];
+                    }
+                    break;
+                    
+                case "CLASS_TEACHER":
+                    if(!RightsHandler::has_user_right("MAIL_WRITE_TO_CLASS")) {
+                        throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                    }
+
+                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.user_id = users.id WHERE user_class IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 3);
+                    foreach($data as $user) {
+                        $array[] = $user["id"];
+                    }
+                    break;
+                    
+                case "CLASS_STUDENT":
+                    if(!RightsHandler::has_user_right("MAIL_WRITE_TO_CLASS")) {
+                        throw new exception("MAIL_MUST_FILL_RECIPIANTS");
+                    }
+
+                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.user_id = users.id WHERE user_class IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 4);
+                    foreach($data as $user) {
+                        $array[] = $user["id"];
+                    }
+                    break;
+                    
+                case "USER_ANY":
+
+                    $data = DbHandler::get_instance()->return_query("SELECT id FROM users WHERE id IN (". $this->generate_in_query($value) .")");
+                    foreach($data as $user) {
+                        $array[] = $user["id"];
+                    }
+                    break;
+            }
+        }
+    }
+    
+    private function generate_in_query($array) {
+        $in_array = "";
+        for($i = 0; $i < count($array); $i++) {
+            $in_array .= $i > 0 ? ", '" . $array[$i] ."'" : "'" . $array[$i] ."'";
+        }
+        return $in_array;
+    }
+    
+    public function get_receiptians() {
+        try
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            
+            $receiptians = array();
+            if (RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
+                $school_data = DbHandler::get_instance()->return_query("SELECT id, name FROM school WHERE subscription_end >= NOW()");
+                $schools = array();
+                foreach($school_data as $school_value) {
+                    $school = new School($school_value);
+                    
+                    
+                    if(RightsHandler::has_user_right("MAIL_WRITE_TO_CLASS")) {
+                        $classes = array();
+                        $class_data = DbHandler::get_instance()->return_query("SELECT id, title FROM class WHERE open = '1' AND end_date >= CURDATE() AND school_id = :school_id", $school->id);
+                        
+                        if(count($class_data) > 0) {
+                            foreach($class_data as $class_value) {
+                                $classes[] = new School_Class($class_value);
+                            }
+                            $school->classes[] = $classes;
+                        }
+                    }
+                    $schools[] = $school;
+                }
+                $receiptians["SCHOOL"] = $schools;
+            } else if(RightsHandler::has_user_right("MAIL_WRITE_TO_CLASS") && !empty($this->_user->school_id)) {
+                $classes = array();
+                $class_data = DbHandler::get_instance()->return_query("SELECT id, title FROM class WHERE open = '1' AND end_date >= CURDATE() AND school_id = :school_id", $this->_user->school_id);
+
+                if(count($class_data) > 0) {
+                    foreach($class_data as $class_value) {
+                        $classes[] = new School_Class($class_value);
+                    }
+                }
+                $receiptians["CLASS"] = $classes;
+            }
+            
+            if(RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.id != :user_id", $this->_user->id);
+            } else {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND users.school_id : school_id", $this->_user->id, $this->_user->school_id);
+            
+            }
+            
+            $users = array();
+            foreach($user_data as $value) {
+                $users[] = new User($value);
+            }
+            $receiptians["USERS"] = $users;
+            
+            return $receiptians;
+	}
+	catch (Exception $ex) 
+        {
+            return array();
+	}
     }
     
     private function update_mail_folder($mails, $folder_id, $sender = false) {

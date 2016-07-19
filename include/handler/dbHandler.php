@@ -140,6 +140,7 @@
             {
                 $this->error = ErrorHandler::return_error($ex->getMessage());
             }
+            return array();
         }
         
         public function last_inserted_id() 

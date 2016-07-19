@@ -376,33 +376,31 @@ class SchoolHandler extends Handler {
     {
         try
         {
-
-
-            $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
-
-            for($i = 0; $i < count($class_ids); $i++)
+            if(!empty($class_ids))
             {
+                $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
 
-                if(is_numeric($class_ids[$i]))
+                for($i = 0; $i < count($class_ids); $i++)
                 {
+                    if(is_numeric($class_ids[$i]))
+                    {
+                        throw new Exception("INVALID_INPUT_IS_NOT_INT");
+                    }
 
+                    $query .= $i != 0 ? ", " : "";
+                    $query .= "'" . $class_ids[$i] . "'";
                 }
 
-                $query .= $i != 0 ? ", " : "";
-                $query .= "'" . $class_ids[$i] . "'";
-            }
+                $query .= ")";
+                $count = DbHandler::get_instance()->count_query($query, $school_id);
 
-            $query .= ")";
-            echo $query;
-            $count = DbHandler::get_instance()->count_query($query, $school_id);
-
-            if($count != count($class_ids))
-            {
-                throw new Exception("CLASS_NOT_FOUND");
+                if($count != count($class_ids))
+                {
+                    throw new Exception("CLASS_NOT_FOUND");
+                }
             }
 
             return true;
-
         }
         catch(Exception $ex)
         {

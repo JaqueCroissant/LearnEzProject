@@ -109,6 +109,11 @@ class UserHandler extends Handler
     {
         try
         {
+            if(!RightsHandler::has_user_right("ACCOUNT_CREATE"))
+            {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
             $this->validate_user_information($firstname, $surname, $email, $password);
             $this->validate_user_affiliations($this->check_if_valid_type($usertype), $school_id, $class_ids);
 
@@ -160,6 +165,7 @@ class UserHandler extends Handler
         if(!empty($email))
         {
             $this->check_if_email($email);
+            $this->mail_exists($email);
         }
 
         if(!empty($password))
@@ -448,6 +454,7 @@ class UserHandler extends Handler
             if(!empty($email))
             {
                 $this->check_if_email($email);
+                //$this->mail_exists($email);
                 $this->_user->email = $email;
             }
 
@@ -697,6 +704,7 @@ class UserHandler extends Handler
         if(!empty($email))
         {
             $this->check_if_email($email);
+            $this->mail_exists($email);
             $user->email = $email;
         }
 
@@ -752,20 +760,23 @@ class UserHandler extends Handler
     private function check_if_valid_type($type)
     {
         $type = strtoupper($type);
+
+        if(($type == "SA" && !RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN"))
+            || ($type == "A" && !RightsHandler::has_user_right("ACCOUNT_CREATE_LOCADMIN")))
+        {
+            throw new Exception("INSUFFICIENT_RIGHTS");
+        }
+
         switch($type)
         {
             case "SA":
                 return 1;
-
             case "A":
                 return 2;
-
             case "T":
                 return 3;
-
             case "S":
                 return 4;
-
             default:
                 throw new Exception("IMPORT_INVALID_TYPE");
         }
@@ -774,6 +785,16 @@ class UserHandler extends Handler
     public function get_profile_images()
     {
         $this->profile_images = DbHandler::get_instance()->return_query("SELECT * FROM image");
+    }
+
+    private function mail_exists($email)
+    {
+        $count = DbHandler::get_instance()->count_query("SELECT * FROM users WHERE email = :email", $email);
+
+        if($count > 0)
+        {
+            throw new Exception("CREATE_EMAIL_USED");
+        }
     }
 }
 ?>

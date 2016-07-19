@@ -327,16 +327,20 @@ a .menu_header {
 }
 
 .notifcation_content {
-    height:53px;
+    height:62px;
     display:flex !important;
     flex-direction: column;
     justify-content: center;
-    margin-top: 3px;
-    margin-bottom: 3px;
+    padding-left:12px;
+    float:left;
 }
 
 .cursor{
     cursor:pointer;
+}
+
+.notification_delete {
+    width:15px;
 }
 
 .notification_button {
@@ -346,6 +350,7 @@ a .menu_header {
 .notification {
     border-bottom:1px solid lightgray;
     padding:0 !important;
+    height:64px;
 }
 
 .notification:hover {

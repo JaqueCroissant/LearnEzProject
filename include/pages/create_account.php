@@ -95,7 +95,8 @@
                                                         <label for="select_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
                                                         <select id="select_class_name" name="class_name[]" class="form-control" data-plugin="select2" multiple>
                                                             <?php
-                                                            if($userHandler->_user->user_type_id > 1) {
+                                                            if($userHandler->_user->user_type_id > 1)
+                                                            {
                                                                 $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
                                                                 foreach($classHandler->classes_in_school as $class)
                                                                 {
@@ -128,11 +129,11 @@
                             <div class="widget-body">
 
                                     <form method="POST" action="" id="create_import_form" url="create_account.php?step=2" name="create_import" enctype="multipart/form-data">
-                                                <div class="form-group m-b-sm">
+                                                <div class="import_select_school form-group m-b-md">
                                                     <div class="<?php echo ($userHandler->_user->user_type_id != 1 ? ' style="visibility:hidden;' : ''); ?>">
 
                                                             <label for="select1"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></label>
-                                                            <select id="select1" name="school_id" class="form-control" data-plugin="select2">
+                                                            <select id="select1" name="school_id" class="import_select_school form-control" data-plugin="select2">
                                                                 <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
                                                                 <?php
                                                                     $schoolHandler->get_all_schools();
@@ -144,8 +145,25 @@
 
                                                             </select>
                                                     </div>
-                                                    <br/>
+                                                </div>
 
+                                                <div class="form-group m-b-md">
+                                                    <div class="import_select_class <?php echo ($userHandler->_user->user_type_id == 1 ? '" style="visibility:hidden;' : ''); ?>">
+                                                        <label for="import_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                        <select id="import_class_name" name="class_name[]" class="import_select_class form-control" data-plugin="select2" multiple>
+                                                            <?php
+                                                            if($userHandler->_user->user_type_id > 1)
+                                                            {
+                                                                $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
+                                                                foreach($classHandler->classes_in_school as $class)
+                                                                {
+                                                                    echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
+                                                                }
+                                                            }
+                                                        ?>
+                                                        </select>
+                                                    </div>
+                                                </div>
 
 
                                                 <div class="form-group m-b-sm">

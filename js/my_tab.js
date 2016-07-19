@@ -22,6 +22,11 @@ $(document).ready(function () {
         if ($(this).hasClass("link_disabled")) {
             return;
         }
+        
+        if ($(this).parent().hasClass("disabled")) {
+            return;
+        }
+        
         $(this).closest("ul").children().each(function (e) {            
             $(this).children().addClass("link_disabled");
         });

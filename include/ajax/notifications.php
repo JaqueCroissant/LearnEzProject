@@ -22,7 +22,7 @@ function get_new_notifications(){
 
 function get_notifications(){
     $notificationHandler = new NotificationHandler();
-    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, 0, 7)) {
+    if ($notificationHandler->load_notifications(0, 7)) {
     }
     $data = $notificationHandler->get_notifications();
     $json_array['notifications'] = "";     
@@ -31,7 +31,7 @@ function get_notifications(){
     }
     else {
         foreach ($data as $value) {
-            $json_array['notifications'] .= notification_setup($value);
+            $json_array['notifications'] .= notification_setup($value, $notificationHandler->get_arguments($value->arg_id));
         }
         if(count($data) < 7) {
             $json_array["status_text"] = "<div class='col-md-12' style='text-align:center;font-style:italic;padding:6px 0 6px 0;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
@@ -42,10 +42,10 @@ function get_notifications(){
 
 function get_more_notifications(){
     $notificationHandler = new NotificationHandler();
-    if ($notificationHandler->load_notifications(SessionKeyHandler::get_from_session("user", true)->id, isset($_POST['offset']) ? $_POST['offset'] : 0, 5)) {
+    if ($notificationHandler->load_notifications(isset($_POST['offset']) ? $_POST['offset'] : 0, 5)) {
         $json_array["notifications"] = "";
         foreach ($notificationHandler->get_notifications() as $not) {
-            $json_array["notifications"] .= notification_setup($not);
+            $json_array["notifications"] .= notification_setup($not, $notificationHandler->get_arguments($not->arg_id));
         }
         if (count($notificationHandler->get_notifications()) != 5) {
             $json_array["status_text"] = "<div class='col-md-12' style='text-align:center;font-style:italic;padding:6px 0 6px 0;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
@@ -55,11 +55,11 @@ function get_more_notifications(){
     }
 }
 
-function notification_setup($value){
+function notification_setup($value, $args){
     $time = time_elapsed($value->datetime);
     $final = "<div class='notification col-md-12 " . ($value->isRead == 0 ? "notification_unseen" : ($value->isRead == 1 ? "notification_unread" : "notification_read"))
-            . "'><div class='col-md-1 notifcation_content'><div class='fa " . $value->icon . "' style='font-size:1.5em'></div></div>"
-            . "<div class='col-md-10 fz-sm notifcation_content'>" . $value->text . "<br/><i class='fz-sm' style='width:100% !important;'>" . $time["value"] . " " . TranslationHandler::get_static_text($time["prefix"]) . " " . TranslationHandler::get_static_text("DATE_AGO") . "</i></div>"
+            . "'><div class='change_page cursor' page='" . $value->page . "' id='" . $value->page . "' step='" . $value->step . "' args='&mail_id=" . (isset($args["link_id"])? $args["link_id"] : "") . "'><div class='col-md-1 notifcation_content notification_icon'><div class='fa " . $value->icon . "' style='font-size:1.5em'></div></div>"
+            . "<div class='col-md-10 fz-sm notifcation_content' style='padding-left:12px;'><p class='mail-item-excerpt'>" . NotificationHandler::parse_text($value->text, $args) . "</p><i class='fz-sm' style='width:100% !important;'>" . $time["value"] . " " . TranslationHandler::get_static_text($time["prefix"]) . " " . TranslationHandler::get_static_text("DATE_AGO") . "</i></div></div>"
             . "<div class='col-md-1 notification_button notifcation_content zmdi zmdi-close-circle' notif='" . $value->id . "'></div></div>";
     return $final;
 }

@@ -43,7 +43,7 @@ RightsHandler::reset();
             </div>
         </main>
         
-        <div id="status_container">
+        <div id="status_container" class="hidden">
             <?php
             include 'include/template/statusbar.php';
             ?>

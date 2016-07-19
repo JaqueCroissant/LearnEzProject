@@ -19,14 +19,13 @@ class ClassHandler extends Handler {
             }
             $this->verify_class_exists($class_id);
 
-            $query = "SELECT class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
-                            class.start_date, class.end_date, class.open
-                            FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
-                            INNER JOIN class_year_prefix ON class.class_year_prefix_id = class_year_prefix.id
-                            INNER JOIN translation_class_year_prefix ON class_year_prefix.id = translation_class_year_prefix.class_year_prefix_id
-                            WHERE class.id = :id AND translation_class_year_prefix.language_id = :language_id";
+            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
+                            class.start_date, class.end_date, class.open, class.school_id, school.name as school_name
+                            FROM class INNER JOIN class_year ON class.class_year_id = class_year.id 
+                            INNER JOIN school ON class.school_id = school.id
+                            WHERE class.id = :id";
 
-            $this->school_class = new School_Class(reset(DbHandler::get_instance()->return_query($query, $class_id, TranslationHandler::get_current_language())));
+            $this->school_class = new School_Class(reset(DbHandler::get_instance()->return_query($query, $class_id)));
 
             if (empty($this->school_class)) {
                 throw new Exception("OBJECT_IS_EMPTY");
@@ -43,17 +42,37 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
+            
+            $base_query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
+                            class.start_date, class.end_date, class.open, class.school_id, school.name as school_name
+                            FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
+                            INNER JOIN school ON class.school_id = school.id";
 
-            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
-                            class.start_date, class.end_date, class.open
-                            FROM class INNER JOIN class_year ON class.class_year_id = class_year.id";
+            switch ($this->_user->user_type_id) {
+                case 1:
+                    $array = DbHandler::get_instance()->return_query($base_query);
 
-            $array = DbHandler::get_instance()->return_query($query);
+                    $this->classes = array();
+                    foreach ($array as $value) {
+                        $this->classes[] = new School_Class($value);
+                    }
+                    break;
 
-            $this->classes = array();
-            foreach ($array as $value) {
-                $this->classes[] = new School_Class($value);
+                case 2: case 3:
+                    $query = $base_query . " WHERE school.id = :school_id";
+                    
+                    $array = DbHandler::get_instance()->return_query($query, $this->_user->school_id);
+
+                    $this->classes = array();
+                    foreach ($array as $value) {
+                        $this->classes[] = new School_Class($value);
+                    }
+                    break;
+                default:
+                    break;
             }
+
+
 
             return true;
         } catch (Exception $exc) {
@@ -152,12 +171,16 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
+            
+            if (!RightsHandler::has_user_right("EDIT_CLASS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            if (!is_int($open_int)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+            $this->is_null_or_empty($class_id);
             $this->verify_class_exists($class_id);
-
-//            if (!is_int($open_int)) {
-//                throw new Exception("INVALID_INPUT_IS_NOT_INT");
-//            }
-
+            
             $query = "UPDATE class SET open=:open WHERE id=:id";
 
             if (!DbHandler::get_instance()->query($query, $open_int, $class_id)) {
@@ -171,15 +194,20 @@ class ClassHandler extends Handler {
         }
     }
 
-    public function update_class($class_id, $title, $description, $class_open, $class_end, $class_start) {
+    public function update_class($class_id, $title, $description, $class_open, $class_end, $class_start, $school_id) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if (!RightsHandler::has_user_right("EDIT_CLASS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_class_exists($class_id);
             $this->is_null_or_empty($title);
             $this->is_null_or_empty($class_end);
             $this->is_null_or_empty($class_start);
+            $this->is_null_or_empty($school_id);
             $this->is_null_or_empty($class_open);
             if (!is_bool($class_open)) {
                 throw new Exception("ARGUMENT_NOT_BOOL");
@@ -191,9 +219,9 @@ class ClassHandler extends Handler {
             $class_end_string = $class_end['year'] . '/' . $class_end['month'] . '/' . $class_end['day'];
 
             $query = "UPDATE class SET title=:title, description=:description, class_year_id=:year_id,
-                        open=:open, start_date=:start_date, end_date=:end_date WHERE id = :id";
+                        open=:open, start_date=:start_date, end_date=:end_date, school_id=:school_id WHERE id = :id";
 
-            if (!DbHandler::get_instance()->query($query, $title, $description, $year_id, $class_open, $class_start, $class_end_string, $class_id)) {
+            if (!DbHandler::get_instance()->query($query, $title, $description, $year_id, $class_open, $class_start, $class_end_string, $school_id, $class_id)) {
                 throw new Exception("DEFAULT");
             }
             return true;

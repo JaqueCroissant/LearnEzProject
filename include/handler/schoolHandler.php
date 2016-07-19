@@ -6,28 +6,35 @@ class SchoolHandler extends Handler {
     public $all_schools;
     public $this_school_rights;
     public $school_types;
+    public $open_slots;
+    public $format = "Y-m-d";
 
     public function __construct() {
         parent::__construct();
-        }
+    }
 
-    public function get_all_schools () {
+    public function get_all_schools() {
         try {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            
-            $query = "Select school.id as id, school.name as name, school.address, school.school_type_id, school.phone, school.email, school.max_students, school.subscription_end, school_type.title from school INNER JOIN school_type ON school.school_type_id = school_type.id;";
-            
+            if (!RightsHandler::has_user_right("GET_ALL_SCHOOLS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            $query = "SELECT school.id as id, school.name as name, school.address, school.school_type_id, school.phone, 
+                     school.email, school.max_students, school.subscription_end, school_type.title 
+                     FROM school 
+                     INNER JOIN school_type ON school.school_type_id = school_type.id;";
+
             $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {
                 $this->all_schools[] = new School($value);
             }
-            
+
             if (count($this->all_schools) == 0) {
-                throw new Exception ("NO_SCHOOL_FOUND");
+                throw new Exception("NO_SCHOOL_FOUND");
             }
-            
+
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -40,7 +47,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-
+            if (!RightsHandler::has_user_right("GET_SCHOOL_TYPES")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $query = "SELECT * FROM school_type";
 
             $this->school_types = DbHandler::get_instance()->return_query($query);
@@ -61,7 +70,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-
+            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_school_exists($school_id);
 
             $query = "SELECT * FROM school_rights WHERE school_id = :school_id";
@@ -88,6 +99,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_school_exists($school_id);
             if (!$this->delete_school_rights_by_school_id($school_id)) {
                 return false;
@@ -108,6 +122,9 @@ class SchoolHandler extends Handler {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_array_contains_strings($array_of_rights_prefixes);
             $query_rights_id = "SELECT id FROM rights WHERE prefix in (";
@@ -141,6 +158,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_school_exists($school_id);
 
             $query = "DELETE FROM school_rights WHERE school_id = :school_id";
@@ -160,6 +180,9 @@ class SchoolHandler extends Handler {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("DELETE_SCHOOL")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($id);
 
@@ -197,6 +220,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("EDIT_SCHOOL")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_school_exists($id);
             $this->verify_name($name);
             $this->verify_phone($phone);
@@ -223,6 +249,9 @@ class SchoolHandler extends Handler {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("CREATE_SCHOOL")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_name($name);
             $this->verify_phone($phone);
@@ -251,12 +280,15 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("CREATE_SCHOOL")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->is_null_or_empty($school);
             $this->verify_max_students($max_students);
             $this->verify_subscription_end($subscription_end);
-
+            $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
             $school->max_students = $max_students;
-            $school->subscription_end = $subscription_end;
+            $school->subscription_end = $end_date;
 
             if (!$this->create_school($school)) {
                 throw new Exception("SCHOOL_CREATION_FAILED_UNKNOWN_ERROR");
@@ -273,6 +305,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->is_null_or_empty($array_of_rights);
 
             if ($this->assign_school_rights_by_school_id($this->school->id, $array_of_rights)) {
@@ -280,6 +315,35 @@ class SchoolHandler extends Handler {
             }
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function can_add_students($school_id) {
+        try {
+            $this->student_slots_open($school_id);
+
+            if ($this->open_slots < 1) {
+                throw new Exception("SCHOOL_NO_SLOTS");
+            }
+
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    public function student_slots_open($school_id) {
+        try {
+            $this->verify_school_exists($school_id);
+            $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
+            $max_students = DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE school_id = :school", $school_id);
+            $this->open_slots = $max_students - $active_students;
+
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }
@@ -294,15 +358,15 @@ class SchoolHandler extends Handler {
 
     private function verify_subscription_end($subscription_end) {
         // checks valid date
-        $format = "Y-m-d H:i:s";
-        $d = date_parse_from_format($format, $subscription_end);
+
+        $d = date_parse_from_format($this->format, $subscription_end);
         if (!checkdate($d['month'], $d['day'], $d['year'])) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }
         // checks if date is in future or not
 
         $ds = strtotime($subscription_end);
-        $ts = strtotime(date($format));
+        $ts = strtotime(date($this->format));
         if ($ts > $ds) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }

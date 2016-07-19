@@ -281,7 +281,7 @@ $paginationHandler = new PaginationHandler();
                                 <div class="col-md-12">
                                     <div class="panel panel-default new-message">
                                         <form method="POST" action="" id="create_mail_form" url="mail.php?step=create_mail" name="create_mail">
-                                            <input type="hidden" name="recipiants" value="<?php echo $current_mail->sender_id; ?>">
+                                            <input type="hidden" name="recipiants[]" value="USER_ANY_<?php echo $current_mail->sender_id; ?>">
                                             <input type="hidden" name="title" value="RE: <?php echo $current_mail->title; ?>">
                                             <?php
                                             foreach($current_mail->mail_tags as $tag)

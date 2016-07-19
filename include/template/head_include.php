@@ -5,6 +5,7 @@
 <script src="js/global.js" type="text/javascript"></script>
 <script src="js/navigation.js" type="text/javascript"></script>
 <script src="js/form.js" type="text/javascript"></script>
+<script src="js/mail.js" type="text/javascript"></script>
 <script src="js/notifications.js" type="text/javascript"></script>
 <link href="css/css.css" rel="stylesheet" type="text/css"/>
 <link href="css/my_tab.css" rel="stylesheet" type="text/css"/>

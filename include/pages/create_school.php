@@ -27,6 +27,15 @@ $schoolHandler->get_school_types();
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("ZIP_CODE") . " & " . TranslationHandler::get_static_text("CITY"); ?></label>
+                            <div class="col-md-1">
+                                <input class="form-control" type="text" name="school_zip_code" placeholder="<?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <input class="form-control" type="text" name="school_city" placeholder="<?php echo TranslationHandler::get_static_text("CITY"); ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></label>
                             <div class="col-md-5">
                                 <input class="form-control " type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
@@ -71,9 +80,15 @@ $schoolHandler->get_school_types();
                             </div>
                         </div>
                         <div class="form-group" >
+                            <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_start"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></label>
+                            <div class="col-md-5">
+                                <input class="form-control datepickers" id="school_subscription_start" type="text" name="school_subscription_start" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>">
+                            </div>
+                        </div>
+                        <div class="form-group" >
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " id="school_subscription_end" type="text"  name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
+                                <input class="form-control datepickers" id="school_subscription_end" type="text" name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
@@ -94,7 +109,7 @@ $schoolHandler->get_school_types();
                 </div>
 
                 <div class="input-container">
-                    <div class="center col-md-7 p-t-xl">
+                    <div class="center col-md-8 p-t-xl">
                         <div class="progress">
                             <div id="step_one_progress" class="progress-bar" style="width: 33.33%;"><span>Step 1</span></div>
                             <div id="step_two_progress" class="progress-bar-inactive" style="width: 33.33%;"><span>Step 2</span></div>
@@ -109,7 +124,7 @@ $schoolHandler->get_school_types();
 <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script type="text/javascript">
-    $("#school_subscription_end").datepicker({
+    $(".datepickers").datepicker({
         dateFormat: "yy-mm-dd"
     });
 </script>

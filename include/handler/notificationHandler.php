@@ -21,7 +21,8 @@
                         . "FROM notifications_category "
                         . "INNER JOIN translation_notifications_category "
                         . "ON translation_notifications_category.notifications_category_id = notifications_category.id "
-                        . "AND translation_notifications_category.translation_language_id = :langId", TranslationHandler::get_current_language());
+                        . "AND translation_notifications_category.translation_language_id = :langId "
+                        . "WHERE notifications_category.master_name = ''", TranslationHandler::get_current_language());
                 
             } catch (Exception $exc) {
                 $this->error = $exc->getMessage();
@@ -139,6 +140,18 @@
             }
         }
         
+        public function clean_arguments(){
+            try {
+                
+                DbHandler::get_instance()->query("DELETE FROM user_notifications_arguments "
+                        . "WHERE arg_id NOT IN ("
+                        . "SELECT arg_id FROM user_notifications)");
+                
+            } catch (Exception $ex) {
+
+            }
+        }
+        
         public function get_notifications(){
             return $this->_notifications;
         }
@@ -164,8 +177,9 @@
                         . "user_notifications.is_read AS isRead, "
                         . "user_notifications.arg_id AS arg_id, "
                         . "notifications_category.icon_class AS icon, "
-                        . "notifications_category.link_page AS page, "
-                        . "notifications_category.link_step AS step, "
+                        . "notifications_category.link_page AS link_page, "
+                        . "notifications_category.link_step AS link_step, "
+                        . "notifications_category.link_args AS link_args, "
                         . "translation_notifications_category.name AS category "
                         . "FROM user_notifications "
                         . "INNER JOIN notifications "
@@ -218,10 +232,15 @@
                 
                 $langId = TranslationHandler::get_current_language();
                 
-                $catId = DbHandler::get_instance()->return_query("SELECT id "
+                $catIds = DbHandler::get_instance()->return_query("SELECT id "
                         . "FROM notifications_category "
-                        . "WHERE category_name = :name"
-                        , $category);
+                        . "WHERE category_name = :name "
+                        . "OR master_name = :name"
+                        , $category, $category);
+                $categories = "";
+                for ($i = 0; $i < count($catIds); $i++){
+                    $categories .= ($i == 0 ? "" : ",") . $catIds[$i]["id"];
+                }
                 
                 $dbData = DbHandler::get_instance()->return_query("SELECT translation_notifications.title AS title, "
                         . "translation_notifications.text AS text, "
@@ -236,7 +255,7 @@
                         . "FROM user_notifications "
                         . "INNER JOIN notifications "
                         . "ON notifications.id = user_notifications.notification_id "
-                        . "AND notifications.notifications_category_id = :catId "
+                        . "AND notifications.notifications_category_id IN (" . $categories . ") "
                         . "INNER JOIN notifications_category "
                         . "ON notifications_category.id = notifications.notifications_category_id "
                         . "INNER JOIN translation_notifications_category "
@@ -252,7 +271,7 @@
                         . "WHERE user_notifications.user_id = :userId "
                         . "ORDER BY user_notifications.datetime DESC "
                         . "LIMIT :limit OFFSET :offset"
-                        , reset($catId)["id"], $langId, $langId, $langId, $this->_user->id, $limit, $offset);
+                        , $langId, $langId, $langId, $this->_user->id, $limit, $offset);
                 if (count($dbData) == 0) {
                     $this->_notifications = array();
                     return true;
@@ -388,12 +407,13 @@
         
         private function get_new_guid(){
             try{
-                while(true){
-                    $guid = $this->create_GUID();
-                    if (DbHandler::get_instance()->count_query("SELECT id FROM user_notifications_arguments WHERE arg_id = :guid", $guid) < 1) {
-                        return $guid;
-                    }
-                }
+                return $this->create_GUID();
+//                while(true){
+//                    $guid = $this->create_GUID();
+//                    if (DbHandler::get_instance()->count_query("SELECT id FROM user_notifications_arguments WHERE arg_id = :guid", $guid) < 1) {
+//                        return $guid;
+//                    }
+//                }
             } catch (Exception $exc) {
                 $this->error = ErrorHandler::return_error($exc->getMessage());
             }
@@ -403,7 +423,7 @@
             if (function_exists('com_create_guid')){
                 return com_create_guid();
             }else{
-                $charid = strtoupper(md5(uniqid(rand(), true)));
+                $charid = md5(uniqid(rand(), true));
                 $hyphen = chr(45);// "-"
                 $uuid = chr(123)// "{"
                     .substr($charid, 0, 8).$hyphen

@@ -147,6 +147,9 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("CLASS_CREATE")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
 
             $this->is_null_or_empty($title);
             $this->is_null_or_empty($school_id);
@@ -176,7 +179,7 @@ class ClassHandler extends Handler {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
             
-            if (!RightsHandler::has_user_right("EDIT_CLASS")) {
+            if (!RightsHandler::has_user_right("CLASS_EDIT")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             if (!is_int($open_int)) {
@@ -204,7 +207,7 @@ class ClassHandler extends Handler {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
             
-            if (!RightsHandler::has_user_right("EDIT_CLASS")) {
+            if (!RightsHandler::has_user_right("CLASS_EDIT")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_class_exists($class_id);
@@ -213,7 +216,9 @@ class ClassHandler extends Handler {
             $this->is_null_or_empty($class_start);
             $this->is_null_or_empty($school_id);
             $this->is_null_or_empty($class_open);
-            if (!is_bool($class_open)) {
+            if (!is_numeric($class_open)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            } elseif (!($class_open == "1" || $class_open == "0")) {
                 throw new Exception("ARGUMENT_NOT_BOOL");
             }
 
@@ -239,6 +244,9 @@ class ClassHandler extends Handler {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("CLASS_DELETE")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_class_exists($class_id);
 
@@ -302,7 +310,7 @@ class ClassHandler extends Handler {
     }
 
     private function verify_user_has_class($user_id) {
-        if (!is_int($user_id)) {
+        if (!is_numeric($user_id)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }
 
@@ -313,7 +321,7 @@ class ClassHandler extends Handler {
     }
 
     private function verify_class_exists($class_id) {
-        if (!is_int($class_id)) {
+        if (!is_numeric($class_id)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }
 

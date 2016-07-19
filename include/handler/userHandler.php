@@ -454,7 +454,13 @@ class UserHandler extends Handler
             if(!empty($email))
             {
                 $this->check_if_email($email);
-                //$this->mail_exists($email);
+
+
+                if($email != $this->_user->email)
+                {
+                    $this->mail_exists($email);
+                }
+
                 $this->_user->email = $email;
             }
 

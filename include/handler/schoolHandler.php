@@ -340,6 +340,12 @@ class SchoolHandler extends Handler {
 
     public function can_add_students($school_id) {
         try {
+
+            if(empty($school_id))
+            {
+                throw new Exception("CREATE_NO_SCHOOL");
+            }
+
             $this->student_slots_open($school_id);
 
             if ($this->open_slots < 1) {
@@ -355,6 +361,12 @@ class SchoolHandler extends Handler {
 
     public function student_slots_open($school_id) {
         try {
+
+            if(empty($school_id))
+            {
+                throw new Exception("CREATE_NO_SCHOOL");
+            }
+
             $this->verify_school_exists($school_id);
             $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
             $max_students = reset(DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $school_id));
@@ -373,13 +385,18 @@ class SchoolHandler extends Handler {
     {
         try
         {
+            if(empty($school_id))
+            {
+                throw new Exception("CREATE_NO_SCHOOL");
+            }
+
             if(!empty($class_ids))
             {
                 $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
 
                 for($i = 0; $i < count($class_ids); $i++)
                 {
-                    if(is_numeric($class_ids[$i]))
+                    if(!is_numeric($class_ids[$i]))
                     {
                         throw new Exception("INVALID_INPUT_IS_NOT_INT");
                     }

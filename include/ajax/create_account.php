@@ -25,9 +25,7 @@
 
                 $class_ids = isset($_POST["class_name"]) ? $_POST["class_name"] : array();
 
-                var_dump($class_ids);
-
-                if(!$schoolHandler->can_add_students($school_id) || !$schoolHandler->school_has_classes($school_id, $class_ids))
+                if($usertype != 'SA' && (!$schoolHandler->can_add_students($school_id) || !$schoolHandler->school_has_classes($school_id, $class_ids)))
                 {
                     $jsonArray['status_value'] = false;
                     $jsonArray['error'] = $schoolHandler->error->title;

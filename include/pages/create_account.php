@@ -80,7 +80,7 @@
                                                         <?php
                                                         if($userHandler->_user->user_type_id==1)
                                                         {?>
-                                                            <label for="select1" class="control-label"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                            <label for="select1" class="control-label"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL");?></label>
                                                             <select id="select1" name="school_id" class="create_select_school form-control" data-plugin="select2">
                                                                 <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
                                                                 <?php
@@ -179,7 +179,7 @@
                                                     </div>
 
                                                     <div class="form-group m-b-md">
-                                                        <div class="import_select_class <?php echo (RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN") ? '" style="visibility:hidden;' : ''); ?>">
+                                                        <div class="import_select_class <?php echo (RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN") ? ' hidden' : ''); ?>">
                                                             <label for="import_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
                                                             <select id="import_class_name" name="class_name[]" class="import_select_class form-control" data-plugin="select2" multiple>
                                                                 <?php

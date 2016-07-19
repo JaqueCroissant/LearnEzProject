@@ -194,8 +194,12 @@ $(document).ready(function () {
 
 
     $(document).on("change", ".create_select_school", function (event) {
-        if ($(this).find("option:selected").val() === "default") {
+        if ($(this).find("option:selected").val() === "") {
             $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_class").find(".select2-selection__rendered").empty();
+        } else if($(".create_select_usertype").find("option:selected").val() === "A"){
+            $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_class").find(".select2-selection__rendered").empty();
         } else {
             event.preventDefault;
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
@@ -209,8 +213,8 @@ $(document).ready(function () {
     });
 
     $(document).on("change", ".import_select_school", function (event) {
-        if ($(this).find("option:selected").val() === "default") {
-            $(".import_select_class").css("visibility", "hidden");
+        if ($(this).find("option:selected").val() === "") {
+            $(".import_select_class").addClass("hidden");
         } else {
             event.preventDefault;
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
@@ -218,7 +222,7 @@ $(document).ready(function () {
             }, function () {
                 $(".import_select_class").find(".select2-selection__rendered").empty();
                 $("#import_class_name").html(ajax_data.classes);
-                $(".import_select_class").css("visibility", "visible");
+                $(".import_select_class").removeClass("hidden");
             });
         }
     });
@@ -227,6 +231,9 @@ $(document).ready(function () {
         if ($(this).find("option:selected").val() === "SA") {
             $(".create_select_class").css("visibility", "hidden");
             $(".create_select_school").css("visibility", "hidden");
+        } else if($(this).find("option:selected").val() === "A"){
+            $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_school").css("visibility", "visible");
         } else {
             event.preventDefault;
             $(".create_select_school").css("visibility", "visible");

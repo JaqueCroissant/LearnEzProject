@@ -52,9 +52,6 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("GET_SCHOOL_TYPES")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
             $query = "SELECT * FROM school_type";
 
             $this->school_types = DbHandler::get_instance()->return_query($query);
@@ -417,8 +414,7 @@ class SchoolHandler extends Handler {
         }
     }
     
-    private function verify_is_date($date) {
-        $d = date_parse_from_format($this->format, $subscription_end);
+    private function verify_is_date($d) {
         if (!checkdate($d['month'], $d['day'], $d['year'])) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }
@@ -432,9 +428,9 @@ class SchoolHandler extends Handler {
         // checks valid date
         $this->verify_is_date($subscription_end);
         
-        // checks if date is in future or not
+        $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
 
-        $ds = strtotime($subscription_end);
+        $ds = strtotime($end_date);
         $ts = strtotime(date($this->format));
         if ($ts > $ds) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
@@ -442,17 +438,14 @@ class SchoolHandler extends Handler {
     }
 
     private function verify_max_students($max_students) {
-        if (!is_int($max_students)) {
+        if (!is_numeric($max_students)) {
             throw new Exception("MAX_STUDENTS_HAS_INVALID_NUMBER");
         }
         $this->is_null_or_empty($max_students);
     }
 
     private function verify_school_exists($id) {
-
-        $id = (int)$id;
-
-        if (!is_numeric($id) || !is_int($id)) {
+        if (!is_numeric($id)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }
 
@@ -463,7 +456,7 @@ class SchoolHandler extends Handler {
     }
 
     private function verify_school_type($school_type_id) {
-        if (!is_int($school_type_id)) {
+        if (!is_numeric($school_type_id)) {
             throw new Exception("WRONG_SCHOOL_TYPE_ID");
         }
         $this->is_null_or_empty($school_type_id);
@@ -476,7 +469,7 @@ class SchoolHandler extends Handler {
     
     private function verify_zip_code($zip_code) {
         $this->is_null_or_empty($zip_code);
-        if (!is_int($zip_code)) {
+        if (!is_numeric($zip_code)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }
     }
@@ -522,7 +515,7 @@ class SchoolHandler extends Handler {
         if ($executedQuery) {
             return true;
         } else {
-            
+            return false;
         }
     }
 

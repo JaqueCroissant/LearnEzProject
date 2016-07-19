@@ -18,7 +18,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("GET_ALL_SCHOOLS")) {
+            if (!RightsHandler::has_user_right("SCHOOL_FIND")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $query = "SELECT school.id as id, school.name as name, school.address, school.school_type_id, school.phone, 
@@ -70,7 +70,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($school_id);
@@ -99,7 +99,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($school_id);
@@ -123,7 +123,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_array_contains_strings($array_of_rights_prefixes);
@@ -158,7 +158,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($school_id);
@@ -181,7 +181,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("DELETE_SCHOOL")) {
+            if (!RightsHandler::has_user_right("SCHOOL_DELETE")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($id);
@@ -204,6 +204,11 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if ($this->_user->user_type_id != 1) {
+                if ($this->_user->school_id != $id) {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+            }
             $this->verify_school_exists($id);
 
             $query = "SELECT * FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
@@ -220,7 +225,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("EDIT_SCHOOL")) {
+            if (!RightsHandler::has_user_right("SCHOOL_EDIT")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($id);
@@ -245,17 +250,19 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function create_school_step_one($name, $phone, $address, $email, $school_type_id) {
+    public function create_school_step_one($name, $phone, $address, $zip_code, $city, $email, $school_type_id) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("CREATE_SCHOOL")) {
+            if (!RightsHandler::has_user_right("SCHOOL_CREATE")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_name($name);
             $this->verify_phone($phone);
             $this->verify_address($address);
+            $this->verify_zip_code($zip_code);
+            $this->verify_city($city);
             $this->verify_email($email);
             $this->verify_school_type($school_type_id);
 
@@ -263,6 +270,8 @@ class SchoolHandler extends Handler {
                 "name" => $name,
                 "phone" => $phone,
                 "address" => $address,
+                "zip_code" => $zip_code,
+                "city" => $city,
                 "email" => $email,
                 "school_type_id" => $school_type_id
             );
@@ -280,7 +289,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("CREATE_SCHOOL")) {
+            if (!RightsHandler::has_user_right("SCHOOL_CREATE")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->is_null_or_empty($school);
@@ -305,7 +314,7 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("SET_SCHOOL_RIGHTS")) {
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->is_null_or_empty($array_of_rights);
@@ -401,6 +410,17 @@ class SchoolHandler extends Handler {
             throw new Exception("WRONG_SCHOOL_TYPE_ID");
         }
     }
+    
+    private function verify_zip_code($zip_code) {
+        $this->is_null_or_empty($zip_code);
+        if (!is_int($zip_code)) {
+            throw new Exception("INVALID_INPUT_IS_NOT_INT");
+        }
+    }
+    
+    private function verify_city($city) {
+        $this->is_null_or_empty($city);
+    }
 
     private function verify_address($address) {
         $this->is_null_or_empty($address);
@@ -431,9 +451,10 @@ class SchoolHandler extends Handler {
     }
 
     private function create_school($school) {
-        $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_end) "
-                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end)";
-        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_end);
+        $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_end, zip_code, city) "
+                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end, :zip_code, :city)";
+        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, 
+                $school->phone, $school->email, $school->max_students, $school->subscription_end, $school->zip_code, $school->city);
         $this->school->id = DbHandler::get_instance()->last_inserted_id();
         if ($executedQuery) {
             return true;

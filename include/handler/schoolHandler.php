@@ -13,7 +13,7 @@ class SchoolHandler extends Handler {
         parent::__construct();
     }
 
-    public function get_all_schools() {
+    public function get_all_schools($is_open = false) {
         try {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
@@ -24,7 +24,12 @@ class SchoolHandler extends Handler {
             $query = "SELECT school.id as id, school.name as name, school.address, school.school_type_id, school.phone, 
                      school.email, school.max_students, school.subscription_end, school_type.title 
                      FROM school 
-                     INNER JOIN school_type ON school.school_type_id = school_type.id;";
+                     INNER JOIN school_type ON school.school_type_id = school_type.id";
+
+            if($is_open)
+            {
+                $query .= " AND subscription_end >= curdate() AND subscription_start <= curdate()";
+            }
 
             $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {

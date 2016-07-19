@@ -25,16 +25,24 @@
 
                 $class_ids = $usertype == 'SA' || $usertype == 'A'  ? (isset($_POST["class_name"]) ? $_POST["class_name"] : array()) : array();
 
-                if($schoolHandler->can_add_students($school_id) && $schoolHandler->school_has_classes($school_id, $class_ids)
-                   && $userHandler->create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids))
+                if(!$schoolHandler->can_add_students($school_id) || !$schoolHandler->school_has_classes($school_id, $class_ids))
                 {
-                    $jsonArray['status_value'] = true;
+                    $jsonArray['status_value'] = false;
+                    $jsonArray['error'] = $schoolHandler->error->title;
                 }
                 else
                 {
-                    $jsonArray['status_value'] = false;
-                    $jsonArray['error'] = $userHandler->error->title;
+                    if($userHandler->create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids))
+                    {
+                        $jsonArray['status_value'] = true;
+                    }
+                    else
+                    {
+                        $jsonArray['status_value'] = false;
+                        $jsonArray['error'] = $userHandler->error->title;
+                    }
                 }
+
                 echo json_encode($jsonArray);
                 die();
             }

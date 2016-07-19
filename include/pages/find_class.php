@@ -13,7 +13,7 @@ $classHandler->get_all_classes();
             <div class="m-b-lg nav-tabs-horizontal">
                 <!-- tabs list -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" id="find_class_header"><a href="#tab-1" class="my_tab_header" id="find_class_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("FIND_CLASS"); ?></a></li>
+                    <li role="presentation" id="find_class_header"><a href="#find_class_tab" class="my_tab_header" id="find_class_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("FIND_CLASS"); ?></a></li>
                     <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                         <li role="presentation" id="edit_class_header" class=""><a href="#edit_class" class="my_tab_header" id="edit_class_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("EDIT_CLASS_GENERIC"); ?></a></li>
                     <?php } ?>
@@ -21,7 +21,7 @@ $classHandler->get_all_classes();
 
                 <!-- Tab panes -->
                 <div class="my_tab_content">
-                    <div class="my_fade my_tab" id="tab-1">
+                    <div class="my_fade my_tab" id="find_class_tab">
                         <div class="widget-body">
                             <table id="default-datatable" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
                                    aria-describedby="default-datatable_info">
@@ -35,7 +35,9 @@ $classHandler->get_all_classes();
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></th>
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
+                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php } ?>
                                         <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                             <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
@@ -55,7 +57,9 @@ $classHandler->get_all_classes();
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></th>
-                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
+                                            <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php } ?>
                                         <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                             <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
@@ -82,7 +86,8 @@ $classHandler->get_all_classes();
                                             <td class="click_me"><?php echo $value->class_year; ?></td>
                                             <td class="click_me"><?php echo $value->start_date; ?></td>
                                             <td class="click_me"><?php echo $value->end_date; ?></td>
-
+                                            
+                                            <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                             <td>
                                                 <form method="post" id="class_open_<?php echo $i; ?>" action="" url="find_class.php">
                                                     <div class="checkbox" id="class_open_<?php echo $i; ?>_div">
@@ -96,12 +101,13 @@ $classHandler->get_all_classes();
                                                     </div>
                                                 </form>
                                             </td>
+                                            <?php } ?>
                                             <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                                 <td>
                                                     <form method="post">
                                                         <div class="p-l-0" id="class_edit_<?php echo $i; ?>_div">
                                                             <input type="text" class="class_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="class_id_hidden_<?php echo $i; ?>">
-                                                            <input class="btn-default edit_class" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("EDIT") ?>">
+                                                            <input class="btn-danger edit_class" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("EDIT") ?>">
                                                         </div>
                                                     </form>
                                                 </td>
@@ -113,7 +119,7 @@ $classHandler->get_all_classes();
                                                             <input type="text" class="class_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="class_id_delete_hidden_<?php echo $i; ?>">
                                                             <input type="text" class="class_delete_hidden" hidden value="1" name="delete_class">
                                                             <input type="hidden" name="state" value="delete_class">
-                                                            <input class="btn-default delete_class" id="class_delete_<?php echo $i; ?>_btn" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("DELETE") ?>">
+                                                            <input class="btn-danger delete_class" id="class_delete_<?php echo $i; ?>_btn" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("DELETE") ?>">
                                                         </div>
                                                     </form>
                                                 </td>
@@ -254,6 +260,7 @@ $classHandler->get_all_classes();
 
 <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script src="js/class.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(".datepickers").datepicker({

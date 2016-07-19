@@ -7,28 +7,39 @@ class SchoolHandler extends Handler {
     public $this_school_rights;
     public $school_types;
     public $open_slots;
+    public $format = "Y-m-d";
 
     public function __construct() {
         parent::__construct();
-        }
+    }
 
-    public function get_all_schools () {
+    public function get_all_schools($is_open = false) {
         try {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            
-            $query = "Select school.id as id, school.name as name, school.address, school.school_type_id, school.phone, school.email, school.max_students, school.subscription_end, school_type.title from school INNER JOIN school_type ON school.school_type_id = school_type.id;";
-            
+            if (!RightsHandler::has_user_right("SCHOOL_FIND")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            $query = "SELECT school.id as id, school.name as name, school.address, school.zip_code, school.city, school.school_type_id, school.phone, 
+                     school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title 
+                     FROM school 
+                     INNER JOIN school_type ON school.school_type_id = school_type.id";
+
+            if($is_open)
+            {
+                $query .= " AND subscription_end >= curdate() AND subscription_start <= curdate()";
+            }
+
             $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {
                 $this->all_schools[] = new School($value);
             }
-            
+
             if (count($this->all_schools) == 0) {
-                throw new Exception ("NO_SCHOOL_FOUND");
+                throw new Exception("NO_SCHOOL_FOUND");
             }
-            
+
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -41,7 +52,6 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-
             $query = "SELECT * FROM school_type";
 
             $this->school_types = DbHandler::get_instance()->return_query($query);
@@ -62,7 +72,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_school_exists($school_id);
 
             $query = "SELECT * FROM school_rights WHERE school_id = :school_id";
@@ -89,6 +101,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_school_exists($school_id);
             if (!$this->delete_school_rights_by_school_id($school_id)) {
                 return false;
@@ -109,6 +124,9 @@ class SchoolHandler extends Handler {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_array_contains_strings($array_of_rights_prefixes);
             $query_rights_id = "SELECT id FROM rights WHERE prefix in (";
@@ -142,6 +160,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_school_exists($school_id);
 
             $query = "DELETE FROM school_rights WHERE school_id = :school_id";
@@ -161,6 +182,9 @@ class SchoolHandler extends Handler {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("SCHOOL_DELETE")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($id);
 
@@ -182,6 +206,11 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if ($this->_user->user_type_id != 1) {
+                if ($this->_user->school_id != $id) {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+            }
             $this->verify_school_exists($id);
 
             $query = "SELECT * FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
@@ -193,23 +222,31 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function update_school_by_id($id, $name, $phone, $address, $email, $school_type_id, $max_students, $subscription_end) {
+    public function update_school_by_id($id, $name, $phone, $address, $zip_code, $city, $email, $school_type_id, $max_students, $subscription_start, $subscription_end) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("SCHOOL_EDIT")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($id);
             $this->verify_name($name);
             $this->verify_phone($phone);
             $this->verify_address($address);
+            $this->verify_zip_code($zip_code);
+            $this->verify_city($city);
             $this->verify_email($email);
             $this->verify_school_type($school_type_id);
             $this->verify_max_students($max_students);
+            
+            $this->verify_subscription_start($subscription_start);
             $this->verify_subscription_end($subscription_end);
 
-            $query = "UPDATE school SET name=:name, phone=:phone, address=:address, email=:email, school_type_id=:school_type_id, max_students=:max_students, subscription_end=:subscription_end WHERE id = :id";
+            $query = "UPDATE school SET name=:name, phone=:phone, address=:address, zip_code=:zip_code, city=:city, email=:email, "
+                    . "school_type_id=:school_type_id, max_students=:max_students, subscription_start=:subscription_start, subscription_end=:subscription_end WHERE id = :id";
 
-            if (DbHandler::get_instance()->query($query, $name, $phone, $address, $email, $school_type_id, $max_students, $subscription_end, $id)) {
+            if (DbHandler::get_instance()->query($query, $name, $phone, $address, $zip_code, $city, $email, $school_type_id, $max_students, $subscription_start, $subscription_end, $id)) {
                 return true;
             } else {
                 throw new Exception("SCHOOL_NOT_UPDATED_UNKNOWN_ERROR");
@@ -220,14 +257,19 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function create_school_step_one($name, $phone, $address, $email, $school_type_id) {
+    public function create_school_step_one($name, $phone, $address, $zip_code, $city, $email, $school_type_id) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SCHOOL_CREATE")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_name($name);
             $this->verify_phone($phone);
             $this->verify_address($address);
+            $this->verify_zip_code($zip_code);
+            $this->verify_city($city);
             $this->verify_email($email);
             $this->verify_school_type($school_type_id);
 
@@ -235,6 +277,8 @@ class SchoolHandler extends Handler {
                 "name" => $name,
                 "phone" => $phone,
                 "address" => $address,
+                "zip_code" => $zip_code,
+                "city" => $city,
                 "email" => $email,
                 "school_type_id" => $school_type_id
             );
@@ -247,17 +291,23 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function create_school_step_two($school, $max_students, $subscription_end) {
+    public function create_school_step_two($school, $max_students, $subscription_start, $subscription_end) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SCHOOL_CREATE")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->is_null_or_empty($school);
             $this->verify_max_students($max_students);
+            $this->verify_subscription_start($subscription_start);
             $this->verify_subscription_end($subscription_end);
-
+            $start_date = $subscription_start['year'] . "/" . $subscription_start['month'] . "/" . $subscription_start['day'];
+            $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
             $school->max_students = $max_students;
-            $school->subscription_end = $subscription_end;
+            $school->subscription_start = $start_date;
+            $school->subscription_end = $end_date;
 
             if (!$this->create_school($school)) {
                 throw new Exception("SCHOOL_CREATION_FAILED_UNKNOWN_ERROR");
@@ -274,6 +324,9 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->is_null_or_empty($array_of_rights);
 
             if ($this->assign_school_rights_by_school_id($this->school->id, $array_of_rights)) {
@@ -285,15 +338,80 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function can_add_students($school_id)
+    public function can_add_students($school_id) {
+        try {
+
+            if(empty($school_id))
+            {
+                throw new Exception("CREATE_NO_SCHOOL");
+            }
+
+            $this->student_slots_open($school_id);
+
+            if ($this->open_slots < 1) {
+                throw new Exception("SCHOOL_NO_SLOTS");
+            }
+
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    public function student_slots_open($school_id) {
+        try {
+
+            if(empty($school_id))
+            {
+                throw new Exception("CREATE_NO_SCHOOL");
+            }
+
+            $this->verify_school_exists($school_id);
+            $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
+            $max_students = reset(DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $school_id));
+            $this->open_slots = $max_students["max_students"] - $active_students;
+
+            return true;
+        } catch (Exception $ex) {
+
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+
+    }
+
+    public function school_has_classes($school_id, $class_ids)
     {
         try
         {
-            $this->student_slots_open($school_id);
-
-            if($this->open_slots < 1)
+            if(empty($school_id))
             {
-                throw new Exception("SCHOOL_NO_SLOTS");
+                throw new Exception("CREATE_NO_SCHOOL");
+            }
+
+            if(!empty($class_ids))
+            {
+                $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
+
+                for($i = 0; $i < count($class_ids); $i++)
+                {
+                    if(!is_numeric($class_ids[$i]))
+                    {
+                        throw new Exception("INVALID_INPUT_IS_NOT_INT");
+                    }
+
+                    $query .= $i != 0 ? ", " : "";
+                    $query .= "'" . $class_ids[$i] . "'";
+                }
+
+                $query .= ")";
+                $count = DbHandler::get_instance()->count_query($query, $school_id);
+
+                if($count != count($class_ids))
+                {
+                    throw new Exception("CLASS_NOT_FOUND");
+                }
             }
 
             return true;
@@ -303,25 +421,6 @@ class SchoolHandler extends Handler {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
-    }
-
-    public function student_slots_open($school_id)
-    {
-        try
-        {
-            $this->verify_school_exists($school_id);
-            $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
-            $max_students = DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE school_id = :school", $school_id);
-            $this->open_slots = $max_students - $active_students;
-
-            return true;
-        }
-        catch(Exception $ex)
-        {
-            $this->error = ErrorHandler::return_error($ex->getMessage());
-            return false;
-        }
-
     }
 
     private function verify_array_contains_strings($array_of_strings) {
@@ -331,32 +430,39 @@ class SchoolHandler extends Handler {
             }
         }
     }
-
-    private function verify_subscription_end($subscription_end) {
-        // checks valid date
-        $format = "Y-m-d H:i:s";
-        $d = date_parse_from_format($format, $subscription_end);
+    
+    private function verify_is_date($d) {
         if (!checkdate($d['month'], $d['day'], $d['year'])) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }
-        // checks if date is in future or not
+    }
+    
+    private function verify_subscription_start($subscription_start) {
+        $this->verify_is_date($subscription_start);
+    }
 
-        $ds = strtotime($subscription_end);
-        $ts = strtotime(date($format));
+    private function verify_subscription_end($subscription_end) {
+        // checks valid date
+        $this->verify_is_date($subscription_end);
+        
+        $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
+
+        $ds = strtotime($end_date);
+        $ts = strtotime(date($this->format));
         if ($ts > $ds) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }
     }
 
     private function verify_max_students($max_students) {
-        if (!is_int($max_students)) {
+        if (!is_numeric($max_students)) {
             throw new Exception("MAX_STUDENTS_HAS_INVALID_NUMBER");
         }
         $this->is_null_or_empty($max_students);
     }
 
     private function verify_school_exists($id) {
-        if (!is_int($id)) {
+        if (!is_numeric($id)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }
 
@@ -367,7 +473,7 @@ class SchoolHandler extends Handler {
     }
 
     private function verify_school_type($school_type_id) {
-        if (!is_int($school_type_id)) {
+        if (!is_numeric($school_type_id)) {
             throw new Exception("WRONG_SCHOOL_TYPE_ID");
         }
         $this->is_null_or_empty($school_type_id);
@@ -376,6 +482,17 @@ class SchoolHandler extends Handler {
         if (!($count == 1)) {
             throw new Exception("WRONG_SCHOOL_TYPE_ID");
         }
+    }
+    
+    private function verify_zip_code($zip_code) {
+        $this->is_null_or_empty($zip_code);
+        if (!is_numeric($zip_code)) {
+            throw new Exception("INVALID_INPUT_IS_NOT_INT");
+        }
+    }
+    
+    private function verify_city($city) {
+        $this->is_null_or_empty($city);
     }
 
     private function verify_address($address) {
@@ -407,14 +524,15 @@ class SchoolHandler extends Handler {
     }
 
     private function create_school($school) {
-        $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_end) "
-                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end)";
-        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_end);
+        $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_start, subscription_end, zip_code, city) "
+                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_start,:subscription_end, :zip_code, :city)";
+        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, 
+                $school->phone, $school->email, $school->max_students, $school->subscription_start, $school->subscription_end, $school->zip_code, $school->city);
         $this->school->id = DbHandler::get_instance()->last_inserted_id();
         if ($executedQuery) {
             return true;
         } else {
-            
+            return false;
         }
     }
 

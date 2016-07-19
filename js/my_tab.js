@@ -18,7 +18,6 @@ $(document).ready(function () {
 
     $(document).on("click", ".my_tab_header", function (event) {
         event.preventDefault();
-        console.log($(this).attr("class"));
         if ($(this).hasClass("link_disabled")) {
             return;
         }
@@ -47,9 +46,7 @@ $(document).ready(function () {
             current_tab = tab;
         }
         $(this).closest("ul").children().each(function (e) {            
-            console.log($(this).children().attr("class"));
             $(this).children().removeClass("link_disabled");
-            
         });
     });
 

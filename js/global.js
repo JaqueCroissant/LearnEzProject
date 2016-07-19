@@ -14,7 +14,6 @@ $(document).ready(function () {
     initial_page_load();
     // Load on startup.
 
-
     // global functions
     $(document).on("click", ".change_page", function (event) {
         if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
@@ -77,35 +76,6 @@ $(document).ready(function () {
     });
     //
 
-    // mail
-    $(document).on("click", ".assign_mail_folder", function (event) {
-        event.preventDefault();
-        var current_page = $(this).attr("current_folder") === "inbox" ? "" : $(this).attr("current_folder");
-        if ($(this).attr("mail_id") !== undefined && $(this).attr("step") !== undefined && $(this).attr("current_folder") !== undefined) {
-            submit_get("mail.php?step=" + $(this).attr("step") + "&mail_id=" + $(this).attr("mail_id") + "&current_folder=" + $(this).attr("current_folder"), $(this), function () {
-                show_status_bar("error", ajax_data.error);
-            }, function () {
-                change_page("mail", current_page);
-            });
-        } else {
-            if ($("#" + $(this).attr("target_form") + " input:checkbox:checked").length > 0) {
-                initiate_custom_submit_form($(this), function () {
-                    show_status_bar("error", ajax_data.error);
-                }, function () {
-                    if (ajax_data.mails_removed !== undefined) {
-                        ajax_data.mails_removed.forEach(function (entry) {
-                            $(".mail_number_" + entry).fadeOut(500, function () {
-                                $(this).remove();
-                            });
-                        });
-                    }
-                }, $(this).attr("args"), $(this).attr("target_form"));
-            }
-        }
-
-    });
-    //
-
     //notifications
     $(document).on("click", ".notifs_button", function (event) {
         event.preventDefault();
@@ -122,38 +92,18 @@ $(document).ready(function () {
                                     $(this).remove();
                                 });
                             });
-                        }
-                        else if (action === "read") {
+                        } else if (action === "read") {
                             ajax_data.affected_notifs.forEach(function (o) {
                                 $(".notif_count_" + o).removeClass("notif_unread");
                                 $(".notif_count_" + o).addClass("notif_read");
                             });
                         }
-                    }
-                    else {
+                    } else {
                         alert(ajax_data.error);
                     }
                 }
             }, $(this).attr("args"), $(this).attr("target_form"));
         }
-    });
-    //
-
-    $(document).on("click", ".submit_create_mail", function (event) {
-        event.preventDefault();
-        initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-        });
-    });
-
-    $(document).on("click", ".submit_reply_mail", function (event) {
-        event.preventDefault();
-        initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            $(".reply_form").fadeOut(500);
-        });
     });
     //
 
@@ -243,140 +193,14 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on("click", ".update_class", function (event) {
-        event.preventDefault();
-        if ($("#class_open").val() === "on") {
-            $("#class_open_hidden").val(1);
-        } else {
-            $("#class_open_hidden").val(0);
-        }
-
-        $("#hidden_description").val($("#class_description").val());
-        ajax_data = undefined;
-        initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            setTimeout(function () {
-                change_page("find_class")
-            }, 300);
-            show_status_bar("success", ajax_data.success);
-        });
-    });
-
-    $(document).on("click", ".delete_class", function (event) {
-        event.preventDefault();
-
-        $("td input[type='checkbox']").attr("disabled", true);
-        position = $(this).offset();
-        height = $("#close_class_alert").height();
-        $("#delete_class_alert").css("top", position["top"] - height - 20);
-        $("#delete_class_alert").removeAttr("hidden");
-        delete_class_id = $(this).attr("id");
-    });
-
-    $(document).on("click", "#accept_delete_class_btn", function (event) {
-        event.preventDefault();
-
-        div_id = $(this).closest("div .alert_panel").attr("id");
-        initiate_submit_form($("#" + delete_class_id), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            $("#" + div_id).attr("hidden", true);
-            setTimeout(function () {
-                location.reload();
-            }, 300);
-            show_status_bar("success", ajax_data.success);
-        });
-    });
-
-    $(document).on("click", "#cancel_delete_class_btn", function (event) {
-        event.preventDefault();
-
-        div_id = $(this).closest("div .alert_panel").attr("id");
-        $("#" + div_id).attr("hidden", true);
-    });
-
-    $(document).on("click", ".btn_class_open", function (event) {
-        event.preventDefault();
-
-        $("td input[type='checkbox']").attr("disabled", true);
-        position = $(this).offset();
-        height = $("#close_class_alert").height();
-        if ($(this).val() === "on") {
-            $("#close_class_alert").css("top", position["top"] - height - 20);
-            $("#close_class_alert").removeAttr("hidden");
-        } else if ($(this).val() === "off") {
-            $("#open_class_alert").css("top", position["top"] - height - 20);
-            $("#open_class_alert").removeAttr("hidden");
-        }
-        clicked_checkbox_id = $(this).attr("id");
-    });
-
-    $(document).on("click", "#accept_close_class_btn", function (event) {
-        event.preventDefault();
-        div_id = $(this).closest("div .alert_panel").attr("id");
-        form_id = $("#" + clicked_checkbox_id).closest("form").attr("id");
-        hidden_id = $("#" + form_id + "_hidden").attr("id");
-        hidden_value = $("#" + hidden_id).val();
-        if (hidden_value === "1") {
-            $("#" + hidden_id).val(0);
-            $("#" + clicked_checkbox_id).val("off");
-            $("#" + clicked_checkbox_id).removeAttr("checked");
-        } else {
-            $("#" + hidden_id).val(1);
-            $("#" + clicked_checkbox_id).val("on");
-            $("#" + clicked_checkbox_id).prop("checked", true);
-        }
-        initiate_submit_form($("#" + clicked_checkbox_id), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            $("#" + div_id).attr("hidden", true);
-            show_status_bar("success", ajax_data.success);
-            $("td input[type='checkbox']").removeAttr("disabled");
-        });
-    });
-
-    $(document).on("click", "#cancel_close_class_btn", function (event) {
-        event.preventDefault();
-        $("#" + clicked_checkbox_id).prop("checked", true);
-        $("#close_class_alert").attr("hidden", true);
-        $("td input[type='checkbox']").removeAttr("disabled");
-    });
-
-    $(document).on("click", ".clickable_row .click_me", function (event) {
-        event.preventDefault();
-        alert("Nothing happened");
-    });
-
-    $(document).on("click", ".edit_class", function (event) {
-        event.preventDefault();
-        
-        var id = $(this).closest("tr").children().last().attr("id");
-        var user_type_id = $(this).closest("tr").children().last().attr("user_type_id");
-        initiate_submit_get($(this), "find_class.php?class_id=" + id, function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            if (user_type_id === "1") {
-                $("#class_title").val(ajax_data.class.title);
-                if (ajax_data.class.open === "1") {
-                    $("#class_open").attr("checked", true);
-                }
-                $("#school_id").text(ajax_data.class.school_name);
-            }
-            $("#class_begin").val(ajax_data.class.start_date);
-            $("#class_end").val(ajax_data.class.end_date);
-            $("#school_id").val(ajax_data.class.school_id);
-            $("#class_description").val(ajax_data.class.description);
-            $("#update_class_id").val(ajax_data.class.id);
-
-            $("#select_school").attr("data-plugin", "select2");
-            $("#edit_class_a").click();
-        });
-    });
 
     $(document).on("change", ".create_select_school", function (event) {
-        if ($(this).find("option:selected").val() === "default") {
+        if ($(this).find("option:selected").val() === "") {
             $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_class").find(".select2-selection__rendered").empty();
+        } else if($(".create_select_usertype").find("option:selected").val() === "A"){
+            $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_class").find(".select2-selection__rendered").empty();
         } else {
             event.preventDefault;
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
@@ -390,8 +214,8 @@ $(document).ready(function () {
     });
 
     $(document).on("change", ".import_select_school", function (event) {
-        if ($(this).find("option:selected").val() === "default") {
-            $(".import_select_class").css("visibility", "hidden");
+        if ($(this).find("option:selected").val() === "") {
+            $(".import_select_class").addClass("hidden");
         } else {
             event.preventDefault;
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
@@ -399,7 +223,7 @@ $(document).ready(function () {
             }, function () {
                 $(".import_select_class").find(".select2-selection__rendered").empty();
                 $("#import_class_name").html(ajax_data.classes);
-                $(".import_select_class").css("visibility", "visible");
+                $(".import_select_class").removeClass("hidden");
             });
         }
     });
@@ -408,6 +232,9 @@ $(document).ready(function () {
         if ($(this).find("option:selected").val() === "SA") {
             $(".create_select_class").css("visibility", "hidden");
             $(".create_select_school").css("visibility", "hidden");
+        } else if($(this).find("option:selected").val() === "A"){
+            $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_school").css("visibility", "visible");
         } else {
             event.preventDefault;
             $(".create_select_school").css("visibility", "visible");
@@ -429,7 +256,6 @@ $(document).ready(function () {
                     $("#step_two").removeClass("hidden");
                     $("#step_one_progress").addClass("progress-bar-success");
                     $("#step_two_progress").switchClass("progress-bar-inactive", "progress-bar");
-                    $("#school_subscription_end").datepicker();
                     show_status_bar("success", ajax_data.success);
                 });
                 break;
@@ -450,19 +276,9 @@ $(document).ready(function () {
     });
     //
 
-    // class
-    $(document).on("click", ".create_class", function (event) {
-        event.preventDefault;
-        $("#hidden_description").val($("#class_description").val());
-        initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            setTimeout(function () {
-                change_page("create_class")
-            }, 300);
-            show_status_bar("success", ajax_data.success);
-        });
-    });
+
+    //
+
 
     // global functions
     function preload(arrayOfImages) {
@@ -503,44 +319,44 @@ $(document).ready(function () {
         $('#status_container').css("bottom", 0);
         $('#status_container').addClass("hidden");
     });
-
-    function show_status_bar(status_type, message, custom_fade_out) {
-        clearTimeout(status_bar_timeout);
-        $('#status_container').removeClass("hidden");
-        $('div.alert').each(function (e) {
-            $(this).attr("style", "display: none; opacity: 0");
-        });
-
-        var current_element;
-        switch (status_type) {
-            default:
-                current_element = $('.status_bar.alert-danger');
-                break;
-
-            case "success":
-                current_element = $('.status_bar.alert-success')
-                break;
-
-            case "warning":
-                current_element = $('.status_bar.alert-warning')
-                break;
-        }
-        current_element.find("span.status_bar_message").html(message);
-        current_element.css("display", "inline-block");
-        current_element.fadeTo(300, 1);
-
-        $('#status_container').css("bottom", 0);
-        $('#status_container').animate({bottom: 50}, 300);
-        var fade_out = custom_fade_out === undefined ? 3000 : custom_fade_out;
-        if (fade_out !== 0) {
-            status_bar_timeout = setTimeout(function () {
-                current_element.fadeTo(300, 0);
-                $('#status_container').addClass("hidden");
-            }, fade_out);
-        }
-    }
     //
 });
+
+function show_status_bar(status_type, message, custom_fade_out) {
+    clearTimeout(status_bar_timeout);
+    $('#status_container').removeClass("hidden");
+    $('div.alert').each(function (e) {
+        $(this).attr("style", "display: none; opacity: 0");
+    });
+
+    var current_element;
+    switch (status_type) {
+        default:
+            current_element = $('.status_bar.alert-danger');
+            break;
+
+        case "success":
+            current_element = $('.status_bar.alert-success')
+            break;
+
+        case "warning":
+            current_element = $('.status_bar.alert-warning')
+            break;
+    }
+    current_element.find("span.status_bar_message").html(message);
+    current_element.css("display", "inline-block");
+    current_element.fadeTo(300, 1);
+
+    $('#status_container').css("bottom", 0);
+    $('#status_container').animate({bottom: 50}, 300);
+    var fade_out = custom_fade_out === undefined ? 3000 : custom_fade_out;
+    if (fade_out !== 0) {
+        status_bar_timeout = setTimeout(function () {
+            current_element.fadeTo(300, 0);
+            $('#status_container').addClass("hidden");
+        }, fade_out);
+    }
+}
 
 function cursor_wait()
 {

@@ -71,11 +71,36 @@ $paginationHandler = new PaginationHandler();
                                     
                                     <div class="form-group m-b-sm">
                                         <label for="mail_recipiants" class="control-label"><?php echo TranslationHandler::get_static_text("RECEIVER"); ?>:</label>
-                                        <select id="mail_recipiants" name="recipiants" class="form-control" data-plugin="select2" <?php echo RightsHandler::has_user_right("MAIL_MULTIPLE_RECEIVERS") ? 'multiple' : ''; ?>>
+                                        <select id="mail_recipiants" name="recipiants[]" class="form-control" data-plugin="select2" <?php echo RightsHandler::has_user_right("MAIL_MULTIPLE_RECEIVERS") ? 'multiple' : ''; ?>>
                                         <?php echo !RightsHandler::has_user_right("MAIL_MULTIPLE_RECEIVERS") ? '<option value="">'.TranslationHandler::get_static_text("RECEIVER").'</option>' : ''; ?>
                                             <?php
-                                            foreach($mailHandler->tags as $tag) {
-                                                echo '<option value="'.$tag->id.'">'.$tag->title.'</option>';
+                                            foreach($mailHandler->get_receiptians() as $key => $value) {
+                                                foreach($value as $inner_key => $inner_value) {
+                                                    switch($key) {
+                                                        case "SCHOOL":
+                                                            echo '<option value="SCHOOL_ADMIN_'.$inner_value->id.'">'. $inner_value->name .': ' .TranslationHandler::get_static_text("ADMINS") .'</option>';
+                                                            echo '<option value="SCHOOL_TEACHER_'.$inner_value->id.'">'. $inner_value->name .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>';
+                                                            echo '<option value="SCHOOL_STUDENT_'.$inner_value->id.'">'. $inner_value->name .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>';
+                                                            if(count($inner_value->classes) > 0) {
+                                                                foreach(reset($inner_value->classes) as $class_key => $class_value) {
+                                                                    
+                                                                    echo '<option value="CLASS_TEACHER_'.$class_value->id.'">'. $inner_value->name .' - '. $class_value->title .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>'; 
+                                                                    echo '<option value="CLASS_STUDENT_'.$class_value->id.'">'. $inner_value->name .' - '. $class_value->title .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>'; 
+                                                                }
+                                                            }
+                                                            break;
+                                                        
+                                                        case "USERS":
+                                                            echo '<option value="USER_ANY_'.$inner_value->id.'">'.$inner_value->firstname.' ' . $inner_value->surname.' ('. $inner_value->school_name .')</option>';
+                                                            break;
+                                                        
+                                                        case "CLASS":
+                                                            echo '<option value="CLASS_TEACHER_'.$inner_value->id.'">'. TranslationHandler::get_static_text("CLASS") .' - '. $inner_value->title .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>';
+                                                            echo '<option value="CLASS_STUDENT_'.$inner_value->id.'">'. TranslationHandler::get_static_text("CLASS") .' - '. $inner_value->title .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>'; 
+                                                            break;
+                                                    }
+                                                    
+                                                }
                                             }
                                             ?>
                                         </select>
@@ -246,7 +271,7 @@ $paginationHandler = new PaginationHandler();
                         </div>
 
                         <?php
-                        if($current_mail->folder_id == 3 || !RightsHandler::has_user_right("MAIL_CREATE")) {
+                        if($current_mail->folder_id == 3 || !RightsHandler::has_user_right("MAIL_CREATE") || $current_mail->disable_reply) {
                             echo '
                                 <div class="divid"></div>
                                 <div style="text-align:center;">'. TranslationHandler::get_static_text("MAIL_CANT_RESPOND_TO_MAIL") . '</div>';
@@ -256,7 +281,7 @@ $paginationHandler = new PaginationHandler();
                                 <div class="col-md-12">
                                     <div class="panel panel-default new-message">
                                         <form method="POST" action="" id="create_mail_form" url="mail.php?step=create_mail" name="create_mail">
-                                            <input type="hidden" name="recipiants" value="<?php echo $current_mail->sender_id; ?>">
+                                            <input type="hidden" name="recipiants[]" value="USER_ANY_<?php echo $current_mail->sender_id; ?>">
                                             <input type="hidden" name="title" value="RE: <?php echo $current_mail->title; ?>">
                                             <?php
                                             foreach($current_mail->mail_tags as $tag)

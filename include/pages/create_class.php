@@ -109,6 +109,7 @@ $classHandler = new ClassHandler();
 </div>
 <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script src="js/class.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#class_begin").datepicker({

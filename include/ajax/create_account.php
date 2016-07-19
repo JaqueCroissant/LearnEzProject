@@ -23,18 +23,26 @@
                 $temp_school_id = $usertype == 'SA' ? "" : (isset($_POST["school_id"]) ? $_POST["school_id"] : "");
                 $school_id = $userHandler->_user->user_type_id == 1 ? $temp_school_id : $userHandler->_user->school_id;
 
-                $class_ids = $usertype == 'SA' || $usertype == 'A'  ? array() : (isset($_POST["class_name"]) ? $_POST["class_name"] : array());
+                $class_ids = isset($_POST["class_name"]) ? $_POST["class_name"] : array();
 
-                if($userHandler->create_new_profile($firstname, $surname, $email,
-                $password, $usertype, $school_id, $class_ids))
+                if($usertype != 'SA' && (!$schoolHandler->can_add_students($school_id) || !$schoolHandler->school_has_classes($school_id, $class_ids)))
                 {
-                    $jsonArray['status_value'] = true;
+                    $jsonArray['status_value'] = false;
+                    $jsonArray['error'] = $schoolHandler->error->title;
                 }
                 else
                 {
-                    $jsonArray['status_value'] = false;
-                    $jsonArray['error'] = $userHandler->error->title;
+                    if($userHandler->create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids))
+                    {
+                        $jsonArray['status_value'] = true;
+                    }
+                    else
+                    {
+                        $jsonArray['status_value'] = false;
+                        $jsonArray['error'] = $userHandler->error->title;
+                    }
                 }
+
                 echo json_encode($jsonArray);
                 die();
             }
@@ -44,21 +52,32 @@
             if(isset($_POST))
             {
 
-                $temp_id = isset($_POST["school_id"]) ? $_POST["school_id"] : "";
+                $temp_school_id = isset($_POST["school_id"]) ? $_POST["school_id"] : "";
                 $school_id = $userHandler->_user->user_type_id == 1 ? $temp_id : $userHandler->_user->school_id;
                 $class_ids = isset($_POST["class_name"]) ? $_POST["class_name"] : array();
 
+
+
                 $file = isset($_FILES["csv_file"]) ? $_FILES["csv_file"] : array();
 
-                if($userHandler->import_users($file, $school_id, $class_ids))
+                if(!$schoolHandler->can_add_students($school_id) || !$schoolHandler->school_has_classes($school_id, $class_ids))
                 {
-                    $jsonArray['status_value'] = true;
+                    $jsonArray['status_value'] = false;
+                    $jsonArray['error'] = $schoolHandler->error->title;
                 }
                 else
                 {
-                    $jsonArray['status_value'] = false;
-                    $jsonArray['error'] = $userHandler->error->title;
+                    if($userHandler->import_users($file, $school_id, $class_ids))
+                    {
+                        $jsonArray['status_value'] = true;
+                    }
+                    else
+                    {
+                        $jsonArray['status_value'] = false;
+                        $jsonArray['error'] = $userHandler->error->title;
+                    }
                 }
+
                 echo json_encode($jsonArray);
                 die();
             }
@@ -70,7 +89,7 @@
             {
                 $jsonArray["classes"] = "";
 
-                if($classHandler->get_classes_by_school_id($_GET["school_id"])) {
+                if($classHandler->get_classes_by_school_id($_GET["school_id"], true)) {
                     foreach($classHandler->classes as $class)
                     {
                         $jsonArray["classes"] .= '<option value="' . $class->id . '">' . $class->title . '</option>'; 

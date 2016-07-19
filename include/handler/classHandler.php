@@ -81,21 +81,25 @@ class ClassHandler extends Handler {
         }
     }
 
-    public function get_classes_by_school_id($school_id) {
+    public function get_classes_by_school_id($school_id, $is_open = false) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
             $this->is_null_or_empty($school_id);
 
-            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
+            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
                             class.start_date, class.end_date, class.open
                             FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
-                            INNER JOIN class_year_prefix ON class.class_year_prefix_id = class_year_prefix.id
-                            INNER JOIN translation_class_year_prefix ON class_year_prefix.id = translation_class_year_prefix.class_year_prefix_id
-                            WHERE class.school_id = :class_id AND translation_class_year_prefix.language_id = :language_id";
+                            WHERE class.school_id = :class_id";
 
-            $array = DbHandler::get_instance()->return_query($query, $school_id, TranslationHandler::get_current_language());
+            if($is_open)
+            {
+                $query .= " AND class.open = 1 AND class.start_date <= curdate() AND class.end_date >= curdate()";
+            }
+
+
+            $array = DbHandler::get_instance()->return_query($query, $school_id);
 
             $this->classes = array();
             foreach ($array as $value) {
@@ -143,6 +147,9 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("CLASS_CREATE")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
 
             $this->is_null_or_empty($title);
             $this->is_null_or_empty($school_id);
@@ -171,12 +178,16 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
+            
+            if (!RightsHandler::has_user_right("CLASS_EDIT")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            if (!is_int($open_int)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+            $this->is_null_or_empty($class_id);
             $this->verify_class_exists($class_id);
-
-//            if (!is_int($open_int)) {
-//                throw new Exception("INVALID_INPUT_IS_NOT_INT");
-//            }
-
+            
             $query = "UPDATE class SET open=:open WHERE id=:id";
 
             if (!DbHandler::get_instance()->query($query, $open_int, $class_id)) {
@@ -195,13 +206,19 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+            
+            if (!RightsHandler::has_user_right("CLASS_EDIT")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
             $this->verify_class_exists($class_id);
             $this->is_null_or_empty($title);
             $this->is_null_or_empty($class_end);
             $this->is_null_or_empty($class_start);
             $this->is_null_or_empty($school_id);
             $this->is_null_or_empty($class_open);
-            if (!is_bool($class_open)) {
+            if (!is_numeric($class_open)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            } elseif (!($class_open == "1" || $class_open == "0")) {
                 throw new Exception("ARGUMENT_NOT_BOOL");
             }
 
@@ -227,6 +244,9 @@ class ClassHandler extends Handler {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("CLASS_DELETE")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_class_exists($class_id);
 
@@ -290,7 +310,7 @@ class ClassHandler extends Handler {
     }
 
     private function verify_user_has_class($user_id) {
-        if (!is_int($user_id)) {
+        if (!is_numeric($user_id)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }
 
@@ -301,7 +321,7 @@ class ClassHandler extends Handler {
     }
 
     private function verify_class_exists($class_id) {
-        if (!is_int($class_id)) {
+        if (!is_numeric($class_id)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }
 

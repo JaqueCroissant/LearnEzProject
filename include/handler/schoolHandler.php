@@ -357,11 +357,12 @@ class SchoolHandler extends Handler {
         try {
             $this->verify_school_exists($school_id);
             $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
-            $max_students = DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE school_id = :school", $school_id);
-            $this->open_slots = $max_students - $active_students;
+            $max_students = reset(DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $school_id));
+            $this->open_slots = $max_students["max_students"] - $active_students;
 
             return true;
         } catch (Exception $ex) {
+
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
@@ -370,25 +371,41 @@ class SchoolHandler extends Handler {
 
     public function school_has_classes($school_id, $class_ids)
     {
-        $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN VALUES (";
-
-        for($i = 0; $i < count($class_ids); $i++)
+        try
         {
-            if($i == 0 || $i == count($class_ids)-1)
+
+
+            $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
+
+            for($i = 0; $i < count($class_ids); $i++)
             {
-                $query .= ", ";
+
+                if(is_numeric($class_ids[$i]))
+                {
+
+                }
+
+                $query .= $i != 0 ? ", " : "";
+                $query .= "'" . $class_ids[$i] . "'";
             }
 
-            $query .= $class_ids[$i];
+            $query .= ")";
+            echo $query;
+            $count = DbHandler::get_instance()->count_query($query, $school_id);
+
+            if($count != count($class_ids))
+            {
+                throw new Exception("CLASS_NOT_FOUND");
+            }
+
+            return true;
+
         }
-
-        $query .= ")";
-
-        var_dump($query);
-
-        return true;
-        //$count = DbHandler::get_instance()->count_query($query);
-
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
     }
 
     private function verify_array_contains_strings($array_of_strings) {

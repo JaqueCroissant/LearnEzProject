@@ -79,7 +79,7 @@
                                                             <select id="select1" name="school_id" class="create_select_school form-control" data-plugin="select2">
 
                                                                 <?php
-                                                                    $schoolHandler->get_all_schools();
+                                                                    $schoolHandler->get_all_schools(true);
                                                                     foreach($schoolHandler->all_schools as $school)
                                                                     {
                                                                         echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';

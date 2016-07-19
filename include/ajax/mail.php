@@ -10,6 +10,16 @@ if(isset($_POST)) {
     $mailHandler = new MailHandler($current_page);
 
     switch($current_step) {
+        case "search":
+            if($mailHandler->search_mail(isset($_POST["search_word"]) ? $_POST["search_word"] : null, isset($_POST["search_folders"]) ? $_POST["search_folders"] : array(), isset($_POST["search_content"]) ? $_POST["search_content"] : 0)) {
+                $jsonArray['status_value'] = true;
+                $jsonArray['url'] = "&search_query=".$_POST["search_word"]."&search_folders=".serialize($_POST["search_folders"])."&search_content=".$_POST["search_content"];
+            } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $mailHandler->error->title;
+            }
+            break;
+        
         case 'sent':
             if($mailHandler->assign_mail_folder($current_step, $mails)) {
                 $jsonArray['status_value'] = true;

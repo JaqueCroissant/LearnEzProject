@@ -36,6 +36,16 @@ $(document).on("click", ".submit_create_mail", function (event) {
     });
 });
 
+$(document).on("click", ".submit_search_mail", function (event) {
+    event.preventDefault();
+    initiate_submit_form($(this), function () {
+        show_status_bar("error", ajax_data.error);
+    }, function () {
+        change_page("mail", "search", ajax_data.url);
+        //show_status_bar("success", ajax_data.success);
+    });
+});
+
 $(document).on("click", ".submit_reply_mail", function (event) {
     event.preventDefault();
     initiate_submit_form($(this), function () {

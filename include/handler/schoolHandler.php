@@ -21,8 +21,8 @@ class SchoolHandler extends Handler {
             if (!RightsHandler::has_user_right("SCHOOL_FIND")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
-            $query = "SELECT school.id as id, school.name as name, school.address, school.school_type_id, school.phone, 
-                     school.email, school.max_students, school.subscription_end, school_type.title 
+            $query = "SELECT school.id as id, school.name as name, school.address, school.zip_code, school.city, school.school_type_id, school.phone, 
+                     school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title 
                      FROM school 
                      INNER JOIN school_type ON school.school_type_id = school_type.id";
 
@@ -225,7 +225,7 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function update_school_by_id($id, $name, $phone, $address, $email, $school_type_id, $max_students, $subscription_end) {
+    public function update_school_by_id($id, $name, $phone, $address, $zip_code, $city, $email, $school_type_id, $max_students, $subscription_start, $subscription_end) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
@@ -237,14 +237,19 @@ class SchoolHandler extends Handler {
             $this->verify_name($name);
             $this->verify_phone($phone);
             $this->verify_address($address);
+            $this->verify_zip_code($zip_code);
+            $this->verify_city($city);
             $this->verify_email($email);
             $this->verify_school_type($school_type_id);
             $this->verify_max_students($max_students);
+            
+            $this->verify_subscription_start($subscription_start);
             $this->verify_subscription_end($subscription_end);
 
-            $query = "UPDATE school SET name=:name, phone=:phone, address=:address, email=:email, school_type_id=:school_type_id, max_students=:max_students, subscription_end=:subscription_end WHERE id = :id";
+            $query = "UPDATE school SET name=:name, phone=:phone, address=:address, zip_code=:zip_code, city=:city, email=:email, "
+                    . "school_type_id=:school_type_id, max_students=:max_students, subscription_start=:subscription_start, subscription_end=:subscription_end WHERE id = :id";
 
-            if (DbHandler::get_instance()->query($query, $name, $phone, $address, $email, $school_type_id, $max_students, $subscription_end, $id)) {
+            if (DbHandler::get_instance()->query($query, $name, $phone, $address, $zip_code, $city, $email, $school_type_id, $max_students, $subscription_start, $subscription_end, $id)) {
                 return true;
             } else {
                 throw new Exception("SCHOOL_NOT_UPDATED_UNKNOWN_ERROR");
@@ -289,7 +294,7 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function create_school_step_two($school, $max_students, $subscription_end) {
+    public function create_school_step_two($school, $max_students, $subscription_start, $subscription_end) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
@@ -299,9 +304,12 @@ class SchoolHandler extends Handler {
             }
             $this->is_null_or_empty($school);
             $this->verify_max_students($max_students);
+            $this->verify_subscription_start($subscription_start);
             $this->verify_subscription_end($subscription_end);
+            $start_date = $subscription_start['year'] . "/" . $subscription_start['month'] . "/" . $subscription_start['day'];
             $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
             $school->max_students = $max_students;
+            $school->subscription_start = $start_date;
             $school->subscription_end = $end_date;
 
             if (!$this->create_school($school)) {
@@ -393,14 +401,22 @@ class SchoolHandler extends Handler {
             }
         }
     }
-
-    private function verify_subscription_end($subscription_end) {
-        // checks valid date
-
+    
+    private function verify_is_date($date) {
         $d = date_parse_from_format($this->format, $subscription_end);
         if (!checkdate($d['month'], $d['day'], $d['year'])) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }
+    }
+    
+    private function verify_subscription_start($subscription_start) {
+        $this->verify_is_date($subscription_start);
+    }
+
+    private function verify_subscription_end($subscription_end) {
+        // checks valid date
+        $this->verify_is_date($subscription_end);
+        
         // checks if date is in future or not
 
         $ds = strtotime($subscription_end);
@@ -480,10 +496,10 @@ class SchoolHandler extends Handler {
     }
 
     private function create_school($school) {
-        $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_end, zip_code, city) "
-                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_end, :zip_code, :city)";
+        $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_start, subscription_end, zip_code, city) "
+                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_start,:subscription_end, :zip_code, :city)";
         $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, 
-                $school->phone, $school->email, $school->max_students, $school->subscription_end, $school->zip_code, $school->city);
+                $school->phone, $school->email, $school->max_students, $school->subscription_start, $school->subscription_end, $school->zip_code, $school->city);
         $this->school->id = DbHandler::get_instance()->last_inserted_id();
         if ($executedQuery) {
             return true;

@@ -62,21 +62,25 @@ class ClassHandler extends Handler {
         }
     }
 
-    public function get_classes_by_school_id($school_id) {
+    public function get_classes_by_school_id($school_id, $is_open = false) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
             $this->is_null_or_empty($school_id);
 
-            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year, translation_class_year_prefix.title as class_year_prefix,
+            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
                             class.start_date, class.end_date, class.open
                             FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
-                            INNER JOIN class_year_prefix ON class.class_year_prefix_id = class_year_prefix.id
-                            INNER JOIN translation_class_year_prefix ON class_year_prefix.id = translation_class_year_prefix.class_year_prefix_id
-                            WHERE class.school_id = :class_id AND translation_class_year_prefix.language_id = :language_id";
+                            WHERE class.school_id = :class_id";
 
-            $array = DbHandler::get_instance()->return_query($query, $school_id, TranslationHandler::get_current_language());
+            if($is_open)
+            {
+                $query .= " AND class.open = 1 AND class.start_date <= curdate() AND class.end_date >= curdate()";
+            }
+
+
+            $array = DbHandler::get_instance()->return_query($query, $school_id);
 
             $this->classes = array();
             foreach ($array as $value) {

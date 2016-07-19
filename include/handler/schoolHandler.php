@@ -321,7 +321,28 @@ class SchoolHandler extends Handler {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
+    }
 
+    public function school_has_classes($school_id, $class_ids)
+    {
+        $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN VALUES (";
+
+        for($i = 0; $i < count($class_ids); $i++)
+        {
+            if($i == 0 || $i == count($class_ids)-1)
+            {
+                $query .= ", ";
+            }
+
+            $query .= $class_ids[$i];
+        }
+
+        $query .= ")";
+
+        var_dump($query);
+
+        return true;
+        //$count = DbHandler::get_instance()->count_query($query);
     }
 
     private function verify_array_contains_strings($array_of_strings) {

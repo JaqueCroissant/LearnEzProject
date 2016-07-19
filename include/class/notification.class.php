@@ -12,5 +12,6 @@ class Notification extends ORM
         public $icon;
         public $page;
         public $step;
+        public $arg_id;
     }
 

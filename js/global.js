@@ -5,6 +5,7 @@ var content_hidden = false;
 var status_bar_timeout;
 
 var clicked_checkbox_id;
+var delete_class_id;
 var school;
 var ajax_data;
 
@@ -40,7 +41,7 @@ $(document).ready(function () {
             $(this).find("i").first().toggleClass('fa-check-square-o fa-square-o');
         }
     });
-    
+
     $(document).on("change", ".check_all_specific", function (event) {
         event.preventDefault();
         var checkbox_id = $(this).attr("checkbox_id");
@@ -121,14 +122,12 @@ $(document).ready(function () {
                                     $(this).remove();
                                 });
                             });
-                        }
-                        else if (action === "read") {
+                        } else if (action === "read") {
                             ajax_data.affected_notifs.forEach(function (o) {
                                 $(".notif_count_" + o).addClass("notif_read");
                             });
                         }
-                    }
-                    else {
+                    } else {
                         alert(ajax_data.error);
                     }
                 }
@@ -152,20 +151,20 @@ $(document).ready(function () {
         }, function () {
             $(".reply_form").fadeOut(500);
         });
-   });
-   //
-   
-   // rights
-   $(document).on("click", ".submit_change_rights", function(event){
+    });
+    //
+
+    // rights
+    $(document).on("click", ".submit_change_rights", function (event) {
         event.preventDefault();
-        initiate_submit_form($(this), function() {
+        initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
-        }, function() {
+        }, function () {
         });
-   });
-   
-   // edit user info
-    $(document).on("click", ".submit_edit_user_info", function(event){
+    });
+
+    // edit user info
+    $(document).on("click", ".submit_edit_user_info", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
@@ -175,21 +174,21 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on("click", ".avatar-hover", function(event){
-            event.preventDefault();
+    $(document).on("click", ".avatar-hover", function (event) {
+        event.preventDefault();
 
-            var avatar_id = $(this).attr("avatar_id");
-            if(avatar_id === undefined) {
-                return;
-            }
-            $(".current-avatar").attr("src", "assets/images/profile_images/" + avatar_id + ".png");
-            $(".input_avatar_id").val(avatar_id);
+        var avatar_id = $(this).attr("avatar_id");
+        if (avatar_id === undefined) {
+            return;
+        }
+        $(".current-avatar").attr("src", "assets/images/profile_images/" + avatar_id + ".png");
+        $(".input_avatar_id").val(avatar_id);
 
     });
 
-    $(document).on("input", "input.input_change", function(event){
-            event.preventDefault();
-            $(".user_full_name").html($(".input_firstname").val() + " " + $(".input_surname").val());
+    $(document).on("input", "input.input_change", function (event) {
+        event.preventDefault();
+        $(".user_full_name").html($(".input_firstname").val() + " " + $(".input_surname").val());
     });
 
     $(document).on("click", ".settings_submit_password", function (event) {
@@ -209,9 +208,9 @@ $(document).ready(function () {
     });
 
 
-   $(document).on("click", ".create_submit_csv", function(event){
+    $(document).on("click", ".create_submit_csv", function (event) {
 
-       var formData = new FormData($('#create_import_form')[0]);
+        var formData = new FormData($('#create_import_form')[0]);
         $.ajax({
             url: 'include/ajax/create_account.php?step=2',
             type: 'POST',
@@ -227,76 +226,20 @@ $(document).ready(function () {
 
         event.preventDefault();
 
-   });
+    });
 
-   $(document).on("click", ".reset_pass_submit_email2", function(event){
-        event.preventDefault;
+    $(document).on("click", ".reset_pass_submit_email2", function (event) {
+        event.preventDefault();
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            location.reload();
-        });
-    });
-    
-    $(document).on("click", ".update_class", function (event) {
-        event.preventDefault;
-        if ($("#class_open").val() === "on") {
-            $("#class_open_hidden").val(1);
-        } else {
-            $("#class_open_hidden").val(0);
-        }
-        
-        $("#hidden_description").val($("#class_description").val());
-        initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            location.reload();
+            setTimeout(function () {
+                location.reload();
+            }, 500);
+            show_status_bar("success", ajax_data.success);
         });
     });
 
-    $(document).on("click", ".btn_class_open", function (event) {
-        event.preventDefault;
-        
-        $("td input[type='checkbox']").attr("disabled", true);
-        position = $(this).offset();
-        height = $("#close_class_alert").height();
-        $("#close_class_alert").css("top", position["top"] - height - 20);
-        $("#close_class_alert").removeAttr("hidden");
-        clicked_checkbox_id = $(this).attr("id");
-    });
-
-    $(document).on("click", "#accept_close_class_btn", function (event) {
-        form_id = $("#" + clicked_checkbox_id).closest("form").attr("id");
-        hidden_id = $("#" + form_id + "_hidden").attr("id");
-        hidden_value = $("#" + hidden_id).val();
-        if (hidden_value === "1") {
-            $("#" + hidden_id).val(0);
-            $("#" + clicked_checkbox_id).val("off");
-        } else {
-            $("#" + hidden_id).val(1);
-            $("#" + clicked_checkbox_id).val("on");
-        }
-        initiate_submit_form($("#" + clicked_checkbox_id), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            $("#close_class_alert").attr("hidden", true);
-            $("td input[type='checkbox']").removeAttr("disabled");
-        });
-    });
-
-    $(document).on("click", "#cancel_close_class_btn", function (event) {
-        $("#" + clicked_checkbox_id).prop("checked", true);
-        $("#close_class_alert").attr("hidden", true);
-        $("td input[type='checkbox']").removeAttr("disabled");
-    });
-
-    $(document).on("click", ".clickable_row .click_me", function (event) {
-        var row = $(this).parent();
-        row.children().each(function (e) {
-            $("#" + $(this).attr("target")).val($(this).attr("title"));
-        });
-        $("#edit_class_a").click();
-    });
 
     $(document).on("change", ".create_select_school", function (event) {
         if ($(this).find("option:selected").val() === "default") {
@@ -353,7 +296,7 @@ $(document).ready(function () {
                     $("#step_two").removeClass("hidden");
                     $("#step_one_progress").addClass("progress-bar-success");
                     $("#step_two_progress").switchClass("progress-bar-inactive", "progress-bar");
-                    $("#school_subscription_end").datepicker();
+                    show_status_bar("success", ajax_data.success);
                 });
                 break;
             case "2":
@@ -366,22 +309,16 @@ $(document).ready(function () {
                     $("#step_three").removeClass("hidden");
                     $("#step_two_progress").addClass("progress-bar-success");
                     $("#step_three_progress").switchClass("progress-bar-inactive", "progress-bar");
+                    show_status_bar("success", ajax_data.success);
                 });
                 break;
         }
     });
     //
 
-    // class
-    $(document).on("click", ".create_class", function (event) {
-        event.preventDefault;
-        $("#hidden_description").val($("#class_description").val());
-        initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            location.reload();
-        });
-    });
+
+    //
+
 
     // global functions
     function preload(arrayOfImages) {
@@ -415,29 +352,31 @@ $(document).ready(function () {
             'assets/images/loading_page.GIF'
         ]);
     });
-    
+
     $(document).on("click", ".close_status_bar", function (event) {
         event.preventDefault;
         $(this).closest('div.alert').css("opacity", 0);
         $('#status_container').css("bottom", 0);
+        $('#status_container').addClass("hidden");
     });
-    
+
     function show_status_bar(status_type, message, custom_fade_out) {
         clearTimeout(status_bar_timeout);
-        $('div.alert').each(function(e) {
+        $('#status_container').removeClass("hidden");
+        $('div.alert').each(function (e) {
             $(this).attr("style", "display: none; opacity: 0");
         });
-        
+
         var current_element;
-        switch(status_type) {
+        switch (status_type) {
             default:
                 current_element = $('.status_bar.alert-danger');
                 break;
-                
+
             case "success":
                 current_element = $('.status_bar.alert-success')
                 break;
-                
+
             case "warning":
                 current_element = $('.status_bar.alert-warning')
                 break;
@@ -445,12 +384,15 @@ $(document).ready(function () {
         current_element.find("span.status_bar_message").html(message);
         current_element.css("display", "inline-block");
         current_element.fadeTo(300, 1);
-                
+
         $('#status_container').css("bottom", 0);
-        $('#status_container').animate({ bottom: 50 }, 300);
+        $('#status_container').animate({bottom: 50}, 300);
         var fade_out = custom_fade_out === undefined ? 3000 : custom_fade_out;
-        if(fade_out !== 0) {
-           status_bar_timeout = setTimeout(function() { current_element.fadeTo(300, 0); }, fade_out ); 
+        if (fade_out !== 0) {
+            status_bar_timeout = setTimeout(function () {
+                current_element.fadeTo(300, 0);
+                $('#status_container').addClass("hidden");
+            }, fade_out);
         }
     }
     //

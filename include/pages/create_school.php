@@ -108,3 +108,8 @@ $schoolHandler->get_school_types();
 </div>
 <script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $("#school_subscription_end").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
+</script>

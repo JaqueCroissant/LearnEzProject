@@ -312,14 +312,14 @@ a .menu_header {
     background-color: white;
 }
 
+#notification_data {
+    margin:0;
+    padding:0;
+}
+
 #notification_top{
     height:45px;
     padding:6px 0 6px 12px !important;
-}
-
-#notification_window div {
-    padding: 0;
-    margin: 0;
 }
 
 #notification_error{
@@ -331,24 +331,29 @@ a .menu_header {
     display:flex !important;
     flex-direction: column;
     justify-content: center;
+    margin-top: 3px;
+    margin-bottom: 3px;
 }
 
-.notification_content:first-child {
-    padding-right:12px !important;
+.cursor{
+    cursor:pointer;
 }
 
-.notifcation_content:last-child {
-    padding-left:15px !important;
+.notification_button {
+    padding-left:0 !important;
 }
 
 .notification {
-    padding: 6px 12px 5px 12px !important;
     border-bottom:1px solid lightgray;
+    padding:0 !important;
+}
+
+.notification:hover {
+    background-color: rgba(0, 128, 192, 0.46);
 }
 
 .notification:first-child{
     border-top:1px solid lightgrey;
-    padding: 5px 12px 5px 12px !important;
 }
 
 #notification_loading_image{

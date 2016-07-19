@@ -16,6 +16,7 @@
         public $surname;
         public $email;
         public $description;
+        public $school_name;
         public $user_type;
         public $user_type_title;
 

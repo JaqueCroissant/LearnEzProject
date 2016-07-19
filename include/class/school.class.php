@@ -9,6 +9,8 @@ class School extends ORM{
     public $email;
     public $max_students;
     public $subscription_end;
+    
+    public $classes = array();
 }
 
 ?>

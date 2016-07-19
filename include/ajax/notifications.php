@@ -14,30 +14,40 @@ if ($action) {
 
 function get_new_notifications(){
     $notificationHandler = new NotificationHandler();
-    if (SessionKeyHandler::session_exists("user") && $notificationHandler->update_unseen_notification_count(SessionKeyHandler::get_from_session("user", true)->id)) {
+    if ($notificationHandler->update_unseen_notification_count()) {
+        $jsonArray["status_value"] = true;
         $jsonArray['count'] = $notificationHandler->get_unseen_notifications_count();
-        echo json_encode($jsonArray);
     }
+    else {
+        $jsonArray["status_value"] = false;
+        $jsonArray["error"] = $notificationHandler->error->title;
+    }
+    echo json_encode($jsonArray);
 }
 
 function get_notifications(){
     $notificationHandler = new NotificationHandler();
-    if ($notificationHandler->load_notifications(0, 7)) {
-    }
-    $data = $notificationHandler->get_notifications();
-    $json_array['notifications'] = "";     
-    if (count($data) == 0) {
-       $json_array["status_text"] = "<div style='text-align:center;font-style:italic;padding:6px 0 6px 0;width:100%;'>" . TranslationHandler::get_static_text("NO_NOTIFICATIONS") . "</div>";
+    if (!$notificationHandler->load_notifications(0, 7)) {
+        $json_array["status_value"] = false;
+        $json_array["error"] = $notificationHandler->error->title;
     }
     else {
-        foreach ($data as $value) {
-            $json_array['notifications'] .= notification_setup($value, $notificationHandler->get_arguments($value->arg_id));
+        $data = $notificationHandler->get_notifications();
+        $json_array['notifications'] = "";     
+        if (count($data) == 0) {
+           $json_array["status_text"] = "<div style='text-align:center;font-style:italic;padding:6px 0 6px 0;width:100%;'>" . TranslationHandler::get_static_text("NO_NOTIFICATIONS") . "</div>";
         }
-        if(count($data) < 7) {
-            $json_array["status_text"] = "<div style='text-align:center;font-style:italic;padding:6px 0 6px 0;width:100%;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
+        else {
+            foreach ($data as $value) {
+                $json_array['notifications'] .= notification_setup($value, $notificationHandler->get_arguments($value->arg_id));
+            }
+            if(count($data) < 7) {
+                $json_array["status_text"] = "<div style='text-align:center;font-style:italic;padding:6px 0 6px 0;width:100%;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
+            }
         }
+        $json_array["status_value"] = true;
+        $json_array["translations"] = array("SEE_ALL" => TranslationHandler::get_static_text("SEE_ALL"), "NOTIFICATIONS" => TranslationHandler::get_static_text("NOTIFICATIONS"));
     }
-    $json_array["translations"] = array("SEE_ALL" => TranslationHandler::get_static_text("SEE_ALL"), "NOTIFICATIONS" => TranslationHandler::get_static_text("NOTIFICATIONS"));
     echo json_encode($json_array);
 }
 
@@ -67,25 +77,18 @@ function notification_setup($value, $args){
 }
 
 function delete(){
-    $notifs = isset($_POST["notifs"]) ? $_POST["notifs"] : null;
+    $notifs = isset($_POST["notifs"]) ? $_POST["notifs"] : "";
     
-//    if (isset($notifs)) {
-//        $notificationHandler = new NotificationHandler();
-//        if($notificationHandler->delete_notifications($notifs)) {
-//            $json_array["status_value"] = true;
-//            $json_array["affected_notifs"] = $notifs;
-//        }
-//        else {
-//            $json_array["status_value"] = false;
-//            $json_array["error"] = $notificationHandler->error->title;
-//        }
-//    }
-//    else {
-//        $json_array["status_value"] = false;
-//        $json_array["error"] = ErrorHandler::return_error("DATABASE_UNKNOWN_ERROR");
-//    }
-    $json_array["status_value"] = false;
-    $json_array["error"] = ErrorHandler::return_error("DATABASE_UNKNOWN_ERROR");
+    $notificationHandler = new NotificationHandler();
+    if($notificationHandler->delete_notifications($notifs)) {
+        $json_array["status_value"] = true;
+        $json_array["affected_notifs"] = $notifs;
+    }
+    else {
+        $json_array["status_value"] = false;
+        $json_array["error"] = $notificationHandler->error->title;
+    }
+    
     echo json_encode($json_array);
 }
 

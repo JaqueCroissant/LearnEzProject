@@ -37,22 +37,25 @@ jQuery(function ($) {
                    dataType: "json",
                    data: {action: 'get_notifications'},
                    success: function (result) {
-                        $('#notification_data').html(result.notifications);
-                        if (result.status_text !== undefined) {
-                            no_more_notifications = true;
-                            $('#notification_loading').hide();
-                            $('#notification_data').append(result.status_text);
+                        if (result.status_value) {
+                            $('#notification_data').html(result.notifications);
+                            if (result.status_text !== undefined) {
+                                no_more_notifications = true;
+                                $('#notification_loading').hide();
+                                $('#notification_data').append(result.status_text);
+                            }
+                            $(".notification_load_window").html(result.translations["SEE_ALL"]);
+                            $(".notification_title").html(result.translations["NOTIFICATIONS"]);
+                            currently_recieving_notifications = false;
+                            $("#notification_loading_image").hide();
+                            $('#notification_window').show("fast");
+                            $('#notification_counter').html("");
                         }
-                        $(".notification_load_window").html(result.translations["SEE_ALL"]);
-                        $(".notification_title").html(result.translations["NOTIFICATIONS"]);
-                        currently_recieving_notifications = false;
-                        $("#notification_loading_image").hide();
+                        else {
+                            show_status_bar("error", result.error, 5000);
+                        }
                    }
                 });
-                $('#notification_window').show("fast");
-                $('#notification_counter').html("");
-            } else {
-                $('#notification_window').hide("fast");
             }
         });
         
@@ -71,7 +74,7 @@ jQuery(function ($) {
                             $(event.target).closest(".notification").remove();
                         }
                         else {
-                            show_status_bar("error", result.error);
+                            show_status_bar("error", result.error, 7000);
                         }
                         currently_clicked_button = false;
                    },

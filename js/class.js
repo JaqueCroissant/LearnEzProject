@@ -1,4 +1,4 @@
-$(document).ready(function (){
+$(document).ready(function () {
 // class
     $(document).on("click", ".create_class", function (event) {
         event.preventDefault;
@@ -97,6 +97,10 @@ $(document).ready(function (){
         }
         initiate_submit_form($("#" + clicked_checkbox_id), function () {
             show_status_bar("error", ajax_data.error);
+            $("#" + clicked_checkbox_id).val("on");
+            $("#" + clicked_checkbox_id).prop("checked", true);
+            $("#" + div_id).attr("hidden", true);
+            $("td input[type='checkbox']").removeAttr("disabled");
         }, function () {
             $("#" + div_id).attr("hidden", true);
             show_status_bar("success", ajax_data.success);
@@ -124,13 +128,11 @@ $(document).ready(function (){
         initiate_submit_get($(this), "find_class.php?class_id=" + id, function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            if (user_type_id === "1") {
-                $("#class_title").val(ajax_data.class.title);
-                if (ajax_data.class.open === "1") {
-                    $("#class_open").attr("checked", true);
-                }
-                $("#school_id").text(ajax_data.class.school_name);
+            $("#class_title").val(ajax_data.class.title);
+            if (ajax_data.class.open === "1") {
+                $("#class_open").prop("checked", true);
             }
+            $("#school_id").text(ajax_data.class.school_name);
             $("#class_begin").val(ajax_data.class.start_date);
             $("#class_end").val(ajax_data.class.end_date);
             $("#school_id").val(ajax_data.class.school_id);

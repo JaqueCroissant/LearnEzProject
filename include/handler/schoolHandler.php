@@ -342,8 +342,7 @@ class SchoolHandler extends Handler {
     public function can_add_students($school_id) {
         try {
 
-            if(empty($school_id))
-            {
+            if (empty($school_id)) {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
@@ -363,8 +362,7 @@ class SchoolHandler extends Handler {
     public function student_slots_open($school_id) {
         try {
 
-            if(empty($school_id))
-            {
+            if (empty($school_id)) {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
@@ -381,24 +379,17 @@ class SchoolHandler extends Handler {
         }
     }
 
-
-    public function school_has_classes($school_id, $class_ids)
-    {
-        try
-        {
-            if(empty($school_id))
-            {
+    public function school_has_classes($school_id, $class_ids) {
+        try {
+            if (empty($school_id)) {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
-            if(!empty($class_ids))
-            {
+            if (!empty($class_ids)) {
                 $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
 
-                for($i = 0; $i < count($class_ids); $i++)
-                {
-                    if(!is_numeric($class_ids[$i]))
-                    {
+                for ($i = 0; $i < count($class_ids); $i++) {
+                    if (!is_numeric($class_ids[$i])) {
                         throw new Exception("INVALID_INPUT_IS_NOT_INT");
                     }
 
@@ -410,25 +401,23 @@ class SchoolHandler extends Handler {
                 $count = DbHandler::get_instance()->count_query($query, $school_id);
 
 
-                if($count != count($class_ids))
-                {
+                if ($count != count($class_ids)) {
                     throw new Exception("CLASS_NOT_FOUND");
                 }
             }
 
             return true;
-        }
-        catch(Exception $ex)
-        {
+        } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }
 
     private function verify_start_date_is_lower_than_end_date($start_date_string, $end_date_string) {
+
         $ds = strtotime($start_date_string);
         $de = strtotime($end_date_string);
-
+        
         if ($ds > $de) {
             throw new Exception("START_DATE_MUST_BE_LOWER_THAN_END");
         }

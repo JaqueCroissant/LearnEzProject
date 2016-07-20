@@ -19,6 +19,8 @@ class UserHandler extends Handler
         
         try
         {
+            $this->validate_user_logged_in();
+
             if(!RightsHandler::has_user_right("CHANGE_PASSWORD"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
@@ -114,6 +116,8 @@ class UserHandler extends Handler
     {
         try
         {
+            $this->validate_user_logged_in();
+
             if(!RightsHandler::has_user_right("ACCOUNT_CREATE"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
@@ -403,6 +407,8 @@ class UserHandler extends Handler
     {
         try
         {
+            $this->validate_user_logged_in();
+
             if(!RightsHandler::has_user_right("ACCOUNT_CREATE"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
@@ -433,14 +439,7 @@ class UserHandler extends Handler
     {
         try
         {
-            if(!$this->user_exists())
-            {
-                $this->get_user_object();
-                if(!$this->user_exists())
-                {
-                    throw new Exception("USER_DOESNT_EXIST");
-                }
-            }
+            $this->validate_user_logged_in();
 
             if(!empty($firstname) && $firstname != $this->_user->firstname)
             {
@@ -546,6 +545,8 @@ class UserHandler extends Handler
     {
         try
         {
+            $this->validate_user_logged_in();
+
             if(is_array($ids))
             {
                  $this->get_multiple_users($ids);
@@ -617,6 +618,8 @@ class UserHandler extends Handler
 
         try
         {
+            $this->validate_user_logged_in();
+
             if(!RightsHandler::has_user_right("CREATE_ACCOUNT"))
             {
                     throw new Exception("INSUFFICIENT_RIGHTS");
@@ -812,7 +815,17 @@ class UserHandler extends Handler
 
     public function get_profile_images()
     {
-        $this->profile_images = DbHandler::get_instance()->return_query("SELECT * FROM image");
+        try
+        {
+            $this->validate_user_logged_in();
+            $this->profile_images = DbHandler::get_instance()->return_query("SELECT * FROM image");
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
     }
 
     private function mail_exists($email)
@@ -823,6 +836,13 @@ class UserHandler extends Handler
         {
             throw new Exception("CREATE_EMAIL_USED");
         }
+    }
+
+    private function validate_user_logged_in()
+    {
+        if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
     }
 }
 ?>

@@ -2,10 +2,8 @@
     class NotificationHandler extends Handler
     {
         private $_unseen_notifications;
-        private $_unread_notifications;
         private $_notifications;
         private $_args;
-        private $_load_notifications = true;
         
         
         public function __construct() {
@@ -15,6 +13,7 @@
         
         public function get_notification_categories(){
             try {
+                $this->check_login();
                 return DbHandler::get_instance()->return_query("SELECT notifications_category.icon_class, "
                         . "notifications_category.category_name, "
                         . "translation_notifications_category.name "
@@ -29,20 +28,19 @@
             }
         }
         
-        public function update_unseen_notification_count($userId){
+        public function update_unseen_notification_count(){
             try {
-                $this->check_numeric($userId);
-                
+                $this->check_login();
+                $this->check_rights();
                 $newCounter = DbHandler::get_instance()->count_query("SELECT notification_id "
                         . "FROM user_notifications "
                         . "WHERE user_id=:userId "
-                        . "AND is_read=:isRead", $userId, 0); 
+                        . "AND is_read=:isRead", $this->_user->id, 0); 
                 
                 if ($newCounter == 0) {
                     return false;
                 }
                 $this->_unseen_notifications = $newCounter;
-                $this->_load_notifications = true;
                 
                 return true;      
                 
@@ -54,9 +52,7 @@
         
         public function read_notifications($notifs_array){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");
-                }
+                $this->check_login();
                 if (count($notifs_array) < 1) {
                     throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
                 }
@@ -78,15 +74,15 @@
             }      
         }
         
-        public function seen_notification($notificationId, $userId){
+        public function seen_notification($notificationId){
             try {
+                $this->check_login();
                 $this->check_numeric($notificationId);
-                $this->check_numeric($userId);
                 
                 DbHandler::get_instance()->query("UPDATE user_notifications "
                         . "SET is_read=1 "
                         . "WHERE id=:notificationId "
-                        . "AND user_id=:userId", $notificationId, $userId);               
+                        . "AND user_id=:userId", $notificationId, $this->_user->id);               
                 
                 return true;
                 
@@ -98,9 +94,7 @@
         
         public function seen_notifications(){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");;
-                }
+                $this->check_login();
                 
                 DbHandler::get_instance()->query("UPDATE user_notifications "
                         . "SET is_read=1 "
@@ -117,9 +111,8 @@
         
         public function delete_notifications($notifs_array){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");
-                }
+                $this->check_login();
+                $this->check_rights();
                 if (count($notifs_array) < 1) {
                     throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
                 }
@@ -139,10 +132,10 @@
                 return false;
             }
         }
-        
+
+        //Flyttes senere
         public function clean_arguments(){
             try {
-                
                 DbHandler::get_instance()->query("DELETE FROM user_notifications_arguments "
                         . "WHERE arg_id NOT IN ("
                         . "SELECT arg_id FROM user_notifications)");
@@ -153,18 +146,21 @@
         }
         
         public function get_notifications(){
-            return $this->_notifications;
+            $this->check_login();
+            $this->check_rights();
+            return isset($this->_notifications) ? $this->_notifications : array();
         }
         
         public function get_unseen_notifications_count(){
-            return $this->_unseen_notifications;
+            $this->check_login();
+            $this->check_rights();
+            return isset($this->_unseen_notifications) ? $this->_unseen_notifications : 0;
         }
         
         public function load_notifications($offset, $limit = 5){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");
-                }
+                $this->check_login();
+                $this->check_rights();
                 $this->check_numeric($offset);
                 $this->check_numeric($limit);
                 
@@ -223,9 +219,8 @@
         
         public function load_notifications_from_category($offset, $category, $limit = 5){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");
-                }
+                $this->check_login();
+                $this->check_rights();
                 $this->check_numeric($offset);
                 $this->check_numeric($limit);
                 $this->is_null_or_empty($category);
@@ -249,8 +244,9 @@
                         . "user_notifications.is_read AS isRead, "
                         . "user_notifications.arg_id AS arg_id, "
                         . "notifications_category.icon_class AS icon, "
-                        . "notifications_category.link_page AS page, "
-                        . "notifications_category.link_step AS step, "
+                        . "notifications_category.link_page AS link_page, "
+                        . "notifications_category.link_step AS link_step, "
+                        . "notifications_category.link_args AS link_args, "
                         . "translation_notifications_category.name AS category "
                         . "FROM user_notifications "
                         . "INNER JOIN notifications "
@@ -321,6 +317,8 @@
         
         public function get_arguments($arg_id){
             try {
+                $this->check_login();
+                $this->check_rights();
                 $this->check_numeric($arg_id);
                 
                 $new_array = array();
@@ -337,9 +335,11 @@
         
         public function create_new_static_user_notification($reciever, $prefix, $args){
             try {
+                //TODO validation
                 $this->check_numeric($reciever);
                 $this->check_prefix($prefix);
-                //TODO check $args
+                $this->check_isnull($args);
+                
                 $guid = $this->get_new_guid();
                 $query = "INSERT INTO user_notifications_arguments (name, value, arg_id) VALUES ";
                 foreach ($args as $key => $value) {
@@ -486,12 +486,28 @@
             }
         }
         
+        private function check_login(){
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+        }
+        
         private function is_null_or_empty($value){
+            $this->check_isnull($value);
+            if (empty($value) && $value != 0) {
+                throw new Exception("OBJECT_IS_EMPTY");
+            }
+        }
+        
+        private function check_isnull($value){
             if (!isset($value)) {
                 throw new Exception("OBJECT_DOESNT_EXIST");
             }
-            if (empty($value) && $value != 0) {
-                throw new Exception("OBJECT_IS_EMPTY");
+        }
+        
+        private function check_rights(){
+            if (!RightsHandler::has_user_right("NOTIFICATIONS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
         }
     }

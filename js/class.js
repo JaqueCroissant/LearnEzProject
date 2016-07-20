@@ -13,9 +13,10 @@ $(document).ready(function () {
 
     $(document).on("click", ".update_class", function (event) {
         event.preventDefault();
-        if ($("#class_open").val() === "on") {
+        var count = $("#class_open:checked").length;
+        if (count === 1) {
             $("#class_open_hidden").val(1);
-        } else {
+        } else if (count === 0) {
             $("#class_open_hidden").val(0);
         }
 
@@ -128,6 +129,7 @@ $(document).ready(function () {
         initiate_submit_get($(this), "find_class.php?class_id=" + id, function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
+            $("#edit_class_header").removeClass("hidden");
             $("#class_title").val(ajax_data.class.title);
             if (ajax_data.class.open === "1") {
                 $("#class_open").prop("checked", true);

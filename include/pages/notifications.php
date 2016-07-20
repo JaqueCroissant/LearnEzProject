@@ -69,7 +69,7 @@ $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), 
                                                 $args = $not_handler->get_arguments($notif->arg_id);
                                                 $timeString = time_elapsed($notif->datetime);
                                                 echo '
-                                                <div class="mail-item notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? 'notif_read' : 'notif_unread') . '" style="padding:0;">
+                                                <div class="mail-item item_hover notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? '' : 'item_unread') . '" style="padding:0;">
                                                     <div class="notif_element_checkbox checkbox-resize" style="padding:0 16px 15px 16px;">
                                                         <div class="checkbox">
                                                             <input type="checkbox" id="checkbox-enable-reply" name="notifs[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>

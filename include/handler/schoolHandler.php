@@ -502,7 +502,6 @@ class SchoolHandler extends Handler {
         if (!is_numeric($max_students)) {
             throw new Exception("MAX_STUDENTS_HAS_INVALID_NUMBER");
         }
-        $this->is_null_or_empty($max_students);
     }
 
     private function verify_school_exists($id) {
@@ -520,7 +519,6 @@ class SchoolHandler extends Handler {
         if (!is_numeric($school_type_id)) {
             throw new Exception("WRONG_SCHOOL_TYPE_ID");
         }
-        $this->is_null_or_empty($school_type_id);
 
         $count = DbHandler::get_instance()->count_query("SELECT * FROM school_type WHERE id = :id", $school_type_id);
         if (!($count == 1)) {
@@ -529,7 +527,6 @@ class SchoolHandler extends Handler {
     }
 
     private function verify_zip_code($zip_code) {
-        $this->is_null_or_empty($zip_code);
         if (!is_numeric($zip_code)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }

@@ -205,11 +205,8 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("SCHOOL_FIND")) {
-                
-            } elseif ($this->_user->school_id != $id) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
+
+            $this->verify_user_school_access($id);
             $this->verify_school_exists($id);
 
             $query = "SELECT * FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
@@ -341,11 +338,16 @@ class SchoolHandler extends Handler {
 
     public function can_add_students($school_id) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
 
-            if (empty($school_id)) {
+            if(empty($school_id))
+            {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
+            $this->verify_user_school_access($school_id);
             $this->student_slots_open($school_id);
 
             if ($this->open_slots < 1) {
@@ -361,11 +363,16 @@ class SchoolHandler extends Handler {
 
     public function student_slots_open($school_id) {
         try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
 
-            if (empty($school_id)) {
+            if(empty($school_id))
+            {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
+            $this->verify_user_school_access($school_id);
             $this->verify_school_exists($school_id);
             $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
             $max_students = reset(DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $school_id));
@@ -379,20 +386,30 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function school_has_classes($school_id, $class_ids) {
-        try {
-            if (empty($school_id)) {
+    public function school_has_classes($school_id, $class_ids)
+    {
+        try
+        {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(empty($school_id))
+            {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
-            if (!empty($class_ids)) {
+            $this->verify_user_school_access($school_id);
+            $this->verify_school_exists($school_id);
+
+            if(!empty($class_ids))
+            {
+                $this->verify_array_contains_numerics($class_ids);
+
                 $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
 
-                for ($i = 0; $i < count($class_ids); $i++) {
-                    if (!is_numeric($class_ids[$i])) {
-                        throw new Exception("INVALID_INPUT_IS_NOT_INT");
-                    }
-
+                for($i = 0; $i < count($class_ids); $i++)
+                {
                     $query .= $i != 0 ? ", " : "";
                     $query .= "'" . $class_ids[$i] . "'";
                 }
@@ -413,6 +430,18 @@ class SchoolHandler extends Handler {
         }
     }
 
+
+    private function verify_user_school_access($school_id)
+    {
+        if($this->_user->school_id != $school_id)
+        {
+            if(RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+        }
+    }
+
     private function verify_start_date_is_lower_than_end_date($start_date_string, $end_date_string) {
 
         $ds = strtotime($start_date_string);
@@ -420,6 +449,7 @@ class SchoolHandler extends Handler {
         
         if ($ds > $de) {
             throw new Exception("START_DATE_MUST_BE_LOWER_THAN_END");
+
         }
     }
 
@@ -430,6 +460,18 @@ class SchoolHandler extends Handler {
             }
         }
     }
+
+    private function verify_array_contains_numerics($array_of_nums)
+    {
+        foreach($array_of_nums as $value)
+        {
+            if(!is_numeric($value))
+            {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+        }
+    }
+
 
     private function verify_is_date($d) {
         if (!checkdate($d['month'], $d['day'], $d['year'])) {

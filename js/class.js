@@ -129,6 +129,7 @@ $(document).ready(function () {
         initiate_submit_get($(this), "find_class.php?class_id=" + id, function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
+            $("#edit_class_header").removeClass("hidden");
             $("#class_title").val(ajax_data.class.title);
             if (ajax_data.class.open === "1") {
                 $("#class_open").prop("checked", true);

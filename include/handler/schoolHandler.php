@@ -439,9 +439,9 @@ class SchoolHandler extends Handler {
 
     private function verify_user_school_access($school_id)
     {
-        if($this->_user->school_id != $school_id)
+        if(empty($this->_user->school_id) || $this->_user->school_id != $school_id)
         {
-            if(RightsHandler::has_user_right("SCHOOL_FIND"))
+            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }

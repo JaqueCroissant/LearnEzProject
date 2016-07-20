@@ -532,7 +532,7 @@ $paginationHandler = new PaginationHandler();
                                                 foreach($mails as $value) {
                                                     $date_to_string = time_elapsed($value->date);
                                                     echo '
-                                                        <div class="mail-item mail_number_'. $value->id.' '.($value->is_read ? 'mail-item-read' : "") .'" style="height:100px;">
+                                                        <div class="mail-item item_hover mail_number_'. $value->id.' '.($value->is_read ? '""' : "item_unread") .'" style="height:100px;">
                                                             <div class="mail_element_checkbox checkbox-resize">
                                                                 <div>
                                                                     <div class="checkbox">

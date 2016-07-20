@@ -5,7 +5,7 @@ var ready_to_change = true;
 $(document).ready(function () {
     var page_args = getURLParameters(location.href);
     if (typeof page_args['step'] !== 'undefined') {
-        current_tab = "#" + page_args['step'];
+        current_tab = "#" + page_args['step'] + "_tab";
     } else {
         current_tab = "#" + $(".my_tab").first().attr("id");
     }

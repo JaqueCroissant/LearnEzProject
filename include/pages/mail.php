@@ -152,10 +152,14 @@ $paginationHandler = new PaginationHandler();
                 
                 case 'search':
                     $fetch_successful = false;
-                    if(isset($_GET["search_query"]) && isset($_GET["search_folders"]) && isset($_GET["search_content"])) {
-                        $fetch_successful = $mailHandler->search_mail($_GET["search_query"], unserialize($_GET["search_folders"]), $_GET["search_content"],  $current_page_number, $current_order, $current_filter);
+                    $fetch_query = "";
+                    if(isset($_GET["search_q"]) && isset($_GET["search_f"]) && isset($_GET["search_c"])) {
+                        $fetch_successful = $mailHandler->search_mail($_GET["search_q"], unserialize($_GET["search_f"]), $_GET["search_c"],  $current_page_number, $current_order, $current_filter);
                         $mails = $paginationHandler->run_pagination($mailHandler->search_mails, $current_page_number, 5);
+                        $search_f = str_replace('"', '&quot;', $_GET['search_f']);
+                        $fetch_query = '&search_q='.$_GET['search_q'].'&search_f='.$search_f.'&search_c='.$_GET['search_c'];
                     }
+                    if($fetch_successful) {
                 ?>
                     <div class="row">
                         <div class="col-md-12">
@@ -165,52 +169,38 @@ $paginationHandler = new PaginationHandler();
                                 </div>
                                 
                                 <div class="btn-group" style="float:right;margin-right: 0px !important;"  role="group">
-                                    <a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter=0&order='.$current_order.'&p='.$paginationHandler->get_last_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo /*$paginationHandler->is_first_page()*/ true ? 'disabled' : '';?>><i class="fa fa-chevron-left"></i></a>
-                                    <a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter=0&order='.$current_order.'&p='.$paginationHandler->get_next_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo /*$paginationHandler->is_last_page()*/ true ? 'disabled' : '';?>><i class="fa fa-chevron-right"></i></a>
+                                    <a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter=0&order='.$current_order.'&p='.$paginationHandler->get_last_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_first_page() ==  true ? 'disabled' : '';?>><i class="fa fa-chevron-left"></i></a>
+                                    <a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter=0&order='.$current_order.'&p='.$paginationHandler->get_next_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_last_page() == true ? 'disabled' : '';?>><i class="fa fa-chevron-right"></i></a>
                                 </div>
 
                                 <div class="btn-group" style="float:right;" role="group">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo TranslationHandler::get_static_text("FILTER"); ?> <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter=0&order='.$current_order.'&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("ALL"); ?></a></li>
-                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter=1&order='.$current_order.'&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("UNREAD"); ?></a></li>
-                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter=2&order='.$current_order.'&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("READ"); ?></a></li>
+                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter=0&order='.$current_order.'&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("ALL"); ?></a></li>
+                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter=1&order='.$current_order.'&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("UNREAD"); ?></a></li>
+                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter=2&order='.$current_order.'&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("READ"); ?></a></li>
                                     </ul>
                                 </div>
 
                                 <div class="btn-group" style="float:right;"  role="group">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo TranslationHandler::get_static_text("ORDER_BY"); ?> <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter='.$current_filter.'&order=0&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("NEWEST"); ?></a></li>
-                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter='.$current_filter.'&order=1&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("OLDEST"); ?></a></li>
+                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter='.$current_filter.'&order=0&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("NEWEST"); ?></a></li>
+                                        <li><a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter='.$current_filter.'&order=1&p='.$current_page_number; ?>" id="mail" class="change_page"><?php echo TranslationHandler::get_static_text("OLDEST"); ?></a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div style="clear:both;"></div>
                         </div>
                     </div>
-        
-                    <?php
-                    if($fetch_successful) {
-                    ?>
                     <div class="table-responsive">
-                        <form method="POST" action="" id="mail_form" url="mail.php?step=search" name="mail">
-                        <input type="hidden" name="current_page" value="<?php echo $current_page; ?>">
-                        <input type="button" name="submit" style="display:none;">
                         <table class="table mail-list"><tbody><tr><td>
                             <?php
                                 if($fetch_successful) {
                                 foreach($mails as $value) {
                                     $date_to_string = time_elapsed($value->date);
                                     echo '
-                                        <div class="mail-item mail_number_'. $value->id.' '.($value->is_read ? 'mail-item-read' : "") .'" style="height:100px;">
-                                            <div class="mail_element_checkbox checkbox-resize">
-                                                <div>
-                                                    <div class="checkbox">
-                                                        <input type="checkbox" id="checkbox-enable-reply" name="mail[]" value="'.$value->id.'"><label for="checkbox-enable-reply"></label>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="mail-item mail_number_'. $value->id.' '.(!$value->is_read ? 'item_unread' : "") .' item_hover" style="height:100px;">
                                             <div class="change_page mail_element_content" page="mail" id="mail" step="show_mail" args="&mail_id='. $value->id .'">
                                                 <table class="mail-container"><tbody>
                                                     <tr>
@@ -244,10 +234,12 @@ $paginationHandler = new PaginationHandler();
                                 }
                             ?>
                             </td></tr></tbody></table>
-                        </form>
                     </div>
                     <?php
                     } else {
+                        if(isset($_GET["url"])) {
+                            $_GET["url"] = null;
+                        }
                     ?>
                     <div class="panel panel-default new-message">						
                         <form method="POST" action="" id="search_mail_form" url="mail.php?step=search" name="search_mail">

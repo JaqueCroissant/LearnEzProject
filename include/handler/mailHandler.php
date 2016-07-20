@@ -513,8 +513,12 @@ class MailHandler extends Handler
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.receiver_folder_id"
                     . " WHERE user_mail.receiver_id = :user_id AND ". $query_search_content ." AND user_mail.receiver_folder_id IN (". $this->generate_in_query($final_mail_folders).")";
             
+            echo $read_unread_all;
+            if($read_unread_all == 2) {
+                echo "LOL";
+            }
             $query .= $read_unread_all == 1 ? " AND user_mail.is_read is false" : ($read_unread_all == 2 ? " AND user_mail.is_read is true" : "");
-            $query .= $order_ascending == 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
+            $query .= $order_ascending != 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
 
             if($search_content == 3) {
                 $data = DbHandler::get_instance()->return_query($query, $this->_user->id, '%'.$search_query.'%', '%'.$search_query.'%');

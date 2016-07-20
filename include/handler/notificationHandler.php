@@ -2,7 +2,6 @@
     class NotificationHandler extends Handler
     {
         private $_unseen_notifications;
-        private $_unread_notifications;
         private $_notifications;
         private $_args;
         
@@ -32,7 +31,7 @@
         public function update_unseen_notification_count(){
             try {
                 $this->check_login();
-                
+                $this->check_rights();
                 $newCounter = DbHandler::get_instance()->count_query("SELECT notification_id "
                         . "FROM user_notifications "
                         . "WHERE user_id=:userId "
@@ -113,6 +112,7 @@
         public function delete_notifications($notifs_array){
             try {
                 $this->check_login();
+                $this->check_rights();
                 if (count($notifs_array) < 1) {
                     throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
                 }
@@ -132,10 +132,10 @@
                 return false;
             }
         }
-        
+
+        //Flyttes senere
         public function clean_arguments(){
             try {
-                //TODO validation
                 DbHandler::get_instance()->query("DELETE FROM user_notifications_arguments "
                         . "WHERE arg_id NOT IN ("
                         . "SELECT arg_id FROM user_notifications)");
@@ -147,17 +147,20 @@
         
         public function get_notifications(){
             $this->check_login();
-            return $this->_notifications;
+            $this->check_rights();
+            return isset($this->_notifications) ? $this->_notifications : array();
         }
         
         public function get_unseen_notifications_count(){
             $this->check_login();
-            return $this->_unseen_notifications;
+            $this->check_rights();
+            return isset($this->_unseen_notifications) ? $this->_unseen_notifications : 0;
         }
         
         public function load_notifications($offset, $limit = 5){
             try {
                 $this->check_login();
+                $this->check_rights();
                 $this->check_numeric($offset);
                 $this->check_numeric($limit);
                 
@@ -217,6 +220,7 @@
         public function load_notifications_from_category($offset, $category, $limit = 5){
             try {
                 $this->check_login();
+                $this->check_rights();
                 $this->check_numeric($offset);
                 $this->check_numeric($limit);
                 $this->is_null_or_empty($category);
@@ -314,6 +318,7 @@
         public function get_arguments($arg_id){
             try {
                 $this->check_login();
+                $this->check_rights();
                 $this->check_numeric($arg_id);
                 
                 $new_array = array();
@@ -333,7 +338,8 @@
                 //TODO validation
                 $this->check_numeric($reciever);
                 $this->check_prefix($prefix);
-                //TODO check $args
+                $this->check_isnull($args);
+                
                 $guid = $this->get_new_guid();
                 $query = "INSERT INTO user_notifications_arguments (name, value, arg_id) VALUES ";
                 foreach ($args as $key => $value) {
@@ -356,7 +362,6 @@
         
         
         public static function parse_text($string, $args){
-            $this->check_login();
             $array = array_reverse(self::parser($string));
             $final = $string;
             foreach ($array as $value) {
@@ -488,11 +493,21 @@
         }
         
         private function is_null_or_empty($value){
+            $this->check_isnull($value);
+            if (empty($value) && $value != 0) {
+                throw new Exception("OBJECT_IS_EMPTY");
+            }
+        }
+        
+        private function check_isnull($value){
             if (!isset($value)) {
                 throw new Exception("OBJECT_DOESNT_EXIST");
             }
-            if (empty($value) && $value != 0) {
-                throw new Exception("OBJECT_IS_EMPTY");
+        }
+        
+        private function check_rights(){
+            if (!RightsHandler::has_user_right("NOTIFICATIONS")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
         }
     }

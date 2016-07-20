@@ -353,10 +353,6 @@ a .menu_header {
     height:64px;
 }
 
-.notification:hover {
-    background-color: rgba(0, 128, 192, 0.46);
-}
-
 .notification:first-child{
     border-top:1px solid lightgrey;
 }
@@ -380,18 +376,12 @@ a .menu_header {
     padding-right:0.5em;
 }
 
-.mail-item .notif_unread:hover, .mail-item .notif_read:hover {
-    background-color: #e4e2e2 !important;
-    padding-right:1em;
+.item_unread {
+    background-color: rgba(0, 128, 192, 0.10) !important;
 }
 
-.notif_read {
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0.15), inset 0 0 1px rgba(0, 0, 0, 0.15) !important;
-    background-color: #fff !important;
-}
-
-.notif_unread {
-    background-color: #cecece !important;
+.item_hover:hover {
+    background-color: rgba(0, 128, 192, 0.20) !important;
 }
 
 .checkbox label {
@@ -412,7 +402,7 @@ a .menu_header {
     overflow: hidden; 
     cursor:pointer;
 }
-
+/*
 .mail-item:hover,
 .mail-item-read:hover {
     background: #e4e2e2 !important;
@@ -420,7 +410,7 @@ a .menu_header {
 
 .mail-item-read {
     background: #eceaea !important;
-}
+}*/
 
 .four_oh_four_title {
     text-align: center;

@@ -385,22 +385,23 @@ class SchoolHandler extends Handler {
     {
         try
         {
+
+
             if(empty($school_id))
             {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
+            $this->verify_school_exists($school_id);
+
             if(!empty($class_ids))
             {
+                $this->verify_array_contains_numerics($class_ids);
+
                 $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
 
                 for($i = 0; $i < count($class_ids); $i++)
                 {
-                    if(!is_numeric($class_ids[$i]))
-                    {
-                        throw new Exception("INVALID_INPUT_IS_NOT_INT");
-                    }
-
                     $query .= $i != 0 ? ", " : "";
                     $query .= "'" . $class_ids[$i] . "'";
                 }
@@ -423,6 +424,17 @@ class SchoolHandler extends Handler {
         }
     }
 
+    private function verify_user_school_access($school_id)
+    {
+        if($this->_user->school_id != $school_id)
+        {
+            if(RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+        }
+    }
+
     private function verify_array_contains_strings($array_of_strings) {
         foreach ($array_of_strings as $value) {
             if (!is_string($value)) {
@@ -431,6 +443,17 @@ class SchoolHandler extends Handler {
         }
     }
     
+    private function verify_array_contains_numerics($array_of_nums)
+    {
+        foreach($array_of_nums as $value)
+        {
+            if(!is_numeric($value))
+            {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+        }
+    }
+
     private function verify_is_date($d) {
         if (!checkdate($d['month'], $d['day'], $d['year'])) {
             throw new Exception("SUBSCRIPTION_END_INVALID");

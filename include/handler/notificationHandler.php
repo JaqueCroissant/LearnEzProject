@@ -16,6 +16,7 @@
                 $this->check_login();
                 return DbHandler::get_instance()->return_query("SELECT notifications_category.icon_class, "
                         . "notifications_category.category_name, "
+                        . "notifications_category.id, "
                         . "translation_notifications_category.name "
                         . "FROM notifications_category "
                         . "INNER JOIN translation_notifications_category "
@@ -172,6 +173,7 @@
                         . "user_notifications.datetime AS datetime, "
                         . "user_notifications.is_read AS isRead, "
                         . "user_notifications.arg_id AS arg_id, "
+                        . "notifications.notifications_category_id AS category_id, "
                         . "notifications_category.icon_class AS icon, "
                         . "notifications_category.link_page AS link_page, "
                         . "notifications_category.link_step AS link_step, "
@@ -202,7 +204,8 @@
                 }
                 $ids = array();
                 $fullArray = array();
-                foreach ($dbData as $notification) {
+                $filtered = $this->filter_blocked_notifications($dbData);
+                foreach ($filtered as $notification) {
                     array_push($fullArray, new Notification($notification));
                     array_push($ids, $notification["arg_id"]);
                 }
@@ -243,6 +246,7 @@
                         . "user_notifications.datetime AS datetime, "
                         . "user_notifications.is_read AS isRead, "
                         . "user_notifications.arg_id AS arg_id, "
+                        . "notifications.notifications_category_id AS category_id, "
                         . "notifications_category.icon_class AS icon, "
                         . "notifications_category.link_page AS link_page, "
                         . "notifications_category.link_step AS link_step, "
@@ -274,6 +278,7 @@
                 }
                 $ids = array();
                 $fullArray = array();
+                
                 foreach ($dbData as $notification) {
                     array_push($fullArray, new Notification($notification));
                     array_push($ids, $notification["arg_id"]);
@@ -291,25 +296,26 @@
         
         private function load_arguments($arg_ids) {
             try {
-                $ids = array_unique($arg_ids);
-                foreach ($ids as $id) {
-                    $this->check_numeric($id);
+                if (count($arg_ids) > 0) {
+                    $ids = array_unique($arg_ids);
+                    foreach ($ids as $id) {
+                        $this->check_numeric($id);
+                    }
+                    $final = "";
+                    foreach ($ids as $value) {
+                        $final .= "'" . $value . "',";
+                    }
+                    $final = rtrim($final, ",");
+                    $dbData = DbHandler::get_instance()->return_query("SELECT name, value, arg_id "
+                            . "FROM user_notifications_arguments "
+                            . "WHERE arg_id IN (" . $final . ")");
+                    $array = array();
+                    foreach ($dbData as $value) {
+                        array_push($array, array($value["name"] => $value["value"], "arg_id" => $value["arg_id"]));
+                    }
+                    return $array;
                 }
-                $final = "";
-                for ($i = 0; $i < count($ids); $i++) {
-                   $this->check_numeric($ids[$i]); 
-                   $final .= ($i != 0 ? "," : "") . "'" . $ids[$i] . "'";
-                }
-                $dbData = DbHandler::get_instance()->return_query("SELECT name, value, arg_id "
-                        . "FROM user_notifications_arguments "
-                        . "WHERE arg_id IN (" . $final . ")");
-                $array = array();
-                foreach ($dbData as $value) {
-                    array_push($array, array($value["name"] => $value["value"], "arg_id" => $value["arg_id"]));
-                }
-                
-                return $array;
-                
+                return array();
             } catch (Exception $ex) {
                 $this->error = ErrorHandler::return_error($ex->getMessage());
             }
@@ -339,16 +345,17 @@
                 $this->check_numeric($reciever);
                 $this->check_prefix($prefix);
                 $this->check_isnull($args);
-                
-                $guid = $this->get_new_guid();
-                $query = "INSERT INTO user_notifications_arguments (name, value, arg_id) VALUES ";
-                foreach ($args as $key => $value) {
-                    $query .= "('" . $key . "','" . $value . "','" . $guid . "'),";
-                }
-                $query = rtrim($query, ",") . ";";
-                echo $query;
-                
-                DbHandler::get_instance()->query($query);
+
+                $guid = "";
+                if (count($args) > 0) {
+                    $guid = $this->get_new_guid();
+                    $query = "INSERT INTO user_notifications_arguments (name, value, arg_id) VALUES ";
+                    foreach ($args as $key => $value) {
+                        $query .= "('" . $key . "','" . $value . "','" . $guid . "'),";
+                    }
+                    $query = rtrim($query, ",") . ";";
+                    DbHandler::get_instance()->query($query);
+                }               
                 
                 $this->create_static_user_notification($reciever, $prefix, $guid);
                 
@@ -356,6 +363,7 @@
                 
             } catch (Exception $exc) {
                 $this->error = ErrorHandler::return_error($exc->getMessage());
+                echo $this->error->title;
                 return false;
             }
         }
@@ -403,6 +411,25 @@
                 }
             }
             return $parse_array;
+        }
+        
+        private function get_blocked_categories(){
+            try{
+                //Missing
+                return array();
+                
+                
+            } catch (Exception $ex) {
+
+            }
+        }
+        
+        private function filter_blocked_notifications($data){
+            $blocked = $this->get_blocked_categories();
+            if (count($blocked) > 0) {
+                return array_filter($data, function($v) use($blocked) {return (!in_array($v["category_id"], $blocked, true));});
+            }
+            return $data;
         }
         
         private function get_new_guid(){

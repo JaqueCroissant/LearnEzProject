@@ -15,7 +15,7 @@ $classHandler->get_all_classes();
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" id="find_class_header"><a href="#find_class_tab" class="my_tab_header" id="find_class_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("FIND_CLASS"); ?></a></li>
                     <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                        <li role="presentation" id="edit_class_header" class=""><a href="#edit_class" class="my_tab_header" id="edit_class_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("EDIT_CLASS_GENERIC"); ?></a></li>
+                        <li role="presentation" id="edit_class_header" class="hidden"><a href="#edit_class" class="my_tab_header" id="edit_class_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("EDIT_CLASS_GENERIC"); ?></a></li>
                     <?php } ?>
                 </ul><!-- .nav-tabs -->
 

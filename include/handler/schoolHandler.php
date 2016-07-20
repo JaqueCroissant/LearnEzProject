@@ -205,11 +205,8 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("SCHOOL_FIND")) {
-                
-            } elseif ($this->_user->school_id != $id) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
+
+            $this->verify_user_school_access($id);
             $this->verify_school_exists($id);
 
             $query = "SELECT * FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
@@ -342,11 +339,16 @@ class SchoolHandler extends Handler {
     public function can_add_students($school_id) {
         try {
 
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+
             if(empty($school_id))
             {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
+            $this->verify_user_school_access($school_id);
             $this->student_slots_open($school_id);
 
             if ($this->open_slots < 1) {
@@ -363,11 +365,16 @@ class SchoolHandler extends Handler {
     public function student_slots_open($school_id) {
         try {
 
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+
             if(empty($school_id))
             {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
+            $this->verify_user_school_access($school_id);
             $this->verify_school_exists($school_id);
             $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
             $max_students = reset(DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $school_id));
@@ -386,13 +393,16 @@ class SchoolHandler extends Handler {
     {
         try
         {
-
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
 
             if(empty($school_id))
             {
                 throw new Exception("CREATE_NO_SCHOOL");
             }
 
+            $this->verify_user_school_access($school_id);
             $this->verify_school_exists($school_id);
 
             if(!empty($class_ids))

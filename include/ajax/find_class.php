@@ -13,6 +13,7 @@ if (isset($_POST['state'])) {
                 $class_open = "";
             } else {
                 $class_open = $_POST['class_open'];
+                $array['class_open'] = $class_open;
             }
 
             if (!isset($_POST['class_title'])) {

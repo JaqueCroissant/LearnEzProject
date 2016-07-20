@@ -444,10 +444,14 @@ class MailHandler extends Handler
             }
             
             if(RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.id != :user_id", $this->_user->id);
+                if(RightsHandler::has_user_right("MAIL_SEND_TO_ADMIN")) {
+                    $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id", $this->_user->id);
+                } else {
+                    $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND users.user_type_id != '1'", $this->_user->id);
+                }
+                
             } else {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND users.school_id : school_id", $this->_user->id, $this->_user->school_id);
-            
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND school_id = :school_id", $this->_user->id, $this->_user->school_id);
             }
             
             $users = array();
@@ -513,10 +517,6 @@ class MailHandler extends Handler
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.receiver_folder_id"
                     . " WHERE user_mail.receiver_id = :user_id AND ". $query_search_content ." AND user_mail.receiver_folder_id IN (". $this->generate_in_query($final_mail_folders).")";
             
-            echo $read_unread_all;
-            if($read_unread_all == 2) {
-                echo "LOL";
-            }
             $query .= $read_unread_all == 1 ? " AND user_mail.is_read is false" : ($read_unread_all == 2 ? " AND user_mail.is_read is true" : "");
             $query .= $order_ascending != 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
 

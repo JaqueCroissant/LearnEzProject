@@ -91,7 +91,7 @@ $paginationHandler = new PaginationHandler();
                                                             break;
                                                         
                                                         case "USERS":
-                                                            echo '<option value="USER_ANY_'.$inner_value->id.'">'.$inner_value->firstname.' ' . $inner_value->surname.' ('. $inner_value->school_name .')</option>';
+                                                            echo '<option value="USER_ANY_'.$inner_value->id.'">'.$inner_value->firstname.' ' . $inner_value->surname.' ('. (empty($inner_value->school_name) ? TranslationHandler::get_static_text("SUPER_ADMIN") : $inner_value->school_name) .')</option>';
                                                             break;
                                                         
                                                         case "CLASS":
@@ -154,7 +154,7 @@ $paginationHandler = new PaginationHandler();
                     $fetch_successful = false;
                     $fetch_query = "";
                     if(isset($_GET["search_q"]) && isset($_GET["search_f"]) && isset($_GET["search_c"])) {
-                        $fetch_successful = $mailHandler->search_mail($_GET["search_q"], unserialize($_GET["search_f"]), $_GET["search_c"],  $current_page_number, $current_order, $current_filter);
+                        $fetch_successful = $mailHandler->search_mail($_GET["search_q"], unserialize($_GET["search_f"]), $_GET["search_c"], $current_order, $current_filter);
                         $mails = $paginationHandler->run_pagination($mailHandler->search_mails, $current_page_number, 5);
                         $search_f = str_replace('"', '&quot;', $_GET['search_f']);
                         $fetch_query = '&search_q='.$_GET['search_q'].'&search_f='.$search_f.'&search_c='.$_GET['search_c'];
@@ -169,8 +169,8 @@ $paginationHandler = new PaginationHandler();
                                 </div>
                                 
                                 <div class="btn-group" style="float:right;margin-right: 0px !important;"  role="group">
-                                    <a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter=0&order='.$current_order.'&p='.$paginationHandler->get_last_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_first_page() ==  true ? 'disabled' : '';?>><i class="fa fa-chevron-left"></i></a>
-                                    <a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter=0&order='.$current_order.'&p='.$paginationHandler->get_next_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_last_page() == true ? 'disabled' : '';?>><i class="fa fa-chevron-right"></i></a>
+                                    <a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter='.$current_filter.'&order='.$current_order.'&p='.$paginationHandler->get_last_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_first_page() ==  true ? 'disabled' : '';?>><i class="fa fa-chevron-left"></i></a>
+                                    <a href="javascript:void(0)" page="mail" step="search" args="<?php echo $fetch_query.'&filter='.$current_filter.'&order='.$current_order.'&p='.$paginationHandler->get_next_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_last_page() == true ? 'disabled' : '';?>><i class="fa fa-chevron-right"></i></a>
                                 </div>
 
                                 <div class="btn-group" style="float:right;" role="group">
@@ -474,8 +474,8 @@ $paginationHandler = new PaginationHandler();
                                     ?>
                                 </div>
                                 <div class="btn-group" style="float:right;margin-right: 0px !important;"  role="group">
-                                    <a href="javascript:void(0)" page="mail" step="<?php echo $current_page ?>" args="<?php echo '&filter=0&order='.$current_order.'&p='.$paginationHandler->get_last_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_first_page() ? 'disabled' : '';?>><i class="fa fa-chevron-left"></i></a>
-                                    <a href="javascript:void(0)" page="mail" step="<?php echo $current_page ?>" args="<?php echo '&filter=0&order='.$current_order.'&p='.$paginationHandler->get_next_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_last_page() ? 'disabled' : '';?>><i class="fa fa-chevron-right"></i></a>
+                                    <a href="javascript:void(0)" page="mail" step="<?php echo $current_page ?>" args="<?php echo '&filter='.$current_filter.'&order='.$current_order.'&p='.$paginationHandler->get_last_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_first_page() ? 'disabled' : '';?>><i class="fa fa-chevron-left"></i></a>
+                                    <a href="javascript:void(0)" page="mail" step="<?php echo $current_page ?>" args="<?php echo '&filter='.$current_filter.'&order='.$current_order.'&p='.$paginationHandler->get_next_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo $paginationHandler->is_last_page() ? 'disabled' : '';?>><i class="fa fa-chevron-right"></i></a>
                                 </div>
 
                                 <?php

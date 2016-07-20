@@ -9,6 +9,7 @@ class Notification extends ORM
         public $datetime;
         public $isRead;
         public $category;
+        public $category_id;
         public $icon;
         public $link_page;
         public $link_step;

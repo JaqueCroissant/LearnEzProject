@@ -61,7 +61,7 @@ function get_more_notifications(){
         if (count($notificationHandler->get_notifications()) != 5) {
             $json_array["status_text"] = "<div style='text-align:center;font-style:italic;padding:6px 0 6px 0;width:100%;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
         }
-        $json_array['error'] = $notificationHandler->error->title;
+        $json_array['error'] = (isset($notificationHandler->error) ? $notificationHandler->error->title : null);
         echo json_encode($json_array);
     }
 }
@@ -69,7 +69,7 @@ function get_more_notifications(){
 function notification_setup($value, $args){
     $time = time_elapsed($value->datetime);
     $final = "<div class='notification item_hover " . ($value->isRead == 2 ? "" : "item_unread")
-            . "' style='width:100%;'><div class='change_page cursor' page='" . $value->link_page . "' id='" . $value->link_page . "' step='" . $value->link_step . "' args='" . $value->link_args . (isset($args["link_id"])? $args["link_id"] : "") . "'>"
+            . "' style='width:100%;'><div class='change_page cursor read_notif' notif='" . $value->id . "' page='" . $value->link_page . "' id='" . $value->link_page . "' step='" . $value->link_step . "' args='" . $value->link_args . (isset($args["link_id"])? $args["link_id"] : "") . "'>"
             . "<div class='notifcation_content notification_icon' style='width:8.33%'><div class='fa " . $value->icon . "' style='font-size:1.5em'></div></div>"
             . "<div class='fz-sm notifcation_content' style='padding-left:12px;width:80%;'><p class='mail-item-excerpt'>" . NotificationHandler::parse_text($value->text, $args) . "</p><i class='fz-sm' style='width:100% !important;'>" . $time["value"] . " " . TranslationHandler::get_static_text($time["prefix"]) . " " . TranslationHandler::get_static_text("DATE_AGO") . "</i></div></div>"
             . "<div class='notification_button notifcation_content' style='width:11.67%;'><div class='notification_delete cursor zmdi zmdi-close-circle' notif='" . $value->id . "'></div></div></div>";

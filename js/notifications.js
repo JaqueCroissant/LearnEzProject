@@ -59,6 +59,32 @@ jQuery(function ($) {
             }
         });
         
+        //read on click
+        $(document).on("click", ".read_notif", function(event){
+           if (!currently_clicked_button) {
+                currently_clicked_button = true;
+                $.ajax({
+                   type: "POST",
+                   url: "include/ajax/notifications.php",
+                   dataType: "json",
+                   data: {action: 'read', notifs: [$(this).attr("notif")]},
+                   success: function (result) {
+                        if (result.status_value === true) {
+                            $(event.target).closest(".notification").removeClass("item_unread");
+                        }
+                        else {
+                            show_status_bar("error", result.error, 7000);
+                        }
+                        currently_clicked_button = false;
+                   },
+                   error: function(result){
+                       show_status_bar("error", result.error);
+                       currently_clicked_button = false;
+                   }
+                });
+            }
+        });
+        
         //delete
         $("#notification_data").on("click", ".notification .notification_button .notification_delete", function(event){
             event.stopPropagation();
@@ -91,7 +117,6 @@ jQuery(function ($) {
             var notif = $("#notification_window");
             if (!no_more_notifications && !currently_recieving_notifications && (notif.scrollTop() + notif.innerHeight() >= notif[0].scrollHeight - 10)) {
                 currently_recieving_notifications = true;
-                console.log("running");
                 $("#notification_loading_image").show();
                 $.ajax({
                    type: "POST",

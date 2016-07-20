@@ -157,6 +157,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
+            show_status_bar("success", ajax_data.success);
         });
     });
 
@@ -165,12 +166,21 @@ $(document).ready(function () {
 
         var formData = new FormData($('#create_import_form')[0]);
         $.ajax({
-            url: 'include/ajax/create_account.php?step=2',
+            url: 'include/ajax/create_account.php?step=import_users',
             type: 'POST',
             data: formData,
+            dataType: "json",
             async: false,
             complete: function (data) {
-                alert(data)
+                ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+                if(ajax_data.status_value === "true")
+                {
+                    show_status_bar("success", ajax_data.success);
+                }
+                else
+                {
+                    show_status_bar("error", ajax_data.error);
+                }
             },
             cache: false,
             contentType: false,
@@ -215,7 +225,7 @@ $(document).ready(function () {
 
     $(document).on("change", ".import_select_school", function (event) {
         if ($(this).find("option:selected").val() === "") {
-            $(".import_select_class").addClass("hidden");
+            $(".import_select_class").prop("style", "visibility:hidden;height:0px;");
         } else {
             event.preventDefault;
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
@@ -223,7 +233,7 @@ $(document).ready(function () {
             }, function () {
                 $(".import_select_class").find(".select2-selection__rendered").empty();
                 $("#import_class_name").html(ajax_data.classes);
-                $(".import_select_class").removeClass("hidden");
+                $(".import_select_class").prop("style", "visibility:visible;height:auto;");
             });
         }
     });

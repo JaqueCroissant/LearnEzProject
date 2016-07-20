@@ -7,8 +7,8 @@
     switch($_GET['step'])
     {
         //VERIFICER BRUGERINFO
-        case "1":
-            if(isset($_POST)) 
+        case "edit_info":
+            if(isset($_POST))
             {
                 $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : "";
                 $surname = isset($_POST['surname']) ? $_POST['surname'] : "";
@@ -33,7 +33,7 @@
         break;
         
         //SKIFT PASSWORD
-        case "2":
+        case "change_password":
             if(isset($_POST))
             {
                 $old_password = isset($_POST['old_password']) ? $_POST['old_password'] : "";

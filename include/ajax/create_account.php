@@ -10,8 +10,7 @@
 
     switch($_GET['step'])
     {
-
-        case '1':
+        case 'create_user':
             if(isset($_POST))
             {
                 $firstname = isset($_POST["firstname"]) ? $_POST["firstname"] : "";
@@ -35,6 +34,7 @@
                     if($userHandler->create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids))
                     {
                         $jsonArray['status_value'] = true;
+                        $jsonArray['success'] = TranslationHandler::get_static_text("CREATE_USER_SUCCESS");
                     }
                     else
                     {
@@ -48,15 +48,12 @@
             }
         break;
 
-        case '2':
+        case 'import_users':
             if(isset($_POST))
             {
-
                 $temp_school_id = isset($_POST["school_id"]) ? $_POST["school_id"] : "";
-                $school_id = $userHandler->_user->user_type_id == 1 ? $temp_id : $userHandler->_user->school_id;
+                $school_id = $userHandler->_user->user_type_id == 1 ? $temp_school_id : $userHandler->_user->school_id;
                 $class_ids = isset($_POST["class_name"]) ? $_POST["class_name"] : array();
-
-
 
                 $file = isset($_FILES["csv_file"]) ? $_FILES["csv_file"] : array();
 
@@ -70,6 +67,7 @@
                     if($userHandler->import_users($file, $school_id, $class_ids))
                     {
                         $jsonArray['status_value'] = true;
+                        $jsonArray['success'] = TranslationHandler::get_static_text("IMPORT_USER_SUCCESS");
                     }
                     else
                     {

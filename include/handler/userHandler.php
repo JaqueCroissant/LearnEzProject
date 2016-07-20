@@ -19,6 +19,11 @@ class UserHandler extends Handler
         
         try
         {
+            if(!RightsHandler::has_user_right("CHANGE_PASSWORD"))
+            {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
             if(func_num_args() != 3 && func_num_args() != 4) {
                 throw new Exception ();
             }
@@ -109,6 +114,11 @@ class UserHandler extends Handler
     {
         try
         {
+            if(!RightsHandler::has_user_right("ACCOUNT_CREATE"))
+            {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
             $this->validate_user_information($firstname, $surname, $email, $password);
             $this->validate_user_affiliations($this->check_if_valid_type($usertype), $school_id, $class_ids);
 
@@ -160,6 +170,7 @@ class UserHandler extends Handler
         if(!empty($email))
         {
             $this->check_if_email($email);
+            $this->mail_exists($email);
         }
 
         if(!empty($password))
@@ -171,7 +182,7 @@ class UserHandler extends Handler
         }
     }
 
-    public function validate_user_affiliations($user_type, $school_id = null, $class_ids = null)
+    private function validate_user_affiliations($user_type, $school_id = null, $class_ids = null)
     {
         if(!$this->user_exists())
         {
@@ -215,9 +226,8 @@ class UserHandler extends Handler
         }
     }
 
-    public function generate_username($firstname, $surname)
+    private function generate_username($firstname, $surname)
     {
-
         $firstname = $this->clean(strtolower($firstname));
         $surname = $this->clean(strtolower($surname));
         $new_username = "";
@@ -393,6 +403,11 @@ class UserHandler extends Handler
     {
         try
         {
+            if(!RightsHandler::has_user_right("ACCOUNT_CREATE"))
+            {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
             foreach ($user_array as $user)
             {
                 $user->unhashed_password = $this->random_char(8);
@@ -427,14 +442,24 @@ class UserHandler extends Handler
                 }
             }
 
-            if(!empty($firstname))
+            if(!empty($firstname) && $firstname != $this->_user->firstname)
             {
+                if(!RightsHandler::has_user_right("CHANGE_FULL_NAME"))
+                {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+
                 $this->check_if_valid_string($firstname, false);
                 $this->_user->firstname = $firstname;
             }
 
-            if(!empty($surname))
+            if(!empty($surname) && $surname != $this->_user->surname)
             {
+                if(!RightsHandler::has_user_right("CHANGE_FULL_NAME"))
+                {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+
                 $this->check_if_valid_string($surname, false);
                 $this->_user->surname = $surname;
             }
@@ -448,6 +473,13 @@ class UserHandler extends Handler
             if(!empty($email))
             {
                 $this->check_if_email($email);
+
+
+                if($email != $this->_user->email)
+                {
+                    $this->mail_exists($email);
+                }
+
                 $this->_user->email = $email;
             }
 
@@ -585,6 +617,11 @@ class UserHandler extends Handler
 
         try
         {
+            if(!RightsHandler::has_user_right("CREATE_ACCOUNT"))
+            {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
             if($this->_user->user_type_id != 1)
             {
                 $school_id = $this->_user->school_id;
@@ -688,8 +725,6 @@ class UserHandler extends Handler
         $this->verify_class_ids($class_ids);
 
         $user->user_type_id = $this->check_if_valid_type($type);
-        //$user->firstname = $this->make_html_compatible($row[0+$offset]);
-        //$user->surname = $this->make_html_compatible($row[1+$offset]);
         $user->firstname = $firstname;
         $user->surname = $surname;
         $user->class_ids = $class_ids;
@@ -697,6 +732,7 @@ class UserHandler extends Handler
         if(!empty($email))
         {
             $this->check_if_email($email);
+            $this->mail_exists($email);
             $user->email = $email;
         }
 
@@ -752,20 +788,23 @@ class UserHandler extends Handler
     private function check_if_valid_type($type)
     {
         $type = strtoupper($type);
+
+        if(($type == "SA" && !RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN"))
+            || ($type == "A" && !RightsHandler::has_user_right("ACCOUNT_CREATE_LOCADMIN")))
+        {
+            throw new Exception("INSUFFICIENT_RIGHTS");
+        }
+
         switch($type)
         {
             case "SA":
                 return 1;
-
             case "A":
                 return 2;
-
             case "T":
                 return 3;
-
             case "S":
                 return 4;
-
             default:
                 throw new Exception("IMPORT_INVALID_TYPE");
         }
@@ -774,6 +813,16 @@ class UserHandler extends Handler
     public function get_profile_images()
     {
         $this->profile_images = DbHandler::get_instance()->return_query("SELECT * FROM image");
+    }
+
+    private function mail_exists($email)
+    {
+        $count = DbHandler::get_instance()->count_query("SELECT * FROM users WHERE email = :email", $email);
+
+        if($count > 0)
+        {
+            throw new Exception("CREATE_EMAIL_USED");
+        }
     }
 }
 ?>

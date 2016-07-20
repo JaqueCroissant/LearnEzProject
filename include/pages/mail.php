@@ -151,10 +151,19 @@ $paginationHandler = new PaginationHandler();
                     break;
                 
                 case 'search':
+                    $fetch_successful = false;
+                    if(isset($_GET["search_query"]) && isset($_GET["search_folders"]) && isset($_GET["search_content"])) {
+                        $fetch_successful = $mailHandler->search_mail($_GET["search_query"], unserialize($_GET["search_folders"]), $_GET["search_content"],  $current_page_number, $current_order, $current_filter);
+                        $mails = $paginationHandler->run_pagination($mailHandler->search_mails, $current_page_number, 5);
+                    }
                 ?>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mail-toolbar m-b-lg">
+                                <div class="btn-group" role="group">
+                                    <a href="javascript:void(0)" target_form="mail_form" class="check_all btn btn-default" style="opacity: 0;cursor:default"><i class="fa fa-square-o" style="opacity:0"></i></a>
+                                </div>
+                                
                                 <div class="btn-group" style="float:right;margin-right: 0px !important;"  role="group">
                                     <a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter=0&order='.$current_order.'&p='.$paginationHandler->get_last_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo /*$paginationHandler->is_first_page()*/ true ? 'disabled' : '';?>><i class="fa fa-chevron-left"></i></a>
                                     <a href="javascript:void(0)" page="mail" step="search" args="<?php echo '&filter=0&order='.$current_order.'&p='.$paginationHandler->get_next_page(); ?>" id="mail" class="change_page btn btn-default" <?php echo /*$paginationHandler->is_last_page()*/ true ? 'disabled' : '';?>><i class="fa fa-chevron-right"></i></a>
@@ -177,8 +186,118 @@ $paginationHandler = new PaginationHandler();
                                     </ul>
                                 </div>
                             </div>
+                            <div style="clear:both;"></div>
                         </div>
                     </div>
+        
+                    <?php
+                    if($fetch_successful) {
+                    ?>
+                    <div class="table-responsive">
+                        <form method="POST" action="" id="mail_form" url="mail.php?step=search" name="mail">
+                        <input type="hidden" name="current_page" value="<?php echo $current_page; ?>">
+                        <input type="button" name="submit" style="display:none;">
+                        <table class="table mail-list"><tbody><tr><td>
+                            <?php
+                                if($fetch_successful) {
+                                foreach($mails as $value) {
+                                    $date_to_string = time_elapsed($value->date);
+                                    echo '
+                                        <div class="mail-item mail_number_'. $value->id.' '.($value->is_read ? 'mail-item-read' : "") .'" style="height:100px;">
+                                            <div class="mail_element_checkbox checkbox-resize">
+                                                <div>
+                                                    <div class="checkbox">
+                                                        <input type="checkbox" id="checkbox-enable-reply" name="mail[]" value="'.$value->id.'"><label for="checkbox-enable-reply"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="change_page mail_element_content" page="mail" id="mail" step="show_mail" args="&mail_id='. $value->id .'">
+                                                <table class="mail-container"><tbody>
+                                                    <tr>
+
+                                                        <td class="mail-left">
+                                                            <div class="avatar avatar-lg avatar-circle">
+                                                                <img src="assets/images/profile_images/'.$value->user_image_id.'.png" alt="' . $value->firstname . ' ' . $value->surname .'" title="' . $value->firstname . ' ' . $value->surname .'">
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div>
+                                                                <p class="mail-item-date" style="float:right;margin-top:-6px;">' . $date_to_string["value"] . ' ' . TranslationHandler::get_static_text($date_to_string["prefix"]) .' ' . TranslationHandler::get_static_text("DATE_AGO") . '</p>
+                                                                <div class="mail-item-header">
+                                                                    <h4 class="mail-item-title"><p class="title-color">' . $value->title .'</p></h4>';
+                                                                    foreach($value->mail_tags as $mail_tag) {
+                                                                       echo '<span class="label '. $mail_tag->color_class .'" style="margin-right: 5px !important;">'. $mail_tag->title .'</span>';
+                                                                    }
+                                                                    echo '
+                                                                </div>
+                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 100 ? substr($value->text, 0, 100) . '...' : $value->text) .'</p>
+                                                            </div>                                                            
+                                                        </td>
+                                                    </tr>
+                                                </tbody></table>
+                                            </div>
+                                            <div style="clear:both;"></div>
+                                        </div>';
+                                        }
+                                } else {
+                                    echo $mailHandler->error->title;
+                                }
+                            ?>
+                            </td></tr></tbody></table>
+                        </form>
+                    </div>
+                    <?php
+                    } else {
+                    ?>
+                    <div class="panel panel-default new-message">						
+                        <form method="POST" action="" id="search_mail_form" url="mail.php?step=search" name="search_mail">
+                            <input type="hidden" name="current_page" value="<?php echo $current_page; ?>">
+                            <div class="panel-body">
+
+
+                                <div class="form-group m-b-sm">
+                                    <label for="mail_search_word" class="control-label"><?php echo TranslationHandler::get_static_text("SEARCH_WORDS"); ?>:</label>
+                                    <input id="mail_search_word" type="text" name="search_word" class="form-control">
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label for="select_mail_folders" class="control-label"><?php echo TranslationHandler::get_static_text("FOLDER"); ?>:</label>
+                                    <select id="select_mail_folders" name="search_folders[]" class="form-control" data-plugin="select2" multiple>
+                                        <option value="ALL"><?php echo TranslationHandler::get_static_text("ALL"); ?></option>
+                                        <?php
+                                            foreach($mailHandler->folders as $value) {
+                                                if($value->id != 3 && $value->id != 4) {
+                                                    echo '<option value="'.$value->id.'">'.$value->title.'</option>';
+                                                }
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="select_search_content" class="control-label"><?php echo TranslationHandler::get_static_text("SEARCH_IN"); ?>:</label>
+                                    <select id="select_search_content" name="search_content" class="form-control">
+                                        <option value="1"><?php echo TranslationHandler::get_static_text("MESSAGE"); ?></option>
+                                        <option value="2"><?php echo TranslationHandler::get_static_text("TITLE"); ?></option>
+                                        <option value="3"><?php echo TranslationHandler::get_static_text("TITLE_MESSAGE"); ?></option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="panel-footer clearfix">
+                                <div class="pull-right">
+                                    <button type="button" name="submit" id="submit_button" class="submit_search_mail btn btn-primary"><?php echo TranslationHandler::get_static_text("SEARCH"); ?> <i class="fa fa-search" style="margin-left:3px;"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <?php
+                    }
+                    ?>
+                </div>
+                    
                 <?php
                     break;
                 

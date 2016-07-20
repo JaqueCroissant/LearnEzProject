@@ -72,10 +72,10 @@ $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), 
                                                 <div class="mail-item notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? 'notif_read' : 'notif_unread') . '" style="padding:0;">
                                                     <div class="notif_element_checkbox checkbox-resize" style="padding:0 16px 15px 16px;">
                                                         <div class="checkbox">
-                                                            <input type="checkbox" id="checkbox-enable-reply" name="notifications[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>
+                                                            <input type="checkbox" id="checkbox-enable-reply" name="notifs[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>
                                                         </div>
                                                     </div>
-                                                    <div class="change_page mail_element_content" page="' . $notif->page . '" id="'. $notif->page . '" step="' . $notif->step .'" args="&mail_id=' . (isset($args["link_id"]) ? $args["link_id"] : "") . '" style="min-height:100px;">
+                                                    <div class="change_page mail_element_content" page="' . $notif->link_page . '" id="'. $notif->link_page . '" step="' . $notif->link_step .'" args="' . $notif->link_args . (isset($args["link_id"]) ? $args["link_id"] : "") . '" style="min-height:100px;">
                                                         <table class="mail-container" style="margin-top:16px;">
                                                             <tr> 
                                                                 <td class="mail-center">

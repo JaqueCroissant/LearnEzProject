@@ -7,6 +7,7 @@ class MailHandler extends Handler
     public $current_folder;
     public $current_mail;
     public $folders = array();
+    public $search_mails = array();
     public $mails = array();
     public $tags = array();
     
@@ -408,7 +409,6 @@ class MailHandler extends Handler
                 throw new exception("USER_NOT_LOGGED_IN");
             }
             
-            
             $receiptians = array();
             if (RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
                 $school_data = DbHandler::get_instance()->return_query("SELECT id, name FROM school WHERE subscription_end >= NOW()");
@@ -462,6 +462,76 @@ class MailHandler extends Handler
         {
             return array();
 	}
+    }
+    
+    public function search_mail($search_query = null, $mail_folders = array(), $search_content = 0, $order_ascending = 0, $read_unread_all = 0) {
+        try
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if (!RightsHandler::has_user_right("MAIL_SEARCH")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            if(empty($search_query)) {
+                throw new exception("MAIL_MUST_FILL_SEARCH_WORD");
+            }
+            
+            if(empty($mail_folders) || !is_array($mail_folders) || count($mail_folders) < 1) {
+                throw new exception("MAIL_MUST_SELECT_MAIL_FOLDER");
+            }
+            
+            if(!is_numeric($search_content) || $search_content < 1 || $search_content > 3) {
+                throw new exception("MAIL_MUST_FILL_SEARCH_TYPE");
+            }
+            
+            if (!is_numeric($order_ascending) || !is_numeric($read_unread_all)) {
+                throw new exception();
+            }
+            
+            $final_mail_folders = array();
+            $available_mail_folders = array("1", "2", "5", "6");
+            foreach($mail_folders as $value) {
+                if($value == "ALL") {
+                    $final_mail_folders = $available_mail_folders;
+                    break;
+                }
+                
+                if(!is_numeric($value) || !in_array($value, $available_mail_folders)) {
+                    throw new exception("MAIL_MUST_SELECT_MAIL_FOLDER");
+                }
+                
+                $final_mail_folders[] = $value;
+            }
+            
+            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id"
+                    . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
+                    . " INNER JOIN users ON users.id = sender_id"
+                    . " INNER JOIN mail_folder ON mail_folder.id = user_mail.receiver_folder_id"
+                    . " WHERE user_mail.receiver_id = :user_id AND mail.title LIKE :search_query AND user_mail.receiver_folder_id IN (". $this->generate_in_query($final_mail_folders).")";
+            
+            $query .= $read_unread_all == 1 ? " AND user_mail.is_read is false" : ($read_unread_all == 2 ? " AND user_mail.is_read is true" : "");
+            $query .= $order_ascending == 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
+
+            $data = DbHandler::get_instance()->return_query($query, $this->_user->id, '%'.$search_query.'%');
+            
+            if(empty($data) || !is_array($data) || count($data) < 1) {
+                throw new exception("MAIL_NO_MAILS_FOUND");
+            }
+            
+            foreach($data as $value) {
+                $this->search_mails[] = new Mail($value);
+            }
+            return true;
+        } 
+        catch (Exception $ex) 
+        {
+            //echo $ex->getMessage();
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+	}
+        return false;
     }
     
     private function update_mail_folder($mails, $folder_id, $sender = false) {

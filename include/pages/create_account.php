@@ -59,11 +59,16 @@
                                                     <label for="user_type"><?php echo TranslationHandler::get_static_text("CREATE_USERTYPE"); ?></label>
                                                     <select id="user_type" name ="usertype" class="create_select_usertype form-control">
                                                         <?php
-                                                            if($userHandler->_user->user_type_id==1)
+                                                            if(RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN"))
                                                             {
                                                                 echo '<option value="SA">' . TranslationHandler::get_static_text("SUPER_ADMIN") . '</option>';
+                                                            }
+
+                                                            if(RightsHandler::has_user_right("ACCOUNT_CREATE_LOCADMIN"))
+                                                            {
                                                                 echo '<option value="A">' . TranslationHandler::get_static_text("ADMIN") . '</option>';
                                                             }
+
                                                         ?>
                                                         <option value="T"><?php echo TranslationHandler::get_static_text("TEACHER"); ?></option>'
                                                         <option value="S"><?php echo TranslationHandler::get_static_text("STUDENT"); ?></option>'
@@ -75,9 +80,9 @@
                                                         <?php
                                                         if($userHandler->_user->user_type_id==1)
                                                         {?>
-                                                            <label for="select1" class="control-label"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                            <label for="select1" class="control-label"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL");?></label>
                                                             <select id="select1" name="school_id" class="create_select_school form-control" data-plugin="select2">
-
+                                                                <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
                                                                 <?php
                                                                     $schoolHandler->get_all_schools(true);
                                                                     foreach($schoolHandler->all_schools as $school)
@@ -91,21 +96,43 @@
                                                 </div>
 
                                                 <div class="form-group m-b-sm">
-                                                    <div class="create_select_class <?php echo ($userHandler->_user->user_type_id == 1 ? '" style="visibility:hidden;' : ''); ?>">
-                                                        <label for="select_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
-                                                        <select id="select_class_name" name="class_name[]" class="form-control" data-plugin="select2" multiple>
-                                                            <?php
-                                                            if($userHandler->_user->user_type_id > 1)
-                                                            {
-                                                                $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
-                                                                foreach($classHandler->classes_in_school as $class)
-                                                                {
-                                                                    echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
-                                                                }
-                                                            }
+                                                    <?php
+                                                        if(RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN"))
+                                                        {?>
+                                                             <div class="create_select_class <?php echo (RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN") ? '" style="visibility:hidden;' : ''); ?>">
+                                                                <label for="select_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                                <select id="select_class_name" name="class_name[]" class="form-control" data-plugin="select2" multiple>
+                                                                    <?php
+                                                                        $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
+                                                                        foreach($classHandler->classes as $class)
+                                                                        {
+                                                                            echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
+                                                                        }
+                                                                    ?>
+                                                                </select>
+                                                            </div>
+                                                        <?php
+                                                        }
+                                                        else
+                                                        {?>
+
+                                                            <div class="create_select_class">
+                                                                <label for="select_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                                <select id="select_class_name" name="class_name[]" class="form-control" data-plugin="select2" multiple>
+                                                                    <?php
+                                                                        $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
+                                                                        foreach($classHandler->classes as $class)
+                                                                        {
+                                                                            echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
+                                                                        }
+                                                                    ?>
+                                                                </select>
+                                                            </div>
+
+                                                        <?php
+                                                        }
                                                         ?>
-                                                        </select>
-                                                    </div>
+
                                                 </div>
 
                                         </div>
@@ -129,42 +156,72 @@
                             <div class="widget-body">
 
                                     <form method="POST" action="" id="create_import_form" url="create_account.php?step=2" name="create_import" enctype="multipart/form-data">
-                                                <div class="import_select_school form-group m-b-md">
-                                                    <div class="<?php echo ($userHandler->_user->user_type_id != 1 ? ' style="visibility:hidden;' : ''); ?>">
 
-                                                            <label for="select1"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></label>
-                                                            <select id="select1" name="school_id" class="import_select_school form-control" data-plugin="select2">
-                                                                <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
-                                                                <?php
-                                                                    $schoolHandler->get_all_schools();
-                                                                    foreach($schoolHandler->all_schools as $school)
-                                                                    {
-                                                                        echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
-                                                                    }
-                                                                ?>
+                                            <?php if(RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN"))
+                                                {
+                                                ?>
+                                                    <div class="import_select_school form-group m-b-md">
 
-                                                            </select>
+
+                                                        <label for="select1"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></label>
+                                                        <select id="select1" name="school_id" class="import_select_school form-control" data-plugin="select2">
+                                                            <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
+                                                            <?php
+                                                                $schoolHandler->get_all_schools(true);
+                                                                foreach($schoolHandler->all_schools as $school)
+                                                                {
+                                                                    echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
+                                                                }
+                                                            ?>
+
+                                                        </select>
+
                                                     </div>
-                                                </div>
 
-                                                <div class="form-group m-b-md">
-                                                    <div class="import_select_class <?php echo ($userHandler->_user->user_type_id == 1 ? '" style="visibility:hidden;' : ''); ?>">
+                                                    <div class="form-group m-b-md">
+                                                        <div class="import_select_class <?php echo (RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN") ? ' hidden' : ''); ?>">
+                                                            <label for="import_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
+                                                            <select id="import_class_name" name="class_name[]" class="import_select_class form-control" data-plugin="select2" multiple>
+                                                                <?php
+                                                                if($userHandler->_user->user_type_id > 1)
+                                                                {
+                                                                    $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
+                                                                    foreach($classHandler->classes as $class)
+                                                                    {
+                                                                        echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
+                                                                    }
+                                                                }
+                                                            ?>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                <?php
+                                                }
+                                                else
+                                                {
+                                                ?>
+
+                                                    <div class="form-group m-b-md">
+
                                                         <label for="import_class_name"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_CLASS") . " " . TranslationHandler::get_static_text("OPTIONAL"); ?></label>
                                                         <select id="import_class_name" name="class_name[]" class="import_select_class form-control" data-plugin="select2" multiple>
                                                             <?php
-                                                            if($userHandler->_user->user_type_id > 1)
+
+                                                            $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
+                                                            foreach($classHandler->classes as $class)
                                                             {
-                                                                $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
-                                                                foreach($classHandler->classes_in_school as $class)
-                                                                {
-                                                                    echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
-                                                                }
+                                                                echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
                                                             }
+
                                                         ?>
                                                         </select>
-                                                    </div>
-                                                </div>
 
+                                                    </div>
+
+                                                <?php
+                                                }
+                                                ?>
 
                                                 <div class="form-group m-b-sm">
                                                     <label for="csv_file_dialog"><?php echo TranslationHandler::get_static_text("CREATE_SELECT_FILE"); ?></label>

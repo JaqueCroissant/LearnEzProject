@@ -5,7 +5,6 @@
         private $_unread_notifications;
         private $_notifications;
         private $_args;
-        private $_load_notifications = true;
         
         
         public function __construct() {
@@ -15,33 +14,34 @@
         
         public function get_notification_categories(){
             try {
+                $this->check_login();
                 return DbHandler::get_instance()->return_query("SELECT notifications_category.icon_class, "
                         . "notifications_category.category_name, "
                         . "translation_notifications_category.name "
                         . "FROM notifications_category "
                         . "INNER JOIN translation_notifications_category "
                         . "ON translation_notifications_category.notifications_category_id = notifications_category.id "
-                        . "AND translation_notifications_category.translation_language_id = :langId", TranslationHandler::get_current_language());
+                        . "AND translation_notifications_category.translation_language_id = :langId "
+                        . "WHERE notifications_category.master_name = ''", TranslationHandler::get_current_language());
                 
             } catch (Exception $exc) {
                 $this->error = $exc->getMessage();
             }
         }
         
-        public function update_unseen_notification_count($userId){
+        public function update_unseen_notification_count(){
             try {
-                $this->check_numeric($userId);
+                $this->check_login();
                 
                 $newCounter = DbHandler::get_instance()->count_query("SELECT notification_id "
                         . "FROM user_notifications "
                         . "WHERE user_id=:userId "
-                        . "AND is_read=:isRead", $userId, 0); 
+                        . "AND is_read=:isRead", $this->_user->id, 0); 
                 
                 if ($newCounter == 0) {
                     return false;
                 }
                 $this->_unseen_notifications = $newCounter;
-                $this->_load_notifications = true;
                 
                 return true;      
                 
@@ -53,9 +53,7 @@
         
         public function read_notifications($notifs_array){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");
-                }
+                $this->check_login();
                 if (count($notifs_array) < 1) {
                     throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
                 }
@@ -77,15 +75,15 @@
             }      
         }
         
-        public function seen_notification($notificationId, $userId){
+        public function seen_notification($notificationId){
             try {
+                $this->check_login();
                 $this->check_numeric($notificationId);
-                $this->check_numeric($userId);
                 
                 DbHandler::get_instance()->query("UPDATE user_notifications "
                         . "SET is_read=1 "
                         . "WHERE id=:notificationId "
-                        . "AND user_id=:userId", $notificationId, $userId);               
+                        . "AND user_id=:userId", $notificationId, $this->_user->id);               
                 
                 return true;
                 
@@ -97,9 +95,7 @@
         
         public function seen_notifications(){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");;
-                }
+                $this->check_login();
                 
                 DbHandler::get_instance()->query("UPDATE user_notifications "
                         . "SET is_read=1 "
@@ -116,9 +112,7 @@
         
         public function delete_notifications($notifs_array){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");
-                }
+                $this->check_login();
                 if (count($notifs_array) < 1) {
                     throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
                 }
@@ -139,19 +133,31 @@
             }
         }
         
+        public function clean_arguments(){
+            try {
+                //TODO validation
+                DbHandler::get_instance()->query("DELETE FROM user_notifications_arguments "
+                        . "WHERE arg_id NOT IN ("
+                        . "SELECT arg_id FROM user_notifications)");
+                
+            } catch (Exception $ex) {
+
+            }
+        }
+        
         public function get_notifications(){
+            $this->check_login();
             return $this->_notifications;
         }
         
         public function get_unseen_notifications_count(){
+            $this->check_login();
             return $this->_unseen_notifications;
         }
         
         public function load_notifications($offset, $limit = 5){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");
-                }
+                $this->check_login();
                 $this->check_numeric($offset);
                 $this->check_numeric($limit);
                 
@@ -164,8 +170,9 @@
                         . "user_notifications.is_read AS isRead, "
                         . "user_notifications.arg_id AS arg_id, "
                         . "notifications_category.icon_class AS icon, "
-                        . "notifications_category.link_page AS page, "
-                        . "notifications_category.link_step AS step, "
+                        . "notifications_category.link_page AS link_page, "
+                        . "notifications_category.link_step AS link_step, "
+                        . "notifications_category.link_args AS link_args, "
                         . "translation_notifications_category.name AS category "
                         . "FROM user_notifications "
                         . "INNER JOIN notifications "
@@ -209,19 +216,22 @@
         
         public function load_notifications_from_category($offset, $category, $limit = 5){
             try {
-                if (!$this->user_exists()) {
-                    throw new Exception("USER_NOT_LOGGED_IN");
-                }
+                $this->check_login();
                 $this->check_numeric($offset);
                 $this->check_numeric($limit);
                 $this->is_null_or_empty($category);
                 
                 $langId = TranslationHandler::get_current_language();
                 
-                $catId = DbHandler::get_instance()->return_query("SELECT id "
+                $catIds = DbHandler::get_instance()->return_query("SELECT id "
                         . "FROM notifications_category "
-                        . "WHERE category_name = :name"
-                        , $category);
+                        . "WHERE category_name = :name "
+                        . "OR master_name = :name"
+                        , $category, $category);
+                $categories = "";
+                for ($i = 0; $i < count($catIds); $i++){
+                    $categories .= ($i == 0 ? "" : ",") . $catIds[$i]["id"];
+                }
                 
                 $dbData = DbHandler::get_instance()->return_query("SELECT translation_notifications.title AS title, "
                         . "translation_notifications.text AS text, "
@@ -230,13 +240,14 @@
                         . "user_notifications.is_read AS isRead, "
                         . "user_notifications.arg_id AS arg_id, "
                         . "notifications_category.icon_class AS icon, "
-                        . "notifications_category.link_page AS page, "
-                        . "notifications_category.link_step AS step, "
+                        . "notifications_category.link_page AS link_page, "
+                        . "notifications_category.link_step AS link_step, "
+                        . "notifications_category.link_args AS link_args, "
                         . "translation_notifications_category.name AS category "
                         . "FROM user_notifications "
                         . "INNER JOIN notifications "
                         . "ON notifications.id = user_notifications.notification_id "
-                        . "AND notifications.notifications_category_id = :catId "
+                        . "AND notifications.notifications_category_id IN (" . $categories . ") "
                         . "INNER JOIN notifications_category "
                         . "ON notifications_category.id = notifications.notifications_category_id "
                         . "INNER JOIN translation_notifications_category "
@@ -252,7 +263,7 @@
                         . "WHERE user_notifications.user_id = :userId "
                         . "ORDER BY user_notifications.datetime DESC "
                         . "LIMIT :limit OFFSET :offset"
-                        , reset($catId)["id"], $langId, $langId, $langId, $this->_user->id, $limit, $offset);
+                        , $langId, $langId, $langId, $this->_user->id, $limit, $offset);
                 if (count($dbData) == 0) {
                     $this->_notifications = array();
                     return true;
@@ -302,6 +313,7 @@
         
         public function get_arguments($arg_id){
             try {
+                $this->check_login();
                 $this->check_numeric($arg_id);
                 
                 $new_array = array();
@@ -318,6 +330,7 @@
         
         public function create_new_static_user_notification($reciever, $prefix, $args){
             try {
+                //TODO validation
                 $this->check_numeric($reciever);
                 $this->check_prefix($prefix);
                 //TODO check $args
@@ -343,6 +356,7 @@
         
         
         public static function parse_text($string, $args){
+            $this->check_login();
             $array = array_reverse(self::parser($string));
             $final = $string;
             foreach ($array as $value) {
@@ -388,12 +402,13 @@
         
         private function get_new_guid(){
             try{
-                while(true){
-                    $guid = $this->create_GUID();
-                    if (DbHandler::get_instance()->count_query("SELECT id FROM user_notifications_arguments WHERE arg_id = :guid", $guid) < 1) {
-                        return $guid;
-                    }
-                }
+                return $this->create_GUID();
+//                while(true){
+//                    $guid = $this->create_GUID();
+//                    if (DbHandler::get_instance()->count_query("SELECT id FROM user_notifications_arguments WHERE arg_id = :guid", $guid) < 1) {
+//                        return $guid;
+//                    }
+//                }
             } catch (Exception $exc) {
                 $this->error = ErrorHandler::return_error($exc->getMessage());
             }
@@ -403,7 +418,7 @@
             if (function_exists('com_create_guid')){
                 return com_create_guid();
             }else{
-                $charid = strtoupper(md5(uniqid(rand(), true)));
+                $charid = md5(uniqid(rand(), true));
                 $hyphen = chr(45);// "-"
                 $uuid = chr(123)// "{"
                     .substr($charid, 0, 8).$hyphen
@@ -463,6 +478,12 @@
             $this->is_null_or_empty($title);
             if (strlen($title) > 100) {
                 throw new Exception("NOTIFICATION_TITLE_TOO_LONG");
+            }
+        }
+        
+        private function check_login(){
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
             }
         }
         

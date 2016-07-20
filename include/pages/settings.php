@@ -125,7 +125,7 @@ $userHandler = new UserHandler();
                                         <div class="form-group">
                                             <div class="col-md-12">
 
-                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-left btn btn-default btn-sm submit_edit_user_info">
+                                                <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-left btn btn-default btn-sm create_submit_info">
                                             </div>
                                         </div>
                                     </form>

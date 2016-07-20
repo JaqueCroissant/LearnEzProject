@@ -215,7 +215,7 @@ $(document).ready(function () {
 
     $(document).on("change", ".import_select_school", function (event) {
         if ($(this).find("option:selected").val() === "") {
-            $(".import_select_class").addClass("hidden");
+            $(".import_select_class").prop("style", "visibility:hidden;height:0px;");
         } else {
             event.preventDefault;
             initiate_submit_get($(this), "create_account.php?step=get_classes&school_id=" + $(this).find("option:selected").val(), function () {
@@ -223,7 +223,7 @@ $(document).ready(function () {
             }, function () {
                 $(".import_select_class").find(".select2-selection__rendered").empty();
                 $("#import_class_name").html(ajax_data.classes);
-                $(".import_select_class").removeClass("hidden");
+                $(".import_select_class").prop("style", "visibility:visible;height:auto;");
             });
         }
     });

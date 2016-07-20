@@ -338,7 +338,6 @@ class SchoolHandler extends Handler {
 
     public function can_add_students($school_id) {
         try {
-
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
@@ -364,7 +363,6 @@ class SchoolHandler extends Handler {
 
     public function student_slots_open($school_id) {
         try {
-
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
@@ -387,7 +385,6 @@ class SchoolHandler extends Handler {
             return false;
         }
     }
-
 
     public function school_has_classes($school_id, $class_ids)
     {
@@ -421,16 +418,13 @@ class SchoolHandler extends Handler {
                 $count = DbHandler::get_instance()->count_query($query, $school_id);
 
 
-                if($count != count($class_ids))
-                {
+                if ($count != count($class_ids)) {
                     throw new Exception("CLASS_NOT_FOUND");
                 }
             }
 
             return true;
-        }
-        catch(Exception $ex)
-        {
+        } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
@@ -439,9 +433,9 @@ class SchoolHandler extends Handler {
 
     private function verify_user_school_access($school_id)
     {
-        if($this->_user->school_id != $school_id)
+        if(empty($this->_user->school_id) || $this->_user->school_id != $school_id)
         {
-            if(RightsHandler::has_user_right("SCHOOL_FIND"))
+            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
@@ -449,9 +443,10 @@ class SchoolHandler extends Handler {
     }
 
     private function verify_start_date_is_lower_than_end_date($start_date_string, $end_date_string) {
+
         $ds = strtotime($start_date_string);
         $de = strtotime($end_date_string);
-
+        
         if ($ds > $de) {
             throw new Exception("START_DATE_MUST_BE_LOWER_THAN_END");
 

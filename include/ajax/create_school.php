@@ -1,14 +1,14 @@
 <?php
-
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/schoolHandler.php';
 $schoolHandler = new SchoolHandler();
-$data_array = array();
+
 $format = "Y-m-d";
 
 if (isset($_POST['step'])) {
     switch ($_POST['step']) {
         case "1":
+            $data_array = array();
             if (isset($_POST['school_name'])) {
                 $name = $_POST['school_name'];
             } else {
@@ -56,7 +56,7 @@ if (isset($_POST['step'])) {
             break;
         case "2":
             $schoolHandler->school = new School();
-
+            $data_array = array();
             if (isset($_POST['school_subscription_start'])) {
                 $start_date = date_parse_from_format($format, $_POST['school_subscription_start']);
             } else {
@@ -86,13 +86,14 @@ if (isset($_POST['step'])) {
                 $schoolHandler->school->zip_code = "";
                 $schoolHandler->school->city = "";
             }
-            
+
             if (isset($_POST['school_max_students'])) {
                 $max_students = $_POST['school_max_students'];
             } else {
                 $max_students = "";
             }
 
+            
             if ($schoolHandler->create_school_step_two($schoolHandler->school, $max_students, $start_date, $end_date)) {
                 $data_array["school"] = $schoolHandler->school;
                 $data_array['success'] = TranslationHandler::get_static_text("SCHOOL_CREATED");
@@ -104,6 +105,5 @@ if (isset($_POST['step'])) {
             break;
     }
 }
-
 echo json_encode($data_array);
 die();

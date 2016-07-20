@@ -39,7 +39,7 @@ $userHandler = new UserHandler();
 						<div class="my_tab_content">
 							<div class="my_fade my_tab" id="edit_info">
 								<div class="widget-body">
-                                                                        <form method="post" action="" url="settings.php?step=1" id="edit_info_form" name="edit_info">
+                                                                        <form method="post" action="" url="settings.php?step=edit_info" id="edit_info_form" name="edit_info">
                                                                             <input name="avatar_hidden_id" id="avatar_hidden_id" class="input_avatar_id" type="hidden" value="<?php echo $userHandler->_user->image_id;?>" />
                                                                         <div class="col-md-6">
                                                                             <?php
@@ -139,7 +139,7 @@ $userHandler = new UserHandler();
                             <div class="my_fade my_tab" id="change_password">
 
                                 <div class="widget-body">
-                                     <form method="POST" action="" id="settings_pass" url="settings.php?step=2" name="settings_pass">
+                                     <form method="POST" action="" id="settings_pass" url="settings.php?step=change_password" name="settings_pass">
 
 
                                                                                 <div class="form-group m-b-sm">

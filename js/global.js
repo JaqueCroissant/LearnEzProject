@@ -157,6 +157,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
+            show_status_bar("success", ajax_data.success);
         });
     });
 
@@ -165,12 +166,21 @@ $(document).ready(function () {
 
         var formData = new FormData($('#create_import_form')[0]);
         $.ajax({
-            url: 'include/ajax/create_account.php?step=2',
+            url: 'include/ajax/create_account.php?step=import_users',
             type: 'POST',
             data: formData,
+            dataType: "json",
             async: false,
             complete: function (data) {
-                alert(data)
+                ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+                if(ajax_data.status_value === "true")
+                {
+                    show_status_bar("success", ajax_data.success);
+                }
+                else
+                {
+                    show_status_bar("error", ajax_data.error);
+                }
             },
             cache: false,
             contentType: false,

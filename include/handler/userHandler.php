@@ -613,16 +613,23 @@ class UserHandler extends Handler
 
     public function import_users($csv_file, $school_id, $class_ids)
     {
-        $uploaded_file;
+        $uploaded_file = "";
         $dir = '../../temp_files/';
+        $file_opened = false;
 
         try
         {
+
             $this->validate_user_logged_in();
 
-            if(!RightsHandler::has_user_right("CREATE_ACCOUNT"))
+            if(!RightsHandler::has_user_right("ACCOUNT_CREATE"))
             {
                     throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if(empty($csv_file['tmp_name']))
+            {
+                throw new Exception("IMPORT_NO_FILE");
             }
 
             if($this->_user->user_type_id != 1)
@@ -638,6 +645,7 @@ class UserHandler extends Handler
             $uploaded_file = $dir . $this->upload_csv($csv_file, $dir);
 
             $file = fopen($uploaded_file,"r");
+            $file_opened = true;
             $fp = file($uploaded_file, FILE_SKIP_EMPTY_LINES);
             $count = count($fp);
             
@@ -672,6 +680,11 @@ class UserHandler extends Handler
         }
         finally
         {
+            if($file_opened)
+            {
+                fclose($file);
+            }
+
             if(file_exists($uploaded_file))
             {
                 unlink($uploaded_file);

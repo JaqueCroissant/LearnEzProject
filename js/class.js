@@ -25,9 +25,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            setTimeout(function () {
-                change_page("find_class")
-            }, 300);
+            change_page("find_class");
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -116,16 +114,12 @@ $(document).ready(function () {
         $("td input[type='checkbox']").removeAttr("disabled");
     });
 
-    $(document).on("click", ".clickable_row .click_me", function (event) {
-        event.preventDefault();
-        alert("Nothing happened");
-    });
+
 
     $(document).on("click", ".edit_class", function (event) {
         event.preventDefault();
 
         var id = $(this).closest("tr").children().last().attr("id");
-        var user_type_id = $(this).closest("tr").children().last().attr("user_type_id");
         initiate_submit_get($(this), "find_class.php?class_id=" + id, function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
@@ -140,8 +134,14 @@ $(document).ready(function () {
             $("#school_id").val(ajax_data.class.school_id);
             $("#class_description").val(ajax_data.class.description);
             $("#update_class_id").val(ajax_data.class.id);
-
-            $("#select_school").attr("data-plugin", "select2");
+            console.log(ajax_data.class.school_id);
+            
+            // Set selected school in select2
+            $("#select_school option").removeAttr("selected");
+            $("#school_id_" + ajax_data.class.school_id).attr("selected", "selected");
+            $("#select_school").trigger("change");
+            
+            // switch tab
             $("#edit_class_a").click();
         });
     });

@@ -172,12 +172,11 @@ $classHandler->get_all_classes();
                                         <div class="form-group">
                                             <label class="col-sm-2 col-sm-offset-3 control-label" for="school_id"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
                                             <div class="col-md-4">
-                                                <select id="select_school" name="school_id" class="form-control">
-                                                    <option value="" id="school_id"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME") ?></option>
+                                                <select id="select_school" name="school_id" class="form-control" data-plugin="select2">
                                                     <?php
                                                     if (count($schoolHandler->all_schools) > 0) {
                                                         foreach ($schoolHandler->all_schools as $value) {
-                                                            echo '<option value="' . $value->id . '">' . $value->name . '</option>';
+                                                            echo '<option id="school_id_' . $value->id . '" value="' . $value->id . '">' . $value->name . '</option>';
                                                         }
                                                     }
                                                     ?>
@@ -266,4 +265,5 @@ $classHandler->get_all_classes();
     $(".datepickers").datepicker({
         dateFormat: "yy-mm-dd"
     });
+    
 </script>

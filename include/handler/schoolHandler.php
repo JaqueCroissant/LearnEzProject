@@ -22,7 +22,7 @@ class SchoolHandler extends Handler {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $query = "SELECT school.id as id, school.name as name, school.address, school.zip_code, school.city, school.school_type_id, school.phone, 
-                     school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title 
+                     school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title as school_type
                      FROM school 
                      INNER JOIN school_type ON school.school_type_id = school_type.id";
 
@@ -209,7 +209,9 @@ class SchoolHandler extends Handler {
             $this->verify_user_school_access($id);
             $this->verify_school_exists($id);
 
-            $query = "SELECT * FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
+            $query = "SELECT school.id as id, school.name as name, school.address, school.zip_code, school.city, school.school_type_id, school.phone, 
+                     school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title as school_type 
+                     FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
             $this->school = new School(reset(DbHandler::get_instance()->return_query($query, $id)));
             return true;
         } catch (Exception $exc) {

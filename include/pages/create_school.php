@@ -50,7 +50,7 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
                             <div class="col-md-5">
-                                <select name="school_type_id" class="form-control" data-plugin="select2">
+                                <select id="select_school_type" name="school_type_id" class="form-control">
                                     <?php
                                     foreach ($schoolHandler->school_types as $value) {
                                         echo '<option value="' . $value['id'] . '">' . $value['title'] . '</option>';
@@ -121,10 +121,15 @@ $schoolHandler->get_school_types();
         </div>
     </div>
 </div>
-<script src="assets/js/include_library.js" type="text/javascript"></script>
-<script src="assets/js/include_app.js" type="text/javascript"></script>
+<!--<script src="assets/js/include_library.js" type="text/javascript"></script>-->
+<!--<script src="assets/js/include_app.js" type="text/javascript"></script>-->
+<script src="js/school.js" type="text/javascript"></script>
+<script src="libs/bower/select2/dist/js/select2.full.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(".datepickers").datepicker({
         dateFormat: "yy-mm-dd"
     });
+
+    $("#select_school_type").select2();
+
 </script>

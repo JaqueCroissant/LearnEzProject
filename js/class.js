@@ -13,9 +13,10 @@ $(document).ready(function () {
 
     $(document).on("click", ".update_class", function (event) {
         event.preventDefault();
-        if ($("#class_open").val() === "on") {
+        var count = $("#class_open:checked").length;
+        if (count === 1) {
             $("#class_open_hidden").val(1);
-        } else {
+        } else if (count === 0) {
             $("#class_open_hidden").val(0);
         }
 

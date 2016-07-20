@@ -26,8 +26,7 @@ class SchoolHandler extends Handler {
                      FROM school 
                      INNER JOIN school_type ON school.school_type_id = school_type.id";
 
-            if($is_open)
-            {
+            if ($is_open) {
                 $query .= " AND subscription_end >= curdate() AND subscription_start <= curdate()";
             }
 
@@ -206,10 +205,10 @@ class SchoolHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if ($this->_user->user_type_id != 1) {
-                if ($this->_user->school_id != $id) {
-                    throw new Exception("INSUFFICIENT_RIGHTS");
-                }
+            if (!RightsHandler::has_user_right("SCHOOL_FIND")) {
+                
+            } elseif ($this->_user->school_id != $id) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_school_exists($id);
 
@@ -239,9 +238,10 @@ class SchoolHandler extends Handler {
             $this->verify_email($email);
             $this->verify_school_type($school_type_id);
             $this->verify_max_students($max_students);
-            
-            $this->verify_subscription_start($subscription_start);
-            $this->verify_subscription_end($subscription_end);
+
+            $this->verify_subscription_start(date_parse_from_format($this->format, $subscription_start));
+            $this->verify_subscription_end(date_parse_from_format($this->format, $subscription_end));
+            $this->verify_start_date_is_lower_than_end_date($subscription_start, $subscription_end);
 
             $query = "UPDATE school SET name=:name, phone=:phone, address=:address, zip_code=:zip_code, city=:city, email=:email, "
                     . "school_type_id=:school_type_id, max_students=:max_students, subscription_start=:subscription_start, subscription_end=:subscription_end WHERE id = :id";
@@ -305,6 +305,7 @@ class SchoolHandler extends Handler {
             $this->verify_subscription_end($subscription_end);
             $start_date = $subscription_start['year'] . "/" . $subscription_start['month'] . "/" . $subscription_start['day'];
             $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
+            $this->verify_start_date_is_lower_than_end_date($start_date, $end_date);
             $school->max_students = $max_students;
             $school->subscription_start = $start_date;
             $school->subscription_end = $end_date;
@@ -366,23 +367,18 @@ class SchoolHandler extends Handler {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
-
     }
 
-    public function school_has_classes($school_id, $class_ids)
-    {
-        try
-        {
+    public function school_has_classes($school_id, $class_ids) {
+        try {
 
 
             $query = "SELECT * FROM class WHERE school_id = :school_id AND id IN (";
 
-            for($i = 0; $i < count($class_ids); $i++)
-            {
+            for ($i = 0; $i < count($class_ids); $i++) {
 
-                if(is_numeric($class_ids[$i]))
-                {
-
+                if (is_numeric($class_ids[$i])) {
+                    
                 }
 
                 $query .= $i != 0 ? ", " : "";
@@ -393,18 +389,23 @@ class SchoolHandler extends Handler {
             echo $query;
             $count = DbHandler::get_instance()->count_query($query, $school_id);
 
-            if($count != count($class_ids))
-            {
+            if ($count != count($class_ids)) {
                 throw new Exception("CLASS_NOT_FOUND");
             }
 
             return true;
-
-        }
-        catch(Exception $ex)
-        {
+        } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
+        }
+    }
+
+    private function verify_start_date_is_lower_than_end_date($start_date_string, $end_date_string) {
+        $ds = strtotime($start_date_string);
+        $de = strtotime($end_date_string);
+
+        if ($ds > $de) {
+            throw new Exception("START_DATE_MUST_BE_LOWER_THAN_END");
         }
     }
 
@@ -415,13 +416,13 @@ class SchoolHandler extends Handler {
             }
         }
     }
-    
+
     private function verify_is_date($d) {
         if (!checkdate($d['month'], $d['day'], $d['year'])) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }
     }
-    
+
     private function verify_subscription_start($subscription_start) {
         $this->verify_is_date($subscription_start);
     }
@@ -429,7 +430,7 @@ class SchoolHandler extends Handler {
     private function verify_subscription_end($subscription_end) {
         // checks valid date
         $this->verify_is_date($subscription_end);
-        
+
         $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
 
         $ds = strtotime($end_date);
@@ -468,14 +469,14 @@ class SchoolHandler extends Handler {
             throw new Exception("WRONG_SCHOOL_TYPE_ID");
         }
     }
-    
+
     private function verify_zip_code($zip_code) {
         $this->is_null_or_empty($zip_code);
         if (!is_numeric($zip_code)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }
     }
-    
+
     private function verify_city($city) {
         $this->is_null_or_empty($city);
     }
@@ -511,8 +512,7 @@ class SchoolHandler extends Handler {
     private function create_school($school) {
         $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_start, subscription_end, zip_code, city) "
                 . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_start,:subscription_end, :zip_code, :city)";
-        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, 
-                $school->phone, $school->email, $school->max_students, $school->subscription_start, $school->subscription_end, $school->zip_code, $school->city);
+        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_start, $school->subscription_end, $school->zip_code, $school->city);
         $this->school->id = DbHandler::get_instance()->last_inserted_id();
         if ($executedQuery) {
             return true;

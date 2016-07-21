@@ -1,3 +1,5 @@
+var delete_class_id;
+
 $(document).ready(function () {
 // class
     $(document).on("click", ".create_class", function (event) {
@@ -33,25 +35,24 @@ $(document).ready(function () {
     $(document).on("click", ".delete_class", function (event) {
         event.preventDefault();
 
-        $("td input[type='checkbox']").attr("disabled", true);
         position = $(this).offset();
         height = $("#close_class_alert").height();
         $("#delete_class_alert").css("top", position["top"] - height - 20);
         $("#delete_class_alert").removeAttr("hidden");
-        delete_class_id = $(this).attr("id");
+        delete_class_id = $(this).attr("school_id");
     });
 
     $(document).on("click", "#accept_delete_class_btn", function (event) {
         event.preventDefault();
 
         div_id = $(this).closest("div .alert_panel").attr("id");
-        initiate_submit_form($("#" + delete_class_id), function () {
+        var id = $("#" + delete_class_id).closest("tr").children().last().attr("id");
+        console.log(id);
+        initiate_submit_get($(this), "find_class.php?class_id=" + id + "&state=delete_class", function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
             $("#" + div_id).attr("hidden", true);
-            setTimeout(function () {
-                location.reload();
-            }, 300);
+            change_page("find_class");
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -120,7 +121,7 @@ $(document).ready(function () {
         event.preventDefault();
 
         var id = $(this).closest("tr").children().last().attr("id");
-        initiate_submit_get($(this), "find_class.php?class_id=" + id, function () {
+        initiate_submit_get($(this), "find_class.php?class_id=" + id + "&state=get_class", function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
             $("#edit_class_header").removeClass("hidden");
@@ -134,7 +135,6 @@ $(document).ready(function () {
             $("#school_id").val(ajax_data.class.school_id);
             $("#class_description").val(ajax_data.class.description);
             $("#update_class_id").val(ajax_data.class.id);
-            console.log(ajax_data.class.school_id);
             
             // Set selected school in select2
             $("#select_school option").removeAttr("selected");

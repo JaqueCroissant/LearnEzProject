@@ -356,7 +356,6 @@ class ClassHandler extends Handler {
     }
 
     private function verify_class_exists($class_id) {
-        $this->is_null_or_empty($class_id);
         if (!is_numeric($class_id)) {
             throw new Exception("INVALID_INPUT_IS_NOT_INT");
         }

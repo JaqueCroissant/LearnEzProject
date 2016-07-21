@@ -73,33 +73,35 @@ if (isset($_POST['state'])) {
                 }
             }
             break;
-        case "delete_class":
-            if (!isset($_POST['class_id'])) {
-                throw new Exception("class id is not set");
-            }
-            if (isset($_POST['delete_class']) && $_POST['delete_class'] == "1") {
-                if ($classHandler->delete_class_by_id((int) $_POST['class_id'])) {
-                    $array['success'] = TranslationHandler::get_static_text("CLASS_DELETED");
-                    $array["status_value"] = true;
-                } else {
-                    $array['error'] = $classHandler->error->title;
-                    $array['status_value'] = false;
-                }
-            }
     }
-} elseif (isset($_GET['class_id'])) {
+} elseif (isset($_GET['state'])) {
     if (!isset($_GET['class_id'])) {
         $class_id = "";
     } else {
         $class_id = $_GET['class_id'];
     }
 
-    if ($classHandler->get_class_by_id($class_id)) {
-        $array['class'] = $classHandler->school_class;
-        $array['status_value'] = true;
-    } else {
-        $array['error'] = $classHandler->error->title;
-        $array['status_value'] = false;
+    switch ($_GET['state']) {
+        case "get_class":
+            if ($classHandler->get_class_by_id($class_id)) {
+                $array['class'] = $classHandler->school_class;
+                $array['status_value'] = true;
+            } else {
+                $array['error'] = $classHandler->error->title;
+                $array['status_value'] = false;
+            }
+            break;
+
+        case "delete_class":
+            if ($classHandler->delete_class_by_id($class_id)) {
+                $array['success'] = TranslationHandler::get_static_text("CLASS_DELETED");
+                $array['status_value'] = true;
+            } else {
+                $array['error'] = $classHandler->error->title;
+                $array['status_value'] = false;
+            }
+
+            break;
     }
 }
 echo json_encode($array);

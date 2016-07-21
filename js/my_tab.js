@@ -5,11 +5,14 @@ var ready_to_change = true;
 $(document).ready(function () {
     var page_args = getURLParameters(location.href);
     if (typeof page_args['step'] !== 'undefined') {
-        current_tab = "#" + page_args['step'];
+        current_tab = "#" + page_args['step'] + "_tab";
+        $("#" + page_args['step'] + "_a").parent().removeClass("hidden");
+        console.log($("#" + page_args['step'] + "_a"));
     } else {
         current_tab = "#" + $(".my_tab").first().attr("id");
     }
     $(current_tab).addClass("in");
+    
     $(".my_tab_header").each(function (e) {
         if ($(this).attr("href") === current_tab) {
             $(this).addClass("my_active");
@@ -18,17 +21,7 @@ $(document).ready(function () {
 
     $(document).on("click", ".my_tab_header", function (event) {
         event.preventDefault();
-        if ($(this).hasClass("link_disabled")) {
-            return;
-        }
-        
-        if ($(this).parent().hasClass("disabled")) {
-            return;
-        }
-        
-        $(this).closest("ul").children().each(function (e) {            
-            $(this).children().addClass("link_disabled");
-        });
+        $(this).parent().removeClass("hidden");
         var tab = $(this).attr("href");
         $(".my_tab_header").each(function (e) {
             if ($(this).hasClass("my_active")) {

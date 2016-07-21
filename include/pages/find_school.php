@@ -31,11 +31,8 @@ $schoolHandler->get_school_types();
                                     <tr role="row">
                                         <th class="sorting_asc" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1" aria-sort="ascending"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
-                                        <th class="sorting p-r-0" tabindex="0" aria-controls="default-datatable"><?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?></th>
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
-                                        <th class="sorting p-r-0" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
+                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
@@ -53,10 +50,7 @@ $schoolHandler->get_school_types();
                                     <tr>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
-                                        <th class="p-r-0"><?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
-                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></th>
-                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
@@ -81,10 +75,7 @@ $schoolHandler->get_school_types();
                                             <tr class="clickable_row">
                                                 <td class="click_me"><?php echo $value->name; ?></td>
                                                 <td class="click_me"><?php echo $value->address; ?></td>
-                                                <td class="p-r-0 click_me"><?php echo $value->zip_code; ?></td>
                                                 <td class="click_me"><?php echo $value->city; ?></td>
-                                                <td class="click_me"><?php echo $value->phone; ?></td>
-                                                <td class="click_me"><?php echo $value->email; ?></td>
                                                 <td class="click_me"><?php echo $value->school_type; ?></td>
                                                 <td class="click_me"><?php echo $value->subscription_start; ?></td>
                                                 <td class="click_me"><?php echo $value->subscription_end; ?></td>

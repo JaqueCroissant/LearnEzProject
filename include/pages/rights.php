@@ -3,7 +3,6 @@ require_once 'require.php';
 require_once '../../include/handler/pageHandler.php';
 $pageHandler = new PageHandler(true);
 $rightsHandler = new RightsHandler();
-$rightsHandler->create_school_rights(1);
 
 if (RightsHandler::has_user_right("RIGHTS")) {
 

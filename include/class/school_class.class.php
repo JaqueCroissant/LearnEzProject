@@ -10,4 +10,6 @@ class School_Class extends ORM{
     public $open;
     public $school_id;
     public $school_name;
+    public $number_of_students;
+    public $number_of_teachers;
 }

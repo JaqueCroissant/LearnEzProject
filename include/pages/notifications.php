@@ -8,10 +8,13 @@ $paginationHandler = new PaginationHandler();
 $current_page = isset($_GET['step']) && !empty($_GET['step']) ? $_GET['step'] : "all";
 $current_page_number = isset($_GET['p']) && !empty($_GET['p']) ? $_GET['p'] : 1;
 
-
-$current_page != "all" ? 
-    $not_handler->load_notifications_from_category(0, $current_page, 100) : 
-    $not_handler->load_notifications(0, 100);
+$success;
+if ($current_page != "all") {
+    $success = $not_handler->load_notifications_from_category(0, $current_page, 100);
+}
+else {
+    $success = $not_handler->load_notifications(0, 100);
+}
 $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), $current_page_number, 5);
 ?>
 <script src="js/subpageGlobal.js" type="text/javascript"></script>
@@ -64,38 +67,53 @@ $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), 
                             <tr>
                                 <td>
                                     <?php
-                                        if (count($not_handler->get_notifications()) > 0) {
-                                            foreach ($notifs as $notif) {
-                                                $args = $not_handler->get_arguments($notif->arg_id);
-                                                $timeString = time_elapsed($notif->datetime);
-                                                echo '
-                                                <div class="mail-item item_hover notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? '' : 'item_unread') . '" style="padding:0;">
-                                                    <div class="notif_element_checkbox checkbox-resize" style="padding:0 16px 15px 16px;">
-                                                        <div class="checkbox">
-                                                            <input type="checkbox" id="checkbox-enable-reply" name="notifs[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="change_page mail_element_content read_notif" notif="' . $notif->id . '" page="' . $notif->link_page . '" id="'. $notif->link_page . '" step="' . $notif->link_step .'" args="' . $notif->link_args . (isset($args["link_id"]) ? $args["link_id"] : "") . '" style="min-height:100px;">
-                                                        <table class="mail-container" style="margin-top:16px;">
-                                                            <tr> 
-                                                                <td class="mail-center">
-                                                                    <div class="mail-item-header">
-                                                                        <h4 class="mail-item-title">' . $notif->title . '</h4>
-                                                                        <i class="fa ' . $notif->icon . '"></i>
-                                                                    </div>
-                                                                    <p class="mail-item-excerpt">' . NotificationHandler::parse_text($notif->text, $args) . '</p>
-                                                                </td>
-                                                                <td class="mail-right">
-                                                                    <p class="mail-item-date">' . $timeString["value"] . ' ' . TranslationHandler::get_static_text($timeString["prefix"]) . ' ' . TranslationHandler::get_static_text("DATE_AGO") . '</p>
-                                                                </td>
-                                                            </tr>
-                                                        </table>	
-                                                    </div>
-                                                </div>';
+                                        
+                                        if ($success) {
+                                            $not_handler->load_arguments($notifs);
+                                            if (count($not_handler->get_notifications()) > 0) {
+                                                $count = 0;
+                                                foreach ($notifs as $notif) {
+                                                    $args = $not_handler->get_arguments($notif->arg_id);
+                                                    $text = $not_handler->parse_text($notif->text, $args);
+                                                    if ($text[0]) {
+                                                        $count++;
+                                                        $timeString = time_elapsed($notif->datetime);
+                                                        echo '
+                                                        <div class="mail-item item_hover notif_count_' . $notif->id . " " . ($notif->isRead == 2 ? '' : 'item_unread') . '" style="padding:0;">
+                                                            <div class="notif_element_checkbox checkbox-resize" style="padding:0 16px 15px 16px;">
+                                                                <div class="checkbox">
+                                                                    <input type="checkbox" id="checkbox-enable-reply" name="notifs[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="change_page mail_element_content read_notif" notif="' . $notif->id . '" page="' . $notif->link_page . '" id="'. $notif->link_page . '" step="' . $notif->link_step .'" args="' . $notif->link_args . (isset($args["link_id"]) ? $args["link_id"] : "") . '" style="min-height:100px;">
+                                                                <table class="mail-container" style="margin-top:16px;">
+                                                                    <tr> 
+                                                                        <td class="mail-center">
+                                                                            <div class="mail-item-header">
+                                                                                <h4 class="mail-item-title">' . $notif->title . '</h4>
+                                                                                <i class="fa ' . $notif->icon . '"></i>
+                                                                            </div>
+                                                                            <p class="mail-item-excerpt">' . $text[1] . '</p>
+                                                                        </td>
+                                                                        <td class="mail-right">
+                                                                            <p class="mail-item-date">' . $timeString["value"] . ' ' . TranslationHandler::get_static_text($timeString["prefix"]) . ' ' . TranslationHandler::get_static_text("DATE_AGO") . '</p>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>	
+                                                            </div>
+                                                        </div>';
+                                                    }                                                    
+                                                }
+                                                if ($count == 0) {
+                                                    echo '<div class="mail-item" style="text-align:center">' . ($current_page != "all" ? TranslationHandler::get_static_text("NO_NOTIFICATIONS_IN_CATEGORY") : TranslationHandler::get_static_text("NO_NOTIFICATIONS_IN_ALL")) . '</div>';
+                                                }
+                                            }
+                                            else {
+                                                 echo '<div class="mail-item" style="text-align:center">' . ($current_page != "all" ? TranslationHandler::get_static_text("NO_NOTIFICATIONS_IN_CATEGORY") : TranslationHandler::get_static_text("NO_NOTIFICATIONS_IN_ALL")) . '</div>';
                                             }
                                         }
                                         else {
-                                             echo '<div class="mail-item" style="text-align:center">' . ($current_page != "all" ? TranslationHandler::get_static_text("NO_NOTIFICATIONS_IN_CATEGORY") : TranslationHandler::get_static_text("NO_NOTIFICATIONS_IN_ALL")) . '</div>';
+                                            echo $not_handler->error->title;
                                         }
                                     ?>
                                 </td>

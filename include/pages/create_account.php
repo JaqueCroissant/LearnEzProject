@@ -26,7 +26,7 @@
 							<div class="my_fade my_tab" id="create_user">
 								<div class="widget-body">
 
-                                                                    <form method="POST" action="" id="create_single" url="create_account.php?step=1" name="create_single_user">
+                                                                    <form method="POST" action="" id="create_single" url="create_account.php?step=create_user" name="create_single_user">
                                                                             <div class="col-md-6">
                                                                                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("CREATE_BASIC_INFO"); ?></h4></br>
 
@@ -155,7 +155,7 @@
                                                         <div class="my_fade my_tab" id="import_users">
                                                             <div class="widget-body">
 
-                                                                    <form method="POST" action="" id="create_import_form" url="create_account.php?step=2" name="create_import" enctype="multipart/form-data">
+                                                                    <form method="POST" action="" id="create_import_form" url="create_account.php?step=import_users" name="create_import" enctype="multipart/form-data">
 
                                                                             <?php if(RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN"))
                                                                                 {

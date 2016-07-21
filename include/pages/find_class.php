@@ -27,46 +27,40 @@ $classHandler->get_all_classes();
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
-                                        <th class="sorting_asc" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1" aria-sort="ascending"><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></th>
                                         <?php if ($classHandler->_user->user_type_id == 1) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
                                         <?php } ?>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></th>
                                         <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                         <?php } ?>
                                         <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
-                                        <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("DELETE"); ?></th>
-                                        <?php } ?>
-                                        <th hidden tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"></th>
+                                        <th hidden></th>
                                     </tr>
                                 </thead>
-                                <tfoot>
+                                <tfoot class="hidden">
                                     <tr>
-                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
-                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></th>
                                         <?php if ($classHandler->_user->user_type_id == 1) { ?>
-                                            <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
                                         <?php } ?>
-                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
-                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></th>
-                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></th>
                                         <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                            <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                         <?php } ?>
                                         <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                            <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
-                                        <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
-                                            <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("DELETE"); ?></th>
-                                        <?php } ?>
-                                        <th hidden rowspan="1" colspan="1"></th>
+                                        <th hidden></th>
                                     </tr>
                                 </tfoot>
                                 <tbody> 
@@ -86,45 +80,33 @@ $classHandler->get_all_classes();
                                             <td class="click_me"><?php echo $value->class_year; ?></td>
                                             <td class="click_me"><?php echo $value->start_date; ?></td>
                                             <td class="click_me"><?php echo $value->end_date; ?></td>
-                                            
+
                                             <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                            <td>
-                                                <form method="post" id="class_open_<?php echo $i; ?>" action="" url="find_class.php">
-                                                    <div class="checkbox" id="class_open_<?php echo $i; ?>_div">
-                                                        <input type="text" class="class_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="class_open_<?php echo $i; ?>_id_hidden">
-                                                        <input type="text" hidden value="<?php echo $value->open; ?>" name="class_open" id="class_open_<?php echo $i; ?>_hidden">
-                                                        <input type="hidden" name="state" value="update_open_state">
-                                                        <input class="checkbox-circle checkbox-dark btn_class_open" id="class_open_<?php echo $i; ?>_field" type="checkbox" 
-                                                               <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
-                                                        <label for="class_open_<?php echo $i; ?>_field"></label>
-                                                        <input type='button' name="submit" hidden="">
+                                                <td>
+                                                    <form method="post" id="class_open_<?php echo $i; ?>" action="" url="find_class.php">
+                                                        <div class="checkbox" id="class_open_<?php echo $i; ?>_div">
+                                                            <input type="text" class="class_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="class_open_<?php echo $i; ?>_id_hidden">
+                                                            <input type="text" hidden value="<?php echo $value->open; ?>" name="class_open" id="class_open_<?php echo $i; ?>_hidden">
+                                                            <input type="hidden" name="state" value="update_open_state">
+                                                            <input class="checkbox-circle checkbox-dark btn_class_open" id="class_open_<?php echo $i; ?>_field" type="checkbox" 
+                                                                   <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
+                                                            <label for="class_open_<?php echo $i; ?>_field"></label>
+                                                            <input type='button' name="submit" hidden="">
+                                                        </div>
+                                                    </form>
+                                                </td>
+                                            <?php } ?>
+                                            <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
+                                                <td>
+                                                    <div class="">
+                                                        <i class="fa fa-edit fa-fw fa-2x edit_class m-r-md" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
+                                                        <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
+                                                        <i class="fa fa-times fa-fw fa-2x delete_class" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school" style="font-size: 2.5em !important;"></i>
+                                                        <?php } ?>
                                                     </div>
-                                                </form>
-                                            </td>
-                                            <?php } ?>
-                                            <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                                <td>
-                                                    <form method="post">
-                                                        <div class="p-l-0" id="class_edit_<?php echo $i; ?>_div">
-                                                            <input type="text" class="class_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="class_id_hidden_<?php echo $i; ?>">
-                                                            <input class="btn-danger edit_class" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("EDIT") ?>">
-                                                        </div>
-                                                    </form>
                                                 </td>
                                             <?php } ?>
-                                            <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
-                                                <td>
-                                                    <form method="post" action="" url="find_class.php" id="class_delete_<?php echo $i; ?>">
-                                                        <div class="p-l-0" id="class_delete_<?php echo $i; ?>_div">
-                                                            <input type="text" class="class_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="class_id_delete_hidden_<?php echo $i; ?>">
-                                                            <input type="text" class="class_delete_hidden" hidden value="1" name="delete_class">
-                                                            <input type="hidden" name="state" value="delete_class">
-                                                            <input class="btn-danger delete_class" id="class_delete_<?php echo $i; ?>_btn" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("DELETE") ?>">
-                                                        </div>
-                                                    </form>
-                                                </td>
-                                            <?php } ?>
-                                            <td hidden user_type_id="<?php echo $classHandler->_user->user_type_id ?>" id="<?php echo $value->id ?>"></td>
+                                            <td hidden id="<?php echo $value->id ?>"></td>
                                         </tr>
 
                                         <?php
@@ -172,12 +154,11 @@ $classHandler->get_all_classes();
                                         <div class="form-group">
                                             <label class="col-sm-2 col-sm-offset-3 control-label" for="school_id"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
                                             <div class="col-md-4">
-                                                <select id="select_school" name="school_id" class="form-control">
-                                                    <option value="" id="school_id"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME") ?></option>
+                                                <select id="select_school" name="school_id" class="form-control" data-plugin="select2">
                                                     <?php
                                                     if (count($schoolHandler->all_schools) > 0) {
                                                         foreach ($schoolHandler->all_schools as $value) {
-                                                            echo '<option value="' . $value->id . '">' . $value->name . '</option>';
+                                                            echo '<option id="school_id_' . $value->id . '" value="' . $value->id . '">' . $value->name . '</option>';
                                                         }
                                                     }
                                                     ?>
@@ -266,4 +247,5 @@ $classHandler->get_all_classes();
     $(".datepickers").datepicker({
         dateFormat: "yy-mm-dd"
     });
+
 </script>

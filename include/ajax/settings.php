@@ -7,8 +7,8 @@
     switch($_GET['step'])
     {
         //VERIFICER BRUGERINFO
-        case "1":
-            if(isset($_POST)) 
+        case "edit_info":
+            if(isset($_POST))
             {
                 $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : "";
                 $surname = isset($_POST['surname']) ? $_POST['surname'] : "";
@@ -19,6 +19,7 @@
                 if($userHandler->edit_user_info($firstname, $surname, $email, $description, $avatar_id))
                 {
                     $jsonArray['status_value'] = true;
+                    $jsonArray['success'] = TranslationHandler::get_static_text("EDIT_INFO_SUCCESS");
                     $jsonArray['full_name'] = $userHandler->_user->firstname . " " . $userHandler->_user->surname;
                     $jsonArray['avatar_id'] = $userHandler->_user->image_id;
                 } 
@@ -33,7 +34,7 @@
         break;
         
         //SKIFT PASSWORD
-        case "2":
+        case "change_password":
             if(isset($_POST))
             {
                 $old_password = isset($_POST['old_password']) ? $_POST['old_password'] : "";
@@ -48,6 +49,7 @@
                 else 
                 {
                     $jsonArray['status_value'] = true;
+                    $jsonArray['success'] = TranslationHandler::get_static_text("CHANGE_PASSWORD_SUCCESS");
                 }
                 echo json_encode($jsonArray);
                 die();

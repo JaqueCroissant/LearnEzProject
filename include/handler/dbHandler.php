@@ -138,6 +138,7 @@
             }
             catch (PDOException $ex) 
             {
+                echo $ex->getMessage();
                 $this->error = ErrorHandler::return_error($ex->getMessage());
             }
             return array();

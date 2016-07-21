@@ -10,6 +10,7 @@
         public $image_id;
         public $image_name;
         public $time_created;
+        public $open;
 
         public $username;
         public $firstname;

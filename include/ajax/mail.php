@@ -13,7 +13,7 @@ if(isset($_POST)) {
         case "search":
             if($mailHandler->search_mail(isset($_POST["search_word"]) ? $_POST["search_word"] : null, isset($_POST["search_folders"]) ? $_POST["search_folders"] : array(), isset($_POST["search_content"]) ? $_POST["search_content"] : 0)) {
                 $jsonArray['status_value'] = true;
-                $jsonArray['url'] = "&search_query=".$_POST["search_word"]."&search_folders=".serialize($_POST["search_folders"])."&search_content=".$_POST["search_content"];
+                $jsonArray['url'] = "&search_q=".$_POST["search_word"]."&search_f=".serialize($_POST["search_folders"])."&search_c=".$_POST["search_content"];
             } else {
                 $jsonArray['status_value'] = false;
                 $jsonArray['error'] = $mailHandler->error->title;

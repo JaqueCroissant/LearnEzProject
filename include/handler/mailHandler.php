@@ -161,6 +161,7 @@ class MailHandler extends Handler
                 $this->mails[] = new Mail($value);
             }
             
+            
             return true;
 	}
 	catch (Exception $ex) 
@@ -366,7 +367,7 @@ class MailHandler extends Handler
                         throw new exception("MAIL_MUST_FILL_RECIPIANTS");
                     }
 
-                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.user_id = users.id WHERE user_class IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 3);
+                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.users_id = users.id WHERE user_class.class_id IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 3);
                     foreach($data as $user) {
                         $array[] = $user["id"];
                     }
@@ -376,8 +377,7 @@ class MailHandler extends Handler
                     if(!RightsHandler::has_user_right("MAIL_WRITE_TO_CLASS")) {
                         throw new exception("MAIL_MUST_FILL_RECIPIANTS");
                     }
-
-                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.user_id = users.id WHERE user_class IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 4);
+                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.users_id = users.id WHERE user_class.class_id IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 4);
                     foreach($data as $user) {
                         $array[] = $user["id"];
                     }
@@ -444,10 +444,20 @@ class MailHandler extends Handler
             }
             
             if(RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.id != :user_id", $this->_user->id);
+                $receiver_rights = "";
+                $receiver_rights .= !RightsHandler::has_user_right("MAIL_SEND_TO_ADMIN") ? " AND users.user_type_id != '1'" : "";
+                $receiver_rights .= !RightsHandler::has_user_right("MAIL_SEND_TO_LOCAL_ADMIN") ? " AND users.user_type_id != '2'" : "";
+                $receiver_rights .= !RightsHandler::has_user_right("MAIL_SEND_TO_TEACERS") ? " AND users.user_type_id != '3'" : "";
+                
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id ". $receiver_rights, $this->_user->id);
             } else {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND users.school_id : school_id", $this->_user->id, $this->_user->school_id);
-            
+                $receiver_rights = "";
+                $receiver_rights_two = "";
+                $receiver_rights .= RightsHandler::has_user_right("MAIL_SEND_TO_ADMIN") ? " OR users.user_type_id = '1'" : "";
+                $receiver_rights_two .= !RightsHandler::has_user_right("MAIL_SEND_TO_LOCAL_ADMIN") ? " AND users.user_type_id != '2'" : "";
+                $receiver_rights_two .= !RightsHandler::has_user_right("MAIL_SEND_TO_TEACERS") ? " AND users.user_type_id != '3'" : "";
+
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND ((school_id = :school_id ". $receiver_rights .") OR (school_id = :school_id " . $receiver_rights_two ."))", $this->_user->id, $this->_user->school_id, $this->_user->school_id);
             }
             
             $users = array();
@@ -506,16 +516,21 @@ class MailHandler extends Handler
                 $final_mail_folders[] = $value;
             }
             
+            $query_search_content = ($search_content == 1 ? "mail.text LIKE :search_query" : ($search_content == 2 ? "mail.title LIKE :search_query" : "(mail.text LIKE :search_query OR mail.title LIKE :search_query)"));
             $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
                     . " INNER JOIN users ON users.id = sender_id"
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.receiver_folder_id"
-                    . " WHERE user_mail.receiver_id = :user_id AND mail.title LIKE :search_query AND user_mail.receiver_folder_id IN (". $this->generate_in_query($final_mail_folders).")";
+                    . " WHERE user_mail.receiver_id = :user_id AND ". $query_search_content ." AND user_mail.receiver_folder_id IN (". $this->generate_in_query($final_mail_folders).")";
             
             $query .= $read_unread_all == 1 ? " AND user_mail.is_read is false" : ($read_unread_all == 2 ? " AND user_mail.is_read is true" : "");
-            $query .= $order_ascending == 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
+            $query .= $order_ascending != 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
 
-            $data = DbHandler::get_instance()->return_query($query, $this->_user->id, '%'.$search_query.'%');
+            if($search_content == 3) {
+                $data = DbHandler::get_instance()->return_query($query, $this->_user->id, '%'.$search_query.'%', '%'.$search_query.'%');
+            }else {
+                $data = DbHandler::get_instance()->return_query($query, $this->_user->id, '%'.$search_query.'%');
+            }
             
             if(empty($data) || !is_array($data) || count($data) < 1) {
                 throw new exception("MAIL_NO_MAILS_FOUND");

@@ -36,15 +36,16 @@ $schoolHandler->get_school_types();
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></th>
                                         <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
                                         <th class="sorting p-r-0" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
+                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
+                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
+                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php } ?>
                                         <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                             <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
-                                            <?php if (RightsHandler::has_user_right("SCHOOL_RIGHTS")) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("RIGHTS"); ?></th>
-                                        <?php } ?>
-                                        <?php if (RightsHandler::has_user_right("SCHOOL_DELETE")) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("DELETE"); ?></th>
-                                        <?php } ?>
+                                        
                                         <th hidden tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"></th>
                                     </tr>
                                 </thead>
@@ -57,15 +58,16 @@ $schoolHandler->get_school_types();
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
                                         <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
+                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
+                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
+                                        <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                            <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php } ?>
                                         <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                             <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
-                                        <?php if (RightsHandler::has_user_right("SCHOOL_RIGHTS")) { ?>
-                                            <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("RIGHTS"); ?></th>
-                                        <?php } ?>
-                                        <?php if (RightsHandler::has_user_right("SCHOOL_DELETE")) { ?>
-                                            <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("DELETE"); ?></th>
-                                        <?php } ?>
+                                        
                                         <th hidden rowspan="1" colspan="1"></th>
                                     </tr>
                                 </tfoot>
@@ -84,42 +86,39 @@ $schoolHandler->get_school_types();
                                                 <td class="click_me"><?php echo $value->phone; ?></td>
                                                 <td class="click_me"><?php echo $value->email; ?></td>
                                                 <td class="click_me"><?php echo $value->school_type; ?></td>
+                                                <td class="click_me"><?php echo $value->subscription_start; ?></td>
+                                                <td class="click_me"><?php echo $value->subscription_end; ?></td>
+                                                <td class="click_me"><?php echo $value->max_students; ?></td>
                                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                                     <td>
-                                                        <form method="post">
-                                                            <div class="p-l-0" id="school_edit_<?php echo $i; ?>_div">
-                                                                <input type="text" class="school_id_hidden" hidden value="<?php echo $value->id; ?>" name="school_id" id="school_id_hidden_<?php echo $i; ?>">
-                                                                <input class="btn-danger edit_school" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("EDIT") ?>">
+                                                        <form method="post" id="school_open_<?php echo $i; ?>" action="" url="find_school.php">
+                                                            <div class="checkbox" id="school_open_<?php echo $i; ?>_div">
+                                                                <input type="text" class="school_id_hidden" hidden value="<?php echo $value->id; ?>" name="school_id" id="school_open_<?php echo $i; ?>_id_hidden">
+                                                                <input type="text" hidden value="<?php echo $value->open; ?>" name="school_open" id="school_open_<?php echo $i; ?>_hidden">
+                                                                <input type="hidden" name="state" value="update_open_state">
+                                                                <input class="checkbox-circle checkbox-dark btn_school_open" id="school_open_<?php echo $i; ?>_field" type="checkbox" 
+                                                                       <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
+                                                                <label for="school_open_<?php echo $i; ?>_field"></label>
+                                                                <input type='button' name="submit" hidden="">
                                                             </div>
                                                         </form>
                                                     </td>
                                                 <?php } ?>
-                                                <?php if (RightsHandler::has_user_right("SCHOOL_RIGHTS")) { ?>
+                                                <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                                     <td>
-                                                        <form method="post">
-                                                            <div class="p-l-0" id="school_edit_rights_<?php echo $i; ?>_div">
-                                                                <input type="text" class="school_id_hidden" hidden value="<?php echo $value->id; ?>" name="school_id" id="school_id_hidden_<?php echo $i; ?>">
-                                                                <input class="btn-danger edit_school_rights" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("EDIT_RIGHTS") ?>">
-                                                            </div>
-                                                        </form>
+                                                        <div class="">
+                                                            <i class="fa fa-edit fa-2x edit_school center" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
+                                                        </div>
                                                     </td>
                                                 <?php } ?>
-                                                <?php if (RightsHandler::has_user_right("SCHOOL_DELETE")) { ?>
-                                                    <td>
-                                                        <form method="post" action="" url="find_school.php" id="school_delete_<?php echo $i; ?>">
-                                                            <div class="p-l-0" id="school_delete_<?php echo $i; ?>_div">
-                                                                <input type="text" class="school_id_hidden" hidden value="<?php echo $value->id; ?>" name="school_id" id="school_id_delete_hidden_<?php echo $i; ?>">
-                                                                <input type="text" class="school_delete_hidden" hidden value="1" name="delete_school">
-                                                                <input type="hidden" name="state" value="delete_school">
-                                                                <input class="btn-danger delete_school" id="school_delete_<?php echo $i; ?>_btn" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("DELETE") ?>">
-                                                            </div>
-                                                        </form>
-                                                    </td>
-                                                <?php } ?>
+
+                                                
                                                 <td class="hidden"><?php echo $value->id; ?></td>
                                             </tr>
                                             <?php
                                         }
+                                    } else {
+                                        echo ErrorHandler::return_error("INSUFFICIENT_RIGHTS")->title;
                                     }
                                     ?>
                                 </tbody>
@@ -128,91 +127,95 @@ $schoolHandler->get_school_types();
                     </div>
                     <!-- End Tab -->
 
-                    
+
                     <!-- Tab -->
                     <div class="my_fade my_tab" id="edit_school_tab">
                         <div class="widget-body">
                             <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                            <form method="post" id="update_school_step_one" action="" name="update_school_step_one" class="form-horizontal" url="find_school.php">
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_name"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control" id="edit_school_name" type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
+                                <form method="post" id="update_school" action="" name="update_school_step_one" class="form-horizontal" url="find_school.php">
+                                    <div class="form-group">
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_name"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
+                                        <div class="col-md-5">
+                                            <input class="form-control" id="edit_school_name" type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_address"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control" id="edit_school_address" type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
+                                    <div class="form-group">
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_address"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></label>
+                                        <div class="col-md-5">
+                                            <input class="form-control" id="edit_school_address" type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("ZIP_CODE") . " & " . TranslationHandler::get_static_text("CITY"); ?></label>
-                                    <div class="col-md-1">
-                                        <input class="form-control" id="edit_school_zip_code" type="text" name="school_zip_code" placeholder="<?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?>">
+                                    <div class="form-group">
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("ZIP_CODE") . " & " . TranslationHandler::get_static_text("CITY"); ?></label>
+                                        <div class="col-md-1">
+                                            <input class="form-control" id="edit_school_zip_code" type="text" name="school_zip_code" placeholder="<?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?>">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input class="form-control" id="edit_school_city" type="text" name="school_city" placeholder="<?php echo TranslationHandler::get_static_text("CITY"); ?>">
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <input class="form-control" id="edit_school_city" type="text" name="school_city" placeholder="<?php echo TranslationHandler::get_static_text("CITY"); ?>">
+                                    <div class="form-group">
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></label>
+                                        <div class="col-md-5">
+                                            <input class="form-control" id="edit_school_phone" type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control" id="edit_school_phone" type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
+                                    <div class="form-group">
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_email"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></label>
+                                        <div class="col-md-5">
+                                            <input class="form-control" id="edit_school_email" type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_email"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control" id="edit_school_email" type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
+                                    <div class="form-group">
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_max_students"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></label>
+                                        <div class="col-md-5">
+                                            <input class="form-control" id="edit_school_max_students" type="text" name="school_max_students" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?>">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_max_students"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control" id="edit_school_max_students" type="text" name="school_max_students" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?>">
+                                    <div class="form-group" >
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_start"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></label>
+                                        <div class="col-md-5">
+                                            <input class="form-control datepickers"  id="edit_school_subscription_start" type="text" name="school_subscription_start" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group" >
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_start"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control datepickers"  id="edit_school_subscription_start" type="text" name="school_subscription_start" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>">
+                                    <div class="form-group" >
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
+                                        <div class="col-md-5">
+                                            <input class="form-control datepickers" id="edit_school_subscription_end" type="text" name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group" >
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control datepickers" id="edit_school_subscription_end" type="text" name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
+                                    <div class="form-group">
+                                        <label class="col-md-2 col-md-offset-2 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
+                                        <div class="col-md-5">
+                                            <select name="school_type_id" id="edit_school_type_id" class="form-control" data-plugin="select2">
+                                                <?php
+                                                foreach ($schoolHandler->school_types as $value) {
+                                                    echo '<option id="school_type_id_' . $value['id'] . '" value="' . $value['id'] . '">' . $value['title'] . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
-                                    <div class="col-md-5">
-                                        <select name="school_type_id" id="edit_school_type_id" class="form-control" data-plugin="select2">
-                                            <?php
-                                            foreach ($schoolHandler->school_types as $value) {
-                                                echo '<option id="school_type_id_' . $value['id'] . '" value="' . $value['id'] . '">' . $value['title'] . '</option>';
-                                            }
-                                            ?>
-                                        </select>
+                                    <div class="form-group">
+                                        <label class="col-md-2 col-md-offset-2 control-label"></label>
+                                        <div class="col-md-5">
+                                            <input type="hidden" id="update_school_id" name="school_id">
+                                            <input type="hidden" name="state" value="update_school">
+                                            <input type="button" name="submit" id="update_school_step_one_button"
+                                                   value="<?php echo TranslationHandler::get_static_text("SCHOOL_UPDATE"); ?>" class="pull-right btn btn-default btn-sm update_school">   
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label"></label>
-                                    <div class="col-md-5">
-                                        <input type="hidden" id="update_school_id" name="school_id">
-                                        <input type="hidden" name="state" value="update_school">
-                                        <input type="button" name="submit" id="update_school_step_one_button"
-                                               value="<?php echo TranslationHandler::get_static_text("SCHOOL_UPDATE"); ?>" class="pull-right btn btn-default btn-sm update_school">   
-                                    </div>
-                                </div>
-                            </form>
-                            <?php } else { echo ErrorHandler::return_error("INSUFFICIENT_RIGHTS")->title; } ?>
+                                </form>
+                                <?php
+                            } else {
+                                echo ErrorHandler::return_error("INSUFFICIENT_RIGHTS")->title;
+                            }
+                            ?>
                         </div>
                     </div>
                     <!-- End Tab -->
-                    
-                    
+
+
                     <!-- Tab -->
                     <div class="my_fade my_tab" id="edit_school_rights_tab">
                         <div class="widget-body">
@@ -225,17 +228,31 @@ $schoolHandler->get_school_types();
     </div>
 </div>
 
-<div id="delete_class_alert" class="panel panel-danger alert_panel" hidden>
+<div id="close_school_alert" class="panel panel-danger alert_panel hidden" >
     <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
     <div class="panel-body">
         <p>
-            <?php echo TranslationHandler::get_static_text("CONFIRM_DELETE_CLASS"); ?>
+            <?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?>
         </p>
     </div>
     <div class="panel-footer p-h-sm">
         <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg" id="accept_delete_class_btn" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
-            <input class="btn btn-default btn-sm p-v-lg" id="cancel_delete_class_btn" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg accept_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+    </div>
+</div>
+<div id="open_school_alert" class="panel panel-danger alert_panel hidden">
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <p>
+            <?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?>
+        </p>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
         </p>
     </div>
 </div>

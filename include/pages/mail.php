@@ -220,7 +220,7 @@ $paginationHandler = new PaginationHandler();
                                                                     }
                                                                     echo '
                                                                 </div>
-                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 100 ? substr($value->text, 0, 100) . '...' : $value->text) .'</p>
+                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 85 ? substr($value->text, 0, 85) . '...' : $value->text) .'</p>
                                                             </div>                                                            
                                                         </td>
                                                     </tr>
@@ -524,7 +524,7 @@ $paginationHandler = new PaginationHandler();
                                                 foreach($mails as $value) {
                                                     $date_to_string = time_elapsed($value->date);
                                                     echo '
-                                                        <div class="mail-item item_hover mail_number_'. $value->id.' '.($value->is_read ? '""' : "item_unread") .'" style="height:100px;">
+                                                        <div class="mail-item item_hover mail_number_'. $value->id.' '.($current_page != "sent" && $current_page != "drafts" ? ($value->is_read ? '""' : "item_unread") : '') .'" style="height:100px;">
                                                             <div class="mail_element_checkbox checkbox-resize">
                                                                 <div>
                                                                     <div class="checkbox">
@@ -551,7 +551,7 @@ $paginationHandler = new PaginationHandler();
                                                                                     }
                                                                                     echo '
                                                                                 </div>
-                                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 100 ? substr($value->text, 0, 100) . '...' : $value->text) .'</p>
+                                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 85 ? substr($value->text, 0, 85) . '...' : $value->text) .'</p>
                                                                             </div>                                                            
                                                                         </td>
                                                                     </tr>

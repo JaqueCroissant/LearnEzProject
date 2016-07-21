@@ -1,6 +1,7 @@
 <?php
 class UserHandler extends Handler
 {
+    public $users = array();
     public $temp_user_array;
     public $profile_images;
 
@@ -540,7 +541,36 @@ class UserHandler extends Handler
             throw new Exception("USER_INVALID_DESCRIPTION");
         }
     }
+    
+    public function get_all_users() {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if (!RightsHandler::has_user_right("ACCOUNT_FIND")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id INNER JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id";
+            
 
+            $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language());
+            foreach ($users as $value) {
+                $this->users[] = new User($value);
+            }
+
+            if (count($this->users) == 0) {
+                throw new Exception("NO_USERS_FOUND");
+            }
+
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+    
     public function get_users($ids)
     {
         try

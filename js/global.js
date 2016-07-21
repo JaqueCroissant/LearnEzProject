@@ -113,6 +113,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
+            show_status_bar("success", ajax_data.success);
         });
     });
 

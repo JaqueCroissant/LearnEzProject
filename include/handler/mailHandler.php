@@ -161,6 +161,7 @@ class MailHandler extends Handler
                 $this->mails[] = new Mail($value);
             }
             
+            
             return true;
 	}
 	catch (Exception $ex) 
@@ -366,7 +367,7 @@ class MailHandler extends Handler
                         throw new exception("MAIL_MUST_FILL_RECIPIANTS");
                     }
 
-                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.user_id = users.id WHERE user_class IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 3);
+                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.users_id = users.id WHERE user_class.class_id IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 3);
                     foreach($data as $user) {
                         $array[] = $user["id"];
                     }
@@ -376,8 +377,7 @@ class MailHandler extends Handler
                     if(!RightsHandler::has_user_right("MAIL_WRITE_TO_CLASS")) {
                         throw new exception("MAIL_MUST_FILL_RECIPIANTS");
                     }
-
-                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.user_id = users.id WHERE user_class IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 4);
+                    $data = DbHandler::get_instance()->return_query("SELECT users.id FROM users INNER JOIN user_class ON user_class.users_id = users.id WHERE user_class.class_id IN (". $this->generate_in_query($value) .") AND users.user_type_id = :user_type_id", 4);
                     foreach($data as $user) {
                         $array[] = $user["id"];
                     }
@@ -444,14 +444,20 @@ class MailHandler extends Handler
             }
             
             if(RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
-                if(RightsHandler::has_user_right("MAIL_SEND_TO_ADMIN")) {
-                    $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id", $this->_user->id);
-                } else {
-                    $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND users.user_type_id != '1'", $this->_user->id);
-                }
+                $receiver_rights = "";
+                $receiver_rights .= !RightsHandler::has_user_right("MAIL_SEND_TO_ADMIN") ? " AND users.user_type_id != '1'" : "";
+                $receiver_rights .= !RightsHandler::has_user_right("MAIL_SEND_TO_LOCAL_ADMIN") ? " AND users.user_type_id != '2'" : "";
+                $receiver_rights .= !RightsHandler::has_user_right("MAIL_SEND_TO_TEACERS") ? " AND users.user_type_id != '3'" : "";
                 
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id ". $receiver_rights, $this->_user->id);
             } else {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND school_id = :school_id", $this->_user->id, $this->_user->school_id);
+                $receiver_rights = "";
+                $receiver_rights_two = "";
+                $receiver_rights .= RightsHandler::has_user_right("MAIL_SEND_TO_ADMIN") ? " OR users.user_type_id = '1'" : "";
+                $receiver_rights_two .= !RightsHandler::has_user_right("MAIL_SEND_TO_LOCAL_ADMIN") ? " AND users.user_type_id != '2'" : "";
+                $receiver_rights_two .= !RightsHandler::has_user_right("MAIL_SEND_TO_TEACERS") ? " AND users.user_type_id != '3'" : "";
+
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND ((school_id = :school_id ". $receiver_rights .") OR (school_id = :school_id " . $receiver_rights_two ."))", $this->_user->id, $this->_user->school_id, $this->_user->school_id);
             }
             
             $users = array();

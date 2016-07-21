@@ -13,7 +13,7 @@
                     throw new exception("USER_NOT_LOGGED_IN");
                 }
                 
-                if (!RightsHandler::has_user_right("SCHOOL_CREATE") || !RightsHandler::has_user_right("RIGHTS")) {
+                if (!RightsHandler::has_user_right("SCHOOL_CREATE")) {
                     throw new exception("INSUFFICIENT_RIGHTS");
                 }
                 

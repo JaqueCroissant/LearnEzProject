@@ -261,7 +261,7 @@
         }
         
         
-        private static function set_rights()
+        public static function set_rights()
         {
             try 
             {
@@ -296,6 +296,22 @@
                                                         WHERE user_type_rights.user_type_id = :user_type_id OR user_type_page.user_type_id = :user_type_id", 
                                                         $current_user->user_type_id, $current_user->user_type_id);
 
+                echo "her";
+                if($current_user != null && $current_user->user_type_id != 1) {
+                    $data = DbHandler::get_instance()->return_query("SELECT school_rights.rights_id, rights.id FROM school_rights RIGHT JOIN rights ON rights.id = school_rights.rights_id WHERE school_rights.user_type_id = :user_type_id AND school_id = :school_id", $current_user->user_type_id, $current_user->school_id);
+                    
+                    echo "<pre>";
+                    var_dump($data);
+                    echo "</pre>";
+                    
+                    if(count($data) < 1) {
+                        return true;
+                    }
+                }
+                echo "<pre>";
+                var_dump($user_rights);
+                echo "</pre>";
+                
                 if(count($user_rights) < 1) {
                     throw new Exception();
                 }                
@@ -332,7 +348,6 @@
             if(!self::fetch_rights_session()) {
                 return false;
             }
-
             if(is_string($prefix) && !empty($prefix))
             {
                 return array_key_exists("RIGHT_".strtoupper($prefix), SessionKeyHandler::get_from_session("rights", true));

@@ -59,6 +59,9 @@ $(document).ready(function () {
         event.preventDefault();
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
+            if(ajax_data.user_setup === "true") {
+                // HER
+            }
         }, function () {
             reload_page();
         });

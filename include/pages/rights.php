@@ -3,10 +3,8 @@ require_once 'require.php';
 require_once '../../include/handler/pageHandler.php';
 $pageHandler = new PageHandler(true);
 $rightsHandler = new RightsHandler();
-$rightsHandler->create_school_rights(1);
 
 if (RightsHandler::has_user_right("RIGHTS")) {
-
     $ordered_pages = $pageHandler->fetch_ordered_pages();
     $rights_categories = $pageHandler->fetch_rights_page_categories();
     $rightsHandler->get_all_rights();
@@ -175,6 +173,7 @@ if (RightsHandler::has_user_right("RIGHTS")) {
 
     <?php
     } elseif (RightsHandler::has_user_right("SCHOOL_RIGHTS")) {
+        RightsHandler::set_rights();
         $rights_categories = $pageHandler->fetch_rights_page_categories();
         $rightsHandler->get_all_rights(true);
     ?>

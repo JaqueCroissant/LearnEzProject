@@ -15,20 +15,20 @@ $loginHandler = new LoginHandler();
                 <form method="POST" action="" id="login_form" url="login.php" class="form-horizontal" name="login">
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label" for="username"><?php echo TranslationHandler::get_static_text("USERNAME"); ?></label>
-                        <div class="col-md-5">
+                        <div class="col-sm-5">
                             <input class="form-control input-sm" type="text" name="username" placeholder="<?php echo TranslationHandler::get_static_text("USERNAME"); ?>">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label" for="password"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
-                        <div class="col-md-5">
+                        <div class="col-sm-5">
                             <input class="form-control input-sm" type="password" name="password" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
                             placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label"></label>
-                        <div class="col-md-5">
+                        <div class="col-sm-5">
                             <input type="hidden" id="token" name="token" value="<?php echo $loginHandler->get_login_token(); ?>">
                             <input type="button" id="submit_button" name="submit" 
                                    value="<?php echo TranslationHandler::get_static_text("LOGIN"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">  

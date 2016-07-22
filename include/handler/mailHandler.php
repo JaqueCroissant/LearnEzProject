@@ -293,6 +293,7 @@ class MailHandler extends Handler
             foreach($final_user_ids as $value) {
                 DbHandler::get_instance()->query("INSERT INTO user_mail (mail_id, sender_id, receiver_id, sender_folder_id, receiver_folder_id) VALUES (:last_inserted_id, :sender_id, :receiver_id, :sender_folder_id, :receiver_folder_id)", $last_inserted_id, $this->_user->id, $value["id"], 3, 1);
             }
+            NotificationHandler::create_new_static_user_notification(array_map(function($e){return $e["id"];}, $final_user_ids), "MAIL_RECEIVED", array("user" => $this->_user->id, "link_id" => $last_inserted_id));
             
             if(is_array($tags) && count($tags) > 0) {
                 $data = DbHandler::get_instance()->return_query("SELECT id FROM mail_tags");

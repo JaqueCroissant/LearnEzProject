@@ -261,7 +261,7 @@
         }
         
         
-        private static function set_rights()
+        public static function set_rights()
         {
             try 
             {
@@ -289,13 +289,28 @@
                     return true;
                 }
                 
-                $user_rights = DbHandler::get_instance()->return_query("SELECT rights.id, rights.prefix, rights.sort_order  FROM rights
+                $final_user_rights = array();
+                $user_rights = DbHandler::get_instance()->return_query("SELECT rights.id, rights.prefix, rights.sort_order, rights.is_school_right  FROM rights
                                                         LEFT JOIN user_type_rights ON rights.id = user_type_rights.rights_id
                                                         LEFT JOIN page ON page.id = rights.page_right_id
                                                         LEFT JOIN user_type_page ON user_type_page.page_id = rights.page_right_id
                                                         WHERE user_type_rights.user_type_id = :user_type_id OR user_type_page.user_type_id = :user_type_id", 
                                                         $current_user->user_type_id, $current_user->user_type_id);
 
+                if($current_user != null && $current_user->user_type_id != 1) {
+                    $data = DbHandler::get_instance()->return_query("SELECT school_rights.rights_id, rights.id, rights.prefix FROM school_rights RIGHT JOIN rights ON rights.id = school_rights.rights_id WHERE school_rights.user_type_id = :user_type_id AND school_id = :school_id", $current_user->user_type_id, $current_user->school_id);
+                    
+                    foreach($user_rights as $key => $value) {
+                        if(isset($value["is_school_right"]) && !empty($value["is_school_right"]) && $value["is_school_right"]) {
+                            unset($user_rights[$key]);
+                        }
+                    }
+                    
+                    if(count($data) > 0) {
+                        $user_rights = array_merge($user_rights, $data);
+                    }
+                }
+                
                 if(count($user_rights) < 1) {
                     throw new Exception();
                 }                
@@ -332,7 +347,6 @@
             if(!self::fetch_rights_session()) {
                 return false;
             }
-
             if(is_string($prefix) && !empty($prefix))
             {
                 return array_key_exists("RIGHT_".strtoupper($prefix), SessionKeyHandler::get_from_session("rights", true));

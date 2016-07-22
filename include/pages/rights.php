@@ -5,7 +5,6 @@ $pageHandler = new PageHandler(true);
 $rightsHandler = new RightsHandler();
 
 if (RightsHandler::has_user_right("RIGHTS")) {
-
     $ordered_pages = $pageHandler->fetch_ordered_pages();
     $rights_categories = $pageHandler->fetch_rights_page_categories();
     $rightsHandler->get_all_rights();

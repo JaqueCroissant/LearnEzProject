@@ -6,5 +6,6 @@
         public $prefix;
         public $title;
         public $page_category_id;
+        public $is_school_right;
     }
 ?>

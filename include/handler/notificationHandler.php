@@ -362,7 +362,7 @@
                     if ($d["id"] == $f[$name]) {
                         $get_values = "";
                         foreach ($to_get as $g) {
-                            $get_values .= $d[$g] . " ";
+                            $get_values .= ucfirst($d[$g]) . " ";
                         }
                         array_push($array, array($name => $get_values, "arg_id" => $f["arg_id"]));
                         break;
@@ -390,31 +390,44 @@
             }
         }
         
-        public function create_new_static_user_notification($reciever, $prefix, $args){
+        public static function create_new_static_user_notification($receiver, $prefix, $args){
             try {
-                //TODO validation
-                $this->check_numeric($reciever);
-                $this->check_prefix($prefix);
-                $this->check_isnull($args);
+                
+                if (!isset($receiver) || !is_array($receiver) || (empty($receiver))) {
+                    throw new Exception("OBJECT_IS_EMPTY");
+                }
+                
+                if (isset($prefix) && empty($prefix)) {
+                    throw new Exception("NOTIFICATION_PREFIX_NOT_SET");
+                }
+
+                if (!isset($args) || (empty($args) && $args != 0)) {
+                    throw new Exception("OBJECT_IS_EMPTY");
+                }
 
                 $guid = "";
                 if (count($args) > 0) {
-                    $guid = $this->get_new_guid();
+                    $guid = self::create_GUID();
                     $query = "INSERT INTO user_notifications_arguments (name, value, arg_id) VALUES ";
                     foreach ($args as $key => $value) {
                         $query .= "('" . $key . "','" . $value . "','" . $guid . "'),";
                     }
                     $query = rtrim($query, ",") . ";";
                     DbHandler::get_instance()->query($query);
-                }               
+                } 
                 
-                $this->create_static_user_notification($reciever, $prefix, $guid);
+                foreach($receiver as $reciever) {
+                    if (is_numeric($reciever) && !is_int((int)($reciever))) {
+                        continue;
+                    }             
+
+                     DbHandler::get_instance()->Query("INSERT INTO user_notifications (user_id, notification_id, datetime, is_read, arg_id) "
+                        . "VALUES (:reciever,(SELECT id FROM notifications WHERE prefix=:prefix LIMIT 1),NOW(),:isRead,:guid)", $reciever, $prefix, 0, $guid);
+                }
                 
                 return true;
                 
             } catch (Exception $exc) {
-                $this->error = ErrorHandler::return_error($exc->getMessage());
-                echo $this->error->title;
                 return false;
             }
         }
@@ -429,9 +442,9 @@
                     $final = substr_replace($final, "<b>" . $args[$sub] . "</b>", $value[0], $value[1] + 3);
                     continue;
                 }
-                return array(false, "");
+                $final = substr_replace($final, "<b>" . ucfirst(TranslationHandler::get_static_text("UNKNOWN")) . "</b>", $value[0], $value[1] + 3);
             }
-            return array(true, $final);
+            return $final;
         }
         
         private static function parser($string){
@@ -487,21 +500,8 @@
             return $data;
         }
         
-        private function get_new_guid(){
-            try{
-                return $this->create_GUID();
-//                while(true){
-//                    $guid = $this->create_GUID();
-//                    if (DbHandler::get_instance()->count_query("SELECT id FROM user_notifications_arguments WHERE arg_id = :guid", $guid) < 1) {
-//                        return $guid;
-//                    }
-//                }
-            } catch (Exception $exc) {
-                $this->error = ErrorHandler::return_error($exc->getMessage());
-            }
-        }
         
-        private function create_GUID(){
+        private static function create_GUID(){
             if (function_exists('com_create_guid')){
                 return com_create_guid();
             }else{
@@ -516,11 +516,6 @@
                     .chr(125);// "}"
                 return $uuid;
             }
-        }
-                
-        private function create_static_user_notification($reciever, $prefix, $guid){
-            DbHandler::get_instance()->Query("INSERT INTO user_notifications (user_id, notification_id, datetime, is_read, arg_id) "
-                    . "VALUES (:reciever,(SELECT id FROM notifications WHERE prefix=:prefix LIMIT 1),NOW(),:isRead,:guid)", $reciever, $prefix, 0, $guid);
         }
         
         private function check_prefix($prefix){

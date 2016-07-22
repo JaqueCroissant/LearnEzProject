@@ -1,6 +1,7 @@
 <?php
 require_once 'require.php';
 require_once '../../include/handler/pageHandler.php';
+require_once '../../include/handler/notificationHandler.php';
 require_once '../../include/handler/mailHandler.php';
 
 $current_page = isset($_GET['step']) && !empty($_GET['step']) ? $_GET['step'] : null;
@@ -393,6 +394,7 @@ $paginationHandler = new PaginationHandler();
                                     <div class="panel panel-default new-message">
                                         <form method="POST" action="" id="create_mail_form" url="mail.php?step=create_mail" name="create_mail">
                                             <input type="hidden" name="recipiants[]" value="USER_ANY_<?php echo $current_mail->sender_id; ?>">
+                                            <input name="disable_reply" class="form-control" type="hidden" value="1">
                                             <input type="hidden" name="title" value="RE: <?php echo $current_mail->title; ?>">
                                             <?php
                                             foreach($current_mail->mail_tags as $tag)

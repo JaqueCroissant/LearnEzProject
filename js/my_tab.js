@@ -3,11 +3,10 @@ var clicked = true;
 var ready_to_change = true;
 
 $(document).ready(function () {
-    var page_args = getURLParameters(location.href);
-    if (typeof page_args['step'] !== 'undefined') {
-        current_tab = "#" + page_args['step'] + "_tab";
-        $("#" + page_args['step'] + "_a").parent().removeClass("hidden");
-        console.log($("#" + page_args['step'] + "_a"));
+    var page_step = $.cookie("current_page_step") !== undefined ? $.cookie("current_page_step") : undefined;
+    if (page_step !== undefined) {
+        current_tab = "#" + page_step + "_tab";
+        $("#" + page_step + "_a").parent().removeClass("hidden");
     } else {
         current_tab = "#" + $(".my_tab").first().attr("id");
     }
@@ -42,19 +41,4 @@ $(document).ready(function () {
             $(this).children().removeClass("link_disabled");
         });
     });
-
-    function getURLParameters(url) {
-        var result = {};
-        var searchIndex = url.indexOf("?");
-        if (searchIndex === -1)
-            return result;
-        var sPageURL = url.substring(searchIndex + 1);
-        var sURLVariables = sPageURL.split('&');
-        for (var i = 0; i < sURLVariables.length; i++)
-        {
-            var sParameterName = sURLVariables[i].split('=');
-            result[sParameterName[0]] = sParameterName[1];
-        }
-        return result;
-    }
 });

@@ -367,8 +367,17 @@ a .menu_header {
     color: white;
     font-weight: bold;
     position: fixed;
-    margin-top: -0.4em; 
     background-color: red;
+    -webkit-border-radius: 3px; 
+    -moz-border-radius: 3px; 
+    border-radius: 3px;
+    margin-top: 15px;
+    margin-left: 12px;
+    width: 11px !important;
+    height: 11px !important;
+    line-height: 100% !important;
+    text-align: center;
+    pointer-events: none;
 }
 
 .notif_element_checkbox {

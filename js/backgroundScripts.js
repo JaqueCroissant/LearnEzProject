@@ -1,8 +1,7 @@
 function start_notification_beat(timerInSeconds){
-//    setInterval(function(){
-//        console.log("running notification beat");
-//        notification_beat();
-//    }, timerInSeconds * 1000);
+    setInterval(function(){
+        notification_beat();
+    }, timerInSeconds * 1000);
 }
 
 function notification_beat(){
@@ -13,7 +12,8 @@ function notification_beat(){
        data: {action: 'get_new_notifications'},
        success: function (result) {
             if (result.status_value) {
-                $('#notification_counter').html(result.count);                
+                $('#notification_counter').removeClass("hidden");
+                $('#notification_counter').html(result.count > 9 ? "!" : result.count);                
             }
             else {
                 $('#notification_counter').html("");

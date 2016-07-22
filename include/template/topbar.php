@@ -49,6 +49,7 @@
                     </a>
                     <ul class="dropdown-menu animated flipInY">';
                 } else {
+                    echo $menu->pagename == "notifications" ? '<div id="notification_counter" class="hidden"></div>' : '';
                     echo '<a class="';
                     if($menu->pagename == "logout") {
                         echo "log_out";

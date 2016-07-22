@@ -362,7 +362,7 @@
                     if ($d["id"] == $f[$name]) {
                         $get_values = "";
                         foreach ($to_get as $g) {
-                            $get_values .= $d[$g] . " ";
+                            $get_values .= ucfirst($d[$g]) . " ";
                         }
                         array_push($array, array($name => $get_values, "arg_id" => $f["arg_id"]));
                         break;
@@ -442,9 +442,9 @@
                     $final = substr_replace($final, "<b>" . $args[$sub] . "</b>", $value[0], $value[1] + 3);
                     continue;
                 }
-                return array(false, "");
+                $final = substr_replace($final, "<b>" . ucfirst(TranslationHandler::get_static_text("UNKNOWN")) . "</b>", $value[0], $value[1] + 3);
             }
-            return array(true, $final);
+            return $final;
         }
         
         private static function parser($string){

@@ -47,26 +47,21 @@ $loginHandler = new LoginHandler();
             <hr class="widget-separator">
             <div class="widget-body">
                 <div class="col-md-6">
-                    <form method="POST" action="" id="login_form" url="login.php" class="form-horizontal" name="login">
+                    <form method="POST" action="" id="login_form" url="login.php" class="" name="login">
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="new_email"><?php echo TranslationHandler::get_static_text("EMAIL"); ?></label>
-                            <div class="col-md-9 col-sm-9">
-                                <input class="form-control input-sm" type="text" name="new_email" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
+                            <label class="control-label" for="new_email"><?php echo TranslationHandler::get_static_text("EMAIL"); ?></label>
+                                <input class="form-control" type="text" name="new_email" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
                                 placeholder="<?php echo TranslationHandler::get_static_text("EMAIL"); ?>">
-                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="new_os"><?php echo TranslationHandler::get_static_text("OS"); ?></label>
-                            <div class="col-md-9 col-sm-9">
+                            <label class="control-label" for="new_os"><?php echo TranslationHandler::get_static_text("OS"); ?></label>
                                 <select name="new_os" class="form-control" id="os_select">
                                     <option value="windows"><?php echo TranslationHandler::get_static_text("WINDOWS"); ?></option>
                                     <option value="mac"><?php echo TranslationHandler::get_static_text("MAC"); ?></option>
                                 </select>
-                            </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label" for="new_language"><?php echo TranslationHandler::get_static_text("LANGUAGE"); ?></label>
-                            <div class="col-md-9 col-sm-9">
+                            <label class="control-label" for="new_language"><?php echo TranslationHandler::get_static_text("LANGUAGE"); ?></label>
                                 <select name="new_language" class="form-control" id="language_select">
                                     <?php
                                     foreach (TranslationHandler::get_language_options() as $lang) {
@@ -74,23 +69,29 @@ $loginHandler = new LoginHandler();
                                     }
                                     ?>
                                 </select>
-                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="password_checkbox"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
-                            <div class="col-md-9 col-sm-9">
-                                <div class="checkbox">
-                                    <input type="checkbox" id="password_checkbox">
-                                    <label for="password_checkbox"></label>
+                            <div class="panel-group accordion" id="accordion" role="tablist" aria-multiselectable="false">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="heading-1">
+                                        <a class="accordion-toggle new_password_change" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-1" aria-expanded="false" aria-controls="collapse-1">
+                                            <label for="textarea1"><?php echo TranslationHandler::get_static_text("NEW_PASSWORD"); ?></label>
+                                            <i class="fa acc-switch"></i>
+                                        </a>
+                                    </div>
+                                    <div id="collapse-1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-1" aria-expanded="false">
+                                            <div class="form-group">
+                                                <label class="control-label" for="new_password"><?php echo strtoupper(TranslationHandler::get_static_text("PASSWORD")); ?></label>
+                                                    <input class="form-control" type="password" name="new_password" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
+                                                    placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label" for="new_password_confirm"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
+                                                    <input class="form-control" type="password" name="new_password_confirm" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
+                                                    placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>">
+                                            </div>
+                                    </div>
                                 </div>
-                        </div>
-                        <div class="form-group" id="login_password_change">
-                            <label class="col-sm-2 control-label" for="email"><?php echo TranslationHandler::get_static_text("EMAIL"); ?></label>
-                            <div class="col-md-9 col-sm-9">
-                                <input class="form-control input-sm" type="text" name="email" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
-                                placeholder="<?php echo TranslationHandler::get_static_text("EMAIL"); ?>">
                             </div>
-                        </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label"></label>
                             <div class="col-md-9 col-sm-9">

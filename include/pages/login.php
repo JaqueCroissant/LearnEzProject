@@ -6,7 +6,7 @@ $loginHandler = new LoginHandler();
 
 <div class="row">
     <div class="col-md-12">
-        <div class="widget">
+        <div class="widget" style="display:block;">
             <div class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("LOGIN"); ?></h4>
             </div>
@@ -39,4 +39,74 @@ $loginHandler = new LoginHandler();
             </div>
         </div>
     </div>
-</div>
+    <div class="col-md-12">
+        <div class="widget" style="display:none;">
+            <div class="widget-header">
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("FIRST_TIME_LOGIN"); ?></h4>
+            </div>
+            <hr class="widget-separator">
+            <div class="widget-body">
+                <div class="col-md-6">
+                    <form method="POST" action="" id="login_form" url="login.php" class="form-horizontal" name="login">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="new_email"><?php echo TranslationHandler::get_static_text("EMAIL"); ?></label>
+                            <div class="col-md-9 col-sm-9">
+                                <input class="form-control input-sm" type="text" name="new_email" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
+                                placeholder="<?php echo TranslationHandler::get_static_text("EMAIL"); ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="new_os"><?php echo TranslationHandler::get_static_text("OS"); ?></label>
+                            <div class="col-md-9 col-sm-9">
+                                <select name="new_os" class="form-control" id="os_select">
+                                    <option value="windows"><?php echo TranslationHandler::get_static_text("WINDOWS"); ?></option>
+                                    <option value="mac"><?php echo TranslationHandler::get_static_text("MAC"); ?></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="new_language"><?php echo TranslationHandler::get_static_text("LANGUAGE"); ?></label>
+                            <div class="col-md-9 col-sm-9">
+                                <select name="new_language" class="form-control" id="language_select">
+                                    <?php
+                                    foreach (TranslationHandler::get_language_options() as $lang) {
+                                        echo '<option value="' . $lang["id"] .'">' . $lang["title"] . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="password_checkbox"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
+                            <div class="col-md-9 col-sm-9">
+                                <div class="checkbox">
+                                    <input type="checkbox" id="password_checkbox">
+                                    <label for="password_checkbox"></label>
+                                </div>
+                        </div>
+                        <div class="form-group" id="login_password_change">
+                            <label class="col-sm-2 control-label" for="email"><?php echo TranslationHandler::get_static_text("EMAIL"); ?></label>
+                            <div class="col-md-9 col-sm-9">
+                                <input class="form-control input-sm" type="text" name="email" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
+                                placeholder="<?php echo TranslationHandler::get_static_text("EMAIL"); ?>">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-md-9 col-sm-9">
+                                <input type="hidden" id="token" name="token" value="<?php echo $loginHandler->get_login_token(); ?>">
+                                <input type="button" id="submit_button" name="submit" 
+                                       value="<?php echo TranslationHandler::get_static_text("CONTINUE"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">  
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <p>First time setup!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+<script src="assets/js/include_library.js" type="text/javascript"></script>
+<script src="assets/js/include_app.js" type="text/javascript"></script>

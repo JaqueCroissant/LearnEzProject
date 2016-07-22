@@ -66,6 +66,12 @@ $(document).ready(function () {
             reload_page();
         });
     });
+    
+    //login password show
+    $(document).on("click", "#password_checkbox", function (event) {
+        console.log("test");
+        $("#login_password_change").slideToggle("slow");
+    });
 
 
     $(document).on("click", ".log_out", function (event) {

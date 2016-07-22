@@ -144,4 +144,8 @@ class TranslationHandler {
         self::$_default_language_id = null;
         self::$_user_languages = array();
     }
+    
+    public static function get_language_options(){
+        return DbHandler::get_instance()->return_query("SELECT * FROM translation_language");
+    }
 }

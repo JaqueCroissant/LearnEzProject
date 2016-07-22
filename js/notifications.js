@@ -49,7 +49,7 @@ jQuery(function ($) {
                             currently_recieving_notifications = false;
                             $("#notification_loading_image").hide();
                             $('#notification_window').show("fast");
-                            $('#notification_counter').html("");
+                            $('#notification_counter').addClass("hidden");
                         }
                         else {
                             show_status_bar("error", result.error, 5000);

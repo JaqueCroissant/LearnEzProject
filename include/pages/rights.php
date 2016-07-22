@@ -173,7 +173,6 @@ if (RightsHandler::has_user_right("RIGHTS")) {
 
     <?php
     } elseif (RightsHandler::has_user_right("SCHOOL_RIGHTS")) {
-        RightsHandler::set_rights();
         $rights_categories = $pageHandler->fetch_rights_page_categories();
         $rightsHandler->get_all_rights(true);
     ?>

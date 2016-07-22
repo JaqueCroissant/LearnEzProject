@@ -97,8 +97,7 @@ $(document).ready(function () {
                             });
                         } else if (action === "read") {
                             ajax_data.affected_notifs.forEach(function (o) {
-                                $(".notif_count_" + o).removeClass("notif_unread");
-                                $(".notif_count_" + o).addClass("notif_read");
+                                $(".notif_count_" + o).removeClass("item_unread");
                             });
                         }
                     } else {

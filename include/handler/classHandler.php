@@ -56,7 +56,10 @@ class ClassHandler extends Handler {
 
                     $this->classes = array();
                     foreach ($array as $value) {
-                        $this->classes[] = new School_Class($value);
+                        $class = new School_Class($value);
+                        $class->number_of_students = $this->get_number_of_students_in_class($class->id);
+                        $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
+                        $this->classes[] = $class;
                     }
                     break;
 
@@ -67,7 +70,10 @@ class ClassHandler extends Handler {
 
                     $this->classes = array();
                     foreach ($array as $value) {
-                        $this->classes[] = new School_Class($value);
+                        $class = new School_Class($value);
+                        $class->number_of_students = $this->get_number_of_students_in_class($class->id);
+                        $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
+                        $this->classes[] = $class;
                     }
                     break;
                 default:
@@ -161,7 +167,7 @@ class ClassHandler extends Handler {
             }
             $this->verify_start_date($class_start);
             $class_start = $class_start['year'] . '/' . $class_start['month'] . "/" . $class_start['day'];
-            
+
             $year_id = $this->get_year_id($class_end);
             $this->verify_end_date($class_end);
             $class_end_string = $class_end['year'] . '/' . $class_end['month'] . '/' . $class_end['day'];
@@ -284,6 +290,22 @@ class ClassHandler extends Handler {
         }
     }
 
+    private function get_number_of_students_in_class($class_id) {
+        $query = "SELECT user_class.id FROM user_class
+                 INNER JOIN users ON user_class.users_id = users.id
+                    WHERE class_id = :id AND users.user_type_id = 4";
+        $count = DbHandler::get_instance()->count_query($query, $class_id);
+        return $count;
+    }
+
+    private function get_number_of_teachers_in_class($class_id) {
+        $query = "SELECT user_class.id FROM user_class
+                 INNER JOIN users ON user_class.users_id = users.id
+                    WHERE class_id = :id AND users.user_type_id = 3";
+        $count = DbHandler::get_instance()->count_query($query, $class_id);
+        return $count;
+    }
+
     private function get_year_id($date) {
         $year = $date['year'];
         $year_id_array = reset(DbHandler::get_instance()->return_query("SELECT id FROM class_year WHERE year = :year LIMIT 1", $year));
@@ -302,13 +324,13 @@ class ClassHandler extends Handler {
             throw new Exception("OBJECT_DOESNT_EXIST");
         }
     }
-    
+
     private function verify_start_date_is_lower_than_end_date($start_date_string, $end_date_string) {
         $ds = strtotime($start_date_string);
         $de = strtotime($end_date_string);
-        
+
         if ($ds > $de) {
-            throw new Exception ("START_DATE_MUST_BE_LOWER_THAN_END");
+            throw new Exception("START_DATE_MUST_BE_LOWER_THAN_END");
         }
     }
 
@@ -365,4 +387,5 @@ class ClassHandler extends Handler {
             throw new Exception("CLASS_NOT_FOUND");
         }
     }
+
 }

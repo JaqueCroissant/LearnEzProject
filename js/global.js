@@ -304,8 +304,13 @@ $(document).ready(function () {
         $('#status_container').css("bottom", 0);
         $('#status_container').addClass("hidden");
     });
+    
+    audioElement = document.createElement('audio');
+    audioElement.setAttribute('src', 'sounds/notification.ogg');
     //
 });
+
+var audioElement;
 
 function show_status_bar(status_type, message, custom_fade_out) {
     clearTimeout(status_bar_timeout);

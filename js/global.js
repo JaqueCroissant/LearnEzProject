@@ -250,6 +250,16 @@ $(document).ready(function () {
             $(".create_select_school").css("visibility", "visible");
         }
     });
+
+    $(document).on("change", ".create_select_usertype_no_school", function (event) {
+        if ($(this).find("option:selected").val() === "A") {
+            $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_school").css("visibility", "hidden");
+        } else {
+            event.preventDefault;
+            $(".create_select_class").css("visibility", "visible");
+        }
+    });
     //
 
     // school

@@ -14,13 +14,13 @@ $userHandler = new UserHandler();
                     <div class="m-b-lg nav-tabs-horizontal">
 			<!-- tabs list -->
 			<ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" id="edit_info_header"><a href="#edit_info" class="my_tab_header" id="edit_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
+                            <li role="presentation" id="edit_info_header"><a href="#edit_info_tab" class="my_tab_header" id="edit_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
 
                             <?php
                                 if(RightsHandler::has_user_right("CHANGE_PASSWORD"))
                                 {
                             ?>
-                                    <li role="presentation" id="change_password_header"><a href="#change_password" class="my_tab_header" id="change_password_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_CHANGE_PASS"); ?></a></li>
+                                    <li role="presentation" id="change_password_header"><a href="#change_password_tab" class="my_tab_header" id="change_password_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_CHANGE_PASS"); ?></a></li>
                             <?php
                                 }
                             ?>
@@ -29,7 +29,7 @@ $userHandler = new UserHandler();
                                 if(RightsHandler::has_page_right("SETTINGS_PREFERENCES"))
                                 {
                             ?>
-                                    <li role="presentation" id="preferences_header"><a href="#preferences" class="my_tab_header" id="preferences_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_PREFERENCES"); ?></a></li>
+                                    <li role="presentation" id="preferences_header"><a href="#preferences_tab" class="my_tab_header" id="preferences_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_PREFERENCES"); ?></a></li>
                             <?php
                                 }
                             ?>
@@ -37,7 +37,7 @@ $userHandler = new UserHandler();
 
 						<!-- Tab panes -->
 						<div class="my_tab_content">
-							<div class="my_fade my_tab" id="edit_info">
+							<div class="my_fade my_tab" id="edit_info_tab">
 								<div class="widget-body">
                                                                         <form method="post" action="" url="settings.php?step=edit_info" id="edit_info_form" name="edit_info">
                                                                             <input name="avatar_hidden_id" id="avatar_hidden_id" class="input_avatar_id" type="hidden" value="<?php echo $userHandler->_user->image_id;?>" />
@@ -136,7 +136,7 @@ $userHandler = new UserHandler();
                             if(RightsHandler::has_user_right("CHANGE_PASSWORD"))
                             {
                         ?>
-                            <div class="my_fade my_tab" id="change_password">
+                            <div class="my_fade my_tab" id="change_password_tab">
 
                                 <div class="widget-body">
                                      <form method="POST" action="" id="settings_pass" url="settings.php?step=change_password" name="settings_pass">
@@ -177,7 +177,7 @@ $userHandler = new UserHandler();
 
 
 
-                        <div class="my_fade my_tab" id="preferences">
+                        <div class="my_fade my_tab" id="preferences_tab">
 
 
 

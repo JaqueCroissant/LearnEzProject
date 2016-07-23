@@ -6,7 +6,7 @@ $loginHandler = new LoginHandler();
 
 <div class="row">
     <div class="col-md-12">
-        <div class="widget" style="display:none;">
+        <div class="widget" style="">
             <div class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("LOGIN"); ?></h4>
             </div>

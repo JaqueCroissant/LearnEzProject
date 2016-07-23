@@ -104,7 +104,7 @@ class LoginHandler
             return false;
         }
         
-        $this->_user = new User(reset($user));
+        $this->_user = new User(reset($user), true);
         return true;
     }
     
@@ -119,8 +119,7 @@ class LoginHandler
              return false;
         }
 
-        $this->_user = new User(reset($userData));
-        DbHandler::get_instance()->query("UPDATE users SET last_login = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
+        $this->_user = new User(reset($userData), true);
         return true;
     }
     
@@ -135,6 +134,7 @@ class LoginHandler
             return;
         }
         
+        DbHandler::get_instance()->query("UPDATE users SET last_login = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
         SessionKeyHandler::add_to_session("user", $this->_user, true);
     }
     

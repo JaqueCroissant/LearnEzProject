@@ -8,5 +8,6 @@
         public $elements_shown;
         public $block_mail_notifications;
         public $block_student_mails;
+        public $hide_profile;
     }
 ?>

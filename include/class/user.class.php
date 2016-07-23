@@ -27,8 +27,8 @@
         public $settings;
         
         public function __construct() {
-        
-            if(func_num_args() != 1) {
+            
+            if(func_num_args() != 1 && func_num_args() != 2) {
                 return;
             }
 
@@ -37,6 +37,14 @@
             }
             parent::__construct(func_get_args()[0]);
 
+            if(func_num_args() == 1) {
+                return;
+            }
+            
+            if(!is_bool(func_get_args()[1]) || !func_get_args()[1]) {
+                return;
+            }
+            
             if(empty($this->id)) {
                 return;
             }

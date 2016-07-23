@@ -200,6 +200,22 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                                 <option value="5">50</option>
                                             </select>
                                         </div>
+                                        
+                                        <?php
+                                        if(RightsHandler::has_user_right("ACCOUNT_HIDE_PROFILE")) {
+                                        ?>
+                                        
+                                        <div class="form-group m-b-sm" style="margin-top:20px !important;">
+                                            <div class="checkbox" style="float:left;">
+                                                <input name="hide_profile" class="form-control" type="checkbox" id="checkbox-hide-profile"> <label for="checkbox-hide-profile"></label>
+                                            </div>
+                                            <div><?php echo TranslationHandler::get_static_text("HIDE_PROFILE_FROM_STUDENTS"); ?></div>
+                                            <div style="clear:both;"></div>
+                                        </div>
+                                        
+                                        <?php
+                                        }
+                                        ?>
                                     </div>
                                 </div>
 
@@ -207,6 +223,9 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MAIL_PREFERENCES"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
                                     <div class="col-md-12">
+                                        <?php
+                                        if(RightsHandler::has_user_right("NOTIFICATION_BLOCK_MAILS")) {
+                                        ?>
                                         <div class="form-group m-b-sm" style="">
                                             <div class="checkbox" style="float:left;">
                                                 <input name="block_mail_notifications" class="form-control" type="checkbox" id="checkbox-block-notifications"> <label for="checkbox-block-notifications"></label>
@@ -214,6 +233,11 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                             <div><?php echo TranslationHandler::get_static_text("BLOCK_MAIL_NOTIFICATIONS"); ?></div>
                                             <div style="clear:both;"></div>
                                         </div>
+                                        <?php
+                                        }
+                                        
+                                        if(RightsHandler::has_user_right("MAIL_BLOCK_STUDENTS")) {
+                                        ?>
                                         
                                         <div class="form-group m-b-sm" style="margin-top:-10px !important;">
                                             <div class="checkbox" style="float:left;">
@@ -222,12 +246,24 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                             <div><?php echo TranslationHandler::get_static_text("BLOCK_MAILS_FROM_STUDENTS"); ?></div>
                                             <div style="clear:both;"></div>
                                         </div>
+                                        
+                                        <?php
+                                        }
+                                        ?>
                                     </div>
+                                    
+                                    <?php
+                                    if(RightsHandler::has_user_right("MAIL_BLOCK_STUDENTS")) {
+                                    ?>
                                     
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("BLOCK_STUDENTS"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
                                     <div class="col-md-12">
                                     </div>
+                                    
+                                    <?php
+                                    }
+                                    ?>
                                 </div>
 
                                 <div style="clear:both"></div>

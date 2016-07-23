@@ -354,6 +354,7 @@ class UserHandler extends Handler
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
+            DbHandler::get_instance()->query("INSERT INTO user_settings (user_id) VALUES (:user_id)", DbHandler::get_instance()->last_inserted_id());
 
             $this->create_class_affiliation($user_object->class_ids);
 
@@ -386,6 +387,7 @@ class UserHandler extends Handler
                                             {
                                                 throw new Exception("USER_COULDNT_CREATE");
                                             }
+            DbHandler::get_instance()->query("INSERT INTO user_settings (user_id) VALUES (:user_id)", DbHandler::get_instance()->last_inserted_id());
             $user_object->unhashed_password = "";
             
             $this->create_class_affiliation($user_object->class_ids);

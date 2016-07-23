@@ -156,7 +156,7 @@ $paginationHandler = new PaginationHandler();
                     $fetch_query = "";
                     if(isset($_GET["search_q"]) && isset($_GET["search_f"]) && isset($_GET["search_c"])) {
                         $fetch_successful = $mailHandler->search_mail($_GET["search_q"], unserialize($_GET["search_f"]), $_GET["search_c"], $current_order, $current_filter);
-                        $mails = $paginationHandler->run_pagination($mailHandler->search_mails, $current_page_number, 5);
+                        $mails = $paginationHandler->run_pagination($mailHandler->search_mails, $current_page_number, SettingsHandler::get_settings()->elements_shown);
                         $search_f = str_replace('"', '&quot;', $_GET['search_f']);
                         $fetch_query = '&search_q='.$_GET['search_q'].'&search_f='.$search_f.'&search_c='.$_GET['search_c'];
                     }
@@ -430,7 +430,7 @@ $paginationHandler = new PaginationHandler();
                 
                 default:
                     $fetch_successful = $mailHandler->get_mails($current_page_number, $current_order, $current_filter);
-                    $mails = $paginationHandler->run_pagination($mailHandler->mails, $current_page_number, 5);
+                    $mails = $paginationHandler->run_pagination($mailHandler->mails, $current_page_number, SettingsHandler::get_settings()->elements_shown);
                     ?>
                     <div class="row">
                         <div class="col-md-12">

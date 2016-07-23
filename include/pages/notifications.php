@@ -15,7 +15,7 @@ if ($current_page != "all") {
 else {
     $success = $not_handler->load_notifications(0, 100);
 }
-$notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), $current_page_number, 5);
+$notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), $current_page_number, SettingsHandler::get_settings()->elements_shown);
 ?>
 <script src="js/subpageGlobal.js" type="text/javascript"></script>
 

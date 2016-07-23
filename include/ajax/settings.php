@@ -3,13 +3,14 @@
     require_once '../../include/handler/userHandler.php';
 
     $userHandler = new UserHandler();
+    $settingsHandler = new SettingsHandler();
 
-    switch($_GET['step'])
-    {
-        //VERIFICER BRUGERINFO
-        case "edit_info":
-            if(isset($_POST))
-            {
+    if(isset($_POST)) {
+        $current_step = isset($_GET["step"]) ? $_GET["step"] : null;
+        switch($current_step)
+        {
+            //VERIFICER BRUGERINFO
+            case "edit_info":
                 $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : "";
                 $surname = isset($_POST['surname']) ? $_POST['surname'] : "";
                 $email = isset($_POST['email']) ? $_POST['email'] : "";
@@ -28,15 +29,10 @@
                     $jsonArray['status_value'] = false;
                     $jsonArray['error'] = $userHandler->error->title;
                 }
-                echo json_encode($jsonArray);
-                die();
-            }
-        break;
-        
-        //SKIFT PASSWORD
-        case "change_password":
-            if(isset($_POST))
-            {
+            break;
+
+            //SKIFT PASSWORD
+            case "change_password":
                 $old_password = isset($_POST['old_password']) ? $_POST['old_password'] : "";
                 $new_password = isset($_POST['password']) ? $_POST['password'] : "";
                 $confirm_password = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : "";
@@ -51,9 +47,30 @@
                     $jsonArray['status_value'] = true;
                     $jsonArray['success'] = TranslationHandler::get_static_text("CHANGE_PASSWORD_SUCCESS");
                 }
-                echo json_encode($jsonArray);
-                die();
-            }
-        break;
+            break;
+
+            case "preferences":
+                $settings = SettingsHandler::get_settings();
+                $settings->language_id = isset($_POST['language']) ? $_POST['language'] : 0;
+                $settings->os_id = isset($_POST['os']) ? $_POST['os'] : 0;
+                $settings->elements_shown = isset($_POST['elements_shown']) ? $_POST['elements_shown'] : 0;
+                $settings->hide_profile = isset($_POST['hide_profile']) ? true : false;
+                $settings->block_mail_notifications = isset($_POST['block_mail_notifications']) ? true : false;
+                $settings->block_student_mails = isset($_POST['block_student_mails']) ? true : false;
+
+                if($settingsHandler->update_settings($settings))
+                {
+                    $jsonArray['status_value'] = true;
+                    $jsonArray['reload'] = true;
+                    $jsonArray['success'] = TranslationHandler::get_static_text("EDIT_PREFERENCES");
+                } 
+                else 
+                {
+                    $jsonArray['status_value'] = false;
+                    $jsonArray['error'] = $settingsHandler->error->title;
+                }
+            break;
+        }
+        echo json_encode($jsonArray);
     }
 ?>

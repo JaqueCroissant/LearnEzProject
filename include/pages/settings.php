@@ -173,7 +173,7 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                             <select id="language" name="language" class="form-control">
                                                 <?php
                                                 foreach(TranslationHandler::get_language_options() as $language) {
-                                                    echo '<option value="'.$language["id"].'" '. ($language["id"] == TranslationHandler::get_current_language() ? 'selected' : '') .'>'.$language["title"].'</option>';
+                                                    echo '<option value="'.$language["id"].'" '. (SettingsHandler::get_settings()->language_id == $language["id"] ? 'selected' : '') .'>'.$language["title"].'</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -185,19 +185,20 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                                 <?php
                                                 $course_os_data = DbHandler::get_instance()->return_query("SELECT course_os.id, translation_course_os.title FROM course_os INNER JOIN translation_course_os ON translation_course_os.course_os_id = course_os.id WHERE translation_course_os.language_id = :language_id", TranslationHandler::get_current_language());
                                                 foreach($course_os_data as $os) {
-                                                    echo '<option value="'.$os["id"].'">'.$os["title"].'</option>';
+                                                    echo '<option value="'.$os["id"].'"'. (SettingsHandler::get_settings()->os_id == $os["id"] ? 'selected' : '') .'>'.$os["title"].'</option>';
                                                 }
                                                 ?>
                                             </select>
                                         </div>
                                         
                                         <div class="form-group m-b-sm">
-                                            <label for="os" class="control-label"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_ELEMENTS_SHOWN"); ?>:</label>
-                                            <select id="os" name="os" class="form-control">
-                                                <option value="5">5</option>
-                                                <option value="5">10</option>
-                                                <option value="5">25</option>
-                                                <option value="5">50</option>
+                                            <label for="elements_shown" class="control-label"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_ELEMENTS_SHOWN"); ?>:</label>
+                                            <select id="elements_shown" name="elements_shown" class="form-control">
+                                                <option value="5" <?php echo SettingsHandler::get_settings()->elements_shown == "5" ? "selected" : ""; ?>>5</option>
+                                                <option value="10" <?php echo SettingsHandler::get_settings()->elements_shown == "10" ? "selected" : ""; ?>>10</option>
+                                                <option value="25" <?php echo SettingsHandler::get_settings()->elements_shown == "25" ? "selected" : ""; ?>>25</option>
+                                                <option value="50" <?php echo SettingsHandler::get_settings()->elements_shown == "50" ? "selected" : ""; ?>>50</option>
+                                                <option value="100" <?php echo SettingsHandler::get_settings()->elements_shown == "100" ? "selected" : ""; ?>>100</option>
                                             </select>
                                         </div>
                                         
@@ -207,7 +208,7 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                         
                                         <div class="form-group m-b-sm" style="margin-top:20px !important;">
                                             <div class="checkbox" style="float:left;">
-                                                <input name="hide_profile" class="form-control" type="checkbox" id="checkbox-hide-profile"> <label for="checkbox-hide-profile"></label>
+                                                <input name="hide_profile" class="form-control" type="checkbox" id="checkbox-hide-profile" <?php echo SettingsHandler::get_settings()->hide_profile ? "checked" : ""; ?>> <label for="checkbox-hide-profile"></label>
                                             </div>
                                             <div><?php echo TranslationHandler::get_static_text("HIDE_PROFILE_FROM_STUDENTS"); ?></div>
                                             <div style="clear:both;"></div>
@@ -228,7 +229,7 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                         ?>
                                         <div class="form-group m-b-sm" style="">
                                             <div class="checkbox" style="float:left;">
-                                                <input name="block_mail_notifications" class="form-control" type="checkbox" id="checkbox-block-notifications"> <label for="checkbox-block-notifications"></label>
+                                                <input name="block_mail_notifications" class="form-control" type="checkbox" id="checkbox-block-notifications" <?php echo SettingsHandler::get_settings()->block_mail_notifications ? "checked" : ""; ?>> <label for="checkbox-block-notifications"></label>
                                             </div>
                                             <div><?php echo TranslationHandler::get_static_text("BLOCK_MAIL_NOTIFICATIONS"); ?></div>
                                             <div style="clear:both;"></div>
@@ -241,7 +242,7 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                         
                                         <div class="form-group m-b-sm" style="margin-top:-10px !important;">
                                             <div class="checkbox" style="float:left;">
-                                                <input name="block_student_mails" class="form-control" type="checkbox" id="checkbox-block-student-mails"> <label for="checkbox-block-student-mails"></label>
+                                                <input name="block_student_mails" class="form-control" type="checkbox" id="checkbox-block-student-mails" <?php echo SettingsHandler::get_settings()->block_student_mails ? "checked" : ""; ?>> <label for="checkbox-block-student-mails"></label>
                                             </div>
                                             <div><?php echo TranslationHandler::get_static_text("BLOCK_MAILS_FROM_STUDENTS"); ?></div>
                                             <div style="clear:both;"></div>

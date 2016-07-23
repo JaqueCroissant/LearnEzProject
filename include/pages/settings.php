@@ -111,8 +111,6 @@ foreach ($userHandler->profile_images as $image) {
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </div>
                                 </div>
 
@@ -120,8 +118,7 @@ foreach ($userHandler->profile_images as $image) {
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-
-                                        <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-left btn btn-default btn-sm create_submit_info">
+                                        <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm create_submit_info">
                                     </div>
                                 </div>
                             </form>
@@ -135,8 +132,7 @@ if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
 
                             <div class="widget-body">
                                 <form method="POST" action="" id="settings_pass" url="settings.php?step=change_password" name="settings_pass">
-
-
+                                    <div class="col-md-12">
                                     <div class="form-group m-b-sm">
                                         <label for="firstname_input"><?php echo TranslationHandler::get_static_text("OLD_PASSWORD"); ?></label>
                                         <input type="password" id="old_password" name="old_password" placeholder="<?php echo TranslationHandler::get_static_text("OLD_PASSWORD"); ?>" class="form-control">
@@ -152,32 +148,101 @@ if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
                                         <input type="password" id="confirm_password" name="confirm_password" placeholder="<?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?>" class="form-control">
                                     </div>
 
-                                    <div class="form-group m-b-sm">
+                                    <div class="form-group m-b-sm pull-right">
                                         <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default btn-sm create_submit_info" >
                                     </div>
-
-
-
-
-
+                                    </div>
                                 </form>
                             </div>
 
 
                         </div><!-- .tab-pane  -->
-    <?php
+<?php
+}
+if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
+?>
+                     <div class="my_fade my_tab" id="preferences_tab">
+                        <div class="widget-body" style="padding-top:32px !important;">
+                            <form method="post" action="" url="settings.php?step=preferences" id="preferences" name="preferences">
+                                <div class="col-md-6">
+                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_PREFERENCES"); ?></h4>
+                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
+                                    <div class="col-md-12">
+                                        <div class="form-group m-b-sm">
+                                            <label for="language" class="control-label"><?php echo TranslationHandler::get_static_text("LANGUAGE"); ?>:</label>
+                                            <select id="language" name="language" class="form-control">
+                                                <?php
+                                                foreach(TranslationHandler::get_language_options() as $language) {
+                                                    echo '<option value="'.$language["id"].'" '. ($language["id"] == TranslationHandler::get_current_language() ? 'selected' : '') .'>'.$language["title"].'</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group m-b-sm">
+                                            <label for="os" class="control-label"><?php echo TranslationHandler::get_static_text("OS"); ?>:</label>
+                                            <select id="os" name="os" class="form-control">
+                                                <?php
+                                                $course_os_data = DbHandler::get_instance()->return_query("SELECT course_os.id, translation_course_os.title FROM course_os INNER JOIN translation_course_os ON translation_course_os.course_os_id = course_os.id WHERE translation_course_os.language_id = :language_id", TranslationHandler::get_current_language());
+                                                foreach($course_os_data as $os) {
+                                                    echo '<option value="'.$os["id"].'">'.$os["title"].'</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group m-b-sm">
+                                            <label for="os" class="control-label"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_ELEMENTS_SHOWN"); ?>:</label>
+                                            <select id="os" name="os" class="form-control">
+                                                <option value="5">5</option>
+                                                <option value="5">10</option>
+                                                <option value="5">25</option>
+                                                <option value="5">50</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MAIL_PREFERENCES"); ?></h4>
+                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
+                                    <div class="col-md-12">
+                                        <div class="form-group m-b-sm" style="">
+                                            <div class="checkbox" style="float:left;">
+                                                <input name="block_mail_notifications" class="form-control" type="checkbox" id="checkbox-block-notifications"> <label for="checkbox-block-notifications"></label>
+                                            </div>
+                                            <div><?php echo TranslationHandler::get_static_text("BLOCK_MAIL_NOTIFICATIONS"); ?></div>
+                                            <div style="clear:both;"></div>
+                                        </div>
+                                        
+                                        <div class="form-group m-b-sm" style="margin-top:-10px !important;">
+                                            <div class="checkbox" style="float:left;">
+                                                <input name="block_student_mails" class="form-control" type="checkbox" id="checkbox-block-student-mails"> <label for="checkbox-block-student-mails"></label>
+                                            </div>
+                                            <div><?php echo TranslationHandler::get_static_text("BLOCK_MAILS_FROM_STUDENTS"); ?></div>
+                                            <div style="clear:both;"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("BLOCK_STUDENTS"); ?></h4>
+                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
+                                    <div class="col-md-12">
+                                    </div>
+                                </div>
+
+                                <div style="clear:both"></div>
+
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm create_submit_info">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+<?php
 }
 ?>
-
-
-
-
-                    <div class="my_fade my_tab" id="preferences_tab">
-
-
-
-                    </div><!-- .tab-pane  -->
-
 
                 </div><!-- .tab-content  -->
             </div><!-- .nav-tabs-horizontal -->

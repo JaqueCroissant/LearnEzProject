@@ -64,7 +64,7 @@ class TranslationHandler {
     
     private static function set_current_language($language_id = null) {
         if (SessionKeyHandler::session_exists("user")){
-            self::$_current_language_id = SessionKeyHandler::get_from_session("user", true)->language_id;
+            self::$_current_language_id = SessionKeyHandler::get_from_session("user", true)->settings->language_id;
             SessionKeyHandler::add_to_session("current_language", self::$_current_language_id);
             return;
         }

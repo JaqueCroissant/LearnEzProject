@@ -468,7 +468,10 @@ class UserHandler extends Handler
 
             if(!empty($description))
             {
-                $this->check_if_valid_string($description, true);
+                if(!is_string($description))
+                {
+                    throw new Exception("USER_INVALID_DESCRIPTION");
+                }
                 $this->_user->description = $description;
             }
 
@@ -532,15 +535,9 @@ class UserHandler extends Handler
 
     private function check_if_valid_string($string, $allow_special_characters)
     {
-            if(!$this->is_valid_input($string))
-            {
-                throw new Exception("USER_INVALID_USERNAME_INPUT");
-            }
-
-
-        if(!is_string($string))
+        if(!$this->is_valid_input($string))
         {
-            throw new Exception("USER_INVALID_DESCRIPTION");
+            throw new Exception("USER_INVALID_USERNAME_INPUT");
         }
     }
     

@@ -8,6 +8,14 @@ function array_value_exists_in_key($array, $key, $val) {
     return false;
 }
 
+function generate_in_query($array) {
+    $in_array = "";
+    for($i = 0; $i < count($array); $i++) {
+        $in_array .= $i > 0 ? ", '" . $array[$i] ."'" : "'" . $array[$i] ."'";
+    }
+    return $in_array;
+}
+
 function time_elapsed($ptime)
 {
     $etime = time() - strtotime($ptime);

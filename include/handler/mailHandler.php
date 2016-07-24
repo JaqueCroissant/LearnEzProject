@@ -69,7 +69,7 @@ class MailHandler extends Handler
         return false;
     }
     
-    public function get_mail($mail_id = 0) {
+    public function get_mail($mail_id = 0, $receiver_mail = false) {
         try
         {
             if (!$this->user_exists()) {
@@ -83,7 +83,7 @@ class MailHandler extends Handler
             
             $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail.disable_reply, user_mail.id as user_mail_id, user_mail.receiver_id, user_mail.sender_id, user_mail.receiver_folder_id, user_mail.sender_folder_id"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
-                    . " WHERE mail.id = :mail_id AND (user_mail.receiver_id = :user_id OR user_mail.sender_id = :user_id) LIMIT 1";
+                    . " WHERE ". ($receiver_mail ? "mail" : "user_mail") .".id = :mail_id AND (user_mail.receiver_id = :user_id OR user_mail.sender_id = :user_id) LIMIT 1";
             
             $data = reset(DbHandler::get_instance()->return_query($query, $mail_id, $this->_user->id, $this->_user->id));
             
@@ -108,7 +108,7 @@ class MailHandler extends Handler
             $query = "SELECT mail_folder.id as folder_id, mail_folder.folder_name, users.firstname, users.surname, users.image_id as user_image_id FROM user_mail
                 INNER JOIN mail_folder ON mail_folder.id = user_mail.". ($this->is_sender_folder() ? "sender_folder_id" : "receiver_folder_id") ."
                 INNER JOIN users ON users.id = user_mail.". ($this->is_sender_folder() ? "receiver_id" : "sender_id") ."
-                WHERE user_mail.mail_id = :mail_id AND user_mail.". ($this->is_sender_folder() ? "sender_id" : "receiver_id") ." = :user_id LIMIT 1";
+                WHERE user_mail.". ($receiver_mail ? "mail_id" : "id") ." = :mail_id AND user_mail.". ($this->is_sender_folder() ? "sender_id" : "receiver_id") ." = :user_id LIMIT 1";
             
             $new_data = reset(DbHandler::get_instance()->return_query($query, $mail_id, $this->_user->id));
             
@@ -143,7 +143,7 @@ class MailHandler extends Handler
 
             $this->_current_folder_id = $this->get_folder_id($this->current_folder->folder_name);
             
-            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id, users.user_type_id"
+            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.id as user_mail_id, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id, users.user_type_id"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
                     . " INNER JOIN users ON users.id = ". ($this->is_sender_folder() ? "receiver_id" : "sender_id")
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.". ($this->is_sender_folder() ? "sender_folder_id" : "receiver_folder_id")
@@ -194,7 +194,7 @@ class MailHandler extends Handler
             if(!$this->check_folder_rights($this->current_folder->id, $folder_id)) {
                 throw new exception("MAIL_INVALID_INPUT");
             }
-
+            
             switch($this->current_folder->id) {
                 case 1: case 2: case 5:
                     $this->update_mail_folder($mails, $folder_id);
@@ -610,9 +610,9 @@ class MailHandler extends Handler
             $in_query .= ($i > 0 ? "," : "") ." '". $mails[$i] ."'";
         }
         
-        $data = DbHandler::get_instance()->return_query("SELECT mail.id FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id WHERE mail.id IN (". $in_query .") AND user_mail." . ($sender ? "sender_id" : "receiver_id") ." = :user_id", $this->_user->id);
-                
-        if(empty($data) || count($data) != count($mails)) {
+        $data = DbHandler::get_instance()->return_query("SELECT user_mail.id FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id WHERE user_mail.id IN (". $in_query .") AND user_mail." . ($sender ? "sender_id" : "receiver_id") ." = :user_id", $this->_user->id);
+        
+        if(empty($data) || count($data) < count($mails)) {
             throw new exception("MAIL_INVALID_INPUT");
         }
 
@@ -620,7 +620,7 @@ class MailHandler extends Handler
         for($i = 0; $i < count($data); $i++) {
             $in_query .= ($i > 0 ? "," : "") ." '". $data[$i]["id"] ."'";
         }
-        DbHandler::get_instance()->query("UPDATE user_mail SET " . ($sender ? "sender_folder_id" : "receiver_folder_id") ." = :folder_id WHERE mail_id IN (". $in_query .")", $folder_id);
+        DbHandler::get_instance()->query("UPDATE user_mail SET " . ($sender ? "sender_folder_id" : "receiver_folder_id") ." = :folder_id WHERE id IN (". $in_query .")", $folder_id);
                     
     }
     

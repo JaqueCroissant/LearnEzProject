@@ -1,6 +1,4 @@
 var current_tab;
-var clicked = true;
-var ready_to_change = true;
 
 $(document).ready(function () {
     var page_step = $.cookie("current_page_step") !== undefined ? $.cookie("current_page_step") : undefined;

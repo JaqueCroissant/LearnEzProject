@@ -1,7 +1,6 @@
 var delete_class_id;
 
 $(document).ready(function () {
-// class
     $(document).on("click", ".create_class", function (event) {
         event.preventDefault;
         $("#hidden_description").val($("#class_description").val());
@@ -27,7 +26,6 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            change_page("edit_class");
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -47,7 +45,6 @@ $(document).ready(function () {
 
         div_id = $(this).closest("div .alert_panel").attr("id");
         var id = $("#" + delete_class_id).closest("tr").children().last().attr("id");
-        console.log(id);
         initiate_submit_get($(this), "edit_class.php?class_id=" + id + "&state=delete_class", function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
@@ -114,8 +111,6 @@ $(document).ready(function () {
         $("#close_class_alert").attr("hidden", true);
         $("td input[type='checkbox']").removeAttr("disabled");
     });
-
-
 
     $(document).on("click", ".edit_class", function (event) {
         event.preventDefault();

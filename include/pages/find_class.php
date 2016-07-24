@@ -15,7 +15,7 @@ $classHandler->get_all_classes();
             </div>
             <hr class="widget-separator">
             <div class="widget-body">
-                <table id="find_class_dt" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
+                <table id="find_class_dt" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>}"  data-plugin="DataTable" role="grid" 
                        aria-describedby="default-datatable_info">
                     <thead>
                         <tr role="row">

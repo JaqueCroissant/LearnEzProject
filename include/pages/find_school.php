@@ -17,44 +17,44 @@ $schoolHandler->get_school_types();
             <hr class="widget-separator">
             <div class="widget-body">
                 <?php if (RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
-                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
+                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>}" data-plugin="DataTable" role="grid" 
                            aria-describedby="default-datatable_info">
                         <thead>
                             <tr role="row">
-                                <th class="sorting_asc" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1" aria-sort="ascending"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
-                                <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
-                                <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
-                                <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
-                                <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
-                                <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
-                                <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                 <?php } ?>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                 <?php } ?>
 
-                                <th hidden tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"></th>
+                                <th hidden></th>
                             </tr>
                         </thead>
                         <tfoot class="hidden">
                             <tr>
-                                <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
-                                <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
-                                <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
-                                <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
-                                <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
-                                <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
-                                <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                 <?php } ?>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                 <?php } ?>
 
-                                <th hidden rowspan="1" colspan="1"></th>
+                                <th hidden></th>
                             </tr>
                         </tfoot>
                         <tbody>

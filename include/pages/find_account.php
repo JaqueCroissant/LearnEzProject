@@ -22,24 +22,40 @@ $userHandler->get_all_users();
                     <!-- Tab -->
                     <div class="my_fade my_tab" id="find_school_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
+                            <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>}" data-plugin="DataTable" role="grid" 
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
-                                        <th class="sorting_asc" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1" aria-sort="ascending"><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("USERNAME"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("USER_TYPE"); ?></th>
-                                        <th class="sorting p-r-0" tabindex="0" aria-controls="default-datatable"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
-                                        <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("USERNAME"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("USER_TYPE"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
                                         <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                         <?php } ?>
                                         <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
-                                        <th hidden tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"></th>
+                                        <th hidden></th>
                                     </tr>
                                 </thead>
+                                <tfoot class="hidden">
+                                    <tr role="row">
+                                        <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("USERNAME"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("USER_TYPE"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                            <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php } ?>
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                            <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                        <?php } ?>
+                                        <th hidden></th>
+                                    </tr>
+                                </tfoot>
                                 <tbody>
                                     <?php
                                     if (RightsHandler::has_user_right("ACCOUNT_FIND")) {
@@ -103,80 +119,7 @@ $userHandler->get_all_users();
                     <!-- Tab -->
                     <div class="my_fade my_tab" id="edit_account_tab">
                         <div class="widget-body">
-                            <form method="post" id="update_school_step_one" action="" name="update_school_step_one" class="form-horizontal" url="find_school.php">
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_name"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control " type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_address"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control " type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("ZIP_CODE") . " & " . TranslationHandler::get_static_text("CITY"); ?></label>
-                                    <div class="col-md-1">
-                                        <input class="form-control" type="text" name="school_zip_code" placeholder="<?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?>">
-                                    </div>
-                                    <div class="col-md-4">
-                                        <input class="form-control" type="text" name="school_city" placeholder="<?php echo TranslationHandler::get_static_text("CITY"); ?>">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control " type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_email"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control " type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_max_students"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control " type="text" name="school_max_students" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?>">
-                                    </div>
-                                </div>
-                                <div class="form-group" >
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_start"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control datepickers" id="school_subscription_start" type="text" name="school_subscription_start" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>">
-                                    </div>
-                                </div>
-                                <div class="form-group" >
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
-                                    <div class="col-md-5">
-                                        <input class="form-control datepickers" id="school_subscription_end" type="text" name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
-                                    <div class="col-md-5">
-                                        <select name="school_type_id" id="school_type_id" class="form-control" data-plugin="select2">
-                                            //<?php
-//                                            foreach ($schoolHandler->school_types as $value) {
-//                                                echo '<option id="school_type_id_' . $value['id'] . '" value="' . $value['id'] . '">' . $value['title'] . '</option>';
-//                                            }
-//                                            
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 col-md-offset-2 control-label"></label>
-                                    <div class="col-md-5">
-                                        <input type="hidden" name="step" id="create_school_hidden_field_step_1">
-                                        <input type="button" name="submit" id="create_school_step_one_button" step="1" 
-                                               value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_ONE"); ?>" class="pull-right btn btn-default btn-sm create_school">   
-                                    </div>
-                                </div>
-                            </form>
+                            
                         </div>
                     </div>
                     <!-- End Tab -->
@@ -188,6 +131,6 @@ $userHandler->get_all_users();
     </div>
 </div>
 
-<script src="assets/js/include_library.js" type="text/javascript"></script>
+<!--<script src="assets/js/include_library.js" type="text/javascript"></script>-->
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>

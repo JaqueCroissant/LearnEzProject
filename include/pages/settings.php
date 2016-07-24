@@ -274,18 +274,32 @@ $mailHandler = new MailHandler();
                                         <div class="form-group m-b-sm blocked_students">
                                             <label class="control-label"><?php echo TranslationHandler::get_static_text("BLOCKED_STUDENTS"); ?>:</label>
                                             <hr class="m-0 " style="border-color: #ddd;margin: 2px 0px 14px 0px !important;">
-                                            <div class="center no_students_text" style="display:none;"><?php echo TranslationHandler::get_static_text("NO_BLOCKED_STUDENTS"); ?></div>
-                                            <div class="div_student_11 blocked_student">
-                                                <input type="hidden" name="blocked_student[]" value="11"/>
-                                                <div class="user-card m-b-sm student_11" style="padding: 8px !important;background:#f0f0f1;">
-                                                    <div class="media">
-                                                        <div class="media-body">
-                                                            Mathias Olsen
-                                                            <i class="zmdi zmdi-hc-lg zmdi-close pull-right remove_blocked_student" student_id="11" style="margin-top:4px;cursor:pointer;"></i>
+                                            <?php
+                                            if(!empty(SettingsHandler::get_settings()->blocked_students)) {
+                                                ?>
+                                                <div class="center no_students_text" style="display:none;"><?php echo TranslationHandler::get_static_text("NO_BLOCKED_STUDENTS"); ?></div>
+                                                <?php
+                                                foreach(SettingsHandler::get_settings()->blocked_students as $user) {
+                                                    ?>
+                                                    <div class="div_student_<?php echo $user->id; ?> blocked_student">
+                                                        <input type="hidden" name="blocked_student[]" value="<?php echo $user->id; ?>"/>
+                                                        <div class="user-card m-b-sm student_<?php echo $user->id; ?>" style="padding: 8px !important;background:#f0f0f1;">
+                                                            <div class="media">
+                                                                <div class="media-body">
+                                                                    <?php echo $user->firstname . " " . $user->surname; ?>
+                                                                    <i class="zmdi zmdi-hc-lg zmdi-close pull-right remove_blocked_student" student_id="<?php echo $user->id; ?>" style="margin-top:4px;cursor:pointer;"></i>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
+                                            <?php
+                                                }
+                                            } else {
+                                            ?>
+                                                <div class="center no_students_text"><?php echo TranslationHandler::get_static_text("NO_BLOCKED_STUDENTS"); ?></div>
+                                            <?php
+                                            }
+                                            ?>
                                         </div>
                                     </div>
                                     

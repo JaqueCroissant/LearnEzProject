@@ -55,6 +55,7 @@
                 $settings->hide_profile = isset($_POST['hide_profile']) ? true : false;
                 $settings->block_mail_notifications = isset($_POST['block_mail_notifications']) ? true : false;
                 $settings->block_student_mails = isset($_POST['block_student_mails']) ? true : false;
+                $settings->blocked_students = isset($_POST['blocked_student']) ? $_POST['blocked_student'] : array();
 
                 if($settingsHandler->update_settings($settings))
                 {

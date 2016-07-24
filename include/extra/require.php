@@ -12,6 +12,7 @@
     require_once 'include/handler/translationHandler.php';
     require_once 'include/handler/notificationHandler.php';
     require_once 'include/handler/paginationHandler.php';
+    require_once 'include/handler/settingsHandler.php';
     require_once 'include/handler/mailHandler.php';
     require_once 'include/handler/schoolHandler.php';
     require_once 'include/handler/classHandler.php';

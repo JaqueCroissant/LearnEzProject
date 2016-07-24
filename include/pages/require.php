@@ -10,6 +10,7 @@ require_once '../../include/handler/translationHandler.php';
 require_once '../../include/handler/paginationHandler.php';
 require_once '../../include/handler/notificationHandler.php';
 require_once '../../include/handler/rightsHandler.php';
+require_once '../../include/handler/settingsHandler.php';
 
 require_once '../../include/class/orm.class.php';
 require_once '../../include/class/error.class.php';

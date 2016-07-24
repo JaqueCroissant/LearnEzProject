@@ -366,6 +366,64 @@
             }
             return false;
         }
+        
+        private static $_rights_list = array();
+        private static $_current_right;
+        private static $_current_user;
+        
+        private static function assign_temporary_rights() {
+            $final = array();
+            $rights = DbHandler::get_instance()->return_query("SELECT id, is_school_right, prefix FROM rights");
+            
+            if(count($rights) < 1) {
+                self::$_rights_list = array();
+                return;
+            }
+            
+            foreach($rights as $right) {
+                $final[$right["prefix"]] = new Rights($right);
+            }
+            self::$_rights_list = $final;
+        }
+        
+        public static function target_has_right($user_id, $prefix) {
+            try 
+            {
+                if(!is_numeric($user_id) || !is_string($prefix) || empty($prefix) || empty($user_id)) {
+                    return false;
+                }
+                
+                if(empty(self::$_rights_list)) {
+                    self::assign_temporary_rights();
+                }
+                
+                if(!array_key_exists($prefix, self::$_rights_list)) {
+                    return false;
+                }
+                
+                self::$_current_right = self::$_rights_list[$prefix];
+                
+                $current_user = DbHandler::get_instance()->return_query("SELECT id, school_id, user_type_id FROM users WHERE id = :user_id LIMIT 1", $user_id);
+                
+                if(empty($current_user)) {
+                    return false;
+                }
+                
+                self::$_current_user = new User(reset($current_user));
+                
+                if(self::$_current_user->user_type_id == 1 || !self::$_current_right->is_school_right) {
+                    $right = DbHandler::get_instance()->count_query("SELECT id FROM user_type_rights WHERE user_type_id = :user_type_id AND rights_id = :right_id", self::$_current_user->user_type_id, self::$_current_right->id);
+                    return $right > 0;     
+                }
+                
+                $right = DbHandler::get_instance()->count_query("SELECT id FROM school_rights WHERE user_type_id = :user_type_id AND rights_id = :right_id AND school_id = :school_id", self::$_current_user->user_type_id, self::$_current_right->id, self::$_current_user->school_id);
+                return $right > 0;
+            }
+            catch (Exception $ex) 
+            {
+                return false;
+            }
+        }
 
         public static function reset()
         {

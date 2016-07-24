@@ -23,6 +23,10 @@ html{
     background-color: #edf0f5 !important;
 }
 
+.a:hover {
+    cursor: pointer;
+}
+
 .alert_panel {
     z-index: 9000;
     position: absolute;

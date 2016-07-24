@@ -37,9 +37,6 @@ $userHandler->get_all_users();
                                         <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
                                             <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
-                                        <?php if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
-                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"><?php echo TranslationHandler::get_static_text("DELETE"); ?></th>
-                                        <?php } ?>
                                         <th hidden tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1"></th>
                                     </tr>
                                 </thead>
@@ -53,36 +50,34 @@ $userHandler->get_all_users();
                                             <tr class="clickable_row">
                                                 <td class="click_me"><?php echo $value->firstname . " " . $value->surname; ?></td>
                                                 <td class="click_me"><?php echo $value->username; ?></td>
-                                                <td class="p-r-0 click_me"><?php echo $value->user_type_title; ?></td>
+                                                <td class="click_me"><?php echo $value->user_type_title; ?></td>
                                                 <td class="click_me"><?php echo $value->email; ?></td>
                                                 <td class="click_me"><?php echo $value->school_name; ?></td>
                                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                                <td>
-                                                    <form method="post" id="account_open_<?php echo $i; ?>" action="" url="find_account.php">
-                                                        <div class="checkbox" id="account_open_<?php echo $i; ?>_div">
-                                                            <input type="text" class="account_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="account_open_<?php echo $i; ?>_id_hidden">
-                                                            <input type="text" hidden value="<?php echo $value->open; ?>" name="account_open" id="account_open_<?php echo $i; ?>_hidden">
-                                                            <input type="hidden" name="state" value="update_open_state">
-                                                            <input class="checkbox-circle checkbox-dark btn_class_open" id="account_open_<?php echo $i; ?>_field" type="checkbox" 
-                                                                   <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
-                                                            <label for="account_open_<?php echo $i; ?>_field"></label>
-                                                            <input type='button' name="submit" hidden="">
-                                                        </div>
-                                                    </form>
-                                                </td>
-                                                <?php } ?>
-                                                <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
                                                     <td>
-                                                        <form method="post">
-                                                            <div class="p-l-0" id="account_edit_<?php echo $i; ?>_div">
-                                                                <input type="text" class="account_id_hidden" hidden value="<?php echo $value->id; ?>" name="account_id" id="account_id_hidden_<?php echo $i; ?>">
-                                                                <input class="btn-danger edit_account" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("EDIT") ?>">
+                                                        <form method="post" id="account_open_<?php echo $i; ?>" action="" url="find_account.php">
+                                                            <div class="checkbox" id="account_open_<?php echo $i; ?>_div">
+                                                                <input type="text" class="account_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="account_open_<?php echo $i; ?>_id_hidden">
+                                                                <input type="text" hidden value="<?php echo $value->open; ?>" name="account_open" id="account_open_<?php echo $i; ?>_hidden">
+                                                                <input type="hidden" name="state" value="update_open_state">
+                                                                <input class="checkbox-circle checkbox-dark btn_class_open" id="account_open_<?php echo $i; ?>_field" type="checkbox" 
+                                                                       <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
+                                                                <label for="account_open_<?php echo $i; ?>_field"></label>
+                                                                <input type='button' name="submit" hidden="">
                                                             </div>
                                                         </form>
                                                     </td>
                                                 <?php } ?>
-                                                <?php if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
+                                                <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
                                                     <td>
+                                                        <div class="">
+                                                            <i class="fa fa-edit fa-2x edit_account m-r-md" account_id="<?php echo $value->id; ?>" state="update_account" id="edit_account_btn"></i>
+                                                            <?php if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
+                                                                <i class="fa fa-times fa-fw fa-2x delete_account" account_id="<?php echo $value->id; ?>" state="delete_account" id="delete_account_btn" style="font-size: 2.5em !important;"></i>
+                                                            <?php } ?>
+                                                        </div>
+                                                    </td>
+<!--                                                    <td>
                                                         <form method="post" action="" url="find_account.php" id="account_delete_<?php echo $i; ?>">
                                                             <div class="p-l-0" id="account_delete_<?php echo $i; ?>_div">
                                                                 <input type="text" class="account_id_hidden" hidden value="<?php echo $value->id; ?>" name="school_id" id="account_id_delete_hidden_<?php echo $i; ?>">
@@ -91,7 +86,7 @@ $userHandler->get_all_users();
                                                                 <input class="btn-danger delete_account" id="account_delete_<?php echo $i; ?>_btn" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("DELETE") ?>">
                                                             </div>
                                                         </form>
-                                                    </td>
+                                                    </td>-->
                                                 <?php } ?>
                                                 <td class="hidden"><?php echo $value->id; ?></td>
                                             </tr>
@@ -168,7 +163,8 @@ $userHandler->get_all_users();
 //                                            foreach ($schoolHandler->school_types as $value) {
 //                                                echo '<option id="school_type_id_' . $value['id'] . '" value="' . $value['id'] . '">' . $value['title'] . '</option>';
 //                                            }
-//                                            ?>
+//                                            
+                                            ?>
                                         </select>
                                     </div>
                                 </div>

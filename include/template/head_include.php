@@ -7,6 +7,7 @@
 <script src="js/form.js" type="text/javascript"></script>
 <script src="js/mail.js" type="text/javascript"></script>
 <script src="js/notifications.js" type="text/javascript"></script>
+<script src="js/settings.js" type="text/javascript"></script>
 <link href="css/css.css" rel="stylesheet" type="text/css"/>
 <link href="css/my_tab.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />

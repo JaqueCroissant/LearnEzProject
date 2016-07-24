@@ -132,7 +132,12 @@ $paginationHandler = new PaginationHandler();
                                         <div><?php echo TranslationHandler::get_static_text("MAIL_ARROW_RECEIVER_TO_REPLY"); ?></div>
                                         <div style="clear:both;"></div>
                                     </div>
-                                    <?php } ?>
+                                    <?php 
+                                    } else {
+                                    ?>
+                                    <input name="disable_reply" type="hidden" value="1" />
+                                    <?php
+                                    } ?>
                                         
 
                                     <textarea name="message" class="form-control input-sm full-wysiwyg" style="min-height:150px !important;"></textarea>

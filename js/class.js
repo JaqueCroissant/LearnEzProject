@@ -145,4 +145,13 @@ $(document).ready(function () {
             $("#edit_class_a").click();
         });
     });
+    
+    
+    $(document).on("length.dt", function (e, settings, len) {
+        if (len > 25) {
+            $("tfoot").removeClass("hidden");
+        } else if (!$("tfoot").hasClass("hidden")) {
+            $("tfoot").addClass("hidden");
+        }
+    });
 });

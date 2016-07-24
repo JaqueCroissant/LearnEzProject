@@ -64,7 +64,7 @@ class TranslationHandler {
     
     private static function set_current_language($language_id = null) {
         if (SessionKeyHandler::session_exists("user")){
-            self::$_current_language_id = SessionKeyHandler::get_from_session("user", true)->language_id;
+            self::$_current_language_id = SettingsHandler::get_settings()->language_id;
             SessionKeyHandler::add_to_session("current_language", self::$_current_language_id);
             return;
         }
@@ -115,28 +115,6 @@ class TranslationHandler {
         return SessionKeyHandler::get_from_session("current_language");
     }
     
-    public static function update_language($language_id = null){
-        if(empty($language_id) || $language_id == self::get_current_language()) {
-            return;
-        }
-        
-        $data = DbHandler::get_instance()->count_query("SELECT * FROM translation_language WHERE id = :id" , $language_id);
-        
-        if(count($data) < 1) {
-            return;
-        }
-        
-        if(SessionKeyHandler::session_exists("user")) {
-            $user = SessionKeyHandler::get_from_session("user", true);
-            $user->language_id = $language_id;
-            SessionKeyHandler::add_to_session("user", $user, true);
-            DbHandler::get_instance()->query("UPDATE users SET language_id = :language_id WHERE id= :user_id", $language_id, $user->id);
-        }
-        
-        self::set_current_language($language_id);
-        self::$_static_texts = array();
-    }
-    
     public static function reset() {
         SessionKeyHandler::remove_from_session("current_language");
         SessionKeyHandler::remove_from_session("default_language");
@@ -146,6 +124,6 @@ class TranslationHandler {
     }
     
     public static function get_language_options(){
-        return DbHandler::get_instance()->return_query("SELECT * FROM translation_language");
+        return DbHandler::get_instance()->return_query("SELECT * FROM language");
     }
 }

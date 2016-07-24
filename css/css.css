@@ -476,4 +476,6 @@ a .menu_header {
 
 .new_password_change {
     padding:0 !important;
+    margin-bottom:13px;
+    border:none !important;
 }

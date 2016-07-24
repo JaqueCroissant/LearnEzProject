@@ -1,4 +1,13 @@
 <?php
+function array_value_exists_in_key($array, $key, $val) {
+    foreach ($array as $item) {
+        if (isset($item[$key]) && $item[$key] == $val) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function time_elapsed($ptime)
 {
     $etime = time() - strtotime($ptime);

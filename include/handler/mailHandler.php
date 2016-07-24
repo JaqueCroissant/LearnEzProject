@@ -143,7 +143,7 @@ class MailHandler extends Handler
 
             $this->_current_folder_id = $this->get_folder_id($this->current_folder->folder_name);
             
-            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id"
+            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id, users.user_type_id"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
                     . " INNER JOIN users ON users.id = ". ($this->is_sender_folder() ? "receiver_id" : "sender_id")
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.". ($this->is_sender_folder() ? "sender_folder_id" : "receiver_folder_id")
@@ -156,11 +156,10 @@ class MailHandler extends Handler
             if(empty($data) || !is_array($data) || count($data) < 1) {
                 return true;
             }
-            
+
             foreach($data as $value) {
                 $this->mails[] = new Mail($value);
             }
-            
             
             return true;
 	}
@@ -286,14 +285,36 @@ class MailHandler extends Handler
             $user_ids = array();
             $this->iterate_receiptian_array($user_ids, $users);
             
-            $final_user_ids = DbHandler::get_instance()->return_query("SELECT id FROM users WHERE id IN (". $this->generate_in_query($user_ids) .")");
+            
+            $final_user_ids = DbHandler::get_instance()->return_query("SELECT users.id, user_settings.block_mail_notifications, user_settings.block_student_mails FROM users INNER JOIN user_settings ON user_settings.user_id = users.id WHERE users.id IN (". $this->generate_in_query($user_ids) .")");
+            $final_notification_ids = array();
+            $blocked_users = 0;
+            
+            for($i = 0; $i < count($final_user_ids); $i++) {
+                if($this->_user->user_type_id == 4 && $final_user_ids[$i]["block_student_mails"]) {
+                    if(RightsHandler::target_has_right($final_user_ids[$i]["id"], "MAIL_BLOCK_STUDENTS")) {
+                        $blocked_users = $blocked_users + 1;
+                        unset($final_user_ids[$i]);
+                        continue;
+                    }
+                }
+                if($final_user_ids[$i]["block_mail_notifications"] && RightsHandler::target_has_right($final_user_ids[$i]["id"], "NOTIFICATION_BLOCK_MAILS")) {
+                    continue;
+                }
+                $final_notification_ids[] = $final_user_ids[$i];
+            }
+            
+            if(count($final_user_ids) < 1) {
+                throw new exception("MAIL_CANT_SEND_TO_THIS_USER");
+            }
+            
             DbHandler::get_instance()->query("INSERT INTO mail (date, title, text, disable_reply) VALUES (:date, :title, :text, :disable_reply)", date("Y-m-d H:i:s"), $title, $message, $disable_reply);
             $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
             
             foreach($final_user_ids as $value) {
                 DbHandler::get_instance()->query("INSERT INTO user_mail (mail_id, sender_id, receiver_id, sender_folder_id, receiver_folder_id) VALUES (:last_inserted_id, :sender_id, :receiver_id, :sender_folder_id, :receiver_folder_id)", $last_inserted_id, $this->_user->id, $value["id"], 3, 1);
             }
-            NotificationHandler::create_new_static_user_notification(array_map(function($e){return $e["id"];}, $final_user_ids), "MAIL_RECEIVED", array("user" => $this->_user->id, "link_id" => $last_inserted_id));
+            NotificationHandler::create_new_static_user_notification(array_map(function($e){return $e["id"];}, $final_notification_ids), "MAIL_RECEIVED", array("user" => $this->_user->id, "link_id" => $last_inserted_id));
             
             if(is_array($tags) && count($tags) > 0) {
                 $data = DbHandler::get_instance()->return_query("SELECT id FROM mail_tags");

@@ -9,6 +9,7 @@ $loginHandler = new LoginHandler();
 if(isset($_GET['logout'])) {
     if($loginHandler->check_login()) {
         $loginHandler->log_out();
+        TranslationHandler::reset();
         $jsonArray['status_value'] = true;
     } else {
         $jsonArray['status_value'] = false;
@@ -23,6 +24,7 @@ if(isset($_POST)) {
     $token = isset($_POST["token"]) ? $_POST["token"] : null;
     if($loginHandler->check_login($username, $password, $token)) {
         $jsonArray['status_value'] = true;
+        TranslationHandler::reset();
     } else {
         $jsonArray['user_setup'] = SessionKeyHandler::session_exists("user_setup") ? true : false;
         $jsonArray['status_value'] = false;

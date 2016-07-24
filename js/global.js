@@ -184,6 +184,11 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
+            if(ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -329,8 +334,13 @@ $(document).ready(function () {
         $('#status_container').css("bottom", 0);
         $('#status_container').addClass("hidden");
     });
+    
+    audioElement = document.createElement('audio');
+    audioElement.setAttribute('src', 'sounds/notification.ogg');
     //
 });
+
+var audioElement;
 
 function show_status_bar(status_type, message, custom_fade_out) {
     clearTimeout(status_bar_timeout);

@@ -424,6 +424,29 @@ class MailHandler extends Handler
         return $in_array;
     }
     
+    public function get_students() {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if(RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.id, users.firstname, users.surname FROM users WHERE users.user_type_id = '4'");
+            } else {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.id, users.firstname, users.surname, school.name as school_name FROM users INNER JOIN school ON school.id = users.school_id WHERE users.user_type_id = '4' AND users.school_id = :school_id", $this->_user->school_id);
+            }
+            
+            $users = array();
+            foreach($user_data as $value) {
+                $users[] = new User($value);
+            }
+            
+            return $users;
+        } catch (Exception $ex) {
+            return array();
+        }
+    }
+    
     public function get_receiptians() {
         try
         {

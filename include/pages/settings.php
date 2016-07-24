@@ -1,10 +1,10 @@
 <?php
 require_once 'require.php';
 require_once '../../include/handler/userHandler.php';
+require_once '../../include/handler/mailHandler.php';
 
 $userHandler = new UserHandler();
-
-//REDIGER BRUGER INFO
+$mailHandler = new MailHandler();
 ?>
 
 
@@ -31,18 +31,18 @@ $userHandler = new UserHandler();
                         <?php
                     }
                     ?>
-                </ul><!-- .nav-tabs -->
-
-                <!-- Tab panes -->
+                </ul>
+                
+                
                 <div class="my_tab_content">
                     <div class="my_fade my_tab" id="edit_user_info_tab">
                         <div class="widget-body">
                             <form method="post" action="" url="settings.php?step=edit_info" id="edit_info_form" name="edit_info">
                                 <input name="avatar_hidden_id" id="avatar_hidden_id" class="input_avatar_id" type="hidden" value="<?php echo $userHandler->_user->image_id; ?>" />
                                 <div class="col-md-6">
-<?php
-if (RightsHandler::has_user_right("CHANGE_FULL_NAME")) {
-    ?>
+                                    <?php
+                                    if (RightsHandler::has_user_right("CHANGE_FULL_NAME")) {
+                                    ?>
                                         <div class="form-group m-b-sm">
                                             <label for="firstname_input"><?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?></label>
                                             <input type="text" id="firstname_input" name="firstname" value="<?php echo $userHandler->_user->firstname; ?>" class="form-control input_change input_firstname">
@@ -52,9 +52,9 @@ if (RightsHandler::has_user_right("CHANGE_FULL_NAME")) {
                                             <label for="surname_input"><?php echo TranslationHandler::get_static_text("INFO_SURNAME"); ?></label>
                                             <input type="text" id="surname_input" name="surname" value="<?php echo $userHandler->_user->surname; ?>" class="form-control input_change input_surname">
                                         </div>
-    <?php
-}
-?>
+                                    <?php
+                                    }
+                                    ?>
                                     <div class="form-group m-b-sm">
                                         <label for="email_input"><?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?></label>
                                         <input type="text" id="email_input" name="email" value="<?php echo $userHandler->_user->email; ?>" class="form-control">
@@ -67,11 +67,6 @@ if (RightsHandler::has_user_right("CHANGE_FULL_NAME")) {
 
                                     </div>
                                 </div>
-
-
-
-
-
 
                                 <div class="col-md-6">
                                     <div class="form-group m-b-sm">
@@ -101,12 +96,12 @@ if (RightsHandler::has_user_right("CHANGE_FULL_NAME")) {
                                                 </div>
                                                 <div id="collapse-1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-1" aria-expanded="false">
                                                     <div class="panel-body">
-<?php
-$userHandler->get_profile_images();
-foreach ($userHandler->profile_images as $image) {
-    echo '<div class="avatar avatar-xl avatar-circle avatar-hover" avatar_id="' . $image['id'] . '"><img src="assets/images/profile_images/' . $image['id'] . '.png"/></div>';
-}
-?>
+                                                    <?php
+                                                    $userHandler->get_profile_images();
+                                                    foreach ($userHandler->profile_images as $image) {
+                                                        echo '<div class="avatar avatar-xl avatar-circle avatar-hover" avatar_id="' . $image['id'] . '"><img src="assets/images/profile_images/' . $image['id'] . '.png"/></div>';
+                                                    }
+                                                    ?>
                                                     </div>
                                                 </div>
                                             </div>
@@ -123,11 +118,11 @@ foreach ($userHandler->profile_images as $image) {
                                 </div>
                             </form>
                         </div>
-                    </div><!-- .tab-pane  -->
+                    </div>
 
-<?php
-if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
-    ?>
+                        <?php
+                        if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
+                        ?>
                         <div class="my_fade my_tab" id="change_password_tab">
 
                             <div class="widget-body">
@@ -156,18 +151,18 @@ if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
                             </div>
 
 
-                        </div><!-- .tab-pane  -->
-<?php
-}
-if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
-?>
+                        </div>
+                        <?php
+                        }
+                        if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
+                        ?>
                      <div class="my_fade my_tab" id="preferences_tab">
                         <div class="widget-body" style="padding-top:32px !important;">
                             <form method="post" action="" url="settings.php?step=preferences" id="preferences" name="preferences">
                                 <div class="col-md-6">
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_PREFERENCES"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
                                         <div class="form-group m-b-sm">
                                             <label for="language" class="control-label"><?php echo TranslationHandler::get_static_text("LANGUAGE"); ?>:</label>
                                             <select id="language" name="language" class="form-control">
@@ -218,9 +213,7 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                         }
                                         ?>
                                     </div>
-                                </div>
-
-                                <div class="col-md-6">
+                                    
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MAIL_PREFERENCES"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
                                     <div class="col-md-12">
@@ -252,7 +245,9 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                         }
                                         ?>
                                     </div>
-                                    
+                                </div>
+
+                                <div class="col-md-6">
                                     <?php
                                     if(RightsHandler::has_user_right("MAIL_BLOCK_STUDENTS")) {
                                     ?>
@@ -260,6 +255,38 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("BLOCK_STUDENTS"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
                                     <div class="col-md-12">
+                                        <div class="form-group m-b-lg">
+                                            <div style="display: table-cell;width: 100%;">
+                                            <label for="student" class="control-label"><?php echo TranslationHandler::get_static_text("PICK_STUDENT"); ?>:</label>
+                                            <select id="student" name="student" class="form-control pull-left" data-plugin="select2">
+                                                <?php
+                                                foreach($mailHandler->get_students() as $value) {
+                                                    echo '<option value="'.$value->id.'">'.$value->firstname . ' ' . $value->surname.'</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                            </div>
+                                            <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
+                                            <input type="button" name="submit" id="block_student" value="<?php echo TranslationHandler::get_static_text("BLOCK"); ?>" class="pull-right btn btn-default btn-md block_student m-l-sm">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group m-b-sm blocked_students">
+                                            <label class="control-label"><?php echo TranslationHandler::get_static_text("BLOCKED_STUDENTS"); ?>:</label>
+                                            <hr class="m-0 " style="border-color: #ddd;margin: 2px 0px 14px 0px !important;">
+                                            <div class="center no_students_text" style="display:none;"><?php echo TranslationHandler::get_static_text("NO_BLOCKED_STUDENTS"); ?></div>
+                                            <div class="div_student_11 blocked_student">
+                                                <input type="hidden" name="blocked_student[]" value="11"/>
+                                                <div class="user-card m-b-sm student_11" style="padding: 8px !important;background:#f0f0f1;">
+                                                    <div class="media">
+                                                        <div class="media-body">
+                                                            Mathias Olsen
+                                                            <i class="zmdi zmdi-hc-lg zmdi-close pull-right remove_blocked_student" student_id="11" style="margin-top:4px;cursor:pointer;"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     
                                     <?php
@@ -277,13 +304,13 @@ if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                             </form>
                         </div>
                     </div>
-<?php
-}
-?>
+                    <?php
+                    }
+                    ?>
 
-                </div><!-- .tab-content  -->
-            </div><!-- .nav-tabs-horizontal -->
-        </div><!-- .widget -->
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

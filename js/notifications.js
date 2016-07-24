@@ -8,8 +8,8 @@ jQuery(function ($) {
         var win = $('#notifications');
         win.attr("aria-expanded", "false");
         win.attr("data-toggle", "dropdown");
-        $(win.closest("li")).append("<div class='dropdown-menu animated flipInY' style='width:auto;'>" +
-                "<div id='notification_window' class='hidden-xs'>" + 
+        $(win.closest("li")).append("<div class='dropdown-menu animated flipInY' style='width:auto;width:400px;'>" +
+                "<div id='notification_window' class='hidden-xs' style='width:400px;'>" + 
                 "<div id='notification_top' style='width:400px;'>" +
                 "<div class='pull-left' style='width:200px;'><h4 class='notification_title'></h4></div>" +
                 "<div class='pull-right' style='width:65px;margin-top:8px;'>" +
@@ -49,7 +49,7 @@ jQuery(function ($) {
                             currently_recieving_notifications = false;
                             $("#notification_loading_image").hide();
                             $('#notification_window').show("fast");
-                            $('#notification_counter').html("");
+                            $('#notification_counter').addClass("hidden");
                         }
                         else {
                             show_status_bar("error", result.error, 5000);

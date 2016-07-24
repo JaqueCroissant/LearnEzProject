@@ -64,7 +64,7 @@ class TranslationHandler {
     
     private static function set_current_language($language_id = null) {
         if (SessionKeyHandler::session_exists("user")){
-            self::$_current_language_id = SessionKeyHandler::get_from_session("user", true)->language_id;
+            self::$_current_language_id = SessionKeyHandler::get_from_session("user", true)->settings->language_id;
             SessionKeyHandler::add_to_session("current_language", self::$_current_language_id);
             return;
         }
@@ -143,5 +143,9 @@ class TranslationHandler {
         self::$_current_language_id = null;
         self::$_default_language_id = null;
         self::$_user_languages = array();
+    }
+    
+    public static function get_language_options(){
+        return DbHandler::get_instance()->return_query("SELECT * FROM translation_language");
     }
 }

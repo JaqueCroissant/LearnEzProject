@@ -11,9 +11,22 @@
             $this->_notifications = array();
         }
         
+        //Til senere brug, cleaner op i arguments tabellen
+        private function clean_arguments(){
+            try {
+                DbHandler::get_instance()->query("DELETE FROM user_notifications_arguments "
+                        . "WHERE arg_id NOT IN ("
+                        . "SELECT arg_id FROM user_notifications)");
+                
+            } catch (Exception $ex) {
+
+            }
+        }
+        
         public function get_notification_categories(){
             try {
                 $this->check_login();
+                $this->check_rights();
                 return DbHandler::get_instance()->return_query("SELECT notifications_category.icon_class, "
                         . "notifications_category.category_name, "
                         . "notifications_category.id, "
@@ -54,11 +67,10 @@
         public function read_notifications($notifs_array){
             try {
                 $this->check_login();
-                if (count($notifs_array) < 1) {
-                    throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
-                }
-                $values = "";
+                $this->check_rights();
+                $this->check_int_array($notifs_array);
                 
+                $values = "";
                 for ($i = 0; $i < count($notifs_array); $i++){
                     $values .= ($i != 0 ? "," : "") . $notifs_array[$i];
                 }
@@ -78,6 +90,7 @@
         public function seen_notification($notificationId){
             try {
                 $this->check_login();
+                $this->check_rights();
                 $this->check_numeric($notificationId);
                 
                 DbHandler::get_instance()->query("UPDATE user_notifications "
@@ -96,6 +109,7 @@
         public function seen_notifications(){
             try {
                 $this->check_login();
+                $this->check_rights();
                 
                 DbHandler::get_instance()->query("UPDATE user_notifications "
                         . "SET is_read=1 "
@@ -114,11 +128,9 @@
             try {
                 $this->check_login();
                 $this->check_rights();
-                if (count($notifs_array) < 1) {
-                    throw new Exception("NOTIFICATION_NO_NOTIFICATIONS");
-                }
-                $values = "";
+                $this->check_int_array($notifs_array);
                 
+                $values = "";
                 for ($i = 0; $i < count($notifs_array); $i++){
                     $values .= ($i != 0 ? "," : "") . $notifs_array[$i];
                 }
@@ -131,18 +143,6 @@
             } catch (Exception $ex) {
                 $this->error = ErrorHandler::return_error($ex->getMessage());
                 return false;
-            }
-        }
-
-        //Flyttes senere
-        public function clean_arguments(){
-            try {
-                DbHandler::get_instance()->query("DELETE FROM user_notifications_arguments "
-                        . "WHERE arg_id NOT IN ("
-                        . "SELECT arg_id FROM user_notifications)");
-                
-            } catch (Exception $ex) {
-
             }
         }
         
@@ -158,7 +158,7 @@
             return isset($this->_unseen_notifications) ? $this->_unseen_notifications : 0;
         }
         
-        public function load_notifications($offset, $limit = 5){
+        public function load_notifications($offset = 0, $limit = 5){
             try {
                 $this->check_login();
                 $this->check_rights();
@@ -173,6 +173,7 @@
                         . "user_notifications.datetime AS datetime, "
                         . "user_notifications.is_read AS isRead, "
                         . "user_notifications.arg_id AS arg_id, "
+                        . "user_notifications.user_id AS user_id, "
                         . "notifications.notifications_category_id AS category_id, "
                         . "notifications_category.icon_class AS icon, "
                         . "notifications_category.link_page AS link_page, "
@@ -202,14 +203,11 @@
                     $this->_notifications = array();
                     return true;
                 }
-                $ids = array();
                 $fullArray = array();
                 $filtered = $this->filter_blocked_notifications($dbData);
                 foreach ($filtered as $notification) {
                     array_push($fullArray, new Notification($notification));
-                    array_push($ids, $notification["arg_id"]);
                 }
-                $this->_args = $this->load_arguments($ids);
                 $this->_notifications = $fullArray;
                 $this->seen_notifications();
                 return true;
@@ -220,13 +218,15 @@
             }
         }
         
-        public function load_notifications_from_category($offset, $category, $limit = 5){
+        public function load_notifications_from_category($offset = 0, $category = "all", $limit = 5){
             try {
                 $this->check_login();
                 $this->check_rights();
                 $this->check_numeric($offset);
                 $this->check_numeric($limit);
                 $this->is_null_or_empty($category);
+                $this->check_not_numeric($category);
+                
                 
                 $langId = TranslationHandler::get_current_language();
                 
@@ -235,6 +235,11 @@
                         . "WHERE category_name = :name "
                         . "OR master_name = :name"
                         , $category, $category);
+                
+                if (count($catIds) < 1) {
+                    throw new Exception("NOTIFICATION_UNKNOWN_CATEGORY");
+                }
+                
                 $categories = "";
                 for ($i = 0; $i < count($catIds); $i++){
                     $categories .= ($i == 0 ? "" : ",") . $catIds[$i]["id"];
@@ -246,6 +251,7 @@
                         . "user_notifications.datetime AS datetime, "
                         . "user_notifications.is_read AS isRead, "
                         . "user_notifications.arg_id AS arg_id, "
+                        . "user_notifications.user_id AS user_id, "
                         . "notifications.notifications_category_id AS category_id, "
                         . "notifications_category.icon_class AS icon, "
                         . "notifications_category.link_page AS link_page, "
@@ -276,14 +282,11 @@
                     $this->_notifications = array();
                     return true;
                 }
-                $ids = array();
                 $fullArray = array();
                 
                 foreach ($dbData as $notification) {
                     array_push($fullArray, new Notification($notification));
-                    array_push($ids, $notification["arg_id"]);
                 }
-                $this->_args = $this->load_arguments($ids);
                 $this->_notifications = $fullArray;
                 $this->seen_notifications();
                 return true;
@@ -294,13 +297,13 @@
             }
         }
         
-        private function load_arguments($arg_ids) {
+        public function load_arguments($notifs = array()) {
             try {
-                if (count($arg_ids) > 0) {
-                    $ids = array_unique($arg_ids);
-                    foreach ($ids as $id) {
-                        $this->check_numeric($id);
-                    }
+                $this->check_login();
+                $this->check_rights();
+                $this->check_notifs_id($notifs);
+                if (count($notifs) > 0) {
+                    $ids = array_map(function($e){return $e->arg_id;}, $notifs);
                     $final = "";
                     foreach ($ids as $value) {
                         $final .= "'" . $value . "',";
@@ -309,16 +312,64 @@
                     $dbData = DbHandler::get_instance()->return_query("SELECT name, value, arg_id "
                             . "FROM user_notifications_arguments "
                             . "WHERE arg_id IN (" . $final . ")");
+                    
                     $array = array();
                     foreach ($dbData as $value) {
                         array_push($array, array($value["name"] => $value["value"], "arg_id" => $value["arg_id"]));
                     }
-                    return $array;
+                    $grouped = $this->array_group_by_key($array);
+                    $final_array = array();
+                    foreach ($grouped as $k => $g) {
+                        switch ($k) {
+                            case "user": $final_array = array_merge($final_array, $this->change_object_data("user", "users", array("firstname", "surname"), $g)); break;
+                            case "class": $final_array = array_merge($final_array, $this->change_object_data("class", "class", array("title"), $g)); break;
+                            default: $final_array = array_merge($final_array, $g); break;
+                        }
+                    }
+                    $this->_args = $final_array;
                 }
                 return array();
             } catch (Exception $ex) {
                 $this->error = ErrorHandler::return_error($ex->getMessage());
             }
+        }
+        
+        private function array_group_by_key(array $arr) {
+            $result = array();
+            foreach ($arr as $i) {
+              $key = key($i);
+              $result[$key][] = $i;
+            }  
+            return $result;
+          }
+        
+        private function change_object_data($name, $table, $to_get, $filtered_array){
+            $objects = array_unique(array_map(function($e) use($name) {return $e[$name];}, $filtered_array));
+            $query_ids = "";
+            $query_get = "";
+            foreach ($objects as $value) {
+                $query_ids .= $value . ",";
+            }
+            foreach ($to_get as $get) {
+                $query_get .= $get . ",";
+            }
+            $query_ids = rtrim($query_ids, ",");
+            $query_get = rtrim($query_get, ",");
+            $data = DbHandler::get_instance()->return_query("SELECT id, " . $query_get . " FROM " . $table . " WHERE id IN (" . $query_ids . ")");
+            $array = array();
+            foreach ($filtered_array as $f) {
+                foreach ($data as $d) {
+                    if ($d["id"] == $f[$name]) {
+                        $get_values = "";
+                        foreach ($to_get as $g) {
+                            $get_values .= ucfirst($d[$g]) . " ";
+                        }
+                        array_push($array, array($name => $get_values, "arg_id" => $f["arg_id"]));
+                        break;
+                    }
+                }
+            }
+            return $array;
         }
         
         public function get_arguments($arg_id){
@@ -339,31 +390,44 @@
             }
         }
         
-        public function create_new_static_user_notification($reciever, $prefix, $args){
+        public static function create_new_static_user_notification($receiver, $prefix, $args){
             try {
-                //TODO validation
-                $this->check_numeric($reciever);
-                $this->check_prefix($prefix);
-                $this->check_isnull($args);
+                
+                if (!isset($receiver) || !is_array($receiver) || (empty($receiver))) {
+                    throw new Exception("OBJECT_IS_EMPTY");
+                }
+                
+                if (isset($prefix) && empty($prefix)) {
+                    throw new Exception("NOTIFICATION_PREFIX_NOT_SET");
+                }
+
+                if (!isset($args) || (empty($args) && $args != 0)) {
+                    throw new Exception("OBJECT_IS_EMPTY");
+                }
 
                 $guid = "";
                 if (count($args) > 0) {
-                    $guid = $this->get_new_guid();
+                    $guid = self::create_GUID();
                     $query = "INSERT INTO user_notifications_arguments (name, value, arg_id) VALUES ";
                     foreach ($args as $key => $value) {
                         $query .= "('" . $key . "','" . $value . "','" . $guid . "'),";
                     }
                     $query = rtrim($query, ",") . ";";
                     DbHandler::get_instance()->query($query);
-                }               
+                } 
                 
-                $this->create_static_user_notification($reciever, $prefix, $guid);
+                foreach($receiver as $reciever) {
+                    if (is_numeric($reciever) && !is_int((int)($reciever))) {
+                        continue;
+                    }             
+
+                     DbHandler::get_instance()->Query("INSERT INTO user_notifications (user_id, notification_id, datetime, is_read, arg_id) "
+                        . "VALUES (:reciever,(SELECT id FROM notifications WHERE prefix=:prefix LIMIT 1),NOW(),:isRead,:guid)", $reciever, $prefix, 0, $guid);
+                }
                 
                 return true;
                 
             } catch (Exception $exc) {
-                $this->error = ErrorHandler::return_error($exc->getMessage());
-                echo $this->error->title;
                 return false;
             }
         }
@@ -374,7 +438,11 @@
             $final = $string;
             foreach ($array as $value) {
                 $sub = substr($string, $value[0] + 2, $value[1]);
-                $final = substr_replace($final, "<b>" . (isset($args[$sub]) ? $args[$sub] : "%error%") . "</b>", $value[0], $value[1] + 3);         
+                if (isset($args[$sub])) {
+                    $final = substr_replace($final, "<b>" . $args[$sub] . "</b>", $value[0], $value[1] + 3);
+                    continue;
+                }
+                $final = substr_replace($final, "<b>" . ucfirst(TranslationHandler::get_static_text("UNKNOWN")) . "</b>", $value[0], $value[1] + 3);
             }
             return $final;
         }
@@ -432,21 +500,8 @@
             return $data;
         }
         
-        private function get_new_guid(){
-            try{
-                return $this->create_GUID();
-//                while(true){
-//                    $guid = $this->create_GUID();
-//                    if (DbHandler::get_instance()->count_query("SELECT id FROM user_notifications_arguments WHERE arg_id = :guid", $guid) < 1) {
-//                        return $guid;
-//                    }
-//                }
-            } catch (Exception $exc) {
-                $this->error = ErrorHandler::return_error($exc->getMessage());
-            }
-        }
         
-        private function create_GUID(){
+        private static function create_GUID(){
             if (function_exists('com_create_guid')){
                 return com_create_guid();
             }else{
@@ -461,11 +516,6 @@
                     .chr(125);// "}"
                 return $uuid;
             }
-        }
-                
-        private function create_static_user_notification($reciever, $prefix, $guid){
-            DbHandler::get_instance()->Query("INSERT INTO user_notifications (user_id, notification_id, datetime, is_read, arg_id) "
-                    . "VALUES (:reciever,(SELECT id FROM notifications WHERE prefix=:prefix LIMIT 1),NOW(),:isRead,:guid)", $reciever, $prefix, 0, $guid);
         }
         
         private function check_prefix($prefix){
@@ -483,33 +533,16 @@
         private function check_numeric($value){
             $this->is_null_or_empty($value);
             if (is_numeric($value) && !is_int((int)($value))) {
-                throw new Exception("NOTIFICATION_FOREIGN_ID_NOT_INT");
+                throw new Exception("NOTIFICATION_INVALID_ID");
             }
         }
         
-        private function check_recievers($ids){
-            if (count($ids) == 0) {
-                throw new Exception("NOTIFICATION_NO_RECIEVERSs");
+        private function check_int_array($ids){
+            if (count($ids) < 1) {
+                throw new Exception("OBJECT_IS_EMPTY");
             }
             foreach ($ids as $value) {
-                $this->is_null_or_empty($value);
-                if (!is_numeric($value)) {
-                    throw new Exception("NOTIFICATION_INVALID_RECIEVER_ID");
-                }
-            }
-        }
-        
-        private function check_sender($value){
-            $this->is_null_or_empty($value);
-            if (!is_numeric($value)) {
-                throw new Exception("NOTIFICATION_INVALID_SENDER_ID");
-            }
-        }
-                
-        private function check_title($title){
-            $this->is_null_or_empty($title);
-            if (strlen($title) > 100) {
-                throw new Exception("NOTIFICATION_TITLE_TOO_LONG");
+                $this->check_numeric($value);
             }
         }
         
@@ -529,6 +562,22 @@
         private function check_isnull($value){
             if (!isset($value)) {
                 throw new Exception("OBJECT_DOESNT_EXIST");
+            }
+        }
+        
+        private function check_notifs_id($notifs){
+            if (isset($notifs)) {
+                foreach ($notifs as $value) {
+                    if ($value->user_id != $this->_user->id) {
+                        throw new Exception("NOTIFICATION_INVALID_ID");
+                    }
+                }
+            }
+        }
+        
+        private function check_not_numeric($string){
+            if (is_numeric($string)) {
+                throw new Exception("INVALID_CATEGORY");
             }
         }
         

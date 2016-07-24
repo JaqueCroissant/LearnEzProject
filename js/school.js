@@ -1,5 +1,7 @@
+var alert_div_id;
+
 $(document).ready(function () {
-    
+
     $(document).on("click", ".create_school", function (event) {
         event.preventDefault();
         switch ($(this).attr("step")) {
@@ -31,16 +33,101 @@ $(document).ready(function () {
                 break;
         }
     });
-    
+
     $(document).on("click", ".edit_school", function (event) {
         event.preventDefault();
-        
-        var id = $(this).closest("tr").children().last().attr("id");
+
+        var id = $(this).closest("tr").children().last().text();
         initiate_submit_get($(this), "find_school.php?school_id=" + id, function () {
             show_status_bar("error", ajax_data.error);
-        }, function () { 
-            
+        }, function () {
+            $("#edit_school_name").val(ajax_data.school.name);
+            $("#edit_school_address").val(ajax_data.school.address);
+            $("#edit_school_zip_code").val(ajax_data.school.zip_code);
+            $("#edit_school_city").val(ajax_data.school.city);
+            $("#edit_school_phone").val(ajax_data.school.phone);
+            $("#edit_school_email").val(ajax_data.school.email);
+            $("#edit_school_max_students").val(ajax_data.school.max_students);
+            $("#edit_school_subscription_start").val(ajax_data.school.subscription_start);
+            $("#edit_school_subscription_end").val(ajax_data.school.subscription_end);
+            $("#update_school_id").val(ajax_data.school.id);
+
+            $("#edit_school_type_id option").removeAttr("selected");
+            $("#school_type_id_" + ajax_data.school.school_type_id).attr("selected", "selected");
+            $("#edit_school_type_id").trigger("change");
+
+            $("#edit_school_a").click();
         });
     });
 
+    $(document).on("click", ".update_school", function (event) {
+        event.preventDefault();
+
+        ajax_data = undefined;
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            change_page("find_school");
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
+    // Close school
+    $(document).on("click", ".btn_school_open", function (event) {
+        event.preventDefault();
+
+        $("td input[type='checkbox']").attr("disabled", true);
+        position = $(this).offset();
+        height = $("#close_school_alert").height();
+        if ($(this).val() === "on") {
+            $("#close_school_alert").css("top", position["top"] - height - 170);
+            $("#close_school_alert").removeClass("hidden");
+        } else if ($(this).val() === "off") {
+            $("#open_school_alert").css("top", position["top"] - height - 170);
+            $("#open_school_alert").removeClass("hidden");
+        }
+        clicked_checkbox_id = $(this).attr("id");
+    });
+    
+        $(document).on("click", ".accept_close_school_btn", function (event) {
+        event.preventDefault();
+        alert_div_id = $(this).closest("div .alert_panel").attr("id");
+        form_id = $("#" + clicked_checkbox_id).closest("form").attr("id");
+        hidden_id = $("#" + form_id + "_hidden").attr("id");
+        hidden_value = $("#" + hidden_id).val();
+        if (hidden_value === "1") {
+            $("#" + hidden_id).val(0);
+            $("#" + clicked_checkbox_id).val("off");
+            $("#" + clicked_checkbox_id).removeAttr("checked");
+        } else {
+            $("#" + hidden_id).val(1);
+            $("#" + clicked_checkbox_id).val("on");
+            $("#" + clicked_checkbox_id).prop("checked", true);
+        }
+        initiate_submit_form($("#" + clicked_checkbox_id), function () {
+            show_status_bar("error", ajax_data.error);
+            $("#" + clicked_checkbox_id).val("on");
+            $("#" + clicked_checkbox_id).prop("checked", true);
+            $("#" + alert_div_id).addClass("hidden");
+            $("td input[type='checkbox']").removeAttr("disabled");
+        }, function () {
+            $("#" + alert_div_id).addClass("hidden");
+            show_status_bar("success", ajax_data.success);
+            $("td input[type='checkbox']").removeAttr("disabled");
+        });
+    });
+
+    $(document).on("click", ".cancel_close_school_btn", function (event) {
+        event.preventDefault();
+        alert_div_id = $(this).closest("div .alert_panel").attr("id");
+        if ($("#" + clicked_checkbox_id).prop("checked") === true) {
+            $("#" + clicked_checkbox_id).prop("checked", true);            
+        } else {
+            $("#" + clicked_checkbox_id).removeAttr("checked");
+
+        }
+        $("#" + alert_div_id).addClass("hidden");
+        $("td input[type='checkbox']").removeAttr("disabled");
+    });
+    //
 });

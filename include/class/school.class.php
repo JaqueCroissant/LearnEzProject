@@ -13,6 +13,7 @@ class School extends ORM{
     public $max_students;
     public $subscription_start;
     public $subscription_end;
+    public $open;
     
     public $classes = array();
 }

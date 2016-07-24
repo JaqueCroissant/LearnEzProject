@@ -49,6 +49,10 @@ class LoginHandler
             if(!$this->verify_password()) {
                 throw new Exception ("LOGIN_INVALID_PASSWORD");
             }
+            
+            if(!$this->verify_activation()) {
+                throw new Exception();
+            }
 	    
 	    $this->_access = true;
 	    $this->register_login_session();
@@ -57,6 +61,22 @@ class LoginHandler
         {
             $this->error = ErrorHandler::return_error($ex->getMessage());
 	}
+    }
+    
+    private function verify_activation() {
+        if(empty($this->_user)) {
+            return false;
+        }
+        
+        if(!isset($this->_user->last_login) || strtotime($this->_user->last_login) == 0) {
+            SessionKeyHandler::add_to_session("user_setup", array("user_id" => $this->_user->id, "username" => $this->_username, "password" => $this->_password));
+            return false;
+        }
+        
+        if(SessionKeyHandler::session_exists("user_setup")) {
+            SessionKeyHandler::remove_from_session("user_setup");
+        }
+        return true;
     }
     
     private function verify_username() {
@@ -84,7 +104,7 @@ class LoginHandler
             return false;
         }
         
-        $this->_user = new User(reset($user));
+        $this->_user = new User(reset($user), true);
         return true;
     }
     
@@ -99,8 +119,7 @@ class LoginHandler
              return false;
         }
 
-        $this->_user = new User(reset($userData));
-        DbHandler::get_instance()->query("UPDATE users SET last_login = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
+        $this->_user = new User(reset($userData), true);
         return true;
     }
     
@@ -115,6 +134,7 @@ class LoginHandler
             return;
         }
         
+        DbHandler::get_instance()->query("UPDATE users SET last_login = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
         SessionKeyHandler::add_to_session("user", $this->_user, true);
     }
     

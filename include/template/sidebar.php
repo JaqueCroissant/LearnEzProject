@@ -80,12 +80,12 @@
                                 }
                                 echo ' href="javascript:void(0)">';
                                 echo '  <span class="menu-icon">
-                                            <i class="zmdi '. $menu->icon_class .' zmdi-hc-lg"></i>
+                                            <i class="zmdi-hc-fw zmdi '. $menu->icon_class .' zmdi-hc-lg"></i>
                                         </span>
                                        <span class="menu-text foldable">'. $menu->title . '</span>';
                                 if ($has_submenu){
                                     echo '  <span class="menu-caret foldable">
-                                                <i class="zmdi zmdi-hc-sm zmdi-chevron-right"></i>
+                                                <i class="zmdi-hc-fw zmdi zmdi-hc-sm zmdi-chevron-right"></i>
                                             </span>';
                                 }
                                 echo '</a>';
@@ -99,7 +99,7 @@
                                         <a class="change_page" 
                                          page="'. $menu->pagename .'" step="'. $menu->step . '"'
                                     . ' id="'.$menu->pagename.'" href="javascript:void(0)">
-                                    <i class="zmdi p-r-lg '. $menu->icon_class .' zmdi-hc-lg"></i>' . $menu->title . '</a>
+                                    <i class="zmdi-hc-fw zmdi p-r-lg '. $menu->icon_class .' zmdi-hc-lg"></i>' . $menu->title . '</a>
                                     </li>';
                             $last_page_submenu = true;
                         }

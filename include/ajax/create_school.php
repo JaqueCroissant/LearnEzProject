@@ -1,6 +1,8 @@
 <?php
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/schoolHandler.php';
+require_once '../../include/handler/rightsHandler.php';
+$rightsHandler = new RightsHandler();
 $schoolHandler = new SchoolHandler();
 
 $format = "Y-m-d";
@@ -96,6 +98,7 @@ if (isset($_POST['step'])) {
             
             if ($schoolHandler->create_school_step_two($schoolHandler->school, $max_students, $start_date, $end_date)) {
                 $data_array["school"] = $schoolHandler->school;
+                $rightsHandler->create_school_rights($schoolHandler->school->id);
                 $data_array['success'] = TranslationHandler::get_static_text("SCHOOL_CREATED");
                 $data_array['status_value'] = true;
             } else {

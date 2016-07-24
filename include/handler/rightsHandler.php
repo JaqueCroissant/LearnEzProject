@@ -3,7 +3,44 @@
     {
         public $rights = array();
         public $user_type_rights = array();
+        public $school_rights = array();
         public $category_rights = array();
+        
+        public function create_school_rights($school_id) {
+            try {
+                
+                if (!$this->user_exists()) {
+                    throw new exception("USER_NOT_LOGGED_IN");
+                }
+                
+                if (!RightsHandler::has_user_right("SCHOOL_CREATE")) {
+                    throw new exception("INSUFFICIENT_RIGHTS");
+                }
+                
+                if(empty($school_id) || !is_numeric($school_id)) {
+                    throw new Exception("USER_INVALID_SCHOOL_ID");
+                }
+                
+                if(!(DbHandler::get_instance()->count_query("SELECT id FROM school WHERE id = :id", $school_id) > 0)) {
+                    throw new Exception("USER_INVALID_SCHOOL_ID"); 
+                }
+                
+                for($i = 2; $i < 5; $i++) {
+                    
+                    $right_data = DbHandler::get_instance()->return_query("SELECT rights.id, user_type_rights.user_type_id FROM rights INNER JOIN user_type_rights ON user_type_rights.rights_id = rights.id WHERE user_type_rights.user_type_id = :user_type_id AND rights.is_school_right = '1'", $i);
+                    
+                    if(count($right_data) > 0) {
+                        foreach($right_data as $value) {
+                            DbHandler::get_instance()->query("INSERT INTO school_rights (school_id, user_type_id, rights_id) VALUES (:school_id, :user_type_id, :rights_id)", $school_id, $value["user_type_id"], $value["id"]);
+                        }
+                    }
+                }
+                
+            } catch (Exception $ex) {
+                echo $ex->getMessage();
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
+        }
         
         public function update_page_rights($user_type = 1, $page_rights = array()) {
             try {
@@ -75,14 +112,51 @@
             return false;
         }
         
-        public function get_all_rights() {
+        public function update_school_rights($user_type_id = 2, $school_rights = array()) {
+            try {
+                if (!$this->user_exists()) {
+                    throw new exception("USER_NOT_LOGGED_IN");
+                }
+                if (!RightsHandler::has_user_right("SCHOOL_RIGHTS")) {
+                    throw new exception("INSUFFICIENT_RIGHTS");
+                }
+                
+                if(empty($user_type_id) || !is_numeric($user_type_id)) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+                
+                if($user_type_id > 5 || $user_type_id < 2) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+                
+                DbHandler::get_instance()->query("DELETE FROM school_rights WHERE school_id = :school_id AND user_type_id = :user_type_id", $this->_user->school_id, $user_type_id);
+                
+                if(empty($school_rights) || !is_array($school_rights) ) {
+                   return true;
+                }
+                
+                foreach($school_rights as $key => $value) {
+                    if(empty($value) || !is_numeric($value)) {
+                        continue;
+                    }
+                    DbHandler::get_instance()->query("INSERT INTO school_rights (school_id, rights_id, user_type_id) VALUES (:school_id, :rights_id, :user_type_id)", $this->_user->school_id, $value, $user_type_id);
+                }
+                
+                return true;
+            } catch (Exception $ex) {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
+            return false;
+        }
+        
+        public function get_all_rights($school_rights = false) {
             try 
             {
                 if (!$this->user_exists()) {
                     throw new exception("USER_NOT_LOGGED_IN");
                 }
 
-                $data = DbHandler::get_instance()->return_query("SELECT rights.id, rights.sort_order, rights.page_category_id, translation_rights.title FROM rights INNER JOIN translation_rights ON translation_rights.rights_id = rights.id WHERE page_right_id = '0' AND translation_rights.language_id = :language_id ORDER BY rights.sort_order ASC", TranslationHandler::get_current_language());
+                $data = DbHandler::get_instance()->return_query("SELECT rights.id, rights.sort_order, rights.page_category_id, translation_rights.title FROM rights INNER JOIN translation_rights ON translation_rights.rights_id = rights.id WHERE page_right_id = '0' ". ($school_rights ? "AND is_school_right = '1' " : "") ." AND translation_rights.language_id = :language_id ORDER BY rights.sort_order ASC", TranslationHandler::get_current_language());
 
                 if(count($data) < 1) {
                     return true;
@@ -111,6 +185,10 @@
         public function get_user_type_rights($user_type_id = 1) {
             try 
             {
+                if (!$this->user_exists()) {
+                    throw new exception("USER_NOT_LOGGED_IN");
+                }
+                
                 if(!is_numeric($user_type_id)) {
                     throw new Exception("INVALID_USER_TYPE");
                 }
@@ -141,8 +219,49 @@
             return false;
         }
         
+        public function get_school_rights($user_type_id = 1) {
+            try 
+            {
+                if (!$this->user_exists()) {
+                    throw new exception("USER_NOT_LOGGED_IN");
+                }
+                
+                if(!RightsHandler::has_user_right("SCHOOL_RIGHTS")) {
+                    throw new exception("INSUFFICIENT_RIGHTS");
+                }
+                
+                if(!is_numeric($user_type_id)) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+
+                if($user_type_id > 5 || $user_type_id < 1) {
+                    throw new Exception("INVALID_USER_TYPE");
+                }
+
+                $data = DbHandler::get_instance()->return_query("SELECT school_rights.id, school_rights.rights_id, school_rights.school_id, school_rights.user_type_id FROM school_rights WHERE user_type_id = :user_type_id AND school_id = :school_id", $user_type_id, $this->_user->school_id);
+
+                if(count($data) < 1) {
+                    return true;
+                }
+
+                $array = array();
+
+                foreach($data as $right) {
+                    $array[$right["rights_id"]] = $right["user_type_id"];
+                }
+
+                $this->school_rights = $array;
+                return true;
+            }
+            catch (Exception $ex) 
+            {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+            }
+            return false;
+        }
         
-        private static function set_rights()
+        
+        public static function set_rights()
         {
             try 
             {
@@ -170,13 +289,28 @@
                     return true;
                 }
                 
-                $user_rights = DbHandler::get_instance()->return_query("SELECT rights.id, rights.prefix, rights.sort_order  FROM rights
+                $final_user_rights = array();
+                $user_rights = DbHandler::get_instance()->return_query("SELECT rights.id, rights.prefix, rights.sort_order, rights.is_school_right  FROM rights
                                                         LEFT JOIN user_type_rights ON rights.id = user_type_rights.rights_id
                                                         LEFT JOIN page ON page.id = rights.page_right_id
                                                         LEFT JOIN user_type_page ON user_type_page.page_id = rights.page_right_id
                                                         WHERE user_type_rights.user_type_id = :user_type_id OR user_type_page.user_type_id = :user_type_id", 
                                                         $current_user->user_type_id, $current_user->user_type_id);
 
+                if($current_user != null && $current_user->user_type_id != 1) {
+                    $data = DbHandler::get_instance()->return_query("SELECT school_rights.rights_id, rights.id, rights.prefix FROM school_rights RIGHT JOIN rights ON rights.id = school_rights.rights_id WHERE school_rights.user_type_id = :user_type_id AND school_id = :school_id", $current_user->user_type_id, $current_user->school_id);
+                    
+                    foreach($user_rights as $key => $value) {
+                        if(isset($value["is_school_right"]) && !empty($value["is_school_right"]) && $value["is_school_right"]) {
+                            unset($user_rights[$key]);
+                        }
+                    }
+                    
+                    if(count($data) > 0) {
+                        $user_rights = array_merge($user_rights, $data);
+                    }
+                }
+                
                 if(count($user_rights) < 1) {
                     throw new Exception();
                 }                
@@ -213,7 +347,6 @@
             if(!self::fetch_rights_session()) {
                 return false;
             }
-
             if(is_string($prefix) && !empty($prefix))
             {
                 return array_key_exists("RIGHT_".strtoupper($prefix), SessionKeyHandler::get_from_session("rights", true));

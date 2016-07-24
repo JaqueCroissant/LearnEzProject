@@ -1,6 +1,7 @@
 <?php
 require_once 'require.php';
 require_once '../../include/handler/pageHandler.php';
+require_once '../../include/handler/notificationHandler.php';
 require_once '../../include/handler/mailHandler.php';
 
 $current_page = isset($_GET['step']) && !empty($_GET['step']) ? $_GET['step'] : null;
@@ -220,7 +221,7 @@ $paginationHandler = new PaginationHandler();
                                                                     }
                                                                     echo '
                                                                 </div>
-                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 100 ? substr($value->text, 0, 100) . '...' : $value->text) .'</p>
+                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 85 ? substr($value->text, 0, 85) . '...' : $value->text) .'</p>
                                                             </div>                                                            
                                                         </td>
                                                     </tr>
@@ -393,6 +394,7 @@ $paginationHandler = new PaginationHandler();
                                     <div class="panel panel-default new-message">
                                         <form method="POST" action="" id="create_mail_form" url="mail.php?step=create_mail" name="create_mail">
                                             <input type="hidden" name="recipiants[]" value="USER_ANY_<?php echo $current_mail->sender_id; ?>">
+                                            <input name="disable_reply" class="form-control" type="hidden" value="1">
                                             <input type="hidden" name="title" value="RE: <?php echo $current_mail->title; ?>">
                                             <?php
                                             foreach($current_mail->mail_tags as $tag)
@@ -524,7 +526,7 @@ $paginationHandler = new PaginationHandler();
                                                 foreach($mails as $value) {
                                                     $date_to_string = time_elapsed($value->date);
                                                     echo '
-                                                        <div class="mail-item item_hover mail_number_'. $value->id.' '.($value->is_read ? '""' : "item_unread") .'" style="height:100px;">
+                                                        <div class="mail-item item_hover mail_number_'. $value->id.' '.($current_page != "sent" && $current_page != "drafts" ? ($value->is_read ? '""' : "item_unread") : '') .'" style="height:100px;">
                                                             <div class="mail_element_checkbox checkbox-resize">
                                                                 <div>
                                                                     <div class="checkbox">
@@ -551,7 +553,7 @@ $paginationHandler = new PaginationHandler();
                                                                                     }
                                                                                     echo '
                                                                                 </div>
-                                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 100 ? substr($value->text, 0, 100) . '...' : $value->text) .'</p>
+                                                                                <div class="mail-item-excerpt">' . (strlen($value->text) > 85 ? substr($value->text, 0, 85) . '...' : $value->text) .'</p>
                                                                             </div>                                                            
                                                                         </td>
                                                                     </tr>

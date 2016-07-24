@@ -59,11 +59,13 @@ $(document).ready(function () {
         event.preventDefault();
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
+            if(ajax_data.user_setup === "true") {
+                // HER
+            }
         }, function () {
             reload_page();
         });
     });
-
 
     $(document).on("click", ".log_out", function (event) {
         event.preventDefault();
@@ -94,8 +96,7 @@ $(document).ready(function () {
                             });
                         } else if (action === "read") {
                             ajax_data.affected_notifs.forEach(function (o) {
-                                $(".notif_count_" + o).removeClass("notif_unread");
-                                $(".notif_count_" + o).addClass("notif_read");
+                                $(".notif_count_" + o).removeClass("item_unread");
                             });
                         }
                     } else {
@@ -113,6 +114,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
+            show_status_bar("success", ajax_data.success);
         });
     });
 
@@ -312,8 +314,13 @@ $(document).ready(function () {
         $('#status_container').css("bottom", 0);
         $('#status_container').addClass("hidden");
     });
+    
+    audioElement = document.createElement('audio');
+    audioElement.setAttribute('src', 'sounds/notification.ogg');
     //
 });
+
+var audioElement;
 
 function show_status_bar(status_type, message, custom_fade_out) {
     clearTimeout(status_bar_timeout);

@@ -24,6 +24,7 @@ if(isset($_POST)) {
     if($loginHandler->check_login($username, $password, $token)) {
         $jsonArray['status_value'] = true;
     } else {
+        $jsonArray['user_setup'] = SessionKeyHandler::session_exists("user_setup") ? true : false;
         $jsonArray['status_value'] = false;
         $jsonArray['error'] = $loginHandler->error->title;
     }

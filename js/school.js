@@ -37,9 +37,10 @@ $(document).ready(function () {
     $(document).on("click", ".edit_school", function (event) {
         event.preventDefault();
 
-        var id = $(this).closest("tr").children().last().text();
-        initiate_submit_get($(this), "find_school.php?school_id=" + id, function () {
+        var id = $(this).attr("school_id");
+        initiate_submit_get($(this), "find_school.php?step=edit_school&school_id=" + id, function () {
             show_status_bar("error", ajax_data.error);
+            alert(id);
         }, function () {
             $("#edit_school_name").val(ajax_data.school.name);
             $("#edit_school_address").val(ajax_data.school.address);
@@ -59,6 +60,13 @@ $(document).ready(function () {
             $("#edit_school_a").click();
         });
     });
+    
+    $(document).on("click", ".edit_school_redirect", function (event) {
+        event.preventDefault();
+        
+        console.log("HERE");
+        change_page("find_school", "edit_school", "&school_id=" + $(this).attr("school_id"));
+    });
 
     $(document).on("click", ".update_school", function (event) {
         event.preventDefault();
@@ -68,6 +76,17 @@ $(document).ready(function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
             change_page("find_school");
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+    
+    $(document).on("click", ".update_school_redirect", function (event) {
+        event.preventDefault();
+        
+        ajax_data = undefined;
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
             show_status_bar("success", ajax_data.success);
         });
     });

@@ -25,6 +25,31 @@ $(document).ready(function () {
             change_page(page, step, args, $(this));
         }
     });
+    
+    $(document).on("click", ".my_tab_header", function (event) {
+        event.preventDefault();
+        console.log("here");
+        $(this).parent().removeClass("hidden");
+        var tab = $(this).attr("href");
+        $(".my_tab_header").each(function (e) {
+            if ($(this).hasClass("my_active")) {
+                $(this).removeClass("my_active");
+            }
+        });
+        if (tab !== (current_tab)) {
+            current_tab = tab;
+            $(".my_tab").each(function (e) {
+                if ($(this).hasClass("in")) {
+                    $(this).removeClass("in");
+                }
+            });
+            $(tab).addClass("in", 300);
+            current_tab = tab;
+        }
+        $(this).closest("ul").children().each(function (e) {            
+            $(this).children().removeClass("link_disabled");
+        });
+    });
 
     $(document).on("click", ".check_all", function (event) {
         event.preventDefault();

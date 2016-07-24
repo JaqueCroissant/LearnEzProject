@@ -1,12 +1,14 @@
 <?php
 require_once 'require.php';
 require_once '../../include/handler/loginHandler.php';
+require_once '../../include/handler/courseHandler.php';
+
 $loginHandler = new LoginHandler();
 ?>
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="widget" style="">
+    <div class="col-md-12 ">
+        <div class="widget">
             <div class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("LOGIN"); ?></h4>
             </div>
@@ -40,7 +42,7 @@ $loginHandler = new LoginHandler();
         </div>
     </div>
     <div class="col-sm-12">
-        <div class="widget" style="display:block;">
+        <div class="widget hidden">
             <div class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("FIRST_TIME_LOGIN"); ?></h4>
             </div>
@@ -56,8 +58,11 @@ $loginHandler = new LoginHandler();
                         <div class="form-group">
                             <label class="control-label" for="new_os"><?php echo TranslationHandler::get_static_text("OS"); ?></label>
                                 <select name="new_os" class="form-control" id="os_select">
-                                    <option value="windows"><?php echo TranslationHandler::get_static_text("WINDOWS"); ?></option>
-                                    <option value="mac"><?php echo TranslationHandler::get_static_text("MAC"); ?></option>
+                                    <?php
+                                    foreach (courseHandler::get_os_options() as $option) {
+                                        echo '<option value="' . $option["id"] . '">' . $option["title"] . '</option>';
+                                    }
+                                    ?>
                                 </select>
                         </div>
                         <div class="form-group">

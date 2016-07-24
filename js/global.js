@@ -58,9 +58,8 @@ $(document).ready(function () {
     $(document).on("click", ".submit_login", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-            if(ajax_data.user_setup === "true") {
-                // HER
+            if(ajax_data.user_setup) {
+                $()
             }
         }, function () {
             reload_page();

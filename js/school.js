@@ -19,7 +19,7 @@ $(document).ready(function () {
                 });
                 break;
             case "2":
-                $("#create_school_hidden_field_step_2").val($(this).attr("step"));
+                $("#create_school_hidden_field_step_2").attr("value", $(this).attr("step"));
                 initiate_submit_form($(this), function () {
                     show_status_bar("error", ajax_data.error);
                 }, function () {

@@ -22,7 +22,7 @@ $userHandler->get_all_users();
                     <!-- Tab -->
                     <div class="my_fade my_tab" id="find_school_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>}" data-plugin="DataTable" role="grid" 
+                            <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, lengthMenu:[5, 10, 25, 50, 100], columnDefs:[{orderable: false, targets: [5,6]}]}" data-plugin="DataTable" role="grid" 
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -131,6 +131,5 @@ $userHandler->get_all_users();
     </div>
 </div>
 
-<!--<script src="assets/js/include_library.js" type="text/javascript"></script>-->
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>

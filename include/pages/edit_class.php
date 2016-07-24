@@ -43,13 +43,13 @@ $classHandler->get_all_classes();
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-3 control-label" for="class_begin"><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></label>
                             <div class="col-md-4">
-                                <input class="form-control datepickers" type="text" id="class_begin" name="class_begin" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?>" value="<?php echo isset($_GET['class_id']) ? $classHandler->school_class->start_date : ""; ?>">
+                                <input class="form-control" type="text" id="class_begin" name="class_begin" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?>" value="<?php echo isset($_GET['class_id']) ? $classHandler->school_class->start_date : ""; ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-3 control-label" for="class_end"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></label>
                             <div class="col-md-4">
-                                <input class="form-control datepickers" type="text" id="class_end" name="class_end" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>" value="<?php echo isset($_GET['class_id']) ? $classHandler->school_class->end_date : ""; ?>">
+                                <input class="form-control" type="text" id="class_end" name="class_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>" value="<?php echo isset($_GET['class_id']) ? $classHandler->school_class->end_date : ""; ?>">
                             </div>
                         </div>
                         <?php
@@ -78,7 +78,7 @@ $classHandler->get_all_classes();
                             <label class="col-sm-2 col-sm-offset-3 control-label" for="class_description"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></label>
                             <div class="col-md-4">
                                 <input type="hidden" id="hidden_description" name="class_description">
-                                <textarea form="update_class" class="form-control " type="text" id="class_description" placeholder="<?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?>"><?php echo isset($_GET['class_id']) ? $classHandler->school_class->description : ""; ?></textarea>
+                                <textarea form="update_class" class="form-control" type="text" id="class_description" placeholder="<?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?>"><?php echo isset($_GET['class_id']) ? $classHandler->school_class->description : ""; ?></textarea>
                             </div>
                         </div>
                         <div class="form-group">
@@ -102,9 +102,5 @@ $classHandler->get_all_classes();
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
-<script type="text/javascript">
-    $(".datepickers").datepicker({
-        dateFormat: "yy-mm-dd"
-    });
-
-</script>
+<!--Link til datetimepicker options-->
+<!--https://eonasdan.github.io/bootstrap-datetimepicker/Options/#format-->

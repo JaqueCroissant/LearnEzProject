@@ -14,7 +14,9 @@ $(document).ready(function () {
     // Load on startup.
     initial_page_load();
     // Load on startup.
-
+    $(".datepickers").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
     // global functions
     $(document).on("click", ".change_page", function (event) {
         if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {

@@ -4,7 +4,6 @@ require_once '../../include/ajax/require.php';
 require_once '../../include/handler/classHandler.php';
 
 $classHandler = new ClassHandler();
-$format = "Y-m-d";
 $class_begin = (isset($_POST['class_begin']) ? $_POST['class_begin'] : "");
 $class_end = (isset($_POST['class_end']) ? $_POST['class_end'] : "");
 $title = (isset($_POST['class_title']) ? $_POST['class_title'] : "");

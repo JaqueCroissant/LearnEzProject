@@ -17,7 +17,7 @@ $schoolHandler->get_school_types();
             <hr class="widget-separator">
             <div class="widget-body">
                 <?php if (RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
-                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>}" data-plugin="DataTable" role="grid" 
+                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, lengthMenu:[5, 10, 25, 50, 100], columnDefs:[{orderable: false, targets: [7,8]}]}" data-plugin="DataTable" role="grid" 
                            aria-describedby="default-datatable_info">
                         <thead>
                             <tr role="row">
@@ -138,10 +138,4 @@ $schoolHandler->get_school_types();
         </p>
     </div>
 </div>
-
 <script src="assets/js/include_app.js" type="text/javascript"></script>
-<script type="text/javascript">
-    $(".datepickers").datepicker({
-        dateFormat: "yy-mm-dd"
-    });
-</script>

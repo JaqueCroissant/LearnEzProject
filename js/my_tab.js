@@ -17,28 +17,4 @@ $(document).ready(function () {
             $(this).addClass("my_active");
         }
     });
-
-    $(document).on("click", ".my_tab_header", function (event) {
-        event.preventDefault();
-        $(this).parent().removeClass("hidden");
-        var tab = $(this).attr("href");
-        $(".my_tab_header").each(function (e) {
-            if ($(this).hasClass("my_active")) {
-                $(this).removeClass("my_active");
-            }
-        });
-        if (tab !== (current_tab)) {
-            current_tab = tab;
-            $(".my_tab").each(function (e) {
-                if ($(this).hasClass("in")) {
-                    $(this).removeClass("in");
-                }
-            });
-            $(tab).addClass("in", 300);
-            current_tab = tab;
-        }
-        $(this).closest("ul").children().each(function (e) {            
-            $(this).children().removeClass("link_disabled");
-        });
-    });
 });

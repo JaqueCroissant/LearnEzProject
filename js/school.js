@@ -63,8 +63,6 @@ $(document).ready(function () {
     
     $(document).on("click", ".edit_school_redirect", function (event) {
         event.preventDefault();
-        
-        console.log("HERE");
         change_page("find_school", "edit_school", "&school_id=" + $(this).attr("school_id"));
     });
 

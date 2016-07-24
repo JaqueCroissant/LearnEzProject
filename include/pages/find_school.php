@@ -260,9 +260,7 @@ $schoolHandler->get_school_types();
     </div>
 </div>
 
-<!--<script src="assets/js/include_library.js" type="text/javascript"></script>
---><script src="assets/js/include_app.js" type="text/javascript"></script>
-<script src="js/school.js" type="text/javascript"></script>
+<script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(".datepickers").datepicker({

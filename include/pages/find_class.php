@@ -23,7 +23,7 @@ $classHandler->get_all_classes();
                 <div class="my_tab_content">
                     <div class="my_fade my_tab" id="find_class_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
+                            <table id="find_class_dt" class="table dataTable" cellspacing="0" data-plugin="DataTable" role="grid" 
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -239,9 +239,7 @@ $classHandler->get_all_classes();
     </div>
 </div>
 
-<script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
-<script src="js/class.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(".datepickers").datepicker({

@@ -102,12 +102,13 @@ switch ($classHandler->_user->user_type_id) {
                         ?>
                     </div>
                     <div class="col-sm-2">
-                        <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                            <div class="p-t-xs">
-                                <i class = "fa fa-edit fa-fw fa-2x edit_school_redirect m-r-md a" school_id="<?php echo $schoolHandler->school->id; ?>"></i>
-                            </div>
-                        <?php }
-                        ?>
+                        <?php if ($classHandler->_user->user_type_id != 1) { ?>
+                            <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                <div class="p-t-xs">
+                                    <i class = "fa fa-edit fa-fw fa-2x edit_school_redirect m-r-md a" school_id="<?php echo $schoolHandler->school->id; ?>"></i>
+                                </div>
+                            <?php } ?>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
@@ -162,4 +163,3 @@ switch ($classHandler->_user->user_type_id) {
 }
 ?>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
-<script src="js/school.js" type="text/javascript"></script>

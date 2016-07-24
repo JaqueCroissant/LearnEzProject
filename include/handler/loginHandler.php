@@ -51,7 +51,7 @@ class LoginHandler
             }
             
             if(!$this->verify_activation()) {
-                throw new Exception();
+                //throw new Exception();
             }
 	    
 	    $this->_access = true;

@@ -14,17 +14,19 @@ $mailHandler = new MailHandler();
             <div class="m-b-lg nav-tabs-horizontal">
                 <!-- tabs list -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" id="edit_info_header"><a href="#edit_user_info_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
-
                     <?php
-                    if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
+                    if (RightsHandler::has_page_right("SETTINGS_EDIT_USER_INFO")) {
                         ?>
+                    <li role="presentation" id="edit_info_header"><a href="#edit_user_info_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
+                    <?php
+                    }
+                    
+                    if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
+                    ?>
                         <li role="presentation" id="change_password_header"><a href="#change_password_tab" class="my_tab_header" id="change_password_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_CHANGE_PASS"); ?></a></li>
                         <?php
                     }
-                    ?>
-
-                    <?php
+                    
                     if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
                         ?>
                         <li role="presentation" id="preferences_header"><a href="#preferences_tab" class="my_tab_header" id="preferences_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_PREFERENCES"); ?></a></li>
@@ -35,6 +37,9 @@ $mailHandler = new MailHandler();
                 
                 
                 <div class="my_tab_content">
+                    <?php
+                    if (RightsHandler::has_page_right("SETTINGS_EDIT_USER_INFO")) {
+                    ?>
                     <div class="my_fade my_tab" id="edit_user_info_tab">
                         <div class="widget-body">
                             <form method="post" action="" url="settings.php?step=edit_info" id="edit_info_form" name="edit_info">
@@ -119,43 +124,43 @@ $mailHandler = new MailHandler();
                             </form>
                         </div>
                     </div>
+                    <?php
+                    }
+                    if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
+                    ?>
+                    <div class="my_fade my_tab" id="change_password_tab">
 
-                        <?php
-                        if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {
-                        ?>
-                        <div class="my_fade my_tab" id="change_password_tab">
+                        <div class="widget-body">
+                            <form method="POST" action="" id="settings_pass" url="settings.php?step=change_password" name="settings_pass">
+                                <div class="col-md-12">
+                                <div class="form-group m-b-sm">
+                                    <label for="firstname_input"><?php echo TranslationHandler::get_static_text("OLD_PASSWORD"); ?></label>
+                                    <input type="password" id="old_password" name="old_password" placeholder="<?php echo TranslationHandler::get_static_text("OLD_PASSWORD"); ?>" class="form-control">
+                                </div>
 
-                            <div class="widget-body">
-                                <form method="POST" action="" id="settings_pass" url="settings.php?step=change_password" name="settings_pass">
-                                    <div class="col-md-12">
-                                    <div class="form-group m-b-sm">
-                                        <label for="firstname_input"><?php echo TranslationHandler::get_static_text("OLD_PASSWORD"); ?></label>
-                                        <input type="password" id="old_password" name="old_password" placeholder="<?php echo TranslationHandler::get_static_text("OLD_PASSWORD"); ?>" class="form-control">
-                                    </div>
+                                <div class="form-group m-b-sm">
+                                    <label for="surname_input"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
+                                    <input type="password" id="password" name="password" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>" class="form-control">
+                                </div>
 
-                                    <div class="form-group m-b-sm">
-                                        <label for="surname_input"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
-                                        <input type="password" id="password" name="password" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>" class="form-control">
-                                    </div>
+                                <div class="form-group m-b-sm">
+                                    <label for="email_input"><?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?></label>
+                                    <input type="password" id="confirm_password" name="confirm_password" placeholder="<?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?>" class="form-control">
+                                </div>
 
-                                    <div class="form-group m-b-sm">
-                                        <label for="email_input"><?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?></label>
-                                        <input type="password" id="confirm_password" name="confirm_password" placeholder="<?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?>" class="form-control">
-                                    </div>
-
-                                    <div class="form-group m-b-sm pull-right">
-                                        <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default btn-sm create_submit_info" >
-                                    </div>
-                                    </div>
-                                </form>
-                            </div>
-
-
+                                <div class="form-group m-b-sm pull-right">
+                                    <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default btn-sm create_submit_info" >
+                                </div>
+                                </div>
+                            </form>
                         </div>
-                        <?php
-                        }
-                        if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
-                        ?>
+
+
+                    </div>
+                    <?php
+                    }
+                    if (RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
+                    ?>
                      <div class="my_fade my_tab" id="preferences_tab">
                         <div class="widget-body" style="padding-top:32px !important;">
                             <form method="post" action="" url="settings.php?step=preferences" id="preferences" name="preferences">

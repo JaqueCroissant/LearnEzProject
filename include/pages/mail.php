@@ -206,8 +206,8 @@ $paginationHandler = new PaginationHandler();
                                 foreach($mails as $value) {
                                     $date_to_string = time_elapsed($value->date);
                                     echo '
-                                        <div class="mail-item mail_number_'. $value->id.' '.(!$value->is_read ? 'item_unread' : "") .' item_hover" style="height:100px;">
-                                            <div class="change_page mail_element_content" page="mail" id="mail" step="show_mail" args="&mail_id='. $value->id .'">
+                                        <div class="mail-item mail_number_'. $value->user_mail_id.' '.(!$value->is_read ? 'item_unread' : "") .' item_hover" style="height:100px;">
+                                            <div class="change_page mail_element_content" page="mail" id="mail" step="show_mail" args="&mail_id='. $value->user_mail_id .'">
                                                 <table class="mail-container"><tbody>
                                                     <tr>
 
@@ -302,7 +302,7 @@ $paginationHandler = new PaginationHandler();
                 
                 
                 case 'show_mail':
-                    if($mailHandler->get_mail($mail_id)) {
+                    if($mailHandler->get_mail($mail_id, isset($_GET["referer"]) ? true : false)) {
                         $current_mail = $mailHandler->current_mail;
                     ?>
                         <div class="row">
@@ -316,33 +316,33 @@ $paginationHandler = new PaginationHandler();
                                     <?php
                                     switch($current_mail->folder_name) {  
                                         case 'important':
-                                        echo '<a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="inbox" title="Remove from important"><i class="fa fa-reply"></i></a>
-                                                <a href="javascript:void(0)"  class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="spam" title="Spam"><i class="fa fa-exclamation-circle"></i></a>
-                                                <a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="trash" title="Trash"><i class="fa fa-trash"></i></a>';
+                                        echo '<a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="inbox" title="Remove from important"><i class="fa fa-reply"></i></a>
+                                                <a href="javascript:void(0)"  class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="spam" title="Spam"><i class="fa fa-exclamation-circle"></i></a>
+                                                <a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="trash" title="Trash"><i class="fa fa-trash"></i></a>';
                                             break;
 
                                         case "sent":
-                                        echo '<a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="delete" title="Delete"><i class="fa fa-times"></i></a>';
+                                        echo '<a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="delete" title="Delete"><i class="fa fa-times"></i></a>';
                                             break;
                                         
                                         case "drafts":
                                             break;
 
                                         case "spam":
-                                        echo '<a href="javascript:void(0)" title="Remove from spam" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="inbox"><i class="fa fa-reply"></i></a>
-                                                <a href="javascript:void(0)" title="Trash" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="trash"><i class="fa fa-trash"></i></a>';
+                                        echo '<a href="javascript:void(0)" title="Remove from spam" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="inbox"><i class="fa fa-reply"></i></a>
+                                                <a href="javascript:void(0)" title="Trash" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="trash"><i class="fa fa-trash"></i></a>';
                                             break;
 
                                         case 'trash':
-                                        echo '<a href="javascript:void(0)" title="Remove from trash" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'"  step="inbox"><i class="fa fa-reply"></i></a>
-                                                <a href="javascript:void(0)" title="Delete" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="delete"><i class="fa fa-times"></i></a>';
+                                        echo '<a href="javascript:void(0)" title="Remove from trash" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'"  step="inbox"><i class="fa fa-reply"></i></a>
+                                                <a href="javascript:void(0)" title="Delete" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="delete"><i class="fa fa-times"></i></a>';
                                             break;
 
 
                                         default:
-                                        echo '<a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="important" title="Bookmark"><i class="fa fa-bookmark"></i></a>
-                                                <a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="spam" title="Spam"><i class="fa fa-exclamation-circle"></i></a>
-                                                <a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->id.'" current_folder="'.$current_mail->folder_name.'" step="trash" title="Trash" name="submit"><i class="fa fa-trash"></i></a>';
+                                        echo '<a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="important" title="Bookmark"><i class="fa fa-bookmark"></i></a>
+                                                <a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="spam" title="Spam"><i class="fa fa-exclamation-circle"></i></a>
+                                                <a href="javascript:void(0)" class="assign_mail_folder btn btn-default" mail_id="'.$current_mail->user_mail_id.'" current_folder="'.$current_mail->folder_name.'" step="trash" title="Trash" name="submit"><i class="fa fa-trash"></i></a>';
                                             break;
                                     }
                                     ?>
@@ -531,15 +531,15 @@ $paginationHandler = new PaginationHandler();
                                                 foreach($mails as $value) {
                                                     $date_to_string = time_elapsed($value->date);
                                                     echo '
-                                                        <div class="mail-item item_hover mail_number_'. $value->id.' '.($current_page != "sent" && $current_page != "drafts" ? ($value->is_read ? '""' : "item_unread") : '') .'" style="height:100px;">
+                                                        <div class="mail-item item_hover mail_number_'. $value->user_mail_id.' '.($current_page != "sent" && $current_page != "drafts" ? ($value->is_read ? '""' : "item_unread") : '') .'" style="height:100px;">
                                                             <div class="mail_element_checkbox checkbox-resize">
                                                                 <div>
                                                                     <div class="checkbox">
-                                                                        <input type="checkbox" id="checkbox-enable-reply" name="mail[]" value="'.$value->id.'"><label for="checkbox-enable-reply"></label>
+                                                                        <input type="checkbox" id="checkbox-enable-reply" name="mail[]" value="'.$value->user_mail_id.'"><label for="checkbox-enable-reply"></label>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="change_page mail_element_content" page="mail" id="mail" step="show_mail" args="&mail_id='. $value->id .'">
+                                                            <div class="change_page mail_element_content" page="mail" id="mail" step="show_mail" args="&mail_id='. $value->user_mail_id .'">
                                                                 <table class="mail-container"><tbody>
                                                                     <tr>
 

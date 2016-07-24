@@ -3,6 +3,7 @@
 class Mail extends ORM {
     
     public $id;
+    public $user_mail_id;
     public $folder_id;
     public $folder_name;
     public $is_read;

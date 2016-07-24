@@ -83,7 +83,7 @@ $notifs = $paginationHandler->run_pagination($not_handler->get_notifications(), 
                                                                 <input type="checkbox" id="checkbox-enable-reply" name="notifs[]" value="' . $notif->id . '"><label for="checkbox-enable-reply"></label>
                                                             </div>
                                                         </div>
-                                                        <div class="change_page mail_element_content read_notif" notif="' . $notif->id . '" page="' . $notif->link_page . '" id="'. $notif->link_page . '" step="' . $notif->link_step .'" args="' . $notif->link_args . (isset($args["link_id"]) ? $args["link_id"] : "") . '" style="min-height:100px;">
+                                                        <div class="change_page mail_element_content read_notif" notif="' . $notif->id . '" page="' . $notif->link_page . '" id="'. $notif->link_page . '" step="' . $notif->link_step .'" args="' . $notif->link_args . (isset($args["link_id"]) ? $args["link_id"] . "&referer=1" : "") . '" style="min-height:100px;">
                                                             <table class="mail-container" style="margin-top:16px;">
                                                                 <tr> 
                                                                     <td class="mail-center">

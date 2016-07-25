@@ -11,16 +11,16 @@ $userHandler->get_all_users();
             <div class="m-b-lg nav-tabs-horizontal">
                 <!-- tabs list -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" id="find_school_header"><a href="#find_account_tab" class="my_tab_header" id="find_account_a" data-toggle="tab">
+                    <li role="presentation" id="find_account_header"><a href="#find_account_tab" class="my_tab_header" id="find_account_a" data-toggle="tab">
                             <?php echo TranslationHandler::get_static_text("FIND_ACCOUNT"); ?></a></li>
                     <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                        <li role="presentation" id="edit_school_header" class="hidden"><a href="#edit_account_tab" class="my_tab_header" id="edit_account_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("EDIT_ACCOUNT"); ?></a></li>
+                        <li role="presentation" id="edit_account_header" class="hidden"><a href="#edit_account_tab" class="my_tab_header" id="edit_account_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("EDIT_ACCOUNT"); ?></a></li>
                     <?php } ?>
                 </ul><!-- .nav-tabs -->
 
                 <div class="my_tab_content">
                     <!-- Tab -->
-                    <div class="my_fade my_tab" id="find_school_tab">
+                    <div class="my_fade my_tab" id="find_account_tab">
                         <div class="widget-body">
                             <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [6,7]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid" 
                                    aria-describedby="default-datatable_info">
@@ -87,7 +87,7 @@ $userHandler->get_all_users();
                                                 <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
                                                     <td>
                                                         <div class="">
-                                                            <i class="fa fa-edit fa-2x edit_account m-r-md" account_id="<?php echo $value->id; ?>" state="update_account" id="edit_account_btn"></i>
+                                                            <i class="fa fa-edit fa-2x edit_account m-r-md change_page" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
                                                             <?php if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                                                 <i class="fa fa-times fa-fw fa-2x delete_account" account_id="<?php echo $value->id; ?>" state="delete_account" id="delete_account_btn" style="font-size: 2.5em !important;"></i>
                                                             <?php } ?>

@@ -3,7 +3,9 @@ class UserHandler extends Handler
 {
     public $users = array();
     public $temp_user_array;
+    public $temp_user;
     public $profile_images;
+
 
     public function __construct() {
         parent::__construct();
@@ -525,6 +527,93 @@ class UserHandler extends Handler
         }
     }
 
+    public function edit_account($user_id, $firstname = null, $surname = null, $email = null, $description = null, $image = null)
+    {
+        try
+        {
+            $this->validate_user_logged_in();
+
+            if(!empty($firstname) && $firstname != $this->_user->firstname)
+            {
+                if(!RightsHandler::has_user_right("CHANGE_FULL_NAME"))
+                {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+
+                $this->check_if_valid_string($firstname, false);
+                $this->_user->firstname = $firstname;
+            }
+
+            if(!empty($surname) && $surname != $this->_user->surname)
+            {
+                if(!RightsHandler::has_user_right("CHANGE_FULL_NAME"))
+                {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+
+                $this->check_if_valid_string($surname, false);
+                $this->_user->surname = $surname;
+            }
+
+            if(!empty($description))
+            {
+                if(!is_string($description))
+                {
+                    throw new Exception("USER_INVALID_DESCRIPTION");
+                }
+                $this->_user->description = $description;
+            }
+
+            if(!empty($email))
+            {
+                $this->check_if_email($email);
+
+
+                if($email != $this->_user->email)
+                {
+                    $this->mail_exists($email);
+                }
+
+                $this->_user->email = $email;
+            }
+
+            if(!empty($image))
+            {
+                if(!is_numeric($image))
+                {
+                    throw new Exception("USER_INVALID_IMAGE_ID");
+                }
+                $this->_user->image_id = $image;
+            }
+
+            foreach(get_object_vars($this->_user) as $key => $value)
+            {
+                if(!isset($key))
+                {
+                    $value = "";
+                }
+            }
+
+            if(!DbHandler::get_instance()->query("UPDATE users SET firstname = :firstname,
+                                                  surname = :surname, description = :description,
+                                                  email = :email, image_id = :image WHERE id = :id",
+                                                  $this->_user->firstname, $this->_user->surname, $this->_user->description,
+                                                  $this->_user->email, $this->_user->image_id, $this->_user->id))
+            {
+                throw new Exception("DATABASE_UNKNOWN_ERROR");
+            }
+
+            SessionKeyHandler::add_to_session('user', $this->_user, true);
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
     private function check_if_email($email)
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL))
@@ -537,7 +626,7 @@ class UserHandler extends Handler
     {
         if(!$this->is_valid_input($string))
         {
-            throw new Exception("USER_INVALID_USERNAME_INPUT");
+            throw new Exception("USER_INVALID_NAME_INPUT");
         }
     }
     
@@ -638,6 +727,33 @@ class UserHandler extends Handler
     {
         $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
         $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
+    }
+
+    pUBLIC function get_user_by_id($id)
+    {
+        try
+        {
+            if(!is_numeric($id))
+            {
+                throw new Exception("USER_INVALID_ID");
+            }
+
+            $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
+            if(isset($user_data) && !empty($user_data))
+            {
+                $this->temp_user = new User(reset($user_data));
+            }
+            else
+            {
+                throw new Exception("USER_DOESNT_EXIST");
+            }
+        }
+        catch (Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+        return true;
     }
 
     public function import_users($csv_file, $school_id, $class_ids)

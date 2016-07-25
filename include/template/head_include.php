@@ -7,6 +7,9 @@
 <script src="js/form.js" type="text/javascript"></script>
 <script src="js/mail.js" type="text/javascript"></script>
 <script src="js/notifications.js" type="text/javascript"></script>
+<script src="js/settings.js" type="text/javascript"></script>
+<script src="js/school.js" type="text/javascript"></script>
+<script src="js/class.js" type="text/javascript"></script>
 <link href="css/css.css" rel="stylesheet" type="text/css"/>
 <link href="css/my_tab.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
@@ -25,11 +28,11 @@
 <link rel="stylesheet" type="text/css" href="libs/bower/switchery/dist/switchery.min.css">
 <link rel="stylesheet" type="text/css" href="libs/bower/lightbox2/dist/css/lightbox.min.css">
 
-<?php        
-if (SessionKeyHandler::session_exists("user")) {
-?>
-<script src="js/backgroundScripts.js" type="text/javascript"></script>
-<script src="js/userGlobal.js" type="text/javascript"></script>
 <?php
+if (SessionKeyHandler::session_exists("user")) {
+    ?>
+    <script src="js/backgroundScripts.js" type="text/javascript"></script>
+    <script src="js/userGlobal.js" type="text/javascript"></script>
+    <?php
 }
 ?>

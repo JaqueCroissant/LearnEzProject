@@ -24,6 +24,8 @@ class SettingsHandler extends Handler {
                 return false;
             }
             self::$_settings = new User_Settings(reset($settings_data));
+            $user->settings = self::$_settings;
+            SessionKeyHandler::add_to_session("user", $user, true);
             return true;
         }
         self::$_settings = $user->settings;
@@ -87,6 +89,30 @@ class SettingsHandler extends Handler {
         }
     }
     
+    private function assign_blocked_users(&$settings) {
+        if(!is_array($settings->blocked_students) || empty($settings->blocked_students)) {
+            $settings->blocked_students = null;
+            return;
+        }
+        
+        $array = array();
+        foreach($settings->blocked_students as $key => $student) {
+            if(!is_numeric($student)) {
+                unset($settings->blocked_students[$key]);
+                continue;
+            }
+            $array[] = $student;
+        }
+        
+        $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id IN (". generate_in_query($array) .") AND user_type_id = '4'");
+        
+        if($count != count($array)) {
+            throw new Exception("INVALID_SETTINGS_INPUT");
+        }
+        
+        $settings->blocked_students = json_encode($array);
+    }
+    
     public function update_settings($settings = null) {
         try 
         {
@@ -118,14 +144,15 @@ class SettingsHandler extends Handler {
             
             $this->assign_language($settings->language_id);
             $this->assign_os($settings->os_id);
+            $this->assign_blocked_users($settings);
             
             if(DbHandler::get_instance()->count_query("SELECT id FROM user_settings WHERE user_id = :user_id", $this->_user->id) > 0) {
-                DbHandler::get_instance()->query("UPDATE user_settings SET language_id = :language_id, os_id = :os_id, elements_shown = :elements_shown, block_mail_notifications = :block_mail_notifications, block_student_mails = :block_student_mails, hide_profile = :hide_profile WHERE user_id = :user_id", $settings->language_id, $settings->os_id, $settings->elements_shown, $settings->block_mail_notifications, $settings->block_student_mails, $settings->hide_profile, $this->_user->id);
+                DbHandler::get_instance()->query("UPDATE user_settings SET language_id = :language_id, os_id = :os_id, elements_shown = :elements_shown, block_mail_notifications = :block_mail_notifications, block_student_mails = :block_student_mails, hide_profile = :hide_profile, blocked_students = :blocked_students WHERE user_id = :user_id", $settings->language_id, $settings->os_id, $settings->elements_shown, $settings->block_mail_notifications, $settings->block_student_mails, $settings->hide_profile, $settings->blocked_students, $this->_user->id);
             } else {
-                DbHandler::get_instance()->query("INSERT INTO user_settings (user_id, language_id, os_id, elements_shown, block_mail_notifications, block_student_mails, hide_profile) VALUES (:user_id, :language_id, :os_id, :elements_shown, :block_mail_notifications, :block_student_mails, :hide_profile)", $this->_user->id, $settings->language_id, $settings->os_id, $settings->elements_shown, $settings->block_mail_notifications, $settings->block_student_mails, $settings->hide_profile);
+                DbHandler::get_instance()->query("INSERT INTO user_settings (user_id, language_id, os_id, elements_shown, block_mail_notifications, block_student_mails, hide_profile, blocked_students) VALUES (:user_id, :language_id, :os_id, :elements_shown, :block_mail_notifications, :block_student_mails, :hide_profile, :blocked_students)", $this->_user->id, $settings->language_id, $settings->os_id, $settings->elements_shown, $settings->block_mail_notifications, $settings->block_student_mails, $settings->hide_profile, $settings->blocked_students);
             }
             
-            $this->_user->settings = $settings;
+            $this->_user->settings = null;
             SessionKeyHandler::add_to_session("user", $this->_user, true);
             return true;
         }

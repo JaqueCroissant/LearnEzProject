@@ -9,7 +9,6 @@
         $current_step = isset($_GET["step"]) ? $_GET["step"] : null;
         switch($current_step)
         {
-            //VERIFICER BRUGERINFO
             case "edit_info":
                 $firstname = isset($_POST['firstname']) ? $_POST['firstname'] : "";
                 $surname = isset($_POST['surname']) ? $_POST['surname'] : "";
@@ -31,7 +30,6 @@
                 }
             break;
 
-            //SKIFT PASSWORD
             case "change_password":
                 $old_password = isset($_POST['old_password']) ? $_POST['old_password'] : "";
                 $new_password = isset($_POST['password']) ? $_POST['password'] : "";
@@ -57,6 +55,7 @@
                 $settings->hide_profile = isset($_POST['hide_profile']) ? true : false;
                 $settings->block_mail_notifications = isset($_POST['block_mail_notifications']) ? true : false;
                 $settings->block_student_mails = isset($_POST['block_student_mails']) ? true : false;
+                $settings->blocked_students = isset($_POST['blocked_student']) ? $_POST['blocked_student'] : array();
 
                 if($settingsHandler->update_settings($settings))
                 {

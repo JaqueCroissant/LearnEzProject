@@ -5,7 +5,7 @@ class ClassHandler extends Handler {
     public $school_class;
     public $classes;
     public $years;
-    private $format = "Y-m-d H:i:s";
+    private $format = "Y-m-d";
 
     public function __construct() {
         parent::__construct();
@@ -160,21 +160,18 @@ class ClassHandler extends Handler {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
 
-            $this->is_null_or_empty($title);
+            $this->verify_title($title);
             $this->verify_school_exists($school_id);
-            if ($class_start == null) {
+            if ($class_start == "") {
                 $class_start = date($this->format);
             }
             $this->verify_start_date($class_start);
-            $class_start = $class_start['year'] . '/' . $class_start['month'] . "/" . $class_start['day'];
-
-            $year_id = $this->get_year_id($class_end);
             $this->verify_end_date($class_end);
-            $class_end_string = $class_end['year'] . '/' . $class_end['month'] . '/' . $class_end['day'];
-            $this->verify_start_date_is_lower_than_end_date($class_start, $class_end_string);
+            $year_id = $this->get_year_id($class_end);
+            $this->verify_start_date_is_lower_than_end_date($class_start, $class_end);
             $query = "INSERT INTO class (title, description, class_year_id, school_id, start_date, end_date, open)
                         VALUES (:title, :description, :class_year_id, :school_id, :start_date, :end_date, :open)";
-            if (DbHandler::get_instance()->query($query, $title, $description, $year_id, $school_id, $class_start, $class_end_string, $class_open)) {
+            if (DbHandler::get_instance()->query($query, $title, $description, $year_id, $school_id, $class_start, $class_end, $class_open)) {
                 return true;
             }
             return false;
@@ -193,11 +190,7 @@ class ClassHandler extends Handler {
             if (!RightsHandler::has_user_right("CLASS_EDIT")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
-            if (!is_numeric($open_int)) {
-                throw new Exception("INVALID_INPUT_IS_NOT_INT");
-            } elseif (!($open_int == "1" || $open_int == "0")) {
-                throw new Exception("ARGUMENT_NOT_BOOL");
-            }
+            $this->verify_class_open($class_open);
             $this->verify_class_exists($class_id);
 
             $query = "UPDATE class SET open=:open WHERE id=:id";
@@ -223,21 +216,14 @@ class ClassHandler extends Handler {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             $this->verify_class_exists($class_id);
-            $this->is_null_or_empty($title);
+            $this->verify_title($title);
             $this->verify_end_date($class_end);
-            $year_id = $this->get_year_id($class_end);
-            $class_end = $class_end['year'] . '/' . $class_end['month'] . '/' . $class_end['day'];
             $this->verify_start_date($class_start);
-            $class_start = $class_start['year'] . '/' . $class_start['month'] . "/" . $class_start['day'];
             $this->verify_start_date_is_lower_than_end_date($class_start, $class_end);
-            $this->is_null_or_empty($school_id);
-            $this->is_null_or_empty($class_open);
-            if (!is_numeric($class_open)) {
-                throw new Exception("INVALID_INPUT_IS_NOT_INT");
-            } elseif (!($class_open == "1" || $class_open == "0")) {
-                throw new Exception("ARGUMENT_NOT_BOOL");
-            }
+            $this->verify_school_exists($school_id);
+            $this->verify_class_open($class_open);
 
+            $year_id = $this->get_year_id($class_end);
             $query = "UPDATE class SET title=:title, description=:description, class_year_id=:year_id,
                         open=:open, start_date=:start_date, end_date=:end_date, school_id=:school_id WHERE id = :id";
 
@@ -307,7 +293,8 @@ class ClassHandler extends Handler {
     }
 
     private function get_year_id($date) {
-        $year = $date['year'];
+        $d = date_parse_from_format($this->format, $date);
+        $year = $d['year'];
         $year_id_array = reset(DbHandler::get_instance()->return_query("SELECT id FROM class_year WHERE year = :year LIMIT 1", $year));
         if (empty($year_id_array)) {
             throw new Exception("OBJECT_IS_EMPTY");
@@ -322,6 +309,20 @@ class ClassHandler extends Handler {
 
         if (!isset($var)) {
             throw new Exception("OBJECT_DOESNT_EXIST");
+        }
+    }
+
+    private function verify_title($title) {
+        $this->is_null_or_empty($title);
+    }
+
+    private function verify_class_open($class_open) {
+        if (!is_numeric($class_open)) {
+            throw new Exception("INVALID_INPUT_IS_NOT_INT");
+        }
+
+        if (!($class_open == "1" || $class_open == "0")) {
+            throw new Exception("ARGUMENT_NOT_BOOL");
         }
     }
 
@@ -342,7 +343,9 @@ class ClassHandler extends Handler {
         $this->verify_is_date($end_date);
     }
 
-    private function verify_is_date($d) {
+    private function verify_is_date($date) {
+        $d = date_parse_from_format($this->format, $date);
+
         if (!checkdate($d['month'], $d['day'], $d['year'])) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }

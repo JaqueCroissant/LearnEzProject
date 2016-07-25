@@ -1,7 +1,6 @@
 var delete_class_id;
 
 $(document).ready(function () {
-// class
     $(document).on("click", ".create_class", function (event) {
         event.preventDefault;
         $("#hidden_description").val($("#class_description").val());
@@ -27,7 +26,6 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            change_page("find_class");
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -47,8 +45,7 @@ $(document).ready(function () {
 
         div_id = $(this).closest("div .alert_panel").attr("id");
         var id = $("#" + delete_class_id).closest("tr").children().last().attr("id");
-        console.log(id);
-        initiate_submit_get($(this), "find_class.php?class_id=" + id + "&state=delete_class", function () {
+        initiate_submit_get($(this), "edit_class.php?class_id=" + id + "&state=delete_class", function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
             $("#" + div_id).attr("hidden", true);
@@ -115,34 +112,10 @@ $(document).ready(function () {
         $("td input[type='checkbox']").removeAttr("disabled");
     });
 
-
-
     $(document).on("click", ".edit_class", function (event) {
         event.preventDefault();
 
         var id = $(this).closest("tr").children().last().attr("id");
-        initiate_submit_get($(this), "find_class.php?class_id=" + id + "&state=get_class", function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            $("#edit_class_header").removeClass("hidden");
-            $("#class_title").val(ajax_data.class.title);
-            if (ajax_data.class.open === "1") {
-                $("#class_open").prop("checked", true);
-            }
-            $("#school_id").text(ajax_data.class.school_name);
-            $("#class_begin").val(ajax_data.class.start_date);
-            $("#class_end").val(ajax_data.class.end_date);
-            $("#school_id").val(ajax_data.class.school_id);
-            $("#class_description").val(ajax_data.class.description);
-            $("#update_class_id").val(ajax_data.class.id);
-            
-            // Set selected school in select2
-            $("#select_school option").removeAttr("selected");
-            $("#school_id_" + ajax_data.class.school_id).attr("selected", "selected");
-            $("#select_school").trigger("change");
-            
-            // switch tab
-            $("#edit_class_a").click();
-        });
+        change_page("edit_class", "" ,"&class_id=" + id);
     });
 });

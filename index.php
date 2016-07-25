@@ -32,24 +32,24 @@ RightsHandler::reset();
         </aside>
 
         <main id="app-main" class="app-main in">
-<!--            <div id="loading_page" class="hidden">
-                <img src="assets/images/loading_page.GIF" />
-            </div>-->
-            
+            <!--            <div id="loading_page" class="hidden">
+                            <img src="assets/images/loading_page.GIF" />
+                        </div>-->
+
             <div class="wrap">
                 <section id="content_container" class="app-content">
-                    
+
                 </section>
             </div>
         </main>
-        
+
         <div id="status_container" class="hidden">
             <?php
             include 'include/template/statusbar.php';
             ?>
         </div>
-        
-        
+
+
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
         <script src="libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
         <script src="libs/bower/superfish/dist/js/hoverIntent.js"></script>
@@ -57,12 +57,12 @@ RightsHandler::reset();
         <script src="libs/bower/jquery-slimscroll/jquery.slimscroll.js"></script>
         <script src="libs/bower/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
         <script src="libs/bower/PACE/pace.min.js"></script>
-	<script src="assets/js/library.js"></script>
-	<script src="assets/js/plugins.js"></script>
-	<script src="assets/js/app.js"></script>
-	<script src="libs/bower/moment/moment.js"></script>
-	<script src="libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
-	<script src="assets/js/fullcalendar.js"></script>
-        
+        <script src="assets/js/library.js"></script>
+        <script src="assets/js/plugins.js"></script>
+        <script src="assets/js/app.js"></script>
+        <script src="libs/bower/moment/moment.js"></script>
+        <script src="libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
+        <script src="assets/js/fullcalendar.js"></script>
+
     </body>
 </html>

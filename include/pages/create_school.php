@@ -17,13 +17,13 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_name"><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
+                                <input class="form-control" type="text" name="school_name" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_address"><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
+                                <input class="form-control" type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
@@ -38,13 +38,13 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_phone"><?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
+                                <input class="form-control" type="text" name="school_phone" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_PHONE"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_email"><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
+                                <input class="form-control" type="text" name="school_email" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
@@ -76,26 +76,26 @@ $schoolHandler->get_school_types();
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_max_students"><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " type="text" name="school_max_students" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?>">
+                                <input class="form-control" type="text" name="school_max_students" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?>">
                             </div>
                         </div>
                         <div class="form-group" >
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_start"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control datepickers" id="school_subscription_start" type="text" name="school_subscription_start" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>">
+                                <input class="form-control" id="school_subscription_start" type="text" name="school_subscription_start" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>">
                             </div>
                         </div>
                         <div class="form-group" >
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control datepickers" id="school_subscription_end" type="text" name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
+                                <input class="form-control" id="school_subscription_end" type="text" name="school_subscription_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label"></label>
                             <div class="col-md-5">
                                 <input type="hidden" name="step" id="create_school_hidden_field_step_2">
-                                <input type="button" name="submit" id="create_school_step_two_button" step="2" 
+                                <input type="button" name="submit" id="create_school_step_two_button" step="2"
                                        value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_TWO"); ?>" class="pull-right btn btn-default btn-sm create_school">     
                             </div>
                         </div>
@@ -121,12 +121,4 @@ $schoolHandler->get_school_types();
         </div>
     </div>
 </div>
-<script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
-<script src="js/school.js" type="text/javascript"></script>
-<script src="libs/bower/select2/dist/js/select2.full.js" type="text/javascript"></script>
-<script type="text/javascript">
-    $(".datepickers").datepicker({
-        dateFormat: "yy-mm-dd"
-    });
-</script>

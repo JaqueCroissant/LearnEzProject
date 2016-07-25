@@ -302,12 +302,10 @@ class SchoolHandler extends Handler {
             $this->verify_max_students($max_students);
             $this->verify_subscription_start($subscription_start);
             $this->verify_subscription_end($subscription_end);
-            $start_date = $subscription_start['year'] . "/" . $subscription_start['month'] . "/" . $subscription_start['day'];
-            $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
-            $this->verify_start_date_is_lower_than_end_date($start_date, $end_date);
+            $this->verify_start_date_is_lower_than_end_date($subscription_start, $subscription_end);
             $school->max_students = $max_students;
-            $school->subscription_start = $start_date;
-            $school->subscription_end = $end_date;
+            $school->subscription_start = $subscription_start;
+            $school->subscription_end = $subscription_end;
 
             if (!$this->create_school($school)) {
                 throw new Exception("SCHOOL_CREATION_FAILED_UNKNOWN_ERROR");
@@ -485,7 +483,8 @@ class SchoolHandler extends Handler {
         }
     }
 
-    private function verify_is_date($d) {
+    private function verify_is_date($date) {
+        $d = date_parse_from_format($this->format, $date);
         if (!checkdate($d['month'], $d['day'], $d['year'])) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
         }
@@ -496,12 +495,11 @@ class SchoolHandler extends Handler {
     }
 
     private function verify_subscription_end($subscription_end) {
-        // checks valid date
         $this->verify_is_date($subscription_end);
+        $end_date = date_parse_from_format($this->format, $subscription_end);
+        $de = $end_date['year'] . "/" . $end_date['month'] . "/" . $end_date['day'];
 
-        $end_date = $subscription_end['year'] . "/" . $subscription_end['month'] . "/" . $subscription_end['day'];
-
-        $ds = strtotime($end_date);
+        $ds = strtotime($de);
         $ts = strtotime(date($this->format));
         if ($ts > $ds) {
             throw new Exception("SUBSCRIPTION_END_INVALID");
@@ -575,9 +573,9 @@ class SchoolHandler extends Handler {
     }
 
     private function create_school($school) {
-        $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_start, subscription_end, zip_code, city) "
-                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_start,:subscription_end, :zip_code, :city)";
-        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_start, $school->subscription_end, $school->zip_code, $school->city);
+        $query = "INSERT INTO school (name, address, school_type_id, phone, email, max_students, subscription_start, subscription_end, zip_code, city, open) "
+                . "VALUES (:name, :address, :school_type_id, :phone, :email, :max_students, :subscription_start,:subscription_end, :zip_code, :city, :open)";
+        $executedQuery = DbHandler::get_instance()->query($query, $school->name, $school->address, $school->school_type_id, $school->phone, $school->email, $school->max_students, $school->subscription_start, $school->subscription_end, $school->zip_code, $school->city, 1);
         $this->school->id = DbHandler::get_instance()->last_inserted_id();
         if ($executedQuery) {
             return true;

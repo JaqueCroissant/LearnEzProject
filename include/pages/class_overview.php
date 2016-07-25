@@ -105,7 +105,7 @@ switch ($classHandler->_user->user_type_id) {
                         <?php if ($classHandler->_user->user_type_id != 1) { ?>
                             <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                 <div class="p-t-xs">
-                                    <i class = "fa fa-edit fa-fw fa-2x edit_school_redirect m-r-md a" school_id="<?php echo $schoolHandler->school->id; ?>"></i>
+                                    <i class = "fa fa-edit fa-fw fa-2x edit_school m-r-md a" school_id="<?php echo $schoolHandler->school->id; ?>"></i>
                                 </div>
                             <?php } ?>
                         <?php } ?>

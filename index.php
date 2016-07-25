@@ -60,8 +60,6 @@ RightsHandler::reset();
         <script src="assets/js/library.js"></script>
         <script src="assets/js/plugins.js"></script>
         <script src="assets/js/app.js"></script>
-        <script src="js/school.js" type="text/javascript"></script>
-        <script src="js/class.js" type="text/javascript"></script>
         <script src="libs/bower/moment/moment.js"></script>
         <script src="libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
         <script src="assets/js/fullcalendar.js"></script>

@@ -19,7 +19,7 @@ $classHandler = new ClassHandler();
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-2 control-label" for="class_title"><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " type="text" name="class_title" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?>">
+                                <input class="form-control" type="text" name="class_title" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?>">
                             </div>
                         </div>
                         <?php
@@ -57,20 +57,20 @@ $classHandler = new ClassHandler();
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-2 control-label" for="class_begin"><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " type="text" id="class_begin" name="class_begin" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?>">
+                                <input class="form-control" type="text" id="class_begin" name="class_begin" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-2 control-label" for="class_end"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control " type="text" id="class_end" name="class_end" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>">
+                                <input class="form-control" type="text" id="class_end" name="class_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-2 control-label" for="class_description"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></label>
                             <div class="col-md-5">
                                 <input type="hidden" id="hidden_description" name="class_description">
-                                <textarea form="create_class" class="form-control " type="text" id="class_description" name="class_description" placeholder="<?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?>"></textarea>
+                                <textarea form="create_class" class="form-control" type="text" id="class_description" name="class_description" placeholder="<?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?>"></textarea>
 
                             </div>
                         </div>
@@ -86,38 +86,8 @@ $classHandler = new ClassHandler();
                     </form>
                 </div>
 
-                <div id="step_two" hidden="true">
-                    <div class="form-group">
-                        <label class="col-sm-2 col-sm-offset-2 control-label" for="class_title"><?php echo "Tildel elever og lærere til den nyligt oprettede klasse"; ?></label>
-                        <!--                    <div class="col-md-5">
-                                                <input class="form-control " type="text" name="class_title" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?>">
-                                            </div>-->
-                    </div>
-
-                    <div class="form-group">
-                        <label class="col-sm-2 col-sm-offset-2 control-label"></label>
-                        <div class="col-md-5">
-                            <input type="hidden" name="step" id="create_class_step_2">
-                            <input type="button" name="submit" id="create_class_step_two_button" step="2" 
-                                   value="<?php echo TranslationHandler::get_static_text("CREATE_CLASS"); ?>" class="pull-right btn btn-default btn-sm create_school">   
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
-<script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
-<script src="js/class.js" type="text/javascript"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#class_begin").datepicker({
-            dateFormat: "yy-mm-dd"
-        });
-        $("#class_end").datepicker({
-            dateFormat: "yy-mm-dd"
-        });
-    });
-</script>
-

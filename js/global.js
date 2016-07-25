@@ -14,7 +14,9 @@ $(document).ready(function () {
     // Load on startup.
     initial_page_load();
     // Load on startup.
-
+    $(".datepickers").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
     // global functions
     $(document).on("click", ".change_page", function (event) {
         if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
@@ -82,11 +84,13 @@ $(document).ready(function () {
 
     // DataTable custom
     $(document).on("length.dt", function (e, settings, len) {
-        if (len > 25) {
-            $("tfoot").removeClass("hidden");
-        } else if (!$("tfoot").hasClass("hidden")) {
-            $("tfoot").addClass("hidden");
-        }
+        var api = new $.fn.dataTable.Api(settings);
+        table_footer(api);
+    });
+
+    $(document).on("init.dt", function (e, settings, json) {
+        var api = new $.fn.dataTable.Api(settings);
+        table_footer(api);
     });
     //
 
@@ -352,6 +356,14 @@ $(document).ready(function () {
 });
 
 var audioElement;
+
+function table_footer(api) {
+    if (api.page.len() > 15) {
+        $("tfoot").removeClass("hidden");
+    } else if (!$("tfoot").hasClass("hidden")) {
+        $("tfoot").addClass("hidden");
+    }
+}
 
 function show_status_bar(status_type, message, custom_fade_out) {
     clearTimeout(status_bar_timeout);

@@ -24,6 +24,9 @@ require_once '../../include/class/user_settings.class.php';
 require_once '../../include/class/mail.class.php';
 require_once '../../include/class/mail_folder.class.php';
 require_once '../../include/class/mail_tag.class.php';
+require_once '../../include/class/course.class.php';
+require_once '../../include/class/lecture.class.php';
+require_once '../../include/class/test.class.php';
 
 if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     die("Direct access not permitted");

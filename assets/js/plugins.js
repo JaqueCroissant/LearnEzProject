@@ -1,127 +1,141 @@
 
-+function(){ 'use strict';
-  
-  var toggle = '[data-toggle="class"]';
++function () {
+    'use strict';
 
-  var ToggleClass = function() {};
+    var toggle = '[data-toggle="class"]';
 
-  ToggleClass.prototype.toggle = function(e) {
-    var $this = $(this);
+    var ToggleClass = function () {
+    };
 
-    if ($this.is('.disabled, :disabled')) return;
+    ToggleClass.prototype.toggle = function (e) {
+        var $this = $(this);
 
-    var target = $this.attr('data-target');
-    var className = $this.attr('data-class');
-    var isActive = $(target).hasClass(className);
+        if ($this.is('.disabled, :disabled'))
+            return;
 
-    if (!isActive) {
-      $(target).addClass(className);
-      $this.attr('data-active', true);
-    } else{
-      $(target).removeClass(className);
-      $this.attr('data-active', false);
+        var target = $this.attr('data-target');
+        var className = $this.attr('data-class');
+        var isActive = $(target).hasClass(className);
+
+        if (!isActive) {
+            $(target).addClass(className);
+            $this.attr('data-active', true);
+        } else {
+            $(target).removeClass(className);
+            $this.attr('data-active', false);
+        }
+
+        if ($this.attr('self-toggle')) {
+            var className = $this.attr('self-toggle');
+            $this.toggleClass(className);
+        }
     }
 
-    if ($this.attr('self-toggle')) {
-      var className = $this.attr('self-toggle');
-      $this.toggleClass(className);
-    }
-  }
-
-  $(document).on('click.app.toggleclass', toggle, ToggleClass.prototype.toggle);
+    $(document).on('click.app.toggleclass', toggle, ToggleClass.prototype.toggle);
 }(jQuery);
 
 var loader = loader || {};
 
-+function($, $document, loader) { "use strict";
-  var loaded = [],
-  promise = false,
-  deferred = $.Deferred();
++function ($, $document, loader) {
+    "use strict";
+    var loaded = [],
+            promise = false,
+            deferred = $.Deferred();
 
-  loader.load = function(srcs) {
-    srcs = srcs || [];
-    srcs = $.isArray(srcs) ? srcs : srcs.split(/\s+/);
-    if (!promise) {
-      promise = deferred.promise();
+    loader.load = function (srcs) {
+        srcs = srcs || [];
+        srcs = $.isArray(srcs) ? srcs : srcs.split(/\s+/);
+        if (!promise) {
+            promise = deferred.promise();
+        }
+
+        $.each(srcs, function (index, src) {
+            promise = promise.then(function () {
+                return src.indexOf('.css') >= 0 ? loadCss(src) : loadScript(src);
+            });
+        });
+
+        deferred.resolve();
+        return promise;
     }
 
-    $.each(srcs, function(index, src){
-      promise = promise.then(function() {
-        return src.indexOf('.css') >=0 ? loadCss(src) : loadScript(src);
-      });
-    });
+    // load javascript files
+    var loadScript = function (src) {
+        if (loaded[src])
+            return loaded[src].promise();
 
-    deferred.resolve();
-    return promise;
-  }
+        var deferred = $.Deferred();
+        var script = $document.createElement('script');
+        script.src = src;
+        script.onload = function (e) {
+            deferred.resolve(e);
 
-  // load javascript files
-  var loadScript = function(src) {
-    if(loaded[src]) return loaded[src].promise();
+        };
 
-    var deferred = $.Deferred();
-    var script = $document.createElement('script');
-    script.src = src;
-    script.onload = function(e) {
-      deferred.resolve(e);
-      
+        script.onerror = function (e) {
+            deferred.reject(e);
+        };
+
+        $document.body.appendChild(script);
+        loaded[src] = deferred;
+        return deferred.promise();
     };
 
-    script.onerror = function(e) {
-      deferred.reject(e);
-    };
+    // load css files
+    var loadCss = function (href) {
+        if (loaded[href])
+            return loaded[href].promise();
 
-    $document.body.appendChild(script);
-    loaded[src] = deferred;
-    return deferred.promise();
-  };
+        var deferred = $.Deferred();
+        var style = $document.createElement('link');
+        style.rel = 'stylesheet';
+        style.type = 'text/css';
+        style.href = href;
+        style.onload = function (e) {
+            deferred.resolve(e);
+        };
 
-  // load css files
-  var loadCss = function(href) {
-    if(loaded[href]) return loaded[href].promise();
+        style.onerror = function (e) {
+            deferred.reject(e);
+        };
 
-    var deferred = $.Deferred();
-    var style = $document.createElement('link');
-    style.rel = 'stylesheet';
-    style.type = 'text/css';
-    style.href = href;
-    style.onload = function(e) {
-      deferred.resolve(e);
-    };
-    
-    style.onerror = function(e) {
-      deferred.reject(e);
-    };
-    
-    $document.head.appendChild(style);
-    loaded[href] = deferred;
+        $document.head.appendChild(style);
+        loaded[href] = deferred;
 
-    return deferred.promise();
-  }
+        return deferred.promise();
+    }
 
 }(jQuery, document, loader);
 
-+function($, LIBS) { 'use strict';
-  $.fn.plugins = function(){
++function ($, LIBS) {
+    'use strict';
+    $.fn.plugins = function () {
 
-    var lists = this;
+        var lists = this;
 
-    lists.each(function() {
-      var self = $(this);
-      var options = {};
-      var options = eval('[' + self.attr('data-options') + ']');
-      if ($.isPlainObject(options[0])) {
-        options[0] = $.extend({}, options[0]);
-      }
-      if(self.data('plugin') != '') {
-        loader.load(LIBS[self.data('plugin')]).then( function(){
-          // self refers to jQuery object
-          self[self.attr('data-plugin')].apply(self, options);
+        lists.each(function () {
+            var self = $(this);
+            var options = {};
+            
+            var options = eval('[' + self.attr('data-options') + ']');
+            if ($.isPlainObject(options[0])) {
+                options[0] = $.extend({}, options[0]);
+            }
+            if (self.data('plugin') === "DataTable") {
+                // language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "libs/misc/datatables/Danish.json": "libs/misc/datatables/English.json"; ?>'}
+                // Sæt language ud fra et POST til en side for at få language ID.
+                var options_string = {"lengthMenu":[5,10,25,50,100]};
+                options[0] = $.extend(options_string, options[0]);
+            }
+            if (self.data('plugin') != '') {
+                loader.load(LIBS[self.data('plugin')]).then(function () {
+                    // self refers to jQuery object
+                    self[self.attr('data-plugin')].apply(self, options);
+                })
+            }
         })
-      }
-    })
 
-    return lists;
-  }
+        return lists;
+    }
 
 }(jQuery, LIBS);

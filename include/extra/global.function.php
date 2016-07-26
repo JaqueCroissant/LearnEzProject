@@ -8,6 +8,15 @@ function array_value_exists_in_key($array, $key, $val) {
     return false;
 }
 
+function array_group_by_key(array $arr) {
+    $result = array();
+    foreach ($arr as $i) {
+      $key = key($i);
+      $result[$key][] = $i;
+    }  
+    return $result;
+}
+
 function generate_in_query($array) {
     $in_array = "";
     for($i = 0; $i < count($array); $i++) {

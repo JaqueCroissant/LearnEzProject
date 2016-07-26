@@ -250,6 +250,30 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on("click", ".update_acc_generate_pass", function (event) {
+        event.preventDefault();
+
+        initiate_submit_get($(this), "edit_account.php?step=generate_password",function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            $("#edit_password").attr("value", ajax_data.password);
+        });
+    });
+
+    $(document).on("click", ".update_account_submit", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
 
     $(document).on("change", ".create_select_school", function (event) {
         if ($(this).find("option:selected").val() === "") {

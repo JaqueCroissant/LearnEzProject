@@ -107,14 +107,6 @@ class UserHandler extends Handler
         return preg_replace('/[^A-Za-z0-9\-]/', '', $string);
     }
 
-    private function make_html_compatible($string)
-    {
-        $chars_to_replace = array('Æ','Ø','Å','æ','ø','å');
-        $replacement_chars = array('&AElig;', '&Oslash;', '&Aring;','&aelig;', '&oslash;', '&aring;');
-
-        return str_replace($chars_to_replace, $replacement_chars, $string);
-    }
-
     public function create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids)
     {
         try
@@ -285,15 +277,14 @@ class UserHandler extends Handler
         return $elements;
     }
 
-    private function random_char($iterations)
+    public function random_char($iterations)
     {
-        $int = rand(0,36);
         $a_z = "abcdefghijklmnopqrstuvwxyz1234567890";
         $rand_letter = "";
         
         for($i=0; $i<$iterations; $i++)
         {
-            $rand_letter .= $a_z[$int];
+            $rand_letter .= $a_z{rand(0, strlen($a_z)-1)};
         }
 
         return $rand_letter;
@@ -322,9 +313,9 @@ class UserHandler extends Handler
         }
     }
 
-    private function create_class_affiliation($classes)
+    private function create_class_affiliation($classes, $id = null)
     {
-        $user_id = DbHandler::get_instance()->last_inserted_id();
+        $user_id = isset($id) ? $id : DbHandler::get_instance()->last_inserted_id();
         $query = "INSERT INTO user_class (users_id, class_id) VALUES ";
 
         if(count($classes)>0)
@@ -527,66 +518,69 @@ class UserHandler extends Handler
         }
     }
 
-    public function edit_account($user_id, $firstname = null, $surname = null, $email = null, $description = null, $image = null)
+    public function edit_account($user_id, $firstname, $surname, $email, $description, $password, $class_ids = null)
     {
         try
         {
             $this->validate_user_logged_in();
 
-            if(!empty($firstname) && $firstname != $this->_user->firstname)
+            if(!RightsHandler::has_user_right("ACCOUNT_EDIT_OTHER"))
             {
-                if(!RightsHandler::has_user_right("CHANGE_FULL_NAME"))
-                {
-                    throw new Exception("INSUFFICIENT_RIGHTS");
-                }
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
 
+            if(!$this->get_user_by_id($user_id))
+            {
+                throw new Exception("USER_DOESNT_EXIST");
+            }
+
+            $user = $this->temp_user;
+            $this->temp_user = null;
+
+            $has_password = false;
+            $has_classes = false;
+
+            if(!empty($firstname) && $firstname != $user->firstname)
+            {
                 $this->check_if_valid_string($firstname, false);
-                $this->_user->firstname = $firstname;
+                $user->firstname = $firstname;
             }
 
-            if(!empty($surname) && $surname != $this->_user->surname)
+            if(!empty($surname) && $surname != $user->surname)
             {
-                if(!RightsHandler::has_user_right("CHANGE_FULL_NAME"))
-                {
-                    throw new Exception("INSUFFICIENT_RIGHTS");
-                }
-
                 $this->check_if_valid_string($surname, false);
-                $this->_user->surname = $surname;
+                $user->surname = $surname;
             }
 
-            if(!empty($description))
+            if(!empty($description) && $description != $user->description)
             {
                 if(!is_string($description))
                 {
                     throw new Exception("USER_INVALID_DESCRIPTION");
                 }
-                $this->_user->description = $description;
+                $user->description = $description;
             }
 
-            if(!empty($email))
+            if(!empty($email) && $email != $user->email)
             {
                 $this->check_if_email($email);
-
-
-                if($email != $this->_user->email)
-                {
-                    $this->mail_exists($email);
-                }
-
-                $this->_user->email = $email;
+                $this->mail_exists($email);
+                $user->email = $email;
             }
 
-            if(!empty($image))
+            if(!empty($password) && strlen($password) > 5)
             {
-                if(!is_numeric($image))
-                {
-                    throw new Exception("USER_INVALID_IMAGE_ID");
-                }
-                $this->_user->image_id = $image;
+                $this->is_valid_input_with_num($password);
+                $user->unhashed_password = $password;
+                $has_password = true;
             }
 
-            foreach(get_object_vars($this->_user) as $key => $value)
+            if(!empty($class_ids) && $user->user_type_id > 2)
+            {
+                $has_classes = true;
+            }
+
+            foreach(get_object_vars($user) as $key => $value)
             {
                 if(!isset($key))
                 {
@@ -594,16 +588,39 @@ class UserHandler extends Handler
                 }
             }
 
-            if(!DbHandler::get_instance()->query("UPDATE users SET firstname = :firstname,
-                                                  surname = :surname, description = :description,
-                                                  email = :email, image_id = :image WHERE id = :id",
-                                                  $this->_user->firstname, $this->_user->surname, $this->_user->description,
-                                                  $this->_user->email, $this->_user->image_id, $this->_user->id))
+            if($has_password)
             {
-                throw new Exception("DATABASE_UNKNOWN_ERROR");
+                $hashed_password = hash("sha256", $user->unhashed_password . " " . $user->username);
+                if(!DbHandler::get_instance()->query("UPDATE users SET firstname = :firstname,
+                                                  surname = :surname, description = :description,
+                                                  email = :email, password = :password WHERE id = :id",
+                                                  $user->firstname, $user->surname, $user->description,
+                                                  $user->email, $hashed_password, $user->id))
+                {
+                    throw new Exception("DATABASE_UNKNOWN_ERROR");
+                }
+            }
+            else
+            {
+                if(!DbHandler::get_instance()->query("UPDATE users SET firstname = :firstname,
+                                                  surname = :surname, description = :description,
+                                                  email = :email WHERE id = :id",
+                                                  $user->firstname, $user->surname, $user->description,
+                                                  $user->email, $user->id))
+                {
+                    throw new Exception("DATABASE_UNKNOWN_ERROR");
+                }
             }
 
-            SessionKeyHandler::add_to_session('user', $this->_user, true);
+            if($has_classes)
+            {
+                if(!DbHandler::get_instance()->query("DELETE FROM user_class WHERE users_id = :id", $user->id))
+                {
+                    throw new Exception("DATABASE_UNKNOWN_ERROR");
+                }
+
+                $this->create_class_affiliation($class_ids, $user->id);
+            }
 
             return true;
         }
@@ -640,10 +657,20 @@ class UserHandler extends Handler
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
             
-            $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id INNER JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id";
+            $users = array();
             
+            if(RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id LEFT JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id";
+                $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language());
+            }
+            else
+            {
+                $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id INNER JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id AND school.id = :school_id";
+                $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language(), $this->_user->school_id);
+            }
 
-            $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language());
+
             foreach ($users as $value) {
                 $this->users[] = new User($value);
             }
@@ -729,7 +756,7 @@ class UserHandler extends Handler
         $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
     }
 
-    pUBLIC function get_user_by_id($id)
+    public function get_user_by_id($id)
     {
         try
         {

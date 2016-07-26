@@ -28,13 +28,15 @@ $schoolHandler->get_school_types();
 
                          <div class="widget-body">
                  
-                            <form method="POST" action="" id="create_single" url="create_account.php?step=create_user" name="create_single_user">
+                            <form method="POST" action="" id="edit_account_form" url="edit_account.php?step=update" name="edit_account">
                                 <div class="col-md-6">
-                                    
                                     <div class="col-md-12">
                                         <div class="form-group m-b-sm">
                                             <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?></label>
                                             <div class="">
+                                                <input id="edit_user_id" name="user_id" type="hidden" value="<?php echo $userHandler->temp_user->id;?>">
+                                                <input id="edit_school_id" name="school_id" type="hidden" value="<?php echo $userHandler->temp_user->school_id;?>">
+                                                <input id="edit_type_id" name="type_id" type="hidden" value="<?php echo $userHandler->temp_user->user_type_id;?>">
                                                 <input class="form-control" id="edit_first_name" type="text" name="first_name" placeholder="<?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?>" value="<?php echo $userHandler->temp_user->firstname; ?>">
                                             </div>
                                         </div>
@@ -68,33 +70,47 @@ $schoolHandler->get_school_types();
                                         <div class="form-group m-b-sm">
                                             <label class="control-label" for="password"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
                                             <div style="display: table-cell;width: 100%;">
-                                                <input readonly="" class="form-control" id="edit_email" type="text" name="email" value="********">
+                                                <input readonly="" class="form-control" id="edit_password" type="text" name="password" value="" placeholder="********">
                                                 
                                             </div>
                                             <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
-                                                <input type="button" name="generate_password" id="generate_password_submit" value="<?php echo TranslationHandler::get_static_text("GEN_PASSWORD"); ?>" class="m-l-sm pull-right btn btn-default">
+                                                <input type="button" name="generate_password" id="generate_password_submit" value="<?php echo TranslationHandler::get_static_text("GEN_PASSWORD"); ?>" class="m-l-sm pull-right btn btn-default update_acc_generate_pass">
                                             </div>
                                         </div>
                                         
-                                        <div class="form-group m-b-sm">
-                                            <label class="control-label" for="class_name"><?php echo TranslationHandler::get_static_text("CLASS_NAME"); ?></label>
-                                            <div class="">
-                                                <select name="class_name[]" id="edit_class_name" class="form-control" data-plugin="select2" multiple>
-                                                    <?php
-                                                        $classHandler->get_classes_by_school_id($userHandler->temp_user->school_id);
-                                                        $possible_classes = $classHandler->classes;
-                                                        $classHandler->get_classes_by_user_id($userHandler->temp_user->id);
-                                                        $user_classes = $classHandler->classes;
+                                        <?php
+                                            if($userHandler->temp_user->user_type_id > 2)
+                                            {
+                                        ?>
+                                            <div class="form-group m-b-sm">
+                                                <label class="control-label" for="class_name"><?php echo TranslationHandler::get_static_text("CLASS_NAME"); ?></label>
+                                                <div class="">
+                                                    <select name="class_name[]" id="edit_class_name" class="form-control" data-plugin="select2" multiple>
+                                                        <?php
+                                                            $classHandler->get_classes_by_school_id($userHandler->temp_user->school_id);
+                                                            $possible_classes = $classHandler->classes;
 
-                                                        foreach ($possible_classes as $class) 
-                                                        {
-                                                            $insert = in_array($class, $user_classes) ? " selected " : ""; 
-                                                            echo '<option ' . $insert . 'value = "' . $class->id . '">' . $class->title . '</option>';
-                                                        }
-                                                    ?>
-                                                </select>
+                                                            $classHandler->get_classes_by_user_id($userHandler->temp_user->id);
+                                                            $user_classes = $classHandler->classes;
+
+                                                            $class_ids = array();
+                                                            foreach($user_classes as $class)
+                                                            {
+                                                                $class_ids[] = $class->id;
+                                                            }
+
+                                                            foreach ($possible_classes as $class)
+                                                            {
+                                                                $insert = in_array($class->id, $class_ids) ? " selected " : "";
+                                                                echo '<option ' . $insert . 'value = "' . $class->id . '">' . $class->title . '</option>';
+                                                            }
+                                                        ?>
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
+                                        <?php
+                                            }
+                                        ?>
                                     </div>
                                 </div>
 
@@ -102,7 +118,7 @@ $schoolHandler->get_school_types();
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("CREATE_SUBMIT"); ?>" class="pull-right btn btn-default create_submit_info">
+                                        <input type="button" name="submit" id="edit_account_submit" value="<?php echo TranslationHandler::get_static_text("ACCOUNT_UPDATE"); ?>" class="pull-right btn btn-default update_account_submit">
                                     </div>
                                 </div>
                             </form>

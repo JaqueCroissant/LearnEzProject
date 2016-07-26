@@ -132,8 +132,7 @@ class ClassHandler extends Handler {
             $this->verify_user_id($user_id);
             $this->verify_user_has_class($user_id);
 
-            $query = "SELECT class.title, class.description, class_year.year as class_year,
-                            class.start_date, class.end_date, class.open
+            $query = "SELECT class.*
                             FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
                             INNER JOIN user_class on class.id = user_class.class_id
                             WHERE user_class.users_id = :user_id";

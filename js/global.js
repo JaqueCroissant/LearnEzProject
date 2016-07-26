@@ -208,6 +208,20 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on("click", ".test_button_stuff", function (event) {
+        event.preventDefault();
+        initiate_submit_get($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
 
     $(document).on("click", ".create_submit_csv", function (event) {
 

@@ -332,7 +332,12 @@ $(document).ready(function () {
             $(".create_select_school").css("visibility", "visible");
         } else {
             event.preventDefault;
+
             $(".create_select_school").css("visibility", "visible");
+            if($(".create_select_school").find("option:selected").val() !== "")
+            {
+                $(".create_select_class").css("visibility", "visible");
+            }
         }
     });
 

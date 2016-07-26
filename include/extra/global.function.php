@@ -8,6 +8,15 @@ function array_value_exists_in_key($array, $key, $val) {
     return false;
 }
 
+function array_group_by_key(array $arr) {
+    $result = array();
+    foreach ($arr as $i) {
+      $key = key($i);
+      $result[$key][] = $i;
+    }  
+    return $result;
+}
+
 function generate_in_query($array) {
     $in_array = "";
     for($i = 0; $i < count($array); $i++) {
@@ -15,6 +24,23 @@ function generate_in_query($array) {
     }
     return $in_array;
 }
+
+function merge_array_recursively($array1, $array2, $overwrite = true) 
+{ 
+    foreach($array2 as $key=>$val) 
+    { 
+        if(isset($array1[$key])) 
+        { 
+            if(is_array($val)) 
+                $array1[$key] = merge_array_recursively($array1[$key], $val); 
+            elseif((is_string($array1[$key]) || is_int($array1[$key])) && $overwrite) 
+                $array1[$key] = $val; 
+        } 
+        else 
+            $array1[$key] = $val; 
+    } 
+    return $array1; 
+} 
 
 function time_elapsed($ptime)
 {

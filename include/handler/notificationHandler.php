@@ -317,7 +317,7 @@
                     foreach ($dbData as $value) {
                         array_push($array, array($value["name"] => $value["value"], "arg_id" => $value["arg_id"]));
                     }
-                    $grouped = $this->array_group_by_key($array);
+                    $grouped = array_group_by_key($array);
                     $final_array = array();
                     foreach ($grouped as $k => $g) {
                         switch ($k) {
@@ -333,15 +333,6 @@
                 $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
-        
-        private function array_group_by_key(array $arr) {
-            $result = array();
-            foreach ($arr as $i) {
-              $key = key($i);
-              $result[$key][] = $i;
-            }  
-            return $result;
-          }
         
         private function change_object_data($name, $table, $to_get, $filtered_array){
             $objects = array_unique(array_map(function($e) use($name) {return $e[$name];}, $filtered_array));

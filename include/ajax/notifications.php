@@ -20,7 +20,7 @@ function get_new_notifications(){
     }
     else {
         $jsonArray["status_value"] = false;
-        $jsonArray["error"] = $notificationHandler->error->title;
+        $jsonArray["error"] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
     }
     echo json_encode($jsonArray);
 }
@@ -29,7 +29,7 @@ function get_notifications(){
     $notificationHandler = new NotificationHandler();
     if (!$notificationHandler->load_notifications(0, 7)) {
         $json_array["status_value"] = false;
-        $json_array["error"] = $notificationHandler->error->title;
+        $json_array["error"] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
     }
     else {
         $data = $notificationHandler->get_notifications();
@@ -72,7 +72,7 @@ function get_more_notifications(){
         if (count($data) != 5) {
             $json_array["status_text"] = "<div style='text-align:center;font-style:italic;padding:6px 0 6px 0;width:100%;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
         }
-        $json_array['error'] = (isset($notificationHandler->error) ? $notificationHandler->error->title : null);
+        $json_array['error'] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
         echo json_encode($json_array);
     }
 }
@@ -96,7 +96,7 @@ function delete(){
     }
     else {
         $json_array["status_value"] = false;
-        $json_array["error"] = $notificationHandler->error->title;
+        $json_array["error"] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
     }
     
     echo json_encode($json_array);
@@ -113,7 +113,7 @@ function read(){
         }
         else {
             $json_array["status_value"] = false;
-            $json_array["error"] = $notificationHandler->error->title;
+            $json_array["error"] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
         }
     }
     else {

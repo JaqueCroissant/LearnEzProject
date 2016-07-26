@@ -1,56 +1,42 @@
 <?php
     class CourseHandler extends Handler
     {
-        public function create_course($course = array()) {
+        public function create_course($os_id = 0, $points = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
             try 
             {
                 if (!$this->user_exists()) {
                     throw new exception("USER_NOT_LOGGED_IN");
                 }
 
-                if(!RightsHandler::has_user_right("CREATE_COURSE")) {
+                if(!RightsHandler::has_user_right("COURSE_CREATE")) {
                     throw new exception("INSUFFICIENT_RIGHTS");
                 }
                 
-                if(!is_array($course) || empty($course)) {
+                if(empty($os_id) || !is_numeric($os_id) || (!is_numeric($points) && !is_int((int)$points))) {
                     throw new exception("INVALID_COURSE_INPUT");
                 }
                 
-                $language_ids = array();
-                $current_course;
-                foreach($course as $value) {
-                    if(!is_a($value, "Course")) {
-                        throw new exception("INVALID_COURSE_INPUT");
-                    }
-                    
-                    if(empty($value->os_id) || empty($value->title) || empty($value->description) || empty($value->language_id)) {
-                        throw new exception("INVALID_COURSE_INPUT");
-                    }
-                    
-                    if(!is_numeric($value->os_id) || !is_numeric($value->language_id) || (!empty($value->points) && !is_numeric($value->points))) {
-                        throw new exception("INVALID_COURSE_INPUT");
-                    }
-                    
-                    if(!in_array($value->language_id, $language_ids)) {
-                        $language_ids[] = $value->language_id;
-                    }
-                    
-                    $current_course = $value;
+                if(!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
+                    throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+                }
+                
+                $titles = $this->assign_language_id($titles, $language_ids, "title");
+                $descriptions = $this->assign_language_id($descriptions, $language_ids, "description");
+                $translation_texts = merge_array_recursively($titles, $descriptions);
+
+                if(DbHandler::get_instance()->count_query("SELECT id FROM course_os WHERE id = :os_id", $os_id) < 1) {
+                    throw new exception("INVALID_COURSE_INPUT");
                 }
                 
                 if(DbHandler::get_instance()->count_query("SELECT id FROM language WHERE id IN (".generate_in_query($language_ids).")") != count($language_ids)) {
-                    throw new exception("INVALID_COURSE_INPUT");
+                    throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
                 }
                 
-                if(DbHandler::get_instance()->count_query("SELECT id FROM course_os WHERE id = :os_id", $current_course->os_id) < 1) {
-                    throw new exception("INVALID_COURSE_INPUT");
-                }
-                
-                DbHandler::get_instance()->query("INSERT INTO course (os_id, points) VALUES (:os_id, :points)", $current_course->os_id, $current_course->points);
+                DbHandler::get_instance()->query("INSERT INTO course (os_id, points) VALUES (:os_id, :points)", $os_id, $points);
                 $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
                 
-                foreach($course as $value) {
-                    DbHandler::get_instance()->query("INSERT INTO translation_course (course_id, language_id, title, description) VALUES (:course_id, :language_id, :title, :description)", $last_inserted_id, $value->language_id, $value->title, $value->description);
+                foreach($translation_texts as $key => $value) {
+                    DbHandler::get_instance()->query("INSERT INTO translation_course (course_id, language_id, title, description) VALUES (:course_id, :language_id, :title, :description)", $last_inserted_id, $key, $value["title"], $value["description"]);
                 }
                 return true;
             }
@@ -59,6 +45,26 @@
                 $this->error = ErrorHandler::return_error($ex->getMessage());
             }
             return false;
+        }
+        
+        private function assign_language_id($elements = array(), &$language_ids = array(), $key_name = null) {
+            if(count($elements) != count($language_ids)) {
+                return array();
+            }
+            
+            $array = array();
+            for($i = 0; $i < count($language_ids); $i++) {
+                if(empty($elements[$i])) {
+                    throw new exception("INVALID_INPUT");
+                }
+                
+                if($key_name != null) {
+                    $array[$language_ids[$i]][$key_name] = $elements[$i];
+                    continue;
+                }
+                $array[$language_ids[$i]] = $elements[$i];
+            }
+            return $array;
         }
         
         

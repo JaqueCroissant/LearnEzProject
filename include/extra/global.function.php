@@ -16,6 +16,23 @@ function generate_in_query($array) {
     return $in_array;
 }
 
+function merge_array_recursively($array1, $array2, $overwrite = true) 
+{ 
+    foreach($array2 as $key=>$val) 
+    { 
+        if(isset($array1[$key])) 
+        { 
+            if(is_array($val)) 
+                $array1[$key] = merge_array_recursively($array1[$key], $val); 
+            elseif((is_string($array1[$key]) || is_int($array1[$key])) && $overwrite) 
+                $array1[$key] = $val; 
+        } 
+        else 
+            $array1[$key] = $val; 
+    } 
+    return $array1; 
+} 
+
 function time_elapsed($ptime)
 {
     $etime = time() - strtotime($ptime);

@@ -97,7 +97,7 @@ $courseHandler = new CourseHandler();
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm">
+                                        <input type="button" name="submit" id="create_course_button" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default submit_create_course">
                                     </div>
                                 </div>
                             </form>

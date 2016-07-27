@@ -17,7 +17,7 @@ $schoolHandler->get_school_types();
             <hr class="widget-separator">
             <div class="widget-body">
                 <?php if (RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
-                    <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, columnDefs:[{orderable: false, targets: [7,8]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                    <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, columnDefs:[{orderable: false, targets: [6,7]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                            aria-describedby="default-datatable_info">
                         <thead>
                             <tr role="row">
@@ -29,10 +29,10 @@ $schoolHandler->get_school_types();
                                 <th><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
                                 <th><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                    <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                 <?php } ?>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                    <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                 <?php } ?>
 
                                 <th hidden></th>
@@ -48,10 +48,10 @@ $schoolHandler->get_school_types();
                                 <th><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
                                 <th><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                    <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                 <?php } ?>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                    <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                 <?php } ?>
 
                                 <th hidden></th>

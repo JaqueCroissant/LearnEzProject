@@ -22,7 +22,7 @@ $userHandler->get_all_users();
                     <!-- Tab -->
                     <div class="my_fade my_tab" id="find_account_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [6,7]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [5,6]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -32,10 +32,10 @@ $userHandler->get_all_users();
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
                                         <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                            <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                            <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                         <?php } ?>
                                         <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                            <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                            <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
                                         <th hidden></th>
                                     </tr>
@@ -48,10 +48,10 @@ $userHandler->get_all_users();
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
                                         <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                            <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                            <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                         <?php } ?>
                                         <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                            <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                            <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
                                         <th hidden></th>
                                     </tr>

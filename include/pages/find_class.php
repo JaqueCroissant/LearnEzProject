@@ -28,10 +28,10 @@ $classHandler->get_all_classes();
                             <th><?php echo TranslationHandler::get_static_text("BEGIN"); ?></th>
                             <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
                             <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                             <?php } ?>
                             <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                             <?php } ?>
                             <th hidden></th>
                         </tr>
@@ -47,10 +47,10 @@ $classHandler->get_all_classes();
                             <th><?php echo TranslationHandler::get_static_text("BEGIN"); ?></th>
                             <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
                             <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                <th><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                             <?php } ?>
                             <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                <th><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                             <?php } ?>
                             <th hidden></th>
                         </tr>

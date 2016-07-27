@@ -4,6 +4,7 @@ $(document).on("click", ".submit_edit_user_info", function (event) {
     initiate_submit_form($(this), function () {
         show_status_bar("error", ajax_data.error);
     }, function () {
+        show_status_bar("success", ajax_data.success);
         $(".username").html(ajax_data.full_name);
         $(".current-avatar-image").attr("src", "assets/images/profile_images/" + ajax_data.avatar_id + ".png");
     });

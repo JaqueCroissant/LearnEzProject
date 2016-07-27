@@ -479,3 +479,31 @@ a .menu_header {
     margin-bottom:13px;
     border:none !important;
 }
+
+#course_content {
+    width:1024px;
+    height:740px;
+}
+
+#iframe_content {
+    overflow: hidden;
+    padding:0;
+    margin:0;
+    width:100%;
+    text-align: center;
+}
+
+.course_iframe {
+    width:1024px;
+    height:740px;
+    overflow:hidden;
+    border:none;
+    
+}
+
+.course_bar {
+    height:30px;
+    background-color: blue;
+    margin:0 auto;
+    padding:0;
+}

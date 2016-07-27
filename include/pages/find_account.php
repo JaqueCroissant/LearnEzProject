@@ -22,7 +22,7 @@ $userHandler->get_all_users();
                     <!-- Tab -->
                     <div class="my_fade my_tab" id="find_account_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [6,7]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid" 
+                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [6,7]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -56,40 +56,38 @@ $userHandler->get_all_users();
                                         <th hidden></th>
                                     </tr>
                                 </tfoot>
+
                                 <tbody>
                                     <?php
                                     if (RightsHandler::has_user_right("ACCOUNT_FIND")) {
-                                        $i = 0;
+
                                         foreach ($userHandler->users as $value) {
-                                            $i++;
+
                                             ?>
                                             <tr class="clickable_row">
-                                                <td class="click_me"><?php echo $value->firstname . " " . $value->surname; ?></td>
+
+                                                <td class="click_me" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? substr($value->firstname . " " . $value->surname, 0, 20) : $value->firstname . " " . $value->surname); ?></td>
                                                 <td class="click_me"><?php echo $value->username; ?></td>
                                                 <td class="click_me"><?php echo $value->user_type_title; ?></td>
-                                                <td class="click_me"><?php echo $value->email; ?></td>
-                                                <td class="click_me"><?php echo $value->school_name; ?></td>
+                                                <td class="click_me" data-search="<?php echo $value->email ?>"><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>
+                                                <td class="click_me" data-search="<?php echo $value->school_name ?>"><?php echo (strlen($value->school_name) > 16 ? substr($value->school_name, 0, 16) : $value->school_name); ?></td>
                                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                                     <td>
-                                                        <form method="post" id="account_open_<?php echo $i; ?>" action="" url="find_account.php">
-                                                            <div class="checkbox" id="account_open_<?php echo $i; ?>_div">
-                                                                <input type="text" class="account_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="account_open_<?php echo $i; ?>_id_hidden">
-                                                                <input type="text" hidden value="<?php echo $value->open; ?>" name="account_open" id="account_open_<?php echo $i; ?>_hidden">
-                                                                <input type="hidden" name="state" value="update_open_state">
-                                                                <input class="checkbox-circle checkbox-dark btn_class_open" id="account_open_<?php echo $i; ?>_field" type="checkbox" 
+                                                        <form method="post" id="account_open_<?php echo $value->id; ?>" action="" url="find_account.php">
+                                                            <div class="checkbox" id="account_open_<?php echo $value->id; ?>_div">
+                                                                <input type="hidden" name="id" value="<?php echo $value->id; ?>">
+                                                                <input class="checkbox-circle checkbox-dark btn_account_open" id="account_open_<?php $value->id; ?>_field" type="checkbox"
                                                                        <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
-                                                                <label for="account_open_<?php echo $i; ?>_field"></label>
-                                                                <input type='button' name="submit" hidden="">
                                                             </div>
                                                         </form>
                                                     </td>
                                                 <?php } ?>
                                                 <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                                    <td>
+                                                    <td align="center">
                                                         <div class="">
-                                                            <i class="fa fa-edit fa-2x edit_account m-r-md change_page" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
+                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
                                                             <?php if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
-                                                                <i class="fa fa-times fa-fw fa-2x delete_account" account_id="<?php echo $value->id; ?>" state="delete_account" id="delete_account_btn" style="font-size: 2.5em !important;"></i>
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete delete_account" account_id="<?php echo $value->id; ?>" state="delete_account" id="delete_account_btn" style=""></i>
                                                             <?php } ?>
                                                         </div>
                                                     </td>
@@ -128,6 +126,35 @@ $userHandler->get_all_users();
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="close_school_alert" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <p>
+            <?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?>
+        </p>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+    </div>
+</div>
+<div id="open_school_alert" class="panel panel-danger alert_panel hidden">
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <p>
+            <?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?>
+        </p>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
     </div>
 </div>
 

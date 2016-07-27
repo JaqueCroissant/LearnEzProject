@@ -296,14 +296,93 @@ class UserHandler extends Handler
         return $count > 1;
     }
 
-    private function delete_user($user_object)
+    public function set_user_availability($user_id, $is_open)
     {
         try
         {
-            if(!DbHandler::get_instance()->query("DELETE FROM users WHERE id = :id", $user_object->id))
+            $this->validate_user_logged_in();
+
+            if(!RightsHandler::has_user_right("ACCOUNT_AVAILABILITY"))
             {
-                throw new Exception("DATABASE_UNKNOWN_ERROR");
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
+
+            if(empty($user_id) || !is_numeric($user_id))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+
+            if(empty($is_open) ||!is_bool($is_open))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+
+            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id AND school_id = :school", $user_id, $this->_user->school_id);
+
+                if($count != 1)
+                {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+            }
+
+            if(!DbHandler::get_instance()->query("UPDATE users SET open = :is_open WHERE id = :id", $is_open, $user_id))
+            {
+                    throw new Exception("DATABASE_UNKNOWN_ERROR");
+            }
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    public function delete_user($user_id)
+    {
+        try
+        {
+            $this->validate_user_logged_in();
+
+            if(!RightsHandler::has_user_right("ACCOUNT_DELETE"))
+            {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if(empty($user_id) || !is_numeric($user_id))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+
+            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id AND school_id = :school", $user_id, $this->_user->school_id);
+
+                if($count != 1)
+                {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+            }
+
+            $queries = array();
+            $queries[] = "DELETE FROM users WHERE id = :id";
+            $queries[] = "DELETE FROM user_class WHERE users_id = :id";
+            $queries[] = "DELETE FROM user_course_lecture WHERE user_id = :id";
+            $queries[] = "DELETE FROM user_course_test WHERE user_id = :id";
+            $queries[] = "DELETE FROM user_notifications WHERE user_id = :id";
+            $queries[] = "DELETE FROM user_settings WHERE user_id = :id";
+
+            foreach($queries as $query)
+            {
+                if(!DbHandler::get_instance()->query($query, $user_id))
+                {
+                    throw new Exception("DATABASE_UNKNOWN_ERROR");
+                }
+            }
+
             return true;
         }
         catch(Exception $ex)

@@ -185,7 +185,6 @@ $classHandler = new ClassHandler();
                                 <div class="form-group">
                                     <div class="col-md-12">
                                         <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("CREATE_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm create_submit_info">
-                                        <input type="button" name="submit" id="test_submit" value="PUSH ME!" class="test_button_stuff change_page" page="create_account" args="&school_id=2">
                                     </div>
                                 </div>
                             </form>

@@ -74,7 +74,7 @@ $classHandler->get_all_classes();
                                 <td class="click_me"><?php echo $value->end_date; ?></td>
 
                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                    <td>
+                                    <td align="center">
                                         <form method="post" id="class_open_<?php echo $i; ?>" action="" url="edit_class.php">
                                             <div class="checkbox" id="class_open_<?php echo $i; ?>_div">
                                                 <input type="text" class="class_id_hidden" hidden value="<?php echo $value->id; ?>" name="class_id" id="class_open_<?php echo $i; ?>_id_hidden">

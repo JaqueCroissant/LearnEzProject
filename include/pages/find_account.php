@@ -72,13 +72,15 @@ $userHandler->get_all_users();
                                                 <td class="click_me" data-search="<?php echo $value->email ?>"><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>
                                                 <td class="click_me" data-search="<?php echo $value->school_name ?>"><?php echo (strlen($value->school_name) > 16 ? substr($value->school_name, 0, 16) : $value->school_name); ?></td>
                                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                                                    <td>
-                                                        <form method="post" id="account_open_<?php echo $value->id; ?>" action="" url="find_account.php">
-                                                            <div class="checkbox" id="account_open_<?php echo $value->id; ?>_div">
-                                                                <input type="hidden" name="id" value="<?php echo $value->id; ?>">
-                                                                <input class="checkbox-circle checkbox-dark btn_account_open" id="account_open_<?php $value->id; ?>_field" type="checkbox"
+                                                    <td align="center">
+                                                        <form method="post" id="alert_form_<?php echo $value->id; ?>" action="" url="edit_account.php?step=set_availability">
+                                                            <input type="hidden" name="user_id" value="<?php echo $value->id; ?>">
+                                                            <div class="checkbox">
+                                                                <input class="checkbox-circle checkbox-dark btn_alertbox" element_id="<?php echo $value->id; ?>" type="checkbox"
                                                                        <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
+                                                                <label></label>
                                                             </div>
+                                                            <input type="hidden" name="submit" value="submit"></input>
                                                         </form>
                                                     </td>
                                                 <?php } ?>
@@ -91,16 +93,7 @@ $userHandler->get_all_users();
                                                             <?php } ?>
                                                         </div>
                                                     </td>
-<!--                                                    <td>
-                                                        <form method="post" action="" url="find_account.php" id="account_delete_<?php echo $i; ?>">
-                                                            <div class="p-l-0" id="account_delete_<?php echo $i; ?>_div">
-                                                                <input type="text" class="account_id_hidden" hidden value="<?php echo $value->id; ?>" name="school_id" id="account_id_delete_hidden_<?php echo $i; ?>">
-                                                                <input type="text" class="account_delete_hidden" hidden value="1" name="delete_account">
-                                                                <input type="hidden" name="state" value="delete_school">
-                                                                <input class="btn-danger delete_account" id="account_delete_<?php echo $i; ?>_btn" type="button" name="submit" value="<?php echo TranslationHandler::get_static_text("DELETE") ?>">
-                                                            </div>
-                                                        </form>
-                                                    </td>-->
+
                                                 <?php } ?>
                                                 <td class="hidden"><?php echo $value->id; ?></td>
                                             </tr>
@@ -129,31 +122,17 @@ $userHandler->get_all_users();
     </div>
 </div>
 
-<div id="close_school_alert" class="panel panel-danger alert_panel hidden" >
+<div style="display:none;" id="open_text"><?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?></div>
+<div style="display:none;" id="close_text"><?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?></div>
+
+<div id="alertbox" class="panel panel-danger alert_panel hidden" >
     <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
     <div class="panel-body">
-        <p>
-            <?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?>
-        </p>
     </div>
     <div class="panel-footer p-h-sm">
         <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg accept_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
-            <input class="btn btn-default btn-sm p-v-lg cancel_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
-        </p>
-    </div>
-</div>
-<div id="open_school_alert" class="panel panel-danger alert_panel hidden">
-    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
-    <div class="panel-body">
-        <p>
-            <?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?>
-        </p>
-    </div>
-    <div class="panel-footer p-h-sm">
-        <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg accept_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
-            <input class="btn btn-default btn-sm p-v-lg cancel_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg accept_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
         </p>
     </div>
 </div>

@@ -69,6 +69,25 @@ if(isset($_POST))
             echo json_encode($jsonArray);
             die();
         break;
+
+        case 'set_availability':
+
+            $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : "";
+
+            if($userHandler->set_user_availability($user_id))
+            {
+                $jsonArray['success'] = TranslationHandler::get_static_text("ACCOUNT_UPDATED");
+                $jsonArray['status_value'] = true;
+            }
+            else
+            {
+                $jsonArray['error'] = $userHandler->error->title;
+                $jsonArray['status_value'] = false;
+            }
+
+            echo json_encode($jsonArray);
+            die();
+        break;
     }
     
     

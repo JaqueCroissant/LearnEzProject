@@ -9,6 +9,7 @@
 <script src="js/notifications.js" type="text/javascript"></script>
 <script src="js/settings.js" type="text/javascript"></script>
 <script src="js/school.js" type="text/javascript"></script>
+<script src="js/alertbox.js" type="text/javascript"></script>
 <script src="js/class.js" type="text/javascript"></script>
 <script src="js/course.js" type="text/javascript"></script>
 <link href="css/css.css" rel="stylesheet" type="text/css"/>

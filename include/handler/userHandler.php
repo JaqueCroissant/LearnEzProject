@@ -296,7 +296,7 @@ class UserHandler extends Handler
         return $count > 1;
     }
 
-    public function set_user_availability($user_id, $is_open)
+    public function set_user_availability($user_id)
     {
         try
         {
@@ -312,11 +312,6 @@ class UserHandler extends Handler
                 throw new Exception("INVALID_INPUT");
             }
 
-            if(empty($is_open) ||!is_bool($is_open))
-            {
-                throw new Exception("INVALID_INPUT");
-            }
-
             if(!RightsHandler::has_user_right("SCHOOL_FIND"))
             {
                 $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id AND school_id = :school", $user_id, $this->_user->school_id);
@@ -327,7 +322,7 @@ class UserHandler extends Handler
                 }
             }
 
-            if(!DbHandler::get_instance()->query("UPDATE users SET open = :is_open WHERE id = :id", $is_open, $user_id))
+            if(!DbHandler::get_instance()->query("UPDATE users SET open = NOT open WHERE id = :id", $user_id))
             {
                     throw new Exception("DATABASE_UNKNOWN_ERROR");
             }

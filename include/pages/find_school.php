@@ -72,7 +72,7 @@ $schoolHandler->get_school_types();
                                     <td class="click_me"><?php echo $value->subscription_end; ?></td>
                                     <td class="click_me"><?php echo $value->max_students; ?></td>
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                        <td>
+                                        <td align="center">
                                             <form method="post" id="school_open_<?php echo $i; ?>" action="" url="edit_school.php">
                                                 <div class="checkbox" id="school_open_<?php echo $i; ?>_div">
                                                     <input type="text" class="school_id_hidden" hidden value="<?php echo $value->id; ?>" name="school_id" id="school_open_<?php echo $i; ?>_id_hidden">

@@ -180,7 +180,7 @@ class ClassHandler extends Handler {
         }
     }
 
-    public function update_class_open($class_id, $open_int) {
+    public function update_class_open($class_id) {
         try {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
@@ -189,12 +189,12 @@ class ClassHandler extends Handler {
             if (!RightsHandler::has_user_right("CLASS_EDIT")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
-            $this->verify_class_open($class_open);
+
             $this->verify_class_exists($class_id);
 
-            $query = "UPDATE class SET open=:open WHERE id=:id";
+            $query = "UPDATE class SET open= NOT open WHERE id=:id";
 
-            if (!DbHandler::get_instance()->query($query, $open_int, $class_id)) {
+            if (!DbHandler::get_instance()->query($query, $class_id)) {
                 throw new Exception("DEFAULT");
             }
 

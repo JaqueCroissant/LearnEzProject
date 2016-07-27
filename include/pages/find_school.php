@@ -73,16 +73,14 @@ $schoolHandler->get_school_types();
                                     <td class="click_me"><?php echo $value->max_students; ?></td>
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <td align="center">
-                                            <form method="post" id="school_open_<?php echo $i; ?>" action="" url="edit_school.php">
-                                                <div class="checkbox" id="school_open_<?php echo $i; ?>_div">
-                                                    <input type="text" class="school_id_hidden" hidden value="<?php echo $value->id; ?>" name="school_id" id="school_open_<?php echo $i; ?>_id_hidden">
-                                                    <input type="text" hidden value="<?php echo $value->open; ?>" name="school_open" id="school_open_<?php echo $i; ?>_hidden">
-                                                    <input type="hidden" name="state" value="update_open_state">
-                                                    <input class="checkbox-circle checkbox-dark btn_school_open" id="school_open_<?php echo $i; ?>_field" type="checkbox" 
+                                            <form method="post" id="alert_form_<?php echo $value->id;; ?>" action="" url="edit_school.php?state=set_availability">
+                                                <input type="hidden" name="school_id" value="<?php echo $value->id; ?>">
+                                                <div class="checkbox">
+                                                    <input class="checkbox-circle checkbox-dark btn_alertbox" element_id="<?php echo $value->id; ?>" type="checkbox"
                                                            <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
-                                                    <label for="school_open_<?php echo $i; ?>_field"></label>
-                                                    <input type='button' name="submit" hidden="">
+                                                    <label></label>
                                                 </div>
+                                                <input type="hidden" name="submit" value="submit"></input>
                                             </form>
                                         </td>
                                     <?php } ?>
@@ -110,31 +108,17 @@ $schoolHandler->get_school_types();
     </div>
 </div>
 
-<div id="close_account_alert" class="panel panel-danger alert_panel hidden" >
+<div style="display:none;" id="open_text"><?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("ACCOUNT")) . "?"; ?></div>
+<div style="display:none;" id="close_text"><?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("ACCOUNT")) . "?"; ?></div>
+
+<div id="alertbox" class="panel panel-danger alert_panel hidden" >
     <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
     <div class="panel-body">
-        <p>
-            <?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?>
-        </p>
     </div>
     <div class="panel-footer p-h-sm">
         <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg accept_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
-            <input class="btn btn-default btn-sm p-v-lg cancel_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
-        </p>
-    </div>
-</div>
-<div id="open_account_alert" class="panel panel-danger alert_panel hidden">
-    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
-    <div class="panel-body">
-        <p>
-            <?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?>
-        </p>
-    </div>
-    <div class="panel-footer p-h-sm">
-        <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg accept_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
-            <input class="btn btn-default btn-sm p-v-lg cancel_close_school_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg accept_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
         </p>
     </div>
 </div>

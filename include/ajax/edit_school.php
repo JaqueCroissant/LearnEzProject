@@ -30,16 +30,7 @@ if (isset($_POST['state'])) {
             }
             break;
         case "update_open_state":
-            $school_open = (isset($_POST['school_open']) ? $_POST['school_open'] : "");
-            $school_id = (isset($_POST['school_id']) ? $_POST['school_id'] : "");
 
-            if ($schoolHandler->update_open_state($school_id, $school_open)) {
-                $array['success'] = TranslationHandler::get_static_text("SCHOOL_UPDATED");
-                $array['status_value'] = true;
-            } else {
-                $array['error'] = $schoolHandler->error->title;
-                $array['status_value'] = false;
-            }
             break;
     }
 } elseif (isset($_GET['school_id'])) {
@@ -51,6 +42,24 @@ if (isset($_POST['state'])) {
     } else {
         $array['error'] = $schoolHandler->error->title;
         $array['status_value'] = false;
+    }
+}
+else if(isset($_GET['state']))
+{
+    switch($_GET['state'])
+    {
+        case 'set_availability':
+
+            $school_id = (isset($_POST['school_id']) ? $_POST['school_id'] : "");
+
+            if ($schoolHandler->update_open_state($school_id)) {
+                $array['success'] = TranslationHandler::get_static_text("SCHOOL_UPDATED");
+                $array['status_value'] = true;
+            } else {
+                $array['error'] = $schoolHandler->error->title;
+                $array['status_value'] = false;
+            }
+            break;
     }
 }
 echo json_encode($array);

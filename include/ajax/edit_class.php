@@ -27,19 +27,9 @@ if (isset($_POST['state'])) {
                 $array['status_value'] = false;
             }
             break;
-        case "update_open_state":
-            if (isset($_POST['class_open'])) {
-                if ($classHandler->update_class_open((int) $_POST['class_id'], (int) $_POST['class_open'])) {
-                    $array['success'] = TranslationHandler::get_static_text("CLASS_UPDATED");
-                    $array["status_value"] = true;
-                    echo json_encode($array);
-                    die();
-                } else {
-                    $array['error'] = $classHandler->error->title;
-                    $array['status_value'] = false;
-                }
-            }
-            break;
+
+
+
     }
 } elseif (isset($_GET['state'])) {
     $class_id = (isset($_GET['class_id']) ? $_GET['class_id'] : "");
@@ -65,6 +55,22 @@ if (isset($_POST['state'])) {
             }
 
             break;
+
+        case "set_availability":
+
+            if ($classHandler->update_class_open((int) $_POST['class_id']))
+            {
+                $array['success'] = TranslationHandler::get_static_text("CLASS_UPDATED");
+                $array["status_value"] = true;
+
+            }
+            else
+            {
+                $array['error'] = $classHandler->error->title;
+                $array['status_value'] = false;
+            }
+
+        break;
     }
 }
 echo json_encode($array);

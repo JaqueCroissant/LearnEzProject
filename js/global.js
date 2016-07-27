@@ -208,6 +208,20 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on("click", ".test_button_stuff", function (event) {
+        event.preventDefault();
+        initiate_submit_get($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
 
     $(document).on("click", ".create_submit_csv", function (event) {
 
@@ -246,6 +260,30 @@ $(document).ready(function () {
             setTimeout(function () {
                 location.reload();
             }, 500);
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
+    $(document).on("click", ".update_acc_generate_pass", function (event) {
+        event.preventDefault();
+
+        initiate_submit_get($(this), "edit_account.php?step=generate_password",function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            $("#edit_password").attr("value", ajax_data.password);
+        });
+    });
+
+    $(document).on("click", ".update_account_submit", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -294,7 +332,22 @@ $(document).ready(function () {
             $(".create_select_school").css("visibility", "visible");
         } else {
             event.preventDefault;
+
             $(".create_select_school").css("visibility", "visible");
+            if($(".create_select_school").find("option:selected").val() !== "")
+            {
+                $(".create_select_class").css("visibility", "visible");
+            }
+        }
+    });
+
+    $(document).on("change", ".create_select_usertype_no_school", function (event) {
+        if ($(this).find("option:selected").val() === "A") {
+            $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_school").css("visibility", "hidden");
+        } else {
+            event.preventDefault;
+            $(".create_select_class").css("visibility", "visible");
         }
     });
     //

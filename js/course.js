@@ -82,3 +82,30 @@ $(document).on("change", ".add_tests", function (event) {
         }
     });
 });
+
+var can_be_clicked = false;
+var slide_reached = 1;
+var current_slide = 1;
+var max_slide = 0;
+
+$(document).on("click", ".course_action", function(event){
+    if (can_be_clicked) {
+        can_be_clicked = false;
+        var window = document.getElementById("scaled-frame").contentWindow;
+        var action = $(this).attr("value");
+        switch (action){
+            case "go_forwards" : if (current_slide !== slide_reached && current_slide !== max_slide) { window.cpAPIInterface.next(); } break;
+            case "go_backwards" : if (current_slide !== 1) {window.cpAPIInterface.previous(); } break;
+            default : break;
+        }
+        setTimeout(function(){
+            can_be_clicked = true;
+        }, 500);
+    }
+});
+
+
+
+
+
+

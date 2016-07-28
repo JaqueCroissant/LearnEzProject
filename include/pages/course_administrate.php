@@ -39,6 +39,7 @@ $courseHandler = new CourseHandler();
                     <div class="my_fade my_tab" id="create_course_tab">
                         <div class="widget-body" style="padding-top:32px !important;">
                             <form method="post" action="" url="course.php?step=create_course" id="create_course" name="create_course">
+                                <input type="hidden" name="color" class="pick_color" value=""/>
                                 <div class="title_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TITLE"); ?></div>
                                 <div class="description_text" style="display:none;"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></div>
                                 <div class="translation_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TRANSLATION"); ?></div>
@@ -74,6 +75,11 @@ $courseHandler = new CourseHandler();
                                         <div class="form-group m-b-sm">
                                             <label for="points"><?php echo TranslationHandler::get_static_text("POINT_AMOUNT"); ?></label>
                                             <input type="text" id="points" name="points" placeholder="0" class="form-control">
+                                        </div>
+                                        
+                                        <div class="form-group m-b-sm">
+                                            <label for="custom"><?php echo TranslationHandler::get_static_text("COLOR"); ?></label>
+                                            <input type="text" id="custom" name="custom">
                                         </div>
                                         
                                     </div>
@@ -125,11 +131,6 @@ $courseHandler = new CourseHandler();
                                             </div>
                                         </div>
                                         
-                                    </div>
-                                    
-                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MEDIA"); ?></h4>
-                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
-                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
                                     </div>
                                 </div>
 
@@ -482,3 +483,26 @@ $courseHandler = new CourseHandler();
 
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>
+<script>
+    $(document).ready(function() {
+        $("#custom").spectrum({
+            showPaletteOnly: true,
+            showPalette:true,
+            hideAfterPaletteSelect:true,
+            replacerClassName: 'form-control',
+            palette: [
+                ["#000","#444","#666","#999","#ccc","#eee","#f3f3f3","#fff"],
+                ["#f00","#f90","#ff0","#0f0","#0ff","#00f","#90f","#f0f"],
+                ["#f4cccc","#fce5cd","#fff2cc","#d9ead3","#d0e0e3","#cfe2f3","#d9d2e9","#ead1dc"],
+                ["#ea9999","#f9cb9c","#ffe599","#b6d7a8","#a2c4c9","#9fc5e8","#b4a7d6","#d5a6bd"],
+                ["#e06666","#f6b26b","#ffd966","#93c47d","#76a5af","#6fa8dc","#8e7cc3","#c27ba0"],
+                ["#c00","#e69138","#f1c232","#6aa84f","#45818e","#3d85c6","#674ea7","#a64d79"],
+                ["#900","#b45f06","#bf9000","#38761d","#134f5c","#0b5394","#351c75","#741b47"],
+                ["#600","#783f04","#7f6000","#274e13","#0c343d","#073763","#20124d","#4c1130"]
+            ],
+            change: function(color) {
+                $(".pick_color").val(color.toHexString());
+            }
+        });
+    });
+</script>

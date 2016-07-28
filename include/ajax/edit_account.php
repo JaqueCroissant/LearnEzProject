@@ -88,6 +88,25 @@ if(isset($_POST))
             echo json_encode($jsonArray);
             die();
         break;
+
+        case 'delete_acc':
+
+            $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : "";
+
+            if($userHandler->delete_user($user_id))
+            {
+                $jsonArray['success'] = TranslationHandler::get_static_text("ACCOUNT_DELETED");
+                $jsonArray['status_value'] = true;
+            }
+            else
+            {
+                $jsonArray['error'] = $userHandler->error->title;
+                $jsonArray['status_value'] = false;
+            }
+
+            echo json_encode($jsonArray);
+            die();
+        break;
     }
     
     

@@ -329,13 +329,23 @@ class CourseHandler extends Handler
             if (!RightsHandler::has_user_right("COURSE_VIEW")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
+            if (!isset($test_id) || !is_numeric($test_id)) {
+                throw new Exception("COURSE_INVALID_ID");                
+            }
             if ($this->_user->user_type_id != 1) {
                 if(DbHandler::get_instance()->count_query("SELECT course.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = :test", $this->_user->school_id, $test_id)){
                     throw new Exception("COURSE_NO_ACCESS");
                 }
             }
+            
+            $test = DbHandler::get_instance()->return_query("SELECT course_test.total_steps, course_test.path, course.color AS course_color, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title, translation_course_test.title FROM course_test INNER JOIN course ON course.id = course_test.course_id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language WHERE course_test.id = :test", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $test_id);
+
+            $this->test = new test(reset($test));
+            return true;
+            
         } catch(Exception $ex){
             $this->error = ErrorHandler::return_error($ex->getMessage());
+            echo $this->error->title;
             return false;
         }
         

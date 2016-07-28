@@ -477,29 +477,51 @@ class UserHandler extends Handler
         }
     }
 
-    public function assign_passwords($user_array)
+    public function assign_passwords($user_ids)
     {
         try
         {
             $this->validate_user_logged_in();
 
-            if(!RightsHandler::has_user_right("ACCOUNT_CREATE"))
+            if(!RightsHandler::has_user_right("ACCOUNT_EDIT"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
 
-            foreach ($user_array as $user)
+            if(!is_array($user_ids))
             {
-                $user->unhashed_password = $this->random_char(8);
-                $hashed_password = hash("sha256", $user->unhashed_password . " " . $user->username);
-                if(!DbHandler::get_instance()->query("INSERT INTO users (password) VALUES (:password)
-                                                    WHERE id = :id", $hashed_password, $user->id))
-                                                    {
-                                                        throw new Exception("PASSWORD_COULDNT_ASSIGN");
-                                                    }
+                throw new Exception("INVALID_INPUT");
             }
-            $this->temp_user_array = array();
-            $this->temp_user_array = $user_array;
+
+            if(count($user_ids) < 1)
+            {
+                throw new Exception("ACCOUNT_NO_SELECTION");
+            }
+
+            foreach($user_ids as $id)
+            {
+                if(!is_numeric($id))
+                {
+                    throw new Exception("INVALID_INPUT");
+                }
+            }
+
+            $query = "SELECT * FROM users WHERE id IN (" . generate_in_query($user_ids) . ")";
+            $temp_users = DbHandler::get_instance()->return_query($query);
+
+            if(count($user_ids) != count($temp_users))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+
+            $user_array = array();
+            foreach ($temp_users as $user)
+            {
+                $user_array[] = new User($user);
+            }
+
+            $this->assign_new_password($user_array);
+
             return true;
         }
         catch(Exception $ex)
@@ -507,6 +529,22 @@ class UserHandler extends Handler
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
+    }
+
+    private function assign_new_password($user_array)
+    {
+        foreach ($user_array as $user)
+            {
+                $user->unhashed_password = $this->random_char(8);
+                $hashed_password = hash("sha256", $user->unhashed_password . " " . $user->username);
+                if(!DbHandler::get_instance()->query("UPDATE users SET password = :password
+                                                    WHERE id = :id", $hashed_password, $user->id))
+                                                    {
+                                                        throw new Exception("PASSWORD_COULDNT_ASSIGN");
+                                                    }
+            }
+            $this->temp_user_array = array();
+            $this->temp_user_array = $user_array;
     }
 
     public function edit_user_info($firstname = null, $surname = null, $email = null, $description = null, $image = null)
@@ -748,7 +786,47 @@ class UserHandler extends Handler
                 $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language(), $this->_user->school_id);
             }
 
+            $this->users = array();
+            foreach ($users as $value) {
+                $this->users[] = new User($value);
+            }
 
+            if (count($this->users) == 0) {
+                throw new Exception("NO_USERS_FOUND");
+            }
+
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function get_all_users_without_password()
+    {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("ACCOUNT_FIND")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
+            $users = array();
+
+            if(RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id LEFT JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id AND users.password = ''";
+                $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language());
+            }
+            else
+            {
+                $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id INNER JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id AND school.id = :school_id AND users.password = ''";
+                $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language(), $this->_user->school_id);
+            }
+
+            $this->users = array();
             foreach ($users as $value) {
                 $this->users[] = new User($value);
             }

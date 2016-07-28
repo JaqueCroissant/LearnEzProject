@@ -2,7 +2,7 @@
 require_once 'require.php';
 require_once '../../include/handler/userHandler.php';
 $userHandler = new UserHandler();
-$userHandler->get_all_users();
+
 ?>
 
 <div class="row">   
@@ -14,7 +14,7 @@ $userHandler->get_all_users();
                     <li role="presentation" id="find_account_header"><a href="#find_account_tab" class="my_tab_header" id="find_account_a" data-toggle="tab">
                             <?php echo TranslationHandler::get_static_text("FIND_ACCOUNT"); ?></a></li>
                     <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                        <li role="presentation" id="edit_account_header" class="hidden"><a href="#edit_account_tab" class="my_tab_header" id="edit_account_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("EDIT_ACCOUNT"); ?></a></li>
+                        <li role="presentation" id="assign_pass_header"><a href="#assign_pass_tab" class="my_tab_header" id="assign_pass_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS"); ?></a></li>
                     <?php } ?>
                 </ul><!-- .nav-tabs -->
 
@@ -60,7 +60,7 @@ $userHandler->get_all_users();
                                 <tbody>
                                     <?php
                                     if (RightsHandler::has_user_right("ACCOUNT_FIND")) {
-
+                                        $userHandler->get_all_users();
                                         foreach ($userHandler->users as $value) {
 
                                             ?>
@@ -112,9 +112,81 @@ $userHandler->get_all_users();
                     <!-- End Tab -->
 
                     <!-- Tab -->
-                    <div class="my_fade my_tab" id="edit_account_tab">
+                    <div class="my_fade my_tab" id="assign_pass_tab">
                         <div class="widget-body">
-                            
+                            <form method="post" id="assign_password_form" url="edit_account.php?step=assign_passwords">
+                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [0]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                                   aria-describedby="default-datatable_info">
+                                <thead>
+                                    <tr role="row">
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                            <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php } ?>
+                                        <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("USERNAME"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("USER_TYPE"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                        <th hidden></th>
+                                    </tr>
+
+                                </thead>
+
+                                    <tfoot>
+                                        <tr role="row">
+                                            <th></th>
+                                            <th>
+                                                <div class="form-group" style="margin-left:-100px;">
+                                                    <div class="col-md-12">
+                                                        <input type="button" name="submit" id="assign_password_submit" value="<?php echo TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS"); ?>" class="btn btn-default create_submit_info">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+
+
+
+                                    </tfoot>
+
+                                    <tbody>
+                                        <?php
+                                        if (RightsHandler::has_user_right("ACCOUNT_FIND")) {
+                                            $userHandler->get_all_users_without_password();
+                                            foreach ($userHandler->users as $value) {
+
+                                                ?>
+                                                <tr class="clickable_row" >
+
+                                                    <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
+                                                        <td align="left">
+                                                                <div class="checkbox">
+                                                                    <input class="checkbox-circle checkbox-dark" type="checkbox" value="<?php echo $value->id; ?>" name="user_ids[]">
+                                                                    <label></label>
+                                                                </div>
+                                                        </td>
+                                                    <?php } ?>
+
+                                                    <td class="click_select_me" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? substr($value->firstname . " " . $value->surname, 0, 20) : $value->firstname . " " . $value->surname); ?></td>
+                                                    <td class="click_select_me"><?php echo $value->username; ?></td>
+                                                    <td class="click_select_me"><?php echo $value->user_type_title; ?></td>
+                                                    <td class="click_select_me" data-search="<?php echo $value->email ?>"><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>
+                                                    <td class="click_select_me" data-search="<?php echo $value->school_name ?>"><?php echo (strlen($value->school_name) > 16 ? substr($value->school_name, 0, 16) : $value->school_name); ?></td>
+
+                                                    <td class="hidden"><?php echo $value->id; ?></td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+
+                                    </tbody>
+
+                            </table>
+                             </form>
                         </div>
                     </div>
                     <!-- End Tab -->

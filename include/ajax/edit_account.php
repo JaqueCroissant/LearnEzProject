@@ -107,6 +107,27 @@ if(isset($_POST))
             echo json_encode($jsonArray);
             die();
         break;
+
+        case 'assign_passwords':
+
+            $user_ids = isset($_POST['user_ids']) ? $_POST['user_ids'] : array();
+
+            if($userHandler->assign_passwords($user_ids))
+            {
+
+                $jsonArray['new_passwords'] = $userHandler->temp_user_array;
+                $jsonArray['success'] = TranslationHandler::get_static_text("ACCOUNT_PASS_ASSIGNED");
+                $jsonArray['status_value'] = true;
+            }
+            else
+            {
+                $jsonArray['error'] = $userHandler->error->title;
+                $jsonArray['status_value'] = false;
+            }
+
+            echo json_encode($jsonArray);
+            die();
+        break;
     }
     
     

@@ -281,6 +281,11 @@ class CourseHandler extends Handler
             return false;
         }
     }
+    
+    public function get_test($test_id){
+        //TODO finish this
+        return 3;
+    }
 }
 
 

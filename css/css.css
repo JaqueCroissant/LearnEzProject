@@ -488,9 +488,7 @@ a .menu_header {
 #iframe_content {
     overflow: hidden;
     padding:0;
-    margin:0;
     width:100%;
-    text-align: center;
 }
 
 .course_iframe {
@@ -498,12 +496,20 @@ a .menu_header {
     height:740px;
     overflow:hidden;
     border:none;
-    
+}
+
+.course_navigation {
+    margin:12px 12px 0 0;
 }
 
 .course_bar {
-    height:30px;
-    background-color: blue;
+    height:60px;
+    margin-bottom: 0 !important;
     margin:0 auto;
     padding:0;
+}
+
+.course_slide_counter {
+    margin: 20px 0 0 12px;
+    width: 100px;
 }

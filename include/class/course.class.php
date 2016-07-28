@@ -8,8 +8,13 @@ class Course extends ORM {
     public $description;
     public $language_id;
     public $sort_order;
+    public $image_filename;
     
     public $points;
+    public $color;
+    public $overall_progress;
+    public $amount_of_lectures = 0;
+    public $amount_of_tests = 0;
 }
 
 ?>

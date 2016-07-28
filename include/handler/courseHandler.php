@@ -4,6 +4,7 @@ class CourseHandler extends Handler
     public $courses = array();
     public $lectures = array();
     public $tests = array();
+    public $test;
     private $_all_courses = array();
 
     public function create_course($os_id = 0, $points = 0, $color = null, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
@@ -320,9 +321,24 @@ class CourseHandler extends Handler
         }
     }
     
-    public function get_test($test_id){
-        //TODO finish this
-        return 3;
+    public function load_test($test_id){
+        try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("COURSE_VIEW")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            if ($this->_user->user_type_id != 1) {
+                if(DbHandler::get_instance()->count_query("SELECT course.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = :test", $this->_user->school_id, $test_id)){
+                    throw new Exception("COURSE_NO_ACCESS");
+                }
+            }
+        } catch(Exception $ex){
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+        
     }
 }
 

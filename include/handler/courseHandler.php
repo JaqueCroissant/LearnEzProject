@@ -6,7 +6,7 @@ class CourseHandler extends Handler
     public $tests = array();
     private $_all_courses = array();
 
-    public function create_course($os_id = 0, $points = 0, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
+    public function create_course($os_id = 0, $points = 0, $color = null, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
         try 
         {
             if (!$this->user_exists()) {
@@ -18,6 +18,10 @@ class CourseHandler extends Handler
             }
 
             if(empty($os_id) || !is_numeric($os_id) || (!is_numeric($points) && !is_int((int)$points)) || (!is_numeric($sort_order) && !is_int((int)$sort_order))) {
+                throw new exception("INVALID_COURSE_INPUT");
+            }
+            
+            if(empty($color) || !preg_match('/^#[a-f0-9]{6}$/i', $color)) {
                 throw new exception("INVALID_COURSE_INPUT");
             }
 
@@ -39,11 +43,59 @@ class CourseHandler extends Handler
             
             DbHandler::get_instance()->query("UPDATE course SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
 
-            DbHandler::get_instance()->query("INSERT INTO course (os_id, points, sort_order) VALUES (:os_id, :points, :sort_order)", $os_id, $points, ($sort_order + 1));
+            DbHandler::get_instance()->query("INSERT INTO course (os_id, points, sort_order, color) VALUES (:os_id, :points, :sort_order, :color)", $os_id, $points, ($sort_order + 1), $color);
             $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
 
             foreach($translation_texts as $key => $value) {
                 DbHandler::get_instance()->query("INSERT INTO translation_course (course_id, language_id, title, description) VALUES (:course_id, :language_id, :title, :description)", $last_inserted_id, $key, $value["title"], $value["description"]);
+            }
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    public function create_lecture($course_id = 0, $points = 0, $difficulty = 0, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
+        try 
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if(empty($course_id) || !is_numeric($course_id) || (!is_numeric($points) && !is_int((int)$points)) || (!is_numeric($sort_order) && !is_int((int)$sort_order)) || (!is_numeric($difficulty) && !is_int((int)$difficulty))) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if(!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
+                throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+            }
+
+            $titles = $this->assign_language_id($titles, $language_ids, "title");
+            $descriptions = $this->assign_language_id($descriptions, $language_ids, "description");
+            $translation_texts = merge_array_recursively($titles, $descriptions);
+
+            if(DbHandler::get_instance()->count_query("SELECT id FROM course WHERE id = :course_id", $course_id) < 1) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if(DbHandler::get_instance()->count_query("SELECT id FROM language WHERE id IN (".generate_in_query($language_ids).")") != count($language_ids)) {
+                throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+            }
+            
+            DbHandler::get_instance()->query("UPDATE course_lecture SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
+
+            DbHandler::get_instance()->query("INSERT INTO course_lecture (course_id, points, sort_order, advanced) VALUES (:course_id, :points, :sort_order, :difficulty)", $course_id, $points, ($sort_order + 1), $difficulty);
+            $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
+
+            foreach($translation_texts as $key => $value) {
+                DbHandler::get_instance()->query("INSERT INTO translation_course_lecture (course_lecture_id, language_id, title, description) VALUES (:course_id, :language_id, :title, :description)", $last_inserted_id, $key, $value["title"], $value["description"]);
             }
             return true;
         }
@@ -213,43 +265,19 @@ class CourseHandler extends Handler
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
 
-            $courses = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, "
-                    . "translation_course.title "
-                    . "FROM course "
-                    . "INNER JOIN school_course "
-                    . "ON school_course.course_id = course.id "
-                    . "AND school_id = :school "
-                    . "INNER JOIN translation_course "
-                    . "ON translation_course.course_id = course.id "
-                    . "AND translation_course.language_id = :language",
-                    $this->_user->school_id, TranslationHandler::get_current_language());
-
-            $in_array = generate_in_query(array_map(function($o){return $o["course_id"];}, $courses));
-
-            $course_progress = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, "
-                    . "course_test.total_steps AS total, "
-                    . "user_course_test.is_complete, "
-                    . "user_course_test.progress "
-                    . "FROM course "
-                    . "INNER JOIN course_test "
-                    . "ON course_test.course_id = course.id "
-                    . "LEFT JOIN user_course_test "
-                    . "ON user_course_test.test_id = course_test.id "
-                    . "AND user_course_test.user_id = :user "
-                    . "WHERE course.id IN(" . $in_array . ") "
-                    . "UNION ALL "
-                    . "SELECT course.id AS course_id, "
-                    . "course_lecture.time_length AS total, "
-                    . "user_course_lecture.is_complete, "
-                    . "user_course_lecture.progress "
-                    . "FROM course "
-                    . "INNER JOIN course_lecture "
-                    . "ON course_lecture.course_id = course.id "
-                    . "LEFT JOIN user_course_lecture "
-                    . "ON user_course_lecture.lecture_id = course_lecture.id "
-                    . "AND user_course_lecture.user_id = :user "
-                    . "WHERE course.id IN(" . $in_array . ")", $this->_user->id, $this->_user->id);
-
+            if($this->_user->user_type_id == 1) {
+                $courses = DbHandler::get_instance()->return_query("SELECT course.id, course.color, course_image.filename as image_filename, translation_course.title, translation_course.description FROM course INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language LEFT JOIN course_image ON course_image.id = course.image_id WHERE course.os_id = :os_id ORDER BY course.sort_order", TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id);
+            } else {
+                $courses = DbHandler::get_instance()->return_query("SELECT course.id, course.color, course_image.filename as image_filename, translation_course.title, translation_course.description FROM course INNER JOIN school_course ON school_course.course_id = course.id AND school_id = :school INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language LEFT JOIN course_image ON course_image.id = course.image_id WHERE course.os_id = :os_id ORDER BY course.sort_order", $this->_user->school_id, TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id);
+            }
+            
+            if(empty($courses)) {
+                $this->courses = array();
+                return true;
+            }
+            
+            $in_array = generate_in_query(array_map(function($o){return $o["id"];}, $courses));
+            $course_progress = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course_test.total_steps AS total, user_course_test.is_complete, user_course_test.progress, 1 AS type FROM course INNER JOIN course_test ON course_test.course_id = course.id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user WHERE course.id IN(" . $in_array . ") UNION ALL SELECT course.id AS course_id, course_lecture.time_length AS total, user_course_lecture.is_complete, user_course_lecture.progress, 2 AS type FROM course INNER JOIN course_lecture ON course_lecture.course_id = course.id LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user WHERE course.id IN(" . $in_array . ")", $this->_user->id, $this->_user->id);
             $group = array();
 
             foreach ($course_progress as $course) {
@@ -258,19 +286,29 @@ class CourseHandler extends Handler
 
             $final = array();
             foreach ($courses as $course) {
+                if(!array_key_exists($course["id"], $group)){
+                    continue;
+                }
                 $current_progress = 0;
-                foreach ($group[$course["course_id"]] as $lecture) {
+                $amount_of_lectures = 0;
+                $amount_of_tests = 0;
+                foreach ($group[$course["id"]] as $lecture) {
                     if (isset($lecture["is_complete"]) && $lecture["is_complete"] == "1") {
                         $current_progress += 100;
                     }
                     else if(isset($lecture["progress"])) {
                         $current_progress += $lecture["progress"] / $lecture["total"] * 100;
                     }
+                    $amount_of_tests = $lecture["type"] == 1 ? $amount_of_tests + 1 : $amount_of_tests;
+                    $amount_of_lectures = $lecture["type"] == 2 ? $amount_of_lectures + 1 : $amount_of_lectures;
                 }
 
+                
                 $temp = $course;
-                $temp["progress"] = (int)floor($current_progress / count($group[$course["course_id"]]));
-                array_push($final, $temp);
+                $temp["overall_progress"] = count($group[$course["id"]]) < 1 ? 0 : (int)floor($current_progress / count($group[$course["id"]]));
+                $temp["amount_of_lectures"]= $amount_of_lectures;
+                $temp["amount_of_tests"] = $amount_of_tests;
+                array_push($final, new Course($temp));
             }
 
             $this->courses = $final;

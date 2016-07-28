@@ -64,7 +64,7 @@ $userHandler->get_all_users();
                                         foreach ($userHandler->users as $value) {
 
                                             ?>
-                                            <tr class="clickable_row">
+                                            <tr class="clickable_row account_tr_id_<?php echo $value->id; ?>">
 
                                                 <td class="click_me" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? substr($value->firstname . " " . $value->surname, 0, 20) : $value->firstname . " " . $value->surname); ?></td>
                                                 <td class="click_me"><?php echo $value->username; ?></td>
@@ -86,10 +86,14 @@ $userHandler->get_all_users();
                                                 <?php } ?>
                                                 <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
                                                     <td align="center">
-                                                        <div class="">
-                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
+                                                        <div>
+                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
                                                             <?php if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete delete_account" account_id="<?php echo $value->id; ?>" state="delete_account" id="delete_account_btn" style=""></i>
+                                                            <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="edit_account.php?step=delete_acc">
+                                                                <input type="hidden" name="user_id" value="<?php echo $value->id; ?>">
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <input type="hidden" name="submit" value="submit"></input>
+                                                            </form>
                                                             <?php } ?>
                                                         </div>
                                                     </td>
@@ -133,6 +137,19 @@ $userHandler->get_all_users();
         <p class="m-0">
             <input class="btn btn-default btn-sm p-v-lg accept_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
             <input class="btn btn-default btn-sm p-v-lg cancel_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+    </div>
+</div>
+
+<div id="click_alertbox" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <div id="delete_text"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("ACCOUNT")) . "?"; ?></div>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
         </p>
     </div>
 </div>

@@ -11,7 +11,7 @@ if ($handler->load_test(6)) {
 
 <div id="iframe_content" style="overflow:hidden;" current_slide="<?php echo (($handler->test->is_complete == 1) ? $handler->test->total_steps : (isset($handler->test->progress) ? $handler->test->progress : "1")); ?>">
     <div id="course_bar" class="course_bar widget" style="<?php echo "background-color: " . $handler->test->course_color . " !important;" ?>">
-        <div class="course_slide_counter pull-left"></div>
+        <div class="course_slide_counter pull-right"></div>
         <div class="btn-group pull-right course_navigation">
             <a href="javascript:void(0)" value="go_backwards" class="course_action course_go_back btn btn-default" title=<?php echo TranslationHandler::get_static_text("PREVIOUS") ?>><i class="fa fa-chevron-left"></i></a>
             <a href="javascript:void(0)" value="go_forwards" class="course_action course_go_for btn btn-default" title=<?php echo TranslationHandler::get_static_text("NEXT") ?>><i class="fa fa-chevron-right"></i></a>

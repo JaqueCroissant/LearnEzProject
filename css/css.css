@@ -507,9 +507,13 @@ a .menu_header {
     margin-bottom: 0 !important;
     margin:0 auto;
     padding:0;
+    color: white;
 }
 
 .course_slide_counter {
-    margin: 20px 0 0 12px;
-    width: 100px;
+    margin: 20px 15px 0 0;
+}
+
+.course_title {
+    margin: 12px 0 0 12px;
 }

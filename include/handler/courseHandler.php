@@ -5,6 +5,7 @@ class CourseHandler extends Handler
     public $lectures = array();
     public $tests = array();
     public $test;
+    public $last_inserted_id;
     private $_all_courses = array();
 
     public function create_course($os_id = 0, $points = 0, $color = null, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
@@ -201,11 +202,16 @@ class CourseHandler extends Handler
                 throw new exception("INSUFFICIENT_RIGHTS");
             }
             
-            if(empty($course_id) || !is_numeric($course_id)) {
+            if((!is_numeric($course_id) && !is_int((int)$course_id))) {
                 throw new exception("INVALID_INPUT");
             }
             
-            $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id WHERE translation_course_lecture.language_id = :language_id AND course_lecture.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+            if($course_id == 0) {
+                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id", TranslationHandler::get_current_language());
+            
+            } else {
+                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id AND course_lecture.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+            }
             $array = array();
             foreach($data as $value) {
                 $array[] = new Lecture($value);
@@ -230,11 +236,17 @@ class CourseHandler extends Handler
                 throw new exception("INSUFFICIENT_RIGHTS");
             }
             
-            if(empty($course_id) || !is_numeric($course_id)) {
+            if((!is_numeric($course_id) && !is_int((int)$course_id))) {
                 throw new exception("INVALID_INPUT");
             }
             
-            $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id WHERE translation_course_test.language_id = :language_id AND course_test.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+            if($course_id == 0) {
+                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id", TranslationHandler::get_current_language());
+            
+            } else {
+                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id AND course_test.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+            }
+
             $array = array();
             foreach($data as $value) {
                 $array[] = new Test($value);
@@ -257,7 +269,7 @@ class CourseHandler extends Handler
         return DbHandler::get_instance()->return_query("SELECT course_os.id, translation_course_os.title FROM course_os INNER JOIN translation_course_os ON translation_course_os.course_os_id = course_os.id AND translation_course_os.language_id = :language", TranslationHandler::get_current_language());  
     }
     
-    public function get_course_progress(){
+    public function get_courses(){
         try{
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
@@ -338,7 +350,7 @@ class CourseHandler extends Handler
                 }
             }
             
-            $test = DbHandler::get_instance()->return_query("SELECT course_test.total_steps, course_test.path, course.color AS course_color, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title, translation_course_test.title FROM course_test INNER JOIN course ON course.id = course_test.course_id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language WHERE course_test.id = :test", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $test_id);
+            $test = DbHandler::get_instance()->return_query("SELECT course_test.total_steps, course_test.path, course.color AS course_color, user_course_test.id, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title, translation_course_test.title FROM course_test INNER JOIN course ON course.id = course_test.course_id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language WHERE course_test.id = :test", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $test_id);
 
             $this->test = new test(reset($test));
             return true;
@@ -349,6 +361,59 @@ class CourseHandler extends Handler
             return false;
         }
         
+    }
+    
+    public function update_progress($type = "", $progress = 0, $is_complete = 0, $table_id = 0, $id = 0){
+        try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("COURSE_VIEW")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            if (!is_int((int)$progress)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+            if ($is_complete != 0 && $is_complete != 1) {
+                throw new Exception("INVALID_INPUT");
+            }
+            if (!is_int((int)$table_id) || !is_int((int)$id)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+            if ($type == "test") {
+                $table = "user_course_test";
+            }
+            else if ($type == "lecture") {
+                $table = "user_course_lecture";
+            }
+            else {
+                throw new Exception("INVALID_INPUT");
+            }
+            if ($is_complete == 1) {
+                $values = "is_complete=1";
+            }
+            else {
+                $values = "progress=" . $progress;
+            }
+            
+            if ($table_id != 0) {
+                DbHandler::get_instance()->query("UPDATE " . $table . " SET " . $values . " WHERE id = :id", $table_id);
+                return true;
+            }
+            else if($id != 0) {
+                DbHandler::get_instance()->query("INSERT INTO " . $table . " VALUES (:table_id, :user_id, :id, :progress, :is_complete)", null, $this->_user->id, $id, $progress, $is_complete);
+                $this->last_inserted_id = DbHandler::get_instance()->last_inserted_id();
+                return true;
+            }
+            else {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
     }
 }
 

@@ -61,9 +61,11 @@
                    throw new Exception("INVALID_FORM_DATA");
                 }
                 
-                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND b.hide_in_backend != 1", $user_type);
+                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND (b.hide_in_backend != '1' OR (b.hide_in_backend = '1' AND b.master_page_id > 0))", $user_type);
                 
-                foreach($page_rights as $key => $value) {
+                $array = array();
+                $this->get_page_children($array, $page_rights);
+                foreach($array as $key => $value) {
                     if(empty($value) || !is_numeric($value)) {
                         continue;
                     }
@@ -75,6 +77,34 @@
                 $this->error = ErrorHandler::return_error($ex->getMessage());
             }
             return false;
+        }
+        
+        private function get_page_children(&$array = array(), $new_array = array(), $master_page = true) {
+            if(empty($new_array) ||!is_array($new_array)) {
+                return;
+            }
+            
+            $page_ids = array();
+            foreach($new_array as $value) {
+                if(!is_numeric($value)) {
+                    continue;
+                }
+                $page_ids[] = $value;
+            }
+            
+            if(empty($page_ids)) {
+                return;
+            }
+
+            $query = $master_page ? "SELECT id FROM page WHERE id IN (".generate_in_query($page_ids).") AND hide_in_backend != '1'" : "SELECT id FROM page WHERE master_page_id IN (".generate_in_query($page_ids).") AND page.hide_in_backend = '1'";
+            $pages = DbHandler::get_instance()->return_query($query);
+            
+            $elements = array();
+            foreach($pages as $value) {
+                $elements[] = $value["id"];
+            }
+            $array = array_merge($elements, $array);
+            $this->get_page_children($array, $elements, false);
         }
         
         public function update_rights($user_type = 1, $user_rights = array()) {

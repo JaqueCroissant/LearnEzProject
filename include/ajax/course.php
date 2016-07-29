@@ -94,4 +94,21 @@ if(isset($_GET["get_tests"]) && isset($_GET["course_id"])) {
     }
     echo json_encode($jsonArray);
 }
+
+if(isset($_GET["update_progress"])) {
+    $type = $_GET["update_progress"];
+    $progress = isset($_GET["progress"]) ? $_GET["progress"] : 0;
+    $table_id = isset($_GET["table_id"]) ? $_GET["table_id"] : 0;
+    $id = isset($_GET["action_id"]) ? $_GET["action_id"] : 0;
+    $is_complete = isset($_GET["is_complete"]) ? $_GET["is_complete"] : 0;
+    if ($courseHandler->update_progress($type, $progress, $is_complete, $table_id, $id)) {
+        $jsonArray['last_inserted_id'] = $courseHandler->last_inserted_id;
+        $jsonArray['status_value'] = true;
+    }
+    else {
+        $jsonArray['status_value'] = false;
+        $jsonArray['error'] = $courseHandler->error->title;
+    }
+    echo json_encode($jsonArray);
+}
     

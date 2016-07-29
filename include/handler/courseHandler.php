@@ -345,7 +345,7 @@ class CourseHandler extends Handler
                 throw new Exception("COURSE_INVALID_ID");                
             }
             if ($this->_user->user_type_id != 1) {
-                if(DbHandler::get_instance()->count_query("SELECT course.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = :test", $this->_user->school_id, $test_id)){
+                if(!(DbHandler::get_instance()->count_query("SELECT course.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = :test", $this->_user->school_id, $test_id) > 0)){
                     throw new Exception("COURSE_NO_ACCESS");
                 }
             }
@@ -357,7 +357,6 @@ class CourseHandler extends Handler
             
         } catch(Exception $ex){
             $this->error = ErrorHandler::return_error($ex->getMessage());
-            echo $this->error->title;
             return false;
         }
         

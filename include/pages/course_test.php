@@ -5,7 +5,10 @@ require_once '../../include/handler/courseHandler.php';
 $handler = new courseHandler();
 
 
-if ($handler->load_test(6)) {
+if (!$handler->load_test(6)) {
+    echo "<script>change_page('error', 'PAGE_NO_RIGHTS');</script>";
+    die();
+}
 ?>
 
 
@@ -143,7 +146,3 @@ function update_progress(type, progress, is_complete, action_id){
     });
 }
 </script>
-<?php
-}
-?>
-

@@ -533,18 +533,22 @@ class UserHandler extends Handler
 
     private function assign_new_password($user_array)
     {
+        $users = array();
+
         foreach ($user_array as $user)
+        {
+            $user->unhashed_password = $this->random_char(8);
+            $hashed_password = hash("sha256", $user->unhashed_password . " " . $user->username);
+            if(!DbHandler::get_instance()->query("UPDATE users SET password = :password
+            WHERE id = :id", $hashed_password, $user->id))
             {
-                $user->unhashed_password = $this->random_char(8);
-                $hashed_password = hash("sha256", $user->unhashed_password . " " . $user->username);
-                if(!DbHandler::get_instance()->query("UPDATE users SET password = :password
-                                                    WHERE id = :id", $hashed_password, $user->id))
-                                                    {
-                                                        throw new Exception("PASSWORD_COULDNT_ASSIGN");
-                                                    }
+                throw new Exception("PASSWORD_COULDNT_ASSIGN");
             }
-            $this->temp_user_array = array();
-            $this->temp_user_array = $user_array;
+
+            $users[$user->id] = $user->unhashed_password;
+        }
+        $this->temp_user_array = array();
+        $this->temp_user_array = $users;
     }
 
     public function edit_user_info($firstname = null, $surname = null, $email = null, $description = null, $image = null)

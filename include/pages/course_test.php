@@ -9,16 +9,18 @@ if ($handler->load_test(6)) {
 ?>
 
 
-<div id="iframe_content" style="overflow:hidden;" current_slide="<?php echo (($handler->test->is_complete == 1) ? $handler->test->total_steps : (isset($handler->test->progress) ? $handler->test->progress : "1")); ?>">
-    <div id="course_bar" class="course_bar widget" style="<?php echo "background-color: " . $handler->test->course_color . " !important;" ?>">
-        <div class="course_slide_counter pull-right"></div>
+<div id="iframe_content" style="overflow:hidden;" table_id="<?php echo isset($handler->test->id) ? $handler->test->id : "" ?>" current_slide="<?php echo (($handler->test->is_complete == 1) ? $handler->test->total_steps : (isset($handler->test->progress) ? $handler->test->progress : "1")); ?>">
+    <div id="course_bar" class="course_bar widget" style="<?php echo "background-color: " . $handler->test->course_color . " !important;" ?>">      
+        <div class="course_title pull-left"><?php echo "<h4>" . $handler->test->course_title . "<span class='p-v-sm zmdi zmdi-chevron-right fa-sm'></span>" . $handler->test->title . "</h4>" ?></div>
         <div class="btn-group pull-right course_navigation">
             <a href="javascript:void(0)" value="go_backwards" class="course_action course_go_back btn btn-default" title=<?php echo TranslationHandler::get_static_text("PREVIOUS") ?>><i class="fa fa-chevron-left"></i></a>
             <a href="javascript:void(0)" value="go_forwards" class="course_action course_go_for btn btn-default" title=<?php echo TranslationHandler::get_static_text("NEXT") ?>><i class="fa fa-chevron-right"></i></a>
         </div>
+        <div class="course_slide_counter pull-right"></div>
     </div>
     <iframe scrolling="no" id="scaled-frame" class="course_iframe" src="<?php echo "../../LearnEZ/courses/" . $handler->test->path . "/index.php"; ?>"></iframe>
 </div>
+<div id="hidden_element" style="display:none"></div>
 
 <script>
     
@@ -26,6 +28,7 @@ var can_be_clicked = false;
 var slide_reached = parseInt(($("#iframe_content").attr("current_slide")));
 var current_slide = parseInt(($("#iframe_content").attr("current_slide")));
 var max_slide = 0;
+var table_id = ($("#iframe_content").attr("table_id"));
     
 function resize(){
     var ratio = $(".wrap").width() / 1024;
@@ -63,8 +66,20 @@ $(document).on("click", ".course_action", function(){
         var window = document.getElementById("scaled-frame").contentWindow;
         var action = $(this).attr("value");
         switch (action){
-            case "go_forwards" : if (current_slide !== slide_reached && current_slide !== max_slide) { window.cpAPIInterface.next(); } break;
-            case "go_backwards" : if (current_slide !== 1) {window.cpAPIInterface.previous(); } break;
+            case "go_forwards" : 
+                if (current_slide !== slide_reached && current_slide !== max_slide) { 
+                    window.cpAPIInterface.next(); 
+                } else {
+                    $(".course_go_for").attr("disabled", true);
+                } 
+                break;
+            case "go_backwards" : if (current_slide !== 1) {
+                    window.cpAPIInterface.previous(); 
+                }
+                else {
+                    $(".course_go_back").attr("disabled", true);
+                }
+                break;
             default : break;
         }
         can_be_clicked = true;
@@ -90,6 +105,12 @@ $(document).ready(function() {
         iframe_window.cpAPIEventEmitter.addEventListener("CPAPI_SLIDEENTER", function(event){
             current_slide = event.Data.slideNumber;
             if (current_slide > slide_reached) {
+                if (current_slide === max_slide) {
+                    update_progress("test", 0, 1, 6);
+                }
+                else {
+                    update_progress("test", current_slide, 0, 6);
+                }
                 slide_reached = current_slide;
             }
             if (current_slide === 1) {
@@ -106,10 +127,21 @@ $(document).ready(function() {
             }
             $(".course_slide_counter").html("<b>" + current_slide + "/" +  max_slide + "</b>");
         });
-        
-        iframe_window.cpAPIInterface.setVariableValue("cpCmndGotoSlide", current_slide - 1);
+        if (current_slide !== max_slide) {
+            iframe_window.cpAPIInterface.setVariableValue("cpCmndGotoSlide", current_slide - 1);
+        }
     });
 });
+
+function update_progress(type, progress, is_complete, action_id){
+    initiate_submit_get($("#hidden_element"), "course.php?update_progress=" + type + "&progress=" + progress + "&is_complete=" + is_complete + "&table_id=" + table_id + "&action_id= "+ action_id, function () {
+    }, function () {
+        if(ajax_data.last_inserted_id !== null) {
+            table_id = ajax_data.last_inserted_id;
+        }
+        
+    });
+}
 </script>
 <?php
 }

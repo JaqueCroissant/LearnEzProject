@@ -5,7 +5,7 @@ $userHandler = new UserHandler();
 
 ?>
 
-<div class="row">   
+<div class="row">
     <div class="col-md-12">
         <div class="widget">
             <div class="m-b-lg nav-tabs-horizontal">
@@ -138,7 +138,7 @@ $userHandler = new UserHandler();
                                             <th>
                                                 <div class="form-group" style="margin-left:-100px;">
                                                     <div class="col-md-12">
-                                                        <input type="button" name="submit" id="assign_password_submit" value="<?php echo TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS"); ?>" class="btn btn-default create_submit_info">
+                                                        <input type="button" name="submit" id="assign_password_submit" value="<?php echo TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS"); ?>" class="btn btn-default account_assign_password">
                                                     </div>
                                                 </div>
                                             </th>

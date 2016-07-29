@@ -3,7 +3,7 @@ require_once 'require.php';
 require_once '../../include/handler/courseHandler.php';
 
 $courseHandler = new CourseHandler();
-$courseHandler->get_course_progress();
+$courseHandler->get_courses();
 ?>
 
 <div class="row">
@@ -12,7 +12,7 @@ $courseHandler->get_course_progress();
             <?php
             foreach($courseHandler->courses as $value) {
             ?>
-            <div class="col-md-3 col-sm-6" style="cursor:pointer;">
+            <div class="col-md-3 col-sm-6 change_page" style="cursor:pointer;" id="show_course" page="show_course">
                 <div class="widget stats-widget">
                     <div class="widget-body clearfix">
                         <div class="pull-left">

@@ -114,8 +114,10 @@ if(isset($_POST))
 
             if($userHandler->assign_passwords($user_ids))
             {
+                SessionKeyHandler::add_to_session("new_passwords", $userHandler->temp_user_array, true);
+                $userHandler->temp_user_array = array();
 
-                $jsonArray['new_passwords'] = $userHandler->temp_user_array;
+                $jsonArray['host'] = $_SERVER['HTTP_HOST'];
                 $jsonArray['success'] = TranslationHandler::get_static_text("ACCOUNT_PASS_ASSIGNED");
                 $jsonArray['status_value'] = true;
             }

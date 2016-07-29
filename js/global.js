@@ -209,9 +209,9 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on("click", ".test_button_stuff", function (event) {
+    $(document).on("click", ".account_assign_password", function (event) {
         event.preventDefault();
-        initiate_submit_get($(this), function () {
+        initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
             if (ajax_data.reload) {
@@ -220,6 +220,15 @@ $(document).ready(function () {
                 }, 500);
             }
             show_status_bar("success", ajax_data.success);
+
+            var url = ajax_data.host + "/LearnEZ/include/pages/printable_passwords.php";
+
+            if (!/^(f|ht)tps?:\/\//i.test(url))
+            {
+                url = "http://" + url;
+            }
+
+            window.location = url;
         });
     });
 

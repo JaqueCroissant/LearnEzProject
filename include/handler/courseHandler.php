@@ -201,11 +201,16 @@ class CourseHandler extends Handler
                 throw new exception("INSUFFICIENT_RIGHTS");
             }
             
-            if(empty($course_id) || !is_numeric($course_id)) {
+            if((!is_numeric($course_id) && !is_int((int)$course_id))) {
                 throw new exception("INVALID_INPUT");
             }
             
-            $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id WHERE translation_course_lecture.language_id = :language_id AND course_lecture.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+            if($course_id == 0) {
+                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id", TranslationHandler::get_current_language());
+            
+            } else {
+                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id AND course_lecture.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+            }
             $array = array();
             foreach($data as $value) {
                 $array[] = new Lecture($value);
@@ -230,11 +235,17 @@ class CourseHandler extends Handler
                 throw new exception("INSUFFICIENT_RIGHTS");
             }
             
-            if(empty($course_id) || !is_numeric($course_id)) {
+            if((!is_numeric($course_id) && !is_int((int)$course_id))) {
                 throw new exception("INVALID_INPUT");
             }
             
-            $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id WHERE translation_course_test.language_id = :language_id AND course_test.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+            if($course_id == 0) {
+                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id", TranslationHandler::get_current_language());
+            
+            } else {
+                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id AND course_test.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+            }
+
             $array = array();
             foreach($data as $value) {
                 $array[] = new Test($value);
@@ -257,7 +268,7 @@ class CourseHandler extends Handler
         return DbHandler::get_instance()->return_query("SELECT course_os.id, translation_course_os.title FROM course_os INNER JOIN translation_course_os ON translation_course_os.course_os_id = course_os.id AND translation_course_os.language_id = :language", TranslationHandler::get_current_language());  
     }
     
-    public function get_course_progress(){
+    public function get_courses(){
         try{
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");

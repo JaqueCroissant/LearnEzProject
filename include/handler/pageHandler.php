@@ -392,7 +392,7 @@ class pageHandler extends Handler {
 //            return;
 //        }
 //        
-//        $current_page_array = (isset($_COOKIE["current_page"])) ? $_COOKIE["current_page"] : array();
+//        $current_page_array = (isset($_COOKIE["navigation"])) ? $_COOKIE["navigation"] : array();
 //        $current_page_array = json_decode($current_page_array);
 //        $current_page_array = json_last_error() === JSON_ERROR_NONE && json_last_error() === 0 ? $current_page_array : array();
 //        

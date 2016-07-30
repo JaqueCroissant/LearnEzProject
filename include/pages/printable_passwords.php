@@ -33,25 +33,42 @@ try
                     <head>
                         <meta charset="UTF-8">
                         <title></title>
+                        <style>
+                            table {
+                                font-family: arial, sans-serif;
+                                border-collapse: collapse;
+                            }
+
+                            td, th {
+                                border: 1px solid #000000;
+                                text-align: left;
+                                padding: 8px;
+                                display: block;
+                            }
+
+                            tr:nth-child(even) {
+                                background-color: #e6e6e6;
+                            }
+
+                            div {
+                                margin-top: 5px;
+                                margin-bottom: 5px;
+                            }
+                        </style>
                     </head>
                     <body>
                         <table>
                             <?php
-                            
                             foreach($users_data as $user)
                             {
-                                echo '<tr>';
-                                echo '<td>Name: ' . $user['firstname'] . " " . $user['surname'] .'</td>';
-                                echo '</tr>';
-                                
-                                echo '<tr>';
-                                echo '<td>Username: ' . $user['username'] . '</td>';
-                                echo '<td> Password: ' . $user_info[$user['id']] . '</td>';
-                                echo '</tr>';
-                                
-                                echo '<tr><td> <td></tr>';
-                                echo '<tr><td> <td></tr>';
-                                echo '<tr><td> <td></tr>';
+                                ?>
+                                <tr>
+                                    <td>
+                                        <div><?php echo '<b>Name:</b> ' . $user['firstname'] . " " . $user['surname']; ?></div>
+                                        <div><?php echo '<b>Username:</b> ' . $user['username'] . ' <b>Password:</b> ' . $user_info[$user['id']]; ?></div>
+                                    </td>
+                                </tr>
+                                <?php
                             }
                             
                             ?>
@@ -67,7 +84,7 @@ try
 
         <div class="row">
             <div class="col-md-12">
-                asssssssssDirect access not permitted
+                Direct access not permitted
             </div>
         </div>
 
@@ -76,7 +93,13 @@ try
 }
 catch(Exception $ex)
 {
-    
+?>
+    <div class="row">
+            <div class="col-md-12">
+                Something went wrong
+            </div>
+        </div>
+<?php
 }
 ?>
 

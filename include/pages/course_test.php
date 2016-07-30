@@ -4,7 +4,6 @@ require_once '../../include/handler/courseHandler.php';
 
 $handler = new courseHandler();
 
-
 if (!$handler->load_test(6)) {
     echo "<script>change_page('error', 'PAGE_NO_RIGHTS');</script>";
     die();
@@ -34,7 +33,9 @@ var max_slide = 0;
 var table_id = ($("#iframe_content").attr("table_id"));
     
 function resize(){
-    var ratio = $(".wrap").width() / 1024;
+    var ratiow = $(".wrap").width() / 1024;
+    var ratioh = ($(window).height() - 120) / 800;
+    var ratio = ratiow > ratioh ? ratioh : ratiow;
     if (ratio < 1) {
         $("#scaled-frame").css({
             "transform" : "scale(" + ratio + ")",
@@ -43,7 +44,7 @@ function resize(){
         });
         $("#scaled-frame").css({
             "margin-top" : -(740 - 740 * ratio) / 2, 
-            "margin-left" : -(1024 - 1024 * ratio) / 2
+            "margin-left" : (-(1024 - 1024 * ratio) / 2) + ($(".wrap").width() - ratio * 1024) / 2
         });
         $("#iframe_content").height(740 * ratio + 60);
         $(".course_bar").width(1024 * ratio);
@@ -146,3 +147,4 @@ function update_progress(type, progress, is_complete, action_id){
     });
 }
 </script>
+

@@ -1,3 +1,106 @@
+$(document).on("click", ".upload_thumbnail", function (event) {
+    var form = $(this).closest("form");
+    event.preventDefault();
+    var formData = new FormData(form[0]);
+    $.ajax({
+        url: 'include/ajax/course.php?step=upload_thumbnail',
+        type: 'POST',
+        data: formData,
+        dataType: "json",
+        async: false,
+        complete: function (data) {
+            ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+            if (ajax_data.status_value) {
+                show_status_bar("success", ajax_data.success);
+                update_thumbnails();
+            } else {
+                show_status_bar("error", ajax_data.error);
+            }
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+});
+
+$(document).on({
+    mouseenter: function () {
+        $(this).find(".delete_thumbnail").removeClass("hidden");
+        $(this).find(".set_default_thumbnail").removeClass("hidden");
+        $(this).css({ opacity: 1 });
+    },
+    mouseleave: function () {
+       $(this).find(".delete_thumbnail").addClass("hidden");
+       var set_default_thumbnail = $(this).find(".set_default_thumbnail");
+       
+       if(set_default_thumbnail.attr("default_thumbnail") !== "1") {
+           set_default_thumbnail.addClass("hidden");
+       }
+       
+       if($(this).attr("thumbnail_id") !== current_thumbnail_id && current_thumbnail_id !== undefined) {
+           $(this).css({ opacity: 0.5 });
+       }
+    }
+}, ".thumbnail_element");
+
+$(document).on("click", ".thumbnail_element", function(event) {
+    if($(this).attr("thumbnail_id") === current_thumbnail_id) {
+        $(".active_thumbnail").addClass('hidden');
+        $(".thumbnail_element").css({ opacity: 1 });
+        current_thumbnail_id = undefined;
+        $(".thumbnail_picked").val(0);
+        return;
+    }
+    
+    current_thumbnail_id = $(this).attr("thumbnail_id");
+    $(".thumbnail_picked").val(current_thumbnail_id);
+    var current_thumbnail = $(this).find(".active_thumbnail");
+    current_thumbnail.removeClass("hidden");
+    $(".active_thumbnail").not(current_thumbnail).addClass('hidden');
+    $(".thumbnail_element").not($(this)).css({ opacity: 0.5 });
+});
+
+
+$(document).on("click", ".delete_thumbnail", function (event) {
+    event.stopPropagation();
+    var form = $(this).closest("form");
+    var thumbnail_id = $(this).attr("thumbnail_id");
+    event.preventDefault();
+    initiate_submit_get($(this), "course.php?delete_thumbnail=1&thumbnail_id="+thumbnail_id, function () {
+        show_status_bar("error", ajax_data.error);
+    }, function () {
+        show_status_bar("success", ajax_data.success);
+        update_thumbnails();
+        if($(".thumbnail_picked").val() === thumbnail_id) {
+            $(".active_thumbnail").addClass('hidden');
+            $(".thumbnail_element").css({ opacity: 1 });
+            current_thumbnail_id = undefined;
+        }
+    });
+});
+
+$(document).on("click", ".set_default_thumbnail", function (event) {
+    event.stopPropagation();
+    var form = $(this).closest("form");
+    var thumbnail_id = $(this).attr("thumbnail_id");
+    event.preventDefault();
+    initiate_submit_get($(this), "course.php?set_default_thumbnail=1&thumbnail_id="+thumbnail_id, function () {
+        show_status_bar("error", ajax_data.error);
+    }, function () {
+        show_status_bar("success", ajax_data.success);
+        update_thumbnails();
+    });
+});
+
+function update_thumbnails() {
+    var url = "course.php?get_thumbnails" + (current_thumbnail_id !== undefined ? "&selected_thumbnail=" + current_thumbnail_id : "");
+    initiate_submit_get($(this), url, function () {}, function () {
+        if(ajax_data.thumbnails !== undefined) {
+            $(".thumbnail-placeholder").html(ajax_data.thumbnails);
+        }
+    });
+}
+
 $(document).on("click", ".add_translation", function (event) {
     var form = $(this).closest("form");
     var value = form.find('#language').find(":selected").val();
@@ -38,6 +141,7 @@ $(document).on("click", ".submit_create_course", function (event) {
     }, function () {
         show_status_bar("success", ajax_data.success);
         change_page("course_administrate", "create_course");
+        current_thumbnail_id = undefined;
     });
 });
 

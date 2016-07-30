@@ -17,9 +17,9 @@ $courseHandler = new CourseHandler();
 
                 <div class="my_tab_content">
                     
-                    <div class="my_fade my_tab active" id="find_course_tab">
+                    <div class="my_fade my_tab" id="find_course_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [4]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid" aria-describedby="default-datatable_info">
+                            <table id="default-datatable" class="table dataTable datatable_1" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [4]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid" aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
                                         <th><?php echo TranslationHandler::get_static_text("TITLE"); ?></th>
@@ -61,9 +61,10 @@ $courseHandler = new CourseHandler();
                                                         <div>
                                                             <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_course" args="&type=course&id=<?php echo $value->id; ?>" id="edit_course"></i>
                                                             <?php if (RightsHandler::has_user_right("COURSE_DELETE")) { ?>
-                                                            <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete&type=course">
+                                                            <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete">
                                                                 <input type="hidden" name="id" value="<?php echo $value->id; ?>">
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <input type="hidden" name="type" value="course">
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="course" current_datatable="datatable_1" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
                                                                 <input type="hidden" name="submit" value="submit"></input>
                                                             </form>
                                                             <?php } ?>
@@ -84,7 +85,7 @@ $courseHandler = new CourseHandler();
                     
                     <div class="my_fade my_tab" id="find_lecture_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [4]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                            <table id="default-datatable" class="table dataTable datatable_2" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [4]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -123,9 +124,10 @@ $courseHandler = new CourseHandler();
                                                         <div>
                                                             <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_course" args="&type=lecture&id=<?php echo $value->id; ?>" id="edit_course"></i>
                                                             <?php if (RightsHandler::has_user_right("COURSE_DELETE")) { ?>
-                                                            <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete&type=lecture">
+                                                            <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete">
                                                                 <input type="hidden" name="id" value="<?php echo $value->id; ?>">
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <input type="hidden" name="type" value="lecture">
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="lecture" current_datatable="datatable_2" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
                                                                 <input type="hidden" name="submit" value="submit"></input>
                                                             </form>
                                                             <?php } ?>
@@ -146,7 +148,7 @@ $courseHandler = new CourseHandler();
                     
                     <div class="my_fade my_tab" id="find_test_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [4]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                            <table id="default-datatable" class="table dataTable datatable_3" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [4]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -185,9 +187,10 @@ $courseHandler = new CourseHandler();
                                                         <div>
                                                             <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_course" args="&type=test&id=<?php echo $value->id; ?>" id="edit_course"></i>
                                                             <?php if (RightsHandler::has_user_right("COURSE_DELETE")) { ?>
-                                                            <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete&type=test">
+                                                            <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete">
                                                                 <input type="hidden" name="id" value="<?php echo $value->id; ?>">
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <input type="hidden" name="type" value="test">
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="test" current_datatable="datatable_3" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
                                                                 <input type="hidden" name="submit" value="submit"></input>
                                                             </form>
                                                             <?php } ?>
@@ -211,25 +214,13 @@ $courseHandler = new CourseHandler();
     </div>
 </div>
 
-<div style="display:none;" id="open_text"><?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("ACCOUNT")) . "?"; ?></div>
-<div style="display:none;" id="close_text"><?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("ACCOUNT")) . "?"; ?></div>
-
-<div id="alertbox" class="panel panel-danger alert_panel hidden" >
-    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
-    <div class="panel-body">
-    </div>
-    <div class="panel-footer p-h-sm">
-        <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg accept_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
-            <input class="btn btn-default btn-sm p-v-lg cancel_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
-        </p>
-    </div>
-</div>
+<div style="display:none;" id="delete_course"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE_COURSE"); ?></div>
+<div style="display:none;" id="delete_lecture"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE_LECTURE"); ?></div>
+<div style="display:none;" id="delete_test"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE_TEST"); ?></div>
 
 <div id="click_alertbox" class="panel panel-danger alert_panel hidden" >
     <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
     <div class="panel-body">
-        <div id="delete_text"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("ACCOUNT")) . "?"; ?></div>
     </div>
     <div class="panel-footer p-h-sm">
         <p class="m-0">

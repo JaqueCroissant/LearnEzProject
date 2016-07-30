@@ -22,7 +22,7 @@ $userHandler = new UserHandler();
                     <!-- Tab -->
                     <div class="my_fade my_tab" id="find_account_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [5,6]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                            <table id="default-datatable" class="table dataTable datatable_1" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [5,6]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -91,7 +91,7 @@ $userHandler = new UserHandler();
                                                             <?php if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                                             <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="edit_account.php?step=delete_acc">
                                                                 <input type="hidden" name="user_id" value="<?php echo $value->id; ?>">
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" current_datatable="datatable_1" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
                                                                 <input type="hidden" name="submit" value="submit"></input>
                                                             </form>
                                                             <?php } ?>

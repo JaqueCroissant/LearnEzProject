@@ -5,6 +5,8 @@ var content_hidden = false;
 var ready_to_change = true;
 var status_bar_timeout;
 
+var current_thumbnail_id;
+var current_datatable;
 var clicked_checkbox_id;
 var clicked_element_id;
 var delete_class_id;

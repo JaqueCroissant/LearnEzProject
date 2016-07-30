@@ -38,8 +38,9 @@ $courseHandler = new CourseHandler();
                     ?>
                     <div class="my_fade my_tab" id="create_course_tab">
                         <div class="widget-body" style="padding-top:32px !important;">
-                            <form method="post" action="" url="course.php?step=create_course" id="create_course" name="create_course">
-                                <input type="hidden" name="color" class="pick_color" value=""/>
+                            <form method="post" action="" url="course.php?step=create_course" id="create_course" name="create_course" enctype="multipart/form-data">
+                                <input type="hidden" name="color" class="pick_color" value="#000000"/>
+                                <input type="hidden" name="thumbnail" class="thumbnail_picked" value="" />
                                 <div class="title_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TITLE"); ?></div>
                                 <div class="description_text" style="display:none;"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></div>
                                 <div class="translation_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TRANSLATION"); ?></div>
@@ -89,6 +90,28 @@ $courseHandler = new CourseHandler();
                                     <div class="col-md-12" style="margin-bottom: 16px !important;">
                                         
                                         <div class="form-group m-b-sm">
+                                            <div class="panel-group accordion" id="accordion-thumbnail-course" role="tablist" aria-multiselectable="false">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="heading-thumbnail-course">
+                                                        <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-thumbnail-course" href="#collapse-thumbnail-course" aria-expanded="false" aria-controls="collapse-thumbnail-course">
+                                                            <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("PICK_FROM_EXISTING_THUMBNAIL"); ?></label>
+                                                            <i class="fa acc-switch"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse-thumbnail-course" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-thumbnail-course" aria-expanded="false">
+                                                        <div class="panel-body thumbnail-placeholder" style="padding-left:0px !important;padding-right:0px !important;">
+                                                            <?php
+                                                            foreach ($courseHandler->get_thumbnails() as $value) {
+                                                                echo '<div class="avatar avatar-xl thumbnail_element" thumbnail_id="' . $value['id'] . '" style="cursor:pointer;z-index:10"><div class="set_default_thumbnail '. (!$value["default_thumbnail"] ? 'hidden' : '') .'" '. ($value["default_thumbnail"] ? 'default_thumbnail="1"' : '') .' title="'.TranslationHandler::get_static_text("DEFAULT_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-home" style="display:initial !important;"></i></div><div class="delete_thumbnail hidden" title="'.TranslationHandler::get_static_text("DELETE_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-close" style="display:initial !important;"></i></div><img src="assets/images/thumbnails/' . $value['filename'] . '"/><div class="active_thumbnail hidden" title="'.TranslationHandler::get_static_text("PICK_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-check" style="display:initial !important;"></i></div></div>';
+                                                            }
+                                                            ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                         <div class="form-group m-b-sm">
                                             <div class="panel-group accordion" id="accordion-new-thumbnail-course" role="tablist" aria-multiselectable="false">
                                                 <div class="panel panel-default">
                                                     <div class="panel-heading" role="tab" id="heading-new-thumbnail-course">
@@ -100,32 +123,13 @@ $courseHandler = new CourseHandler();
                                                     <div id="collapse-new-thumbnail-course" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-new-thumbnail-course" aria-expanded="false">
                                                     <hr class="m-0 " style="border-color: #ddd;margin: 2px 0px 14px 0px !important;">
                                                     <div class="form-group m-b-sm">
+                                                        <div style="display: table-cell;width: 100%;">
                                                         <input type="file" id="thumbnail_upload" name="thumbnail_upload" class="form-control btn btn-default">
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        
-                                        
-                                        <div class="form-group m-b-sm">
-                                            <div class="panel-group accordion" id="accordion-thumbnail-course" role="tablist" aria-multiselectable="false">
-                                                <div class="panel panel-default">
-                                                    <div class="panel-heading" role="tab" id="heading-thumbnail-course">
-                                                        <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-thumbnail-course" href="#collapse-thumbnail-course" aria-expanded="false" aria-controls="collapse-thumbnail-course">
-                                                            <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("PICK_FROM_EXISTING_THUMBNAIL"); ?></label>
-                                                            <i class="fa acc-switch"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse-thumbnail-course" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-thumbnail-course" aria-expanded="false">
-                                                        <div class="panel-body" style="padding-left:0px !important;padding-right:0px !important;">
-                                                            <?php
-                                                            foreach ($courseHandler->get_thumbnails() as $value) {
-                                                                echo '<div class="avatar avatar-xl avatar-circle avatar-hover" thumbnail_id="' . $value['id'] . '"><img src="assets/images/thumbnails/' . $value['filename'] . '"/></div>';
-                                                            }
-                                                            ?>
                                                         </div>
+                                                        <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
+                                                        <input type="button" name="submit" id="upload_thumbnail" value="<?php echo TranslationHandler::get_static_text("UPLOAD_IMAGE"); ?>" class="pull-right btn btn-default btn-md upload_thumbnail m-l-sm">
+                                                        </div>
+                                                    </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -227,54 +231,7 @@ $courseHandler = new CourseHandler();
                                         </div>
                                     </div>
                                     
-                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("THUMBNAIL"); ?></h4>
-                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
-                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
-                                        
-                                        <div class="form-group m-b-sm">
-                                            <div class="panel-group accordion" id="accordion-new-thumbnail-lecture" role="tablist" aria-multiselectable="false">
-                                                <div class="panel panel-default">
-                                                    <div class="panel-heading" role="tab" id="heading-new-thumbnail-lecture">
-                                                        <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-new-thumbnail-lecture" href="#collapse-new-thumbnail-lecture" aria-expanded="false" aria-controls="collapse-new-thumbnail-lecture">
-                                                            <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("UPLOAD_NEW_THUMBNAIL"); ?></label>
-                                                            <i class="fa acc-switch"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse-new-thumbnail-lecture" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-new-thumbnail-lecture" aria-expanded="false">
-                                                    <hr class="m-0 " style="border-color: #ddd;margin: 2px 0px 14px 0px !important;">
-                                                    <div class="form-group m-b-sm">
-                                                        <input type="file" id="thumbnail_upload" name="thumbnail_upload" class="form-control btn btn-default">
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        
-                                        
-                                        <div class="form-group m-b-sm">
-                                            <div class="panel-group accordion" id="accordion-thumbnail-lecture" role="tablist" aria-multiselectable="false">
-                                                <div class="panel panel-default">
-                                                    <div class="panel-heading" role="tab" id="heading-thumbnail-lecture">
-                                                        <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-thumbnail-lecture" href="#collapse-thumbnail-lecture" aria-expanded="false" aria-controls="collapse-thumbnail-lecture">
-                                                            <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("PICK_FROM_EXISTING_THUMBNAIL"); ?></label>
-                                                            <i class="fa acc-switch"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse-thumbnail-lecture" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-thumbnail-lecture" aria-expanded="false">
-                                                        <div class="panel-body" style="padding-left:0px !important;padding-right:0px !important;">
-                                                            <?php
-                                                            foreach ($courseHandler->get_thumbnails() as $value) {
-                                                                echo '<div class="avatar avatar-xl avatar-circle avatar-hover" thumbnail_id="' . $value['id'] . '"><img src="assets/images/thumbnails/' . $value['filename'] . '"/></div>';
-                                                            }
-                                                            ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
+                                   
                                     
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MEDIA"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
@@ -375,54 +332,6 @@ $courseHandler = new CourseHandler();
                                         </div>
                                     </div>
                                     
-                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("THUMBNAIL"); ?></h4>
-                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
-                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
-                                        
-                                        <div class="form-group m-b-sm">
-                                            <div class="panel-group accordion" id="accordion-new-thumbnail-test" role="tablist" aria-multiselectable="false">
-                                                <div class="panel panel-default">
-                                                    <div class="panel-heading" role="tab" id="heading-new-thumbnail-test">
-                                                        <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-new-thumbnail-test" href="#collapse-new-thumbnail-test" aria-expanded="false" aria-controls="collapse-new-thumbnail-test">
-                                                            <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("UPLOAD_NEW_THUMBNAIL"); ?></label>
-                                                            <i class="fa acc-switch"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse-new-thumbnail-test" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-new-thumbnail-test" aria-expanded="false">
-                                                    <hr class="m-0 " style="border-color: #ddd;margin: 2px 0px 14px 0px !important;">
-                                                    <div class="form-group m-b-sm">
-                                                        <input type="file" id="thumbnail_upload" name="thumbnail_upload" class="form-control btn btn-default">
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        
-                                        
-                                        <div class="form-group m-b-sm">
-                                            <div class="panel-group accordion" id="accordion-thumbnail-test" role="tablist" aria-multiselectable="false">
-                                                <div class="panel panel-default">
-                                                    <div class="panel-heading" role="tab" id="heading-thumbnail-test">
-                                                        <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-thumbnail-test" href="#collapse-thumbnail-test" aria-expanded="false" aria-controls="collapse-thumbnail-test">
-                                                            <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("PICK_FROM_EXISTING_THUMBNAIL"); ?></label>
-                                                            <i class="fa acc-switch"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse-thumbnail-test" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-thumbnail-test" aria-expanded="false">
-                                                        <div class="panel-body" style="padding-left:0px !important;padding-right:0px !important;">
-                                                            <?php
-                                                            foreach ($courseHandler->get_thumbnails() as $value) {
-                                                                echo '<div class="avatar avatar-xl avatar-circle avatar-hover" thumbnail_id="' . $value['id'] . '"><img src="assets/images/thumbnails/' . $value['filename'] . '"/></div>';
-                                                            }
-                                                            ?>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                    </div>
                                     
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MEDIA"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">

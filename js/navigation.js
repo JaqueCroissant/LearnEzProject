@@ -56,6 +56,7 @@ function change_page(pagename, step, args, element) {
         complete: function() {
             currently_changing_page = false;
             set_clickable(element);
+            window.scrollTo(0, 0);
         }
     });
 }

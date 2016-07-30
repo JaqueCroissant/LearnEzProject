@@ -7,8 +7,71 @@ class CourseHandler extends Handler
     public $test;
     public $last_inserted_id;
     private $_all_courses = array();
+    
+    public function delete($id = 0, $type = null) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
 
-    public function create_course($os_id = 0, $points = 0, $color = null, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
+            if(!RightsHandler::has_user_right("COURSE_DELETE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            if(empty($id) || !is_numeric($id) || empty($type)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(!in_array($type, array("course", "lecture", "test"))) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            switch($type) {
+                case "course":
+                    DbHandler::get_instance()->query("DELETE FROM course WHERE id = :id", $id);
+                    DbHandler::get_instance()->query("DELETE FROM translation_course WHERE course_id = :id", $id);
+                    
+                    $related_lectures = DbHandler::get_instance()->return_query("SELECT id FROM course_lecture WHERE course_id = :id", $id);
+                    $array = array();
+                    foreach($related_lectures as $value) {
+                        $array[] = $value["id"];
+                    }
+                    DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE course_id = :id", $id);
+                    DbHandler::get_instance()->query("DELETE FROM user_course_lecture WHERE lecture_id IN (".generate_in_query($array).")");
+                    DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id IN (".generate_in_query($array).")");
+                    
+                    $related_tests = DbHandler::get_instance()->return_query("SELECT id FROM course_test WHERE course_id = :id", $id);
+                    $array = array();
+                    foreach($related_tests as $value) {
+                        $array[] = $value["id"];
+                    }
+                    DbHandler::get_instance()->query("DELETE FROM course_test WHERE course_id = :id", $id);
+                    DbHandler::get_instance()->query("DELETE FROM user_course_test WHERE test_id IN (".generate_in_query($array).")");
+                    DbHandler::get_instance()->query("DELETE FROM translation_course_test WHERE course_test_id IN (".generate_in_query($array).")");
+                    break;
+                
+                case "lecture":
+                    DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE id = :id", $id);
+                    DbHandler::get_instance()->query("DELETE FROM user_course_lecture WHERE lecture_id = :id", $id);
+                    DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id = :id", $id);
+                    break;
+                
+                case "test":
+                    DbHandler::get_instance()->query("DELETE FROM course_test WHERE id = :id", $id);
+                    DbHandler::get_instance()->query("DELETE FROM user_course_test WHERE test_id = :id", $id);
+                    DbHandler::get_instance()->query("DELETE FROM translation_course_test WHERE course_test_id = :id", $id);
+                    break;
+            }
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    public function create_course($os_id = 0, $points = 0, $color = null, $sort_order = 0, $thumbnail = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
         try 
         {
             if (!$this->user_exists()) {
@@ -30,6 +93,10 @@ class CourseHandler extends Handler
             if(!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
                 throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
             }
+            
+            if(empty($thumbnail) || !is_numeric($thumbnail) || (DbHandler::get_instance()->count_query("SELECT id FROM course_image WHERE id = :id", $thumbnail) < 1)) {
+                $thumbnail = $this->get_default_thumbnail_id();
+            }
 
             $titles = $this->assign_language_id($titles, $language_ids, "title");
             $descriptions = $this->assign_language_id($descriptions, $language_ids, "description");
@@ -45,7 +112,7 @@ class CourseHandler extends Handler
             
             DbHandler::get_instance()->query("UPDATE course SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
 
-            DbHandler::get_instance()->query("INSERT INTO course (os_id, points, sort_order, color) VALUES (:os_id, :points, :sort_order, :color)", $os_id, $points, ($sort_order + 1), $color);
+            DbHandler::get_instance()->query("INSERT INTO course (os_id, points, sort_order, color, image_id) VALUES (:os_id, :points, :sort_order, :color, :image_id)", $os_id, $points, ($sort_order + 1), $color, $thumbnail);
             $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
 
             foreach($translation_texts as $key => $value) {
@@ -207,10 +274,10 @@ class CourseHandler extends Handler
             }
             
             if($course_id == 0) {
-                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id", TranslationHandler::get_current_language());
+                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id AND translation_course.language_id = :language_id", TranslationHandler::get_current_language(), TranslationHandler::get_current_language());
             
             } else {
-                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id AND course_lecture.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id AND translation_course.language_id = :language_id AND course_lecture.course_id = :course_id", TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $course_id);
             }
             $array = array();
             foreach($data as $value) {
@@ -241,10 +308,10 @@ class CourseHandler extends Handler
             }
             
             if($course_id == 0) {
-                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id", TranslationHandler::get_current_language());
+                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id AND translation_course.language_id = :language_id", TranslationHandler::get_current_language(), TranslationHandler::get_current_language());
             
             } else {
-                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id AND course_test.course_id = :course_id", TranslationHandler::get_current_language(), $course_id);
+                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id AND translation_course.language_id = :language_id AND course_test.course_id = :course_id", TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $course_id);
             }
 
             $array = array();
@@ -260,15 +327,7 @@ class CourseHandler extends Handler
             return false;
         }
     }
-    
-    public function get_thumbnails() {
-        return DbHandler::get_instance()->return_query("SELECT * FROM course_image");
-    }
-    
-    public static function get_os_options(){
-        return DbHandler::get_instance()->return_query("SELECT course_os.id, translation_course_os.title FROM course_os INNER JOIN translation_course_os ON translation_course_os.course_os_id = course_os.id AND translation_course_os.language_id = :language", TranslationHandler::get_current_language());  
-    }
-    
+
     public function get_courses(){
         try{
             if (!$this->user_exists()) {
@@ -414,6 +473,144 @@ class CourseHandler extends Handler
             return false;
         }
     }
+    
+    public function upload_thumbnail($file = null) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            if(empty($file) || !is_array($file)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if($file["size"] > 1000000) {
+                throw new exception("IMAGE_TOO_LARGE_MAX_1_MB");
+            }
+            
+            $file_type = pathinfo($file['name'], PATHINFO_EXTENSION);
+            if(!in_array(strtoupper($file_type), array("JPG", "JPEG", "PNG", "GIF"))) {
+                throw new exception("IMAGE_MUST_BE_OF_TYPE_JPG_JPEG_PNG_GIF");
+            }
+            
+            $file_location = realpath(__DIR__ . '/../..') . "/assets/images/thumbnails/";
+            $file_name = md5(uniqid(mt_rand(), true)) . "." . $file_type;
+            if (!move_uploaded_file($file["tmp_name"], $file_location. "uncropped/" . $file_name)) {
+                throw new exception("UNKNOWN_ERROR");
+            }
+            
+            $resize = new Resize($file_location. "uncropped/" . $file_name);
+            $resize -> resize_image(70, 70, 'auto');
+            $resize -> save_image($file_location . "" . $file_name, 100);
+            
+            DbHandler::get_instance()->query("INSERT INTO course_image (filename) VALUES (:filename)", $file_name);
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    public function set_default_thumbnail($id = 0) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            if(empty($id) || !is_numeric($id)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            $thumbnail_data = DbHandler::get_instance()->return_query("SELECT * FROM course_image WHERE id = :id LIMIT 1", $id);
+            
+            if(empty($thumbnail_data)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(reset($thumbnail_data)["default_thumbnail"]) {
+                return true;
+            }
+            
+            $old_default_thumbnail = DbHandler::get_instance()->return_query("SELECT * FROM course_image WHERE default_thumbnail = '1' LIMIT 1");
+            $old_default_id = !empty($old_default_thumbnail) ? reset($old_default_thumbnail)["id"] : 0;
+            DbHandler::get_instance()->query("UPDATE course_image SET default_thumbnail = '0'");
+            DbHandler::get_instance()->query("UPDATE course_image SET default_thumbnail = '1' WHERE id = :id", $id);
+            DbHandler::get_instance()->query("UPDATE course SET image_id = :id WHERE image_id = :id OR image_id = '0'", $id, $old_default_id);
+            return true;
+            
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    public function delete_thumbnail($id = 0) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            if(empty($id) || !is_numeric($id)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            $thumbnail_data = DbHandler::get_instance()->return_query("SELECT * FROM course_image WHERE id = :id LIMIT 1", $id);
+            
+            if(empty($thumbnail_data)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(reset($thumbnail_data)["default_thumbnail"]) {
+                throw new exception("CANNOT_DELETE_DEFAULT_THUMBNAIL");
+            }
+            
+            $thumbnail_id = reset($thumbnail_data)["id"];
+            $thumbnail_filename = reset($thumbnail_data)["filename"];
+            $default_thumbnail = DbHandler::get_instance()->return_query("SELECT * FROM course_image WHERE default_thumbnail = '1'");
+            $default_thumbnail_id = !empty($default_thumbnail) ? reset($default_thumbnail)["id"] : 0;
+            
+            DbHandler::get_instance()->query("UPDATE course SET image_id = :image_id WHERE image_id = :old_image_id", $default_thumbnail_id, $thumbnail_id);
+            DbHandler::get_instance()->query("DELETE FROM course_image WHERE id = :id", $thumbnail_id);
+            
+            $file_location = realpath(__DIR__ . '/../..') . "/assets/images/thumbnails/";
+            if(file_exists($file_location . "" . $thumbnail_filename) && file_exists($file_location . "uncropped/" . $thumbnail_filename)) {
+                unlink($file_location . "" . $thumbnail_filename);
+                unlink($file_location . "uncropped/" . $thumbnail_filename);
+            }
+            return true;
+            
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    public function get_thumbnails() {
+        return DbHandler::get_instance()->return_query("SELECT * FROM course_image");
+    }
+    
+    public function get_default_thumbnail_id() {
+        return reset(DbHandler::get_instance()->return_query("SELECT id FROM course_image WHERE default_thumbnail = '1' LIMIT 1"))["id"];
+    }
+    
+    public static function get_os_options(){
+        return DbHandler::get_instance()->return_query("SELECT course_os.id, translation_course_os.title FROM course_os INNER JOIN translation_course_os ON translation_course_os.course_os_id = course_os.id AND translation_course_os.language_id = :language", TranslationHandler::get_current_language());  
+    }
+    
 }
 
 

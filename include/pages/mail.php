@@ -381,7 +381,7 @@ $paginationHandler = new PaginationHandler();
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="m-h-lg lh-xl">
-                                        <p><?php echo $current_mail->text; ?></p>
+                                        <p><?php echo nl2br($current_mail->text); ?></p>
                                     </div>
                                 </div>
                             </div>

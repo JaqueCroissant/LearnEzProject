@@ -4,7 +4,7 @@ require_once '../../include/handler/courseHandler.php';
 
 $courseHandler = new CourseHandler();
 ?>
-
+<script>current_thumbnail_id = undefined;</script>
 <div class="row">
     <div class="col-md-12">
         <div class="widget">

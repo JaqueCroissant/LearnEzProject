@@ -141,7 +141,6 @@ $(document).on("click", ".submit_create_course", function (event) {
     }, function () {
         show_status_bar("success", ajax_data.success);
         change_page("course_administrate", "create_course");
-        current_thumbnail_id = undefined;
     });
 });
 

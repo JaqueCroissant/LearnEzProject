@@ -93,8 +93,22 @@ if(isset($_POST)) {
     }
 }
 
+if(isset($_GET["get_courses"]) && isset($_GET["os_id"])) {
+    if($courseHandler->get_multiple(0, "course", $_GET["os_id"])) {
+        $jsonArray["courses"] = "";
+        for($i = 0; $i < count($courseHandler->courses); $i++) {
+            $jsonArray["courses"] .= '<option value="'.$courseHandler->courses[$i]->sort_order.'">'.($i + 1).'. '.$courseHandler->courses[$i]->title.'</option>';
+        }
+        $jsonArray['status_value'] = true;
+    } else {
+        $jsonArray['status_value'] = false;
+        $jsonArray['error'] = $courseHandler->error->title;
+    }
+    echo json_encode($jsonArray);
+}
+
 if(isset($_GET["get_lectures"]) && isset($_GET["course_id"])) {
-    if($courseHandler->get_lectures($_GET["course_id"])) {
+    if($courseHandler->get_multiple($_GET["course_id"], "lecture")) {
         $jsonArray["lectures"] = "";
         for($i = 0; $i < count($courseHandler->lectures); $i++) {
             $jsonArray["lectures"] .= '<option value="'.$courseHandler->lectures[$i]->sort_order.'">'.($i + 1).'. '.$courseHandler->lectures[$i]->title.'</option>';
@@ -108,7 +122,7 @@ if(isset($_GET["get_lectures"]) && isset($_GET["course_id"])) {
 }
 
 if(isset($_GET["get_tests"]) && isset($_GET["course_id"])) {
-    if($courseHandler->get_tests($_GET["course_id"])) {
+    if($courseHandler->get_multiple($_GET["course_id"], "test")) {
         $jsonArray["tests"] = "";
         for($i = 0; $i < count($courseHandler->tests); $i++) {
             $jsonArray["tests"] .= '<option value="'.$courseHandler->tests[$i]->sort_order.'">'.($i + 1).'. '.$courseHandler->tests[$i]->title.'</option>';

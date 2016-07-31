@@ -9,17 +9,14 @@ $userHandler = new UserHandler();
     <div class="col-md-12">
         <div class="widget">
             <div class="m-b-lg nav-tabs-horizontal">
-                <!-- tabs list -->
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" id="find_account_header"><a href="#find_account_tab" class="my_tab_header" id="find_account_a" data-toggle="tab">
-                            <?php echo TranslationHandler::get_static_text("FIND_ACCOUNT"); ?></a></li>
-                    <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                    <li role="presentation" id="find_account_header"><a href="#find_account_tab" class="my_tab_header" id="find_account_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("FIND_ACCOUNT"); ?></a></li>
+                    <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) { ?>
                         <li role="presentation" id="assign_pass_header"><a href="#assign_pass_tab" class="my_tab_header" id="assign_pass_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS"); ?></a></li>
                     <?php } ?>
-                </ul><!-- .nav-tabs -->
+                </ul>
 
                 <div class="my_tab_content">
-                    <!-- Tab -->
                     <div class="my_fade my_tab" id="find_account_tab">
                         <div class="widget-body">
                             <table id="default-datatable" class="table dataTable datatable_1" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [5,6]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
@@ -31,10 +28,10 @@ $userHandler = new UserHandler();
                                         <th><?php echo TranslationHandler::get_static_text("USER_TYPE"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
-                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_AVAILABILITY")) { ?>
                                             <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                         <?php } ?>
-                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT") || RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                             <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
                                         <th hidden></th>
@@ -47,10 +44,10 @@ $userHandler = new UserHandler();
                                         <th><?php echo TranslationHandler::get_static_text("USER_TYPE"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
-                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_AVAILABILITY")) { ?>
                                             <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                         <?php } ?>
-                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT") || RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                             <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                         <?php } ?>
                                         <th hidden></th>
@@ -71,7 +68,7 @@ $userHandler = new UserHandler();
                                                 <td class="click_me"><?php echo $value->user_type_title; ?></td>
                                                 <td class="click_me" data-search="<?php echo $value->email ?>"><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>
                                                 <td class="click_me" data-search="<?php echo $value->school_name ?>"><?php echo (strlen($value->school_name) > 16 ? substr($value->school_name, 0, 16) : $value->school_name); ?></td>
-                                                <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
+                                                <?php if (RightsHandler::has_user_right("ACCOUNT_AVAILABILITY")) { ?>
                                                     <td align="center">
                                                         <form method="post" id="alert_form_<?php echo $value->id; ?>" action="" url="edit_account.php?step=set_availability">
                                                             <input type="hidden" name="user_id" value="<?php echo $value->id; ?>">
@@ -84,11 +81,14 @@ $userHandler = new UserHandler();
                                                         </form>
                                                     </td>
                                                 <?php } ?>
-                                                <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                                <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT") || RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                                     <td align="center">
                                                         <div>
+                                                            <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
                                                             <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
-                                                            <?php if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
+                                                            <?php
+                                                            }
+                                                            if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                                             <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="edit_account.php?step=delete_acc">
                                                                 <input type="hidden" name="user_id" value="<?php echo $value->id; ?>">
                                                                 <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" current_datatable="datatable_1" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
@@ -115,12 +115,12 @@ $userHandler = new UserHandler();
                     <div class="my_fade my_tab" id="assign_pass_tab">
                         <div class="widget-body">
                             <form method="post" id="assign_password_form" url="edit_account.php?step=assign_passwords">
-                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [0]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                            <table id="default-datatable" class="table dataTable" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [0]}],order:[], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
-                                        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                            <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) { ?>
+                                            <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("PICK"); ?></th>
                                         <?php } ?>
                                         <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("USERNAME"); ?></th>
@@ -146,6 +146,7 @@ $userHandler = new UserHandler();
                                             <th></th>
                                             <th></th>
                                             <th></th>
+                                            <th hidden></th>
                                         </tr>
 
 
@@ -160,8 +161,7 @@ $userHandler = new UserHandler();
 
                                                 ?>
                                                 <tr class="clickable_row" >
-
-                                                    <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
+                                                    <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) { ?>
                                                         <td align="left">
                                                                 <div class="checkbox">
                                                                     <input class="checkbox-circle checkbox-dark" type="checkbox" value="<?php echo $value->id; ?>" name="user_ids[]">

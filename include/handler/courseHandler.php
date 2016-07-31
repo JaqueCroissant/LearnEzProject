@@ -1,76 +1,58 @@
 <?php
 class CourseHandler extends Handler
 {
+    public $last_inserted_id;
+    
     public $courses = array();
     public $lectures = array();
     public $tests = array();
-    public $test;
-    public $last_inserted_id;
-    private $_all_courses = array();
+    public $current_element;
     
-    public function delete($id = 0, $type = null) {
-        try {
-            if (!$this->user_exists()) {
-                throw new exception("USER_NOT_LOGGED_IN");
-            }
+    private $_current_element_type;
+    private $_current_element_id;
+    
+    CONST COURSE    = "COURSE";
+    CONST LECTURE   = "LECTURE";
+    CONST TEST      = "TEST";
 
-            if(!RightsHandler::has_user_right("COURSE_DELETE")) {
-                throw new exception("INSUFFICIENT_RIGHTS");
-            }
+    private function set_element_type($element_type = null) {
+        if(!is_string($element_type)) {
+            throw new exception("INVALID_INPUT");
+        }  
+        
+        switch($element_type) {
+            case "course":
+                $this->_current_element_type = self::COURSE;
+                break;
             
-            if(empty($id) || !is_numeric($id) || empty($type)) {
+            case "lecture":
+                $this->_current_element_type = self::LECTURE;
+                break;
+            
+            case "test":
+                $this->_current_element_type = self::TEST;
+                break;
+            
+            default:
                 throw new exception("INVALID_INPUT");
-            }
-            
-            if(!in_array($type, array("course", "lecture", "test"))) {
-                throw new exception("INVALID_INPUT");
-            }
-            
-            switch($type) {
-                case "course":
-                    DbHandler::get_instance()->query("DELETE FROM course WHERE id = :id", $id);
-                    DbHandler::get_instance()->query("DELETE FROM translation_course WHERE course_id = :id", $id);
-                    
-                    $related_lectures = DbHandler::get_instance()->return_query("SELECT id FROM course_lecture WHERE course_id = :id", $id);
-                    $array = array();
-                    foreach($related_lectures as $value) {
-                        $array[] = $value["id"];
-                    }
-                    DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE course_id = :id", $id);
-                    DbHandler::get_instance()->query("DELETE FROM user_course_lecture WHERE lecture_id IN (".generate_in_query($array).")");
-                    DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id IN (".generate_in_query($array).")");
-                    
-                    $related_tests = DbHandler::get_instance()->return_query("SELECT id FROM course_test WHERE course_id = :id", $id);
-                    $array = array();
-                    foreach($related_tests as $value) {
-                        $array[] = $value["id"];
-                    }
-                    DbHandler::get_instance()->query("DELETE FROM course_test WHERE course_id = :id", $id);
-                    DbHandler::get_instance()->query("DELETE FROM user_course_test WHERE test_id IN (".generate_in_query($array).")");
-                    DbHandler::get_instance()->query("DELETE FROM translation_course_test WHERE course_test_id IN (".generate_in_query($array).")");
-                    break;
-                
-                case "lecture":
-                    DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE id = :id", $id);
-                    DbHandler::get_instance()->query("DELETE FROM user_course_lecture WHERE lecture_id = :id", $id);
-                    DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id = :id", $id);
-                    break;
-                
-                case "test":
-                    DbHandler::get_instance()->query("DELETE FROM course_test WHERE id = :id", $id);
-                    DbHandler::get_instance()->query("DELETE FROM user_course_test WHERE test_id = :id", $id);
-                    DbHandler::get_instance()->query("DELETE FROM translation_course_test WHERE course_test_id = :id", $id);
-                    break;
-            }
-            return true;
         }
-        catch (Exception $ex) 
-        {
-            $this->error = ErrorHandler::return_error($ex->getMessage());
-        }
-        return false;
+        
     }
     
+    private function set_element_id($element_id = 0, $allow_empty = false) {
+        if(!$allow_empty) {
+            if (empty($element_id) || !is_numeric($element_id)) {
+                throw new Exception("INVALID_INPUT");
+           } 
+        } else {
+            if(!(is_numeric($element_id) && is_int((int)$element_id))) {
+                throw new Exception("INVALID_INPUT");
+            }
+        }
+        $this->_current_element_id = $element_id;
+    }
+    
+    //<editor-fold defaultstate="collapsed" desc="CREATE">
     public function create_course($os_id = 0, $points = 0, $color = null, $sort_order = 0, $thumbnail = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
         try 
         {
@@ -222,7 +204,7 @@ class CourseHandler extends Handler
         }
         return false;
     }
-
+    
     private function assign_language_id($elements = array(), &$language_ids = array(), $key_name = null) {
         if(count($elements) != count($language_ids)) {
             return array();
@@ -242,92 +224,239 @@ class CourseHandler extends Handler
         }
         return $array;
     }
-
-    private function set_all_courses() {
-        $data = DbHandler::get_instance()->return_query("SELECT course.*, translation_course.title, translation_course.description FROM course INNER JOIN translation_course ON translation_course.course_id = course.id WHERE translation_course.language_id = :language_id ORDER BY course.sort_order", TranslationHandler::get_current_language());
-        $array = array();
-        foreach($data as $value) {
-            $array[] = new Course($value);
-        }
-        $this->_all_courses = $array;
-    }
-
-    public function get_all_courses() {
-        if(empty($this->_all_courses)) {
-            $this->set_all_courses();
-        }
-        return $this->_all_courses;
-    }
+    //</editor-fold>
     
-    public function get_lectures($course_id = 0) {
+    //<editor-fold defaultstate="collapsed" desc="DELETE">
+    public function delete($element_id = 0, $element_type = null) {
         try {
             if (!$this->user_exists()) {
-                throw new exception("USER_NOT_LOGGED_IN");
+                throw new Exception("USER_NOT_LOGGED_IN");
             }
-
-            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+            
+            if(!RightsHandler::has_user_right("COURSE_DELETE")) {
                 throw new exception("INSUFFICIENT_RIGHTS");
             }
             
-            if((!is_numeric($course_id) && !is_int((int)$course_id))) {
-                throw new exception("INVALID_INPUT");
-            }
+            $this->set_element_id($element_id);
             
-            if($course_id == 0) {
-                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id AND translation_course.language_id = :language_id", TranslationHandler::get_current_language(), TranslationHandler::get_current_language());
+            $this->set_element_type($element_type);
             
-            } else {
-                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, translation_course_lecture.title, translation_course_lecture.description, translation_course.title as course_title FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id WHERE translation_course_lecture.language_id = :language_id AND translation_course.language_id = :language_id AND course_lecture.course_id = :course_id", TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $course_id);
-            }
-            $array = array();
-            foreach($data as $value) {
-                $array[] = new Lecture($value);
-            }
-            $this->lectures = $array;
+            $this->delete_element();
             
             return true;
             
-        } catch (Exception $ex) {
+        } catch(Exception $ex){
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }
     
-    public function get_tests($course_id = 0) {
+    private function delete_element() {
+        switch(strtolower($this->_current_element_type)) {
+            case "course":
+                DbHandler::get_instance()->query("DELETE FROM course WHERE id = :id", $this->_current_element_id);
+                DbHandler::get_instance()->query("DELETE FROM translation_course WHERE course_id = :id", $this->_current_element_id);
+                
+
+                $related_lectures = DbHandler::get_instance()->return_query("SELECT id FROM course_lecture WHERE course_id = :id", $this->_current_element_id);
+                $array = array();
+                foreach($related_lectures as $value) {
+                    $array[] = $value["id"];
+                }
+
+                DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE course_id = :id", $this->_current_element_id);
+                if(!empty($array)) {
+                    DbHandler::get_instance()->query("DELETE FROM user_course_lecture WHERE lecture_id IN (".generate_in_query($array).")");
+                    DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id IN (".generate_in_query($array).")");
+                }
+                
+                $related_tests = DbHandler::get_instance()->return_query("SELECT id FROM course_test WHERE course_id = :id", $this->_current_element_id);
+                $array = array();
+                foreach($related_tests as $value) {
+                    $array[] = $value["id"];
+                }
+
+                DbHandler::get_instance()->query("DELETE FROM course_test WHERE course_id = :id", $this->_current_element_id);
+                if(!empty($array)) {
+                    DbHandler::get_instance()->query("DELETE FROM user_course_test WHERE test_id IN (".generate_in_query($array).")");
+                    DbHandler::get_instance()->query("DELETE FROM translation_course_test WHERE course_test_id IN (".generate_in_query($array).")");
+                }
+                break;
+
+            case "lecture":
+                DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE id = :id", $this->_current_element_id);
+                DbHandler::get_instance()->query("DELETE FROM user_course_lecture WHERE lecture_id = :id", $this->_current_element_id);
+                DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id = :id", $this->_current_element_id);
+                break;
+
+            case "test":
+                DbHandler::get_instance()->query("DELETE FROM course_test WHERE id = :id", $this->_current_element_id);
+                DbHandler::get_instance()->query("DELETE FROM user_course_test WHERE test_id = :id", $this->_current_element_id);
+                DbHandler::get_instance()->query("DELETE FROM translation_course_test WHERE course_test_id = :id", $this->_current_element_id);
+                break;
+        }
+    }
+    // </editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="GET">
+    private function fetch_element() {
+        switch(strtolower($this->_current_element_type)) {
+            case "course":
+                if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE") && !(DbHandler::get_instance()->count_query("SELECT id FROM school_course WHERE school_id = :school_id AND course_id = :course_id", $this->_user->school_id, $this->_current_element_id) > 0)){
+                    throw new Exception("COURSE_NO_ACCESS");
+                }
+                $data = DbHandler::get_instance()->return_query("SELECT course.*, translation_course.title, translation_course.description FROM course INNER JOIN translation_course ON translation_course.course_id = course.id WHERE translation_course.language_id = :language_id AND course.id = :id LIMIT 1", TranslationHandler::get_current_language(), $this->_current_element_id);
+                if(!empty($data)) {
+                    $this->current_element = new Course(reset($data));
+                }
+                break;
+            
+            case "lecture":
+                if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE") && !(DbHandler::get_instance()->count_query("SELECT course.id FROM course_lecture INNER JOIN course ON course.id = course_lecture.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_lecture.id = :id", $this->_user->school_id, $this->_current_element_id) > 0)){
+                    throw new Exception("COURSE_NO_ACCESS");
+                }
+                $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, course.color AS course_color, user_course_lecture.id AS user_course_lecture_id, user_course_lecture.progress, user_course_lecture.is_complete, translation_course.title AS course_title,  translation_course_lecture.title, translation_course_lecture.description FROM course_lecture INNER JOIN course ON course.id = course_lecture.course_id LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language_id WHERE course_lecture.id = :id LIMIT 1", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_current_element_id);
+                if(!empty($data)) {
+                    $this->current_element = new Lecture(reset($data));
+                }
+                break;
+            
+            case "test":
+                if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE") && !(DbHandler::get_instance()->count_query("SELECT course.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = :id", $this->_user->school_id, $this->_current_element_id) > 0)){
+                    throw new Exception("COURSE_NO_ACCESS");
+                }
+                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, course.color AS course_color, user_course_test.id AS user_course_test_id, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title, translation_course_test.title, translation_course_test.description FROM course_test INNER JOIN course ON course.id = course_test.course_id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language_id WHERE course_test.id = :id LIMIT 1", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_current_element_id);
+                if(!empty($data)) {
+                    $this->current_element = new Test(reset($data));
+                }
+                break;
+        }
+        
+        if(empty($this->current_element)) {
+            throw new exception("INVALID_INPUT");
+        }
+    }
+    
+    private function fetch_all_elements($os_restriction = 0) {
+        switch(strtolower($this->_current_element_type)) {
+            case "course":
+                if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                    if($os_restriction != 0) {
+                        $data = DbHandler::get_instance()->return_query("SELECT course.*, translation_course.title, translation_course.description, translation_course_os.title as os_title FROM course INNER JOIN translation_course_os ON translation_course_os.course_os_id = course.os_id INNER JOIN school_course ON school_course.course_id = course.id INNER JOIN translation_course ON translation_course.course_id = course.id WHERE translation_course.language_id = :language_id AND school_course.school_id = :school_id AND translation_course_os.language_id = :language_id AND course.os_id = :os_id ORDER BY course.sort_order", TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_user->school_id, $os_restriction);
+                    } else {
+                        $data = DbHandler::get_instance()->return_query("SELECT course.*, translation_course.title, translation_course.description, translation_course_os.title as os_title FROM course INNER JOIN translation_course_os ON translation_course_os.course_os_id = course.os_id INNER JOIN school_course ON school_course.course_id = course.id INNER JOIN translation_course ON translation_course.course_id = course.id WHERE translation_course.language_id = :language_id AND school_course.school_id = :school_id AND translation_course_os.language_id = :language_id ORDER BY course.sort_order", TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_user->school_id);
+                    }
+                } else {
+                    if($os_restriction != 0) {
+                        $data = DbHandler::get_instance()->return_query("SELECT course.*, translation_course.title, translation_course.description, translation_course_os.title as os_title FROM course INNER JOIN translation_course_os ON translation_course_os.course_os_id = course.os_id INNER JOIN translation_course ON translation_course.course_id = course.id WHERE translation_course.language_id = :language_id AND translation_course_os.language_id = :language_id AND course.os_id = :os_id ORDER BY course.sort_order", TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $os_restriction);
+                    } else {
+                        $data = DbHandler::get_instance()->return_query("SELECT course.*, translation_course.title, translation_course.description, translation_course_os.title as os_title FROM course INNER JOIN translation_course_os ON translation_course_os.course_os_id = course.os_id INNER JOIN translation_course ON translation_course.course_id = course.id WHERE translation_course.language_id = :language_id AND translation_course_os.language_id = :language_id ORDER BY course.sort_order", TranslationHandler::get_current_language(), TranslationHandler::get_current_language());
+                    }
+                }
+                
+                $array = array();
+                foreach($data as $value) {
+                    $value["amount_of_lectures"] = $count_lectures = DbHandler::get_instance()->count_query("SELECT id FROM course_lecture WHERE course_id = :course_id", $value["id"]);
+                    $value["amount_of_tests"] = DbHandler::get_instance()->count_query("SELECT id FROM course_test WHERE course_id = :course_id", $value["id"]);
+                    $array[] = new Course($value);
+                }
+                $this->courses = $array;
+                break;
+            
+            case "lecture":
+                if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                    if($this->_current_element_id == 0) {
+                        $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, course.color AS course_color, user_course_lecture.id AS user_course_lecture_id, user_course_lecture.progress, user_course_lecture.is_complete, translation_course.title AS course_title,  translation_course_lecture.title, translation_course_lecture.description FROM course_lecture INNER JOIN course ON course.id = course_lecture.course_id INNER JOIN school_course ON school_course.course_id = course.id LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language_id WHERE school_course.school_id = :school_id ", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_user->school_id);
+                    } else {
+                        $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, course.color AS course_color, user_course_lecture.id AS user_course_lecture_id, user_course_lecture.progress, user_course_lecture.is_complete, translation_course.title AS course_title,  translation_course_lecture.title, translation_course_lecture.description FROM course_lecture INNER JOIN course ON course.id = course_lecture.course_id INNER JOIN school_course ON school_course.course_id = course.id LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language_id WHERE course_lecture.course_id = :course_id AND school_course.school_id = :school_id ", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_current_element_id, $this->_user->school_id);
+                    }
+                } else {
+                    if($this->_current_element_id == 0) {
+                        $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, course.color AS course_color, user_course_lecture.id AS user_course_lecture_id, user_course_lecture.progress, user_course_lecture.is_complete, translation_course.title AS course_title,  translation_course_lecture.title, translation_course_lecture.description FROM course_lecture INNER JOIN course ON course.id = course_lecture.course_id  LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language_id ", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language());
+                    } else {
+                        $data = DbHandler::get_instance()->return_query("SELECT course_lecture.*, course.color AS course_color, user_course_lecture.id AS user_course_lecture_id, user_course_lecture.progress, user_course_lecture.is_complete, translation_course.title AS course_title,  translation_course_lecture.title, translation_course_lecture.description FROM course_lecture INNER JOIN course ON course.id = course_lecture.course_id  LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language_id WHERE course_lecture.course_id = :course_id ", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_current_element_id);
+                    }
+                }
+                $array = array();
+                foreach($data as $value) {
+                    $array[] = new Lecture($value);
+                }
+                $this->lectures = $array;
+                break;
+            
+            case "test":
+                if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                    if($this->_current_element_id == 0) {
+                        $data = DbHandler::get_instance()->return_query("SELECT course_test.*, course.color AS course_color, user_course_test.id AS user_course_test_id, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title,  translation_course_test.title, translation_course_test.description FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language_id WHERE school_course.school_id = :school_id ", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_user->school_id);
+                    } else {
+                        $data = DbHandler::get_instance()->return_query("SELECT course_test.*, course.color AS course_color, user_course_test.id AS user_course_test_id, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title,  translation_course_test.title, translation_course_test.description FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language_id WHERE course_test.course_id = :course_id AND school_course.school_id = :school_id ", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_current_element_id, $this->_user->school_id);
+                    }
+                } else {
+                    if($this->_current_element_id == 0) {
+                        $data = DbHandler::get_instance()->return_query("SELECT course_test.*, course.color AS course_color, user_course_test.id AS user_course_test_id, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title,  translation_course_test.title, translation_course_test.description FROM course_test INNER JOIN course ON course.id = course_test.course_id  LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language_id ", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language());
+                    } else {
+                        $data = DbHandler::get_instance()->return_query("SELECT course_test.*, course.color AS course_color, user_course_test.id AS user_course_test_id, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title,  translation_course_test.title, translation_course_test.description FROM course_test INNER JOIN course ON course.id = course_test.course_id  LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language_id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language_id WHERE course_test.course_id = :course_id ", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $this->_current_element_id);
+                    }
+                }
+                $array = array();
+                foreach($data as $value) {
+                    $array[] = new Test($value);
+                }
+                $this->tests = $array;
+                break;
+        }
+    }
+    
+    public function get($element_id = 0, $element_type = null) {
         try {
             if (!$this->user_exists()) {
-                throw new exception("USER_NOT_LOGGED_IN");
-            }
-
-            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
-                throw new exception("INSUFFICIENT_RIGHTS");
+                throw new Exception("USER_NOT_LOGGED_IN");
             }
             
-            if((!is_numeric($course_id) && !is_int((int)$course_id))) {
-                throw new exception("INVALID_INPUT");
+            if (!RightsHandler::has_user_right("COURSE_VIEW")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
             }
             
-            if($course_id == 0) {
-                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id AND translation_course.language_id = :language_id", TranslationHandler::get_current_language(), TranslationHandler::get_current_language());
+            $this->set_element_id($element_id);
             
-            } else {
-                $data = DbHandler::get_instance()->return_query("SELECT course_test.*, translation_course_test.title, translation_course_test.description, translation_course.title as course_title FROM course_test INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id WHERE translation_course_test.language_id = :language_id AND translation_course.language_id = :language_id AND course_test.course_id = :course_id", TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $course_id);
-            }
-
-            $array = array();
-            foreach($data as $value) {
-                $array[] = new Test($value);
-            }
-            $this->tests = $array;
+            $this->set_element_type($element_type);
+            
+            $this->fetch_element();
             
             return true;
             
-        } catch (Exception $ex) {
+        } catch(Exception $ex){
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }
-
+    
+    public function get_multiple($element_id = 0, $element_type = null, $os_restriction = 0) {
+        try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if (!RightsHandler::has_user_right("COURSE_VIEW")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            $this->set_element_id($element_id, true);
+            
+            $this->set_element_type($element_type);
+            
+            $this->fetch_all_elements($os_restriction);
+            
+            return true;
+            
+        } catch(Exception $ex){
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    //</editor-fold>
+ 
+    //<editor-fold defaultstate="collapsed" desc="PROGRESS">
     public function get_courses(){
         try{
             if (!$this->user_exists()) {
@@ -392,35 +521,6 @@ class CourseHandler extends Handler
         }
     }
     
-    public function load_test($test_id){
-        try {
-            if (!$this->user_exists()) {
-                throw new Exception("USER_NOT_LOGGED_IN");
-            }
-            if (!RightsHandler::has_user_right("COURSE_VIEW")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
-            if (!isset($test_id) || !is_numeric($test_id)) {
-                throw new Exception("COURSE_INVALID_ID");                
-            }
-            if ($this->_user->user_type_id != 1) {
-                if(!(DbHandler::get_instance()->count_query("SELECT course.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = :test", $this->_user->school_id, $test_id) > 0)){
-                    throw new Exception("COURSE_NO_ACCESS");
-                }
-            }
-            
-            $test = DbHandler::get_instance()->return_query("SELECT course_test.total_steps, course_test.path, course.color AS course_color, user_course_test.id, user_course_test.progress, user_course_test.is_complete, translation_course.title AS course_title, translation_course_test.title FROM course_test INNER JOIN course ON course.id = course_test.course_id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language WHERE course_test.id = :test", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), $test_id);
-
-            $this->test = new test(reset($test));
-            return true;
-            
-        } catch(Exception $ex){
-            $this->error = ErrorHandler::return_error($ex->getMessage());
-            return false;
-        }
-        
-    }
-    
     public function update_progress($type = "", $progress = 0, $is_complete = 0, $table_id = 0, $id = 0){
         try {
             if (!$this->user_exists()) {
@@ -473,6 +573,9 @@ class CourseHandler extends Handler
             return false;
         }
     }
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="THUMBNAIL">
     
     public function upload_thumbnail($file = null) {
         try {
@@ -606,6 +709,7 @@ class CourseHandler extends Handler
     public function get_default_thumbnail_id() {
         return reset(DbHandler::get_instance()->return_query("SELECT id FROM course_image WHERE default_thumbnail = '1' LIMIT 1"))["id"];
     }
+    //</editor-fold>
     
     public static function get_os_options(){
         return DbHandler::get_instance()->return_query("SELECT course_os.id, translation_course_os.title FROM course_os INNER JOIN translation_course_os ON translation_course_os.course_os_id = course_os.id AND translation_course_os.language_id = :language", TranslationHandler::get_current_language());  

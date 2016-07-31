@@ -4,14 +4,14 @@ require_once '../../include/handler/courseHandler.php';
 
 $handler = new courseHandler();
 
-if (!$handler->load_test(6)) {
-    echo "<script>change_page('error', 'PAGE_NO_RIGHTS');</script>";
+if (!$handler->get(6, "test")) {
+    ErrorHandler::show_error_page();
     die();
 }
 ?>
 
 
-<div id="iframe_content" style="overflow:hidden;" table_id="<?php echo isset($handler->test->id) ? $handler->test->id : "" ?>" current_slide="<?php echo (($handler->test->is_complete == 1) ? $handler->test->total_steps : (isset($handler->test->progress) ? $handler->test->progress : "1")); ?>">
+<div id="iframe_content" style="overflow:hidden;" table_id="<?php echo isset($handler->test->user_course_test_id) ? $handler->test->user_course_test_id : "" ?>" current_slide="<?php echo (($handler->test->is_complete == 1) ? $handler->test->total_steps : (isset($handler->test->progress) ? $handler->test->progress : "1")); ?>">
     <div id="course_bar" class="course_bar widget" style="<?php echo "background-color: " . $handler->test->course_color . " !important;" ?>">      
         <div class="course_title pull-left"><?php echo "<h4>" . $handler->test->course_title . "<span class='p-v-sm zmdi zmdi-chevron-right fa-sm'></span>" . $handler->test->title . "</h4>" ?></div>
         <div class="btn-group pull-right course_navigation">

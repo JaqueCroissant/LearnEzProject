@@ -483,7 +483,7 @@ class UserHandler extends Handler
         {
             $this->validate_user_logged_in();
 
-            if(!RightsHandler::has_user_right("ACCOUNT_EDIT"))
+            if(!RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
@@ -644,7 +644,7 @@ class UserHandler extends Handler
         {
             $this->validate_user_logged_in();
 
-            if(!RightsHandler::has_user_right("ACCOUNT_EDIT_OTHER"))
+            if(!RightsHandler::has_user_right("ACCOUNT_EDIT"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }

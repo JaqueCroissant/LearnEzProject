@@ -12,7 +12,7 @@ $courseHandler->get_courses();
             <?php
             foreach($courseHandler->courses as $value) {
             ?>
-            <div class="col-md-3 col-sm-6 change_page" style="cursor:pointer;" id="show_course" page="show_course">
+            <div class="col-md-3 col-sm-6 change_page" style="cursor:pointer;" id="course_show" page="course_show" args="&course_id=<?php echo $value->id; ?>">
                 <div class="widget stats-widget">
                     <div class="widget-body clearfix">
                         <div class="pull-left" style="margin-left:-10px;">

@@ -144,6 +144,36 @@ $(document).on("click", ".submit_create_course", function (event) {
     });
 });
 
+$(document).on("click", ".submit_update_course", function (event) {
+    event.preventDefault();
+    initiate_submit_form($(this), function () {
+        show_status_bar("error", ajax_data.error);
+    }, function () {
+        show_status_bar("success", ajax_data.success);
+    });
+});
+
+$(document).on("change", ".add_courses", function (event) {
+    var form = $(this).closest("form");
+    var os_id = $(this).find("option:selected").val();
+    event.preventDefault();
+    initiate_submit_get($(this), "course.php?get_courses=1&os_id="+os_id, function () {
+        show_status_bar("error", ajax_data.error);
+        form.find(".sort_order").attr("style", "height:0px;opacity:0;margin-top:-10px !important;");
+        form.find("#sort_order").empty();
+    }, function () {
+        if(ajax_data.courses !== "") {
+            form.find(".sort_order").attr("style", "height:auto;opacity:1;");
+            form.find("#sort_order").html(ajax_data.courses);
+            var search = form.find("#sort_order");
+            search.select2();
+        } else {
+            form.find(".sort_order").attr("style", "height:0px;opacity:0;margin-top:-10px !important;");
+            form.find("#sort_order").empty();
+        }
+    });
+});
+
 $(document).on("change", ".add_lectures", function (event) {
     var form = $(this).closest("form");
     var course_id = $(this).find("option:selected").val();

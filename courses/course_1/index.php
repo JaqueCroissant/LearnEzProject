@@ -48,7 +48,6 @@ function initializeCP()
         {
             if(cp.UnloadActivties)
                 cp.UnloadActivties();
-            console.log("exit");
             lCpExit();
         };
     }

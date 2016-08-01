@@ -693,6 +693,11 @@ class CourseHandler extends Handler
             $final = array();
             foreach ($courses as $course) {
                 if(!array_key_exists($course["id"], $group)){
+                    $temp = $course;
+                    $temp["overall_progress"] = 100;
+                    $temp["amount_of_lectures"]= 0;
+                    $temp["amount_of_tests"] = 0;
+                    array_push($final, new Course($temp));
                     continue;
                 }
                 $current_progress = 0;
@@ -753,7 +758,7 @@ class CourseHandler extends Handler
                 throw new Exception("INVALID_INPUT");
             }
             if ($is_complete == 1) {
-                $values = "is_complete=1";
+                $values = "is_complete=1,complete_date=NOW()";
             }
             else {
                 $values = "progress=" . $progress;

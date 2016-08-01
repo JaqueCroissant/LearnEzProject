@@ -12,7 +12,7 @@ $schoolHandler->get_school_types();
     <div class="col-md-12">
         <div class="widget">
             <div class="widget-header">
-                <h4 class="widget-title"></h4>
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("SCHOOL_EDIT"); ?></h4>
             </div>
             <hr class="widget-separator">
             <div class="widget-body">

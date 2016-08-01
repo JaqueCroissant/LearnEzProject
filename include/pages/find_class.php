@@ -89,7 +89,7 @@ $classHandler->get_all_classes();
                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                     <td align="center">
                                         <div class="">
-                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_class m-r-xs a" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
+                                            <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>"></i>
                                             <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
                                                 <i class="zmdi zmdi-hc-lg zmdi-delete delete_class a" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
                                             <?php } ?>

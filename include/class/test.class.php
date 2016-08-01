@@ -2,6 +2,7 @@
 
 class Test extends ORM {
     public $id;
+    public $user_course_test_id;
     public $course_id;
     public $path;
     public $total_steps;

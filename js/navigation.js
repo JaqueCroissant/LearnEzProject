@@ -51,11 +51,15 @@ function change_page(pagename, step, args, element) {
                 }
                 append_content(e, data.breadcrumbs);
             });
-            
+            if (data.lang_id !== undefined) {
+                current_lang_id = data.lang_id;
+            }
         },
         complete: function() {
+            
             currently_changing_page = false;
             set_clickable(element);
+            window.scrollTo(0, 0);
         }
     });
 }

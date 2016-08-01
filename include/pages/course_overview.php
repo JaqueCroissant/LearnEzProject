@@ -12,14 +12,14 @@ $courseHandler->get_courses();
             <?php
             foreach($courseHandler->courses as $value) {
             ?>
-            <div class="col-md-3 col-sm-6 change_page" style="cursor:pointer;" id="show_course" page="show_course">
+            <div class="col-md-3 col-sm-6 change_page" style="cursor:pointer;" id="course_show" page="course_show" args="&course_id=<?php echo $value->id; ?>">
                 <div class="widget stats-widget">
                     <div class="widget-body clearfix">
-                        <div class="pull-left">
-                            <img style="width:80px;height:80x;" src="assets/images/thumbnails/<?php echo $value->image_filename; ?>" alt="">
+                        <div class="pull-left" style="margin-left:-10px;">
+                            <img style="width:70px;height:70px;" src="assets/images/thumbnails/<?php echo $value->image_filename; ?>" alt="">
                         </div>
                         <div class="pull-right" style="text-align:right !important;">
-                            <h3 class="widget-title text-primary" style="color: <?php echo $value->color; ?> !important;"><span class="counter" data-plugin="counterUp"><?php echo $value->title; ?></span></h3>
+                            <h3 class="widget-title text-primary" style="color: <?php echo $value->color; ?> !important;font-size:18px !important;"><?php echo $value->title; ?></h3>
                             <table style="width: auto; float:right;">
                                 <tr>
                                     <td><small class="text-color"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_LECTURES"); ?>:</small></td>

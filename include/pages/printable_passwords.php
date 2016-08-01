@@ -15,7 +15,7 @@ try
     if(RightsHandler::has_user_right("ACCOUNT_EDIT") && SessionKeyHandler::session_exists("new_passwords"))
     {
         $user_info = SessionKeyHandler::get_from_session("new_passwords", true);
-        
+        SessionKeyHandler::remove_from_session("new_passwords");
         if(count($user_info > 0))
         {
                 $user_ids = array();

@@ -62,11 +62,22 @@ class ClassHandler extends Handler {
                         $this->classes[] = $class;
                     }
                     break;
-
-                case 2: case 3:
+                case 2:
                     $query = $base_query . " WHERE school.id = :school_id";
 
                     $array = DbHandler::get_instance()->return_query($query, $this->_user->school_id);
+
+                    $this->classes = array();
+                    foreach ($array as $value) {
+                        $class = new School_Class($value);
+                        $class->number_of_students = $this->get_number_of_students_in_class($class->id);
+                        $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
+                        $this->classes[] = $class;
+                    }
+                    break;
+                case 3:
+                    $query = $base_query . " INNER JOIN user_class ON class.id = user_class.class_id WHERE user_class.users_id = :user_id";
+                    $array = DbHandler::get_instance()->return_query($query, $this->_user->id);
 
                     $this->classes = array();
                     foreach ($array as $value) {
@@ -97,7 +108,6 @@ class ClassHandler extends Handler {
             if (!RightsHandler::has_user_right("CLASS_FIND")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
-            $this->is_null_or_empty($school_id);
             $this->verify_school_exists($school_id);
 
             $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
@@ -252,23 +262,6 @@ class ClassHandler extends Handler {
                 throw new Exception("DEFAULT");
             }
             return true;
-        } catch (Exception $exc) {
-            $this->error = ErrorHandler::return_error($exc->getMessage());
-            return false;
-        }
-    }
-
-    public function get_year_and_year_prefix() {
-        try {
-            if (!$this->user_exists()) {
-                throw new Exception("USER_NOT_LOGGED_IN");
-            }
-            $q_year = "SELECT * FROM class_year";
-
-            $this->years = DbHandler::get_instance()->return_query($q_year);
-            if (count($this->years) == 0) {
-                throw new Exception("CLASS_YEAR_NO_DATA");
-            }
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;

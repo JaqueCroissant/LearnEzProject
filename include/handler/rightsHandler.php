@@ -61,7 +61,7 @@
                    throw new Exception("INVALID_FORM_DATA");
                 }
                 
-                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND (b.hide_in_backend != '1' OR (b.hide_in_backend = '1' AND b.master_page_id > 0))", $user_type);
+                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND (b.hide_in_backend != '1' OR (b.hide_in_backend = '1' AND b.master_page_id > 0 AND b.set_rights != '1'))", $user_type);
                 
                 $array = array();
                 $this->get_page_children($array, $page_rights);
@@ -96,7 +96,7 @@
                 return;
             }
 
-            $query = $master_page ? "SELECT id FROM page WHERE id IN (".generate_in_query($page_ids).") AND hide_in_backend != '1'" : "SELECT id FROM page WHERE master_page_id IN (".generate_in_query($page_ids).") AND page.hide_in_backend = '1'";
+            $query = $master_page ? "SELECT id FROM page WHERE id IN (".generate_in_query($page_ids).") AND hide_in_backend != '1' AND set_rights != '1'" : "SELECT id FROM page WHERE master_page_id IN (".generate_in_query($page_ids).") AND page.hide_in_backend = '1' AND set_rights != '1'";
             $pages = DbHandler::get_instance()->return_query($query);
             
             $elements = array();

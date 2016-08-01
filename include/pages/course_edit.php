@@ -298,7 +298,7 @@ $courseHandler = new CourseHandler();
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="button" name="submit" id="edit_course_button" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default submit_edit_course">
+                                        <input type="button" name="submit" id="update_course_button" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default submit_update_course">
                                     </div>
                                 </div>
                             </form>
@@ -425,7 +425,7 @@ $courseHandler = new CourseHandler();
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="button" name="submit" id="edit_course_button" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default submit_edit_course">
+                                        <input type="button" name="submit" id="update_course_button" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default submit_update_course">
                                     </div>
                                 </div>
                             </form>

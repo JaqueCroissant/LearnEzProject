@@ -28,6 +28,28 @@ if(isset($_POST)) {
             echo json_encode($jsonArray);
             break;
             
+        case "edit_course":
+            $course_id = isset($_POST["course_id"]) ? $_POST["course_id"] : 0;
+            $os_id = isset($_POST["os"]) ? $_POST["os"] : 0;
+            $points = isset($_POST["points"]) ? $_POST["points"] : 0;
+            $color = isset($_POST["color"]) ? $_POST["color"] : null;
+            $sort_order = isset($_POST["sort_order"]) ? $_POST["sort_order"] : 0;
+            $title = isset($_POST["title"]) ? $_POST["title"] : array();
+            $thumbnail = isset($_POST["thumbnail"]) ? $_POST["thumbnail"] : 0;
+            $description = isset($_POST["description"]) ? $_POST["description"] : array();
+            $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
+
+            if($courseHandler->edit_course($course_id, $os_id, $points, $color, $sort_order, $thumbnail, $title, $description, $language_ids)) {
+                $jsonArray['status_value'] = true;
+                $jsonArray['success'] = TranslationHandler::get_static_text("COURSE_UPDATED");
+            } else {
+                $jsonArray["redirect"] = "find_course";
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $courseHandler->error->title;
+            }
+            echo json_encode($jsonArray);
+            break;
+            
         case "create_lecture":
             $course_id = isset($_POST["course_id"]) ? $_POST["course_id"] : 0;
             $points = isset($_POST["points"]) ? $_POST["points"] : 0;
@@ -47,6 +69,27 @@ if(isset($_POST)) {
             echo json_encode($jsonArray);
             break;
             
+        case "edit_lecture":
+            $lecture_id = isset($_POST["lecture_id"]) ? $_POST["lecture_id"] : 0;
+            $course_id = isset($_POST["course_id"]) ? $_POST["course_id"] : 0;
+            $points = isset($_POST["points"]) ? $_POST["points"] : 0;
+            $sort_order = isset($_POST["sort_order"]) ? $_POST["sort_order"] : 0;
+            $difficulty = isset($_POST["difficulty"]) ? $_POST["difficulty"] : 0;
+            $title = isset($_POST["title"]) ? $_POST["title"] : array();
+            $description = isset($_POST["description"]) ? $_POST["description"] : array();
+            $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
+
+            if($courseHandler->edit_lecture($lecture_id, $course_id, $points, $sort_order, $difficulty, $title, $description, $language_ids)) {
+                $jsonArray['status_value'] = true;
+                $jsonArray['success'] = TranslationHandler::get_static_text("LECTURE_UPDATED");
+            } else {
+                $jsonArray["redirect"] = "find_lecture";
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $courseHandler->error->title;
+            }
+            echo json_encode($jsonArray);
+            break;
+            
         case "create_test":
             $course_id = isset($_POST["course_id"]) ? $_POST["course_id"] : 0;
             $points = isset($_POST["points"]) ? $_POST["points"] : 0;
@@ -60,6 +103,27 @@ if(isset($_POST)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("TEST_CREATED");
             } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $courseHandler->error->title;
+            }
+            echo json_encode($jsonArray);
+            break;
+            
+        case "edit_test":
+            $test_id = isset($_POST["test_id"]) ? $_POST["test_id"] : 0;
+            $course_id = isset($_POST["course_id"]) ? $_POST["course_id"] : 0;
+            $points = isset($_POST["points"]) ? $_POST["points"] : 0;
+            $sort_order = isset($_POST["sort_order"]) ? $_POST["sort_order"] : 0;
+            $difficulty = isset($_POST["difficulty"]) ? $_POST["difficulty"] : 0;
+            $title = isset($_POST["title"]) ? $_POST["title"] : array();
+            $description = isset($_POST["description"]) ? $_POST["description"] : array();
+            $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
+
+            if($courseHandler->edit_test($test_id, $course_id, $points, $sort_order, $difficulty, $title, $description, $language_ids)) {
+                $jsonArray['status_value'] = true;
+                $jsonArray['success'] = TranslationHandler::get_static_text("TEST_UPDATED");
+            } else {
+                $jsonArray["redirect"] = "find_test";
                 $jsonArray['status_value'] = false;
                 $jsonArray['error'] = $courseHandler->error->title;
             }

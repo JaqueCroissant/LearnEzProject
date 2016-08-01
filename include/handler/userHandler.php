@@ -551,6 +551,63 @@ class UserHandler extends Handler
         $this->temp_user_array = $users;
     }
 
+    public function init_user_info($email, $password, $password_copy)
+    {
+        try
+        {
+            $has_password = (isset($password) && isset($password_copy)) && (!empty($password) && !empty($password_copy));
+            $this->check_if_email($email);
+
+            if(!SessionKeyHandler::session_exists("user_setup"))
+            {
+                throw new Exception("INVALID_SETTINGS_INPUT");
+            }
+
+            $user = SessionKeyHandler::get_from_session("user_setup");
+
+            if($email != $user['email'])
+            {
+                $this->mail_exists($email);
+            }
+
+            if($has_password)
+            {
+                if($password != $password_copy) {
+                    throw new Exception ("USER_PASSWORDS_DOES_NOT_MATCH");
+                }
+
+                if(strlen($password) < 6) {
+                    throw new Exception ("USER_PASSWORD_TOO_SHORT");
+                }
+            }
+
+            if($has_password)
+            {
+                $hashed_password = hash("sha256", $password . " " . $user['username']);
+                if(!DbHandler::get_instance()->query("UPDATE users SET email = :email, password = :password, last_login = :date WHERE id = :id", $email, $hashed_password, date ("Y-m-d H:i:s"),$user['user_id']))
+                {
+                    throw new Exception("DATABASE_UNKNOWN_ERROR");
+                }
+            }
+            else
+            {
+                if(!DbHandler::get_instance()->query("UPDATE users SET email = :email, last_login = :date WHERE id = :id", $email, date ("Y-m-d H:i:s"), $user['user_id']))
+                {
+                    throw new Exception("DATABASE_UNKNOWN_ERROR");
+                }
+            }
+
+
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+
+            return false;
+        }
+    }
+
     public function edit_user_info($firstname = null, $surname = null, $email = null, $description = null, $image = null)
     {
         try
@@ -914,6 +971,80 @@ class UserHandler extends Handler
     {
         $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
         $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
+    }
+    
+    public function get_by_school_id($school_id)
+    {
+        try
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("ACCOUNT_FIND") || !RightsHandler::has_user_right("SCHOOL_FIND")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            if(empty($school_id) || !is_numeric($school_id))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE school_id = :id", $school_id);
+            
+            $this->users = array();
+            if(count($user_data > 0))
+            {
+                foreach ($user_data as $user)
+                {
+                    $this->users[] = new User($user);
+                }
+            }
+            
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    public function get_by_class_id($class_id)
+    {
+        try
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("ACCOUNT_FIND") || !RightsHandler::has_user_right("CLASS_FIND")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            if(empty($class_id) || !is_numeric($class_id))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users INNER JOIN user_class WHERE users.id = user_class.users_id AND user_class.class_id = :id", $class_id);
+            
+            $this->users = array();
+            if(count($user_data > 0))
+            {
+                foreach ($user_data as $user)
+                {
+                    $this->users[] = new User($user);
+                }
+            }
+            
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
     }
 
     public function get_user_by_id($id)

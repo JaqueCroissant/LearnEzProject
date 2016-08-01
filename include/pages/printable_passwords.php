@@ -37,37 +37,40 @@ try
                             table {
                                 font-family: arial, sans-serif;
                                 border-collapse: collapse;
+                                margin: 0px auto;
                             }
 
-                            td, th {
-                                border: 1px solid #000000;
-                                text-align: left;
-                                padding: 8px;
-                                display: block;
-                            }
-
-                            tr:nth-child(even) {
+                            tr:nth-child(4n+3) td.content{
                                 background-color: #e6e6e6;
                             }
 
-                            div {
-                                margin-top: 5px;
-                                margin-bottom: 5px;
-                            }
+
                         </style>
                     </head>
                     <body>
                         <table>
                             <?php
+
+                            for($i = 0; $i < count($users_data); $i++)
+                            {
+
+                            }
                             foreach($users_data as $user)
                             {
                                 ?>
                                 <tr>
-                                    <td>
-                                        <div><?php echo '<b>Name:</b> ' . $user['firstname'] . " " . $user['surname']; ?></div>
-                                        <div><?php echo '<b>Username:</b> ' . $user['username'] . ' <b>Password:</b> ' . $user_info[$user['id']]; ?></div>
+                                    <td class="content" style="padding: 13px;border: 1px solid #000000;">
+                                        <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $user['firstname'] . " " . $user['surname']; ?></div>
+                                        <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $user['username'] ?></span><?php echo '<b>Password:</b> ' . $user_info[$user['id']]; ?></div>
+                                    </td>
+                                    <td style="padding: 4px !important;"></td>
+                                    <td class="content" style="padding: 13px;border: 1px solid #000000;">
+                                        <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $user['firstname'] . " " . $user['surname']; ?></div>
+                                        <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $user['username'] ?></span><?php echo '<b>Password:</b> ' . $user_info[$user['id']]; ?></div>
                                     </td>
                                 </tr>
+
+                                <tr><td style="padding: 4px !important;"></td></tr>
                                 <?php
                             }
                             

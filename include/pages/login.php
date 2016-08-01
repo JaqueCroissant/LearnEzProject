@@ -8,7 +8,7 @@ $loginHandler = new LoginHandler();
 
 <div class="row">
     <div class="col-md-12 ">
-        <div class="widget">
+        <div class="widget main_login">
             <div class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("LOGIN"); ?></h4>
             </div>
@@ -18,20 +18,20 @@ $loginHandler = new LoginHandler();
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label" for="username"><?php echo TranslationHandler::get_static_text("USERNAME"); ?></label>
                         <div class="col-sm-5">
-                            <input class="form-control input-sm" type="text" name="username" placeholder="<?php echo TranslationHandler::get_static_text("USERNAME"); ?>">
+                            <input class="form-control input-sm login_username" type="text" name="username" placeholder="<?php echo TranslationHandler::get_static_text("USERNAME"); ?>">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label" for="password"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
                         <div class="col-sm-5">
-                            <input class="form-control input-sm" type="password" name="password" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
+                            <input class="form-control input-sm login_password" type="password" name="password" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
                             placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>">
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 col-sm-offset-2 control-label"></label>
                         <div class="col-sm-5">
-                            <input type="hidden" id="token" name="token" value="<?php echo $loginHandler->get_login_token(); ?>">
+                            <input type="hidden" id="token" name="token" class="login_token" value="<?php echo $loginHandler->get_login_token(); ?>">
                             <input type="button" id="submit_button" name="submit" 
                                    value="<?php echo TranslationHandler::get_static_text("LOGIN"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">  
                             <a class="change_page pull-right p-r-lg p-t-xs" page="resetpassword" id="resetpassword" href="#">Reset password</a>
@@ -42,14 +42,14 @@ $loginHandler = new LoginHandler();
         </div>
     </div>
     <div class="col-sm-12">
-        <div class="widget hidden">
+        <div class="widget first_time_login hidden">
             <div class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("FIRST_TIME_LOGIN"); ?></h4>
             </div>
             <hr class="widget-separator">
             <div class="widget-body">
                 <div class="col-sm-6">
-                    <form method="POST" action="" id="login_form" url="login.php" class="" name="login">
+                    <form method="POST" action="" id="activation_form" url="login.php?init" class="" name="login">
                         <div class="form-group">
                             <label class="control-label" for="new_email"><?php echo TranslationHandler::get_static_text("EMAIL"); ?></label>
                                 <input class="form-control" type="text" name="new_email" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
@@ -99,7 +99,9 @@ $loginHandler = new LoginHandler();
                             </div>
                         <div class="col-sm-12">
                             <div class="pull-right">
-                                <input type="hidden" id="token" name="token" value="<?php echo $loginHandler->get_login_token(); ?>">
+                                <input type="hidden" id="token" name="token" class="activation_token" value="<?php echo $loginHandler->get_login_token(); ?>">
+                                <input type="hidden" id="username_id" name="username" value="" class="activation_username">
+                                <input type="hidden" id="password_id" name="password" value="" class="activation_password">
                                 <input type="button" id="submit_button" name="submit" 
                                        value="<?php echo TranslationHandler::get_static_text("CONTINUE"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">  
                             </div>

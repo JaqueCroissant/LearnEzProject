@@ -91,7 +91,7 @@ $classHandler->get_all_classes();
                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                     <td>
                                         <div class="">
-                                            <i class="fa fa-edit fa-fw fa-2x edit_class m-r-md a" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
+                                            <i class="fa fa-edit fa-fw fa-2x m-r-md change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
                                             <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
                                                 <i class="fa fa-times fa-fw fa-2x delete_class a" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school" style="font-size: 2.5em !important;"></i>
                                             <?php } ?>

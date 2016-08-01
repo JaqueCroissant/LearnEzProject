@@ -122,9 +122,16 @@ var loader = loader || {};
                 options[0] = $.extend({}, options[0]);
             }
             if (self.data('plugin') === "DataTable") {
-                // language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "libs/misc/datatables/Danish.json": "libs/misc/datatables/English.json"; ?>'}
-                // Sæt language ud fra et POST til en side for at få language ID.
-                var options_string = {"lengthMenu":[5,10,25,50,100]};
+                var lang;
+                switch (current_lang_id) {
+                    case "1": 
+                        lang = "libs/misc/datatables/Danish.json";
+                        break;
+                }
+                var options_string = {
+                    lengthMenu:[5,10,25,50,100], 
+                    language: { "url": lang }
+                };
                 options[0] = $.extend(options_string, options[0]);
             }
             if (self.data('plugin') != '') {

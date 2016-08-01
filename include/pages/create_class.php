@@ -79,7 +79,7 @@ $classHandler = new ClassHandler();
                             <div class="col-md-5">
                                 <input type="hidden" name="step" id="create_class_step">
                                 <input type="button" name="submit" id="create_class_step_one_button" step="1"
-                                       value="<?php echo TranslationHandler::get_static_text("CREATE_CLASS"); ?>" class="pull-right btn btn-default btn-sm create_class">   
+                                       value="<?php echo TranslationHandler::get_static_text("CREATE_CLASS"); ?>" class="pull-right btn btn-default create_class">   
                             </div>
                         </div>
 

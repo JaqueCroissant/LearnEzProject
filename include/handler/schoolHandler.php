@@ -238,8 +238,8 @@ class SchoolHandler extends Handler {
             $this->verify_school_type($school_type_id);
             $this->verify_max_students($max_students);
 
-            $this->verify_subscription_start(date_parse_from_format($this->format, $subscription_start));
-            $this->verify_subscription_end(date_parse_from_format($this->format, $subscription_end));
+            $this->verify_subscription_start($subscription_start);
+            $this->verify_subscription_end($subscription_end);
             $this->verify_start_date_is_lower_than_end_date($subscription_start, $subscription_end);
 
             $query = "UPDATE school SET name=:name, phone=:phone, address=:address, zip_code=:zip_code, city=:city, email=:email, "

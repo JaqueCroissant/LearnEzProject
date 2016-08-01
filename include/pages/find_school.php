@@ -17,7 +17,7 @@ $schoolHandler->get_school_types();
             <hr class="widget-separator">
             <div class="widget-body">
                 <?php if (RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
-                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, columnDefs:[{orderable: false, targets: [7,8]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid" 
+                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, columnDefs:[{orderable: false, targets: [7,8]}]}" data-plugin="DataTable" role="grid" 
                            aria-describedby="default-datatable_info">
                         <thead>
                             <tr role="row">
@@ -89,7 +89,7 @@ $schoolHandler->get_school_types();
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <td>
                                             <div class="">
-                                                <i class="fa fa-edit fa-2x edit_school center" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
+                                                <i class="fa fa-edit fa-2x change_page center" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
                                             </div>
                                         </td>
                                     <?php } ?>

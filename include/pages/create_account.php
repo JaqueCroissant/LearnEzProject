@@ -231,6 +231,5 @@ if (RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN")) {
 
 
 
-<script src="assets/js/include_library.js" type="text/javascript"></script>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>

@@ -12,6 +12,7 @@ var clicked_element_id;
 var delete_class_id;
 var school;
 var ajax_data;
+var current_lang_id;
 
 $(document).ready(function () {
     // Load on startup.

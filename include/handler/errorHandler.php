@@ -17,5 +17,9 @@ class ErrorHandler
         }
         return new Error("Unknown error occoured.", "Unknown error occoured.", $errorCode);
     }
+    
+    public static function show_error_page($error = null) {
+        echo "<script>change_page('error');</script>";
+    }
 }
 ?>

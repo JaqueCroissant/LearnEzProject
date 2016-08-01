@@ -55,15 +55,15 @@ $classHandler = new ClassHandler();
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 col-sm-offset-2 control-label" for="class_begin"><?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?></label>
+                            <label class="col-sm-2 col-sm-offset-2 control-label" for="class_begin"><?php echo TranslationHandler::get_static_text("BEGIN"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control" type="text" id="class_begin" name="class_begin" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_BEGIN"); ?>">
+                                <input class="form-control" type="text" id="class_begin" name="class_begin" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("BEGIN"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 col-sm-offset-2 control-label" for="class_end"><?php echo TranslationHandler::get_static_text("CLASS_END"); ?></label>
+                            <label class="col-sm-2 col-sm-offset-2 control-label" for="class_end"><?php echo TranslationHandler::get_static_text("END"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control" type="text" id="class_end" name="class_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("CLASS_END"); ?>">
+                                <input class="form-control" type="text" id="class_end" name="class_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("END"); ?>">
                             </div>
                         </div>
                         <div class="form-group">

@@ -5,7 +5,10 @@ var content_hidden = false;
 var ready_to_change = true;
 var status_bar_timeout;
 
+var current_thumbnail_id;
+var current_datatable;
 var clicked_checkbox_id;
+var clicked_element_id;
 var delete_class_id;
 var school;
 var ajax_data;
@@ -209,6 +212,29 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on("click", ".account_assign_password", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
+            show_status_bar("success", ajax_data.success);
+
+            var url = ajax_data.host + "/LearnEZ/include/pages/printable_passwords.php";
+
+            if (!/^(f|ht)tps?:\/\//i.test(url))
+            {
+                url = "http://" + url;
+            }
+
+            window.location = url;
+        });
+    });
+
 
     $(document).on("click", ".create_submit_csv", function (event) {
 
@@ -247,6 +273,30 @@ $(document).ready(function () {
             setTimeout(function () {
                 location.reload();
             }, 500);
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
+    $(document).on("click", ".update_acc_generate_pass", function (event) {
+        event.preventDefault();
+
+        initiate_submit_get($(this), "edit_account.php?step=generate_password",function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            $("#edit_password").attr("value", ajax_data.password);
+        });
+    });
+
+    $(document).on("click", ".update_account_submit", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -295,7 +345,22 @@ $(document).ready(function () {
             $(".create_select_school").css("visibility", "visible");
         } else {
             event.preventDefault;
+
             $(".create_select_school").css("visibility", "visible");
+            if($(".create_select_school").find("option:selected").val() !== "")
+            {
+                $(".create_select_class").css("visibility", "visible");
+            }
+        }
+    });
+
+    $(document).on("change", ".create_select_usertype_no_school", function (event) {
+        if ($(this).find("option:selected").val() === "A") {
+            $(".create_select_class").css("visibility", "hidden");
+            $(".create_select_school").css("visibility", "hidden");
+        } else {
+            event.preventDefault;
+            $(".create_select_class").css("visibility", "visible");
         }
     });
     //
@@ -309,6 +374,12 @@ $(document).ready(function () {
     $(document).on("click", ".clickable_row .click_me", function (event) {
         event.preventDefault();
         alert("Nothing happened");
+    });
+
+    $(document).on("click", ".clickable_row .click_select_me", function (event) {
+        event.preventDefault();
+        var current_checkbox = $(this).parent("tr").find("input[type=checkbox]")
+        current_checkbox.prop("checked", !current_checkbox.prop("checked"));
     });
 
     // global functions

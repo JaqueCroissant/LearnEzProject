@@ -317,7 +317,7 @@ class SchoolHandler extends Handler {
         }
     }
 
-    public function update_open_state($school_id, $school_open) {
+    public function update_open_state($school_id) {
         try {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
@@ -325,14 +325,12 @@ class SchoolHandler extends Handler {
             if (!RightsHandler::has_user_right("SCHOOL_EDIT")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
-            if (!is_numeric($school_open)) {
-                throw new Exception("INVALID_INPUT_IS_NOT_INT");
-            }
+
             $this->verify_school_exists($school_id);
             
-            $query = "UPDATE school SET open=:open WHERE id=:id;";
+            $query = "UPDATE school SET open = NOT open WHERE id=:id;";
             
-            if (DbHandler::get_instance()->query($query, $school_open, $school_id)) {
+            if (DbHandler::get_instance()->query($query, $school_id)) {
                 return true;
             } else {
                 throw new Exception ("DEFAULT");

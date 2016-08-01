@@ -20,7 +20,7 @@ function get_new_notifications(){
     }
     else {
         $jsonArray["status_value"] = false;
-        $jsonArray["error"] = $notificationHandler->error->title;
+        $jsonArray["error"] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
     }
     echo json_encode($jsonArray);
 }
@@ -29,7 +29,7 @@ function get_notifications(){
     $notificationHandler = new NotificationHandler();
     if (!$notificationHandler->load_notifications(0, 7)) {
         $json_array["status_value"] = false;
-        $json_array["error"] = $notificationHandler->error->title;
+        $json_array["error"] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
     }
     else {
         $data = $notificationHandler->get_notifications();
@@ -72,7 +72,7 @@ function get_more_notifications(){
         if (count($data) != 5) {
             $json_array["status_text"] = "<div style='text-align:center;font-style:italic;padding:6px 0 6px 0;width:100%;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
         }
-        $json_array['error'] = (isset($notificationHandler->error) ? $notificationHandler->error->title : null);
+        $json_array['error'] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
         echo json_encode($json_array);
     }
 }
@@ -80,7 +80,7 @@ function get_more_notifications(){
 function notification_setup($value, $text, $args){
     $time = time_elapsed($value->datetime);
     $final = "<div class='notification item_hover " . ($value->isRead == 2 ? "" : "item_unread")
-            . "' style='width:100%;'><div class='cursor read_notif " . "' notif='" . $value->id . "' page='" . $value->link_page . "' id='" . $value->link_page . "' step='" . $value->link_step . "' args='" . $value->link_args . "" . (isset($args["link_id"]) ? $args["link_id"] : "") . "'>"
+            . "' style='width:100%;'><div class='cursor change_page read_notif " . "' notif='" . $value->id . "' page='" . $value->link_page . "' id='" . $value->link_page . "' step='" . $value->link_step . "' args='" . $value->link_args . "" . (isset($args["link_id"]) ? $args["link_id"] . "&referer=notification" : "") . "'>"
             . "<div class='notifcation_content notification_icon' style='width:8.33%'><div class='fa " . $value->icon . "' style='font-size:1.5em'></div></div>"
             . "<div class='fz-sm notifcation_content' style='padding-left:12px;width:80%;'><p class='mail-item-excerpt'>" . $text . "</p><i class='fz-sm' style='width:100% !important;'>" . $time["value"] . " " . TranslationHandler::get_static_text($time["prefix"]) . " " . TranslationHandler::get_static_text("DATE_AGO") . "</i></div></div>"
             . "<div class='notification_button notifcation_content' style='width:11.67%;'><div class='notification_delete cursor zmdi zmdi-close-circle' notif='" . $value->id . "'></div></div></div>";
@@ -96,7 +96,7 @@ function delete(){
     }
     else {
         $json_array["status_value"] = false;
-        $json_array["error"] = $notificationHandler->error->title;
+        $json_array["error"] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
     }
     
     echo json_encode($json_array);
@@ -113,7 +113,7 @@ function read(){
         }
         else {
             $json_array["status_value"] = false;
-            $json_array["error"] = $notificationHandler->error->title;
+            $json_array["error"] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
         }
     }
     else {

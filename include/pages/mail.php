@@ -236,7 +236,8 @@ $paginationHandler = new PaginationHandler();
                                         </div>';
                                         }
                                 } else {
-                                    echo $mailHandler->error->title;
+                                    ErrorHandler::show_error_page($mailHandler->error);
+                                    die();
                                 }
                             ?>
                             </td></tr></tbody></table>
@@ -381,7 +382,7 @@ $paginationHandler = new PaginationHandler();
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="m-h-lg lh-xl">
-                                        <p><?php echo $current_mail->text; ?></p>
+                                        <p><?php echo nl2br($current_mail->text); ?></p>
                                     </div>
                                 </div>
                             </div>
@@ -427,7 +428,8 @@ $paginationHandler = new PaginationHandler();
         
                 <?php
                     } else {
-                        echo $mailHandler->error->title;
+                        ErrorHandler::show_error_page($mailHandler->error);
+                        die();
                     }
                     break;
                 
@@ -571,7 +573,7 @@ $paginationHandler = new PaginationHandler();
                                                 echo '<div class="mail-item" style="text-align:center">' .TranslationHandler::get_static_text("NO_MAILS_IN_THIS_FOLDER") .'</div>';
                                             }
                                         } else {
-                                            echo $mailHandler->error->title;
+                                            ErrorHandler::show_error_page($mailHandler->error);
                                         }
                                     ?>
                                 </td>

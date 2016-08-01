@@ -73,7 +73,7 @@ if (RightsHandler::has_user_right("RIGHTS")) {
                                                                 }
                                                             }
                                                         }
-                                                        if (empty($last_page_subpage_level) && $counter > 10) {
+                                                        if (empty($last_page_subpage_level) && $counter > 12) {
                                                             echo '</ul></div><div style="display: inline-block; vertical-align: top;  min-width:230px;"><ul class="treeview">';
                                                             $counter = $page->total_children;
                                                         }

@@ -12,6 +12,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
 }
 ?>
 
+
 <div class="row">
     <div class="col-md-9">
         <div class="col-md-12">
@@ -31,8 +32,8 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                             <div class="widget-body">
                                 <div class="clearfix">
                                     <div class="pull-left">
-                                        <div class="pieprogress text-primary" data-plugin="circleProgress" data-value=".6" data-thickness="6" data-size="70" data-start-angle="90" data-empty-fill="rgba(0, 0, 0, .3)" data-fill='{"gradient": [["#FF0000", 0], ["#ffc528", 0.3], ["#fff830", 0.7], ["#30ff37", 1]]}'>
-                                            <strong style="color: #6a6c6f !important;margin-top: -14px;font-size: 16px">%60</strong>
+                                        <div class="pieprogress text-primary circle_progress" data-plugin="circleProgress" data-value="<?php echo $value->is_complete == 1 ? 1 : (isset($value->progress) ? $value->progress / $value->time_length : 0); ?>" data-thickness="6" data-size="70" data-start-angle="1.616" data-empty-fill='rgba(0,0,0,0.3)' data-fill='{"gradient": ["#ff0000", "#000000"]}'>
+                                            <strong style="color: #6a6c6f !important;margin-top: -14px;font-size: 16px"></strong>
                                         </div>
                                     </div>
                                     <div class="pull-right">
@@ -66,7 +67,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                             <div class="widget-body">
                                 <div class="clearfix">
                                     <div class="pull-left">
-                                        <div class="pieprogress text-primary" data-plugin="circleProgress" data-value=".6" data-thickness="6" data-size="70" data-start-angle="90" data-empty-fill="rgba(0, 0, 0, .3)" data-fill="{&quot;color&quot;: &quot;#333435&quot;}">
+                                        <div class="pieprogress text-primary circle_progress" data-plugin="circleProgress" data-value=".6" data-thickness="6" data-size="70" data-start-angle="90" data-empty-fill="rgba(0, 0, 0, .3)" data-fill="{&quot;color&quot;: &quot;#333435&quot;}">
                                             <strong style="color: #6a6c6f !important;margin-top: -14px;font-size: 16px">%60</strong>
                                         </div>
                                     </div>
@@ -100,3 +101,10 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
 </div>
     
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script>
+    $(document).ready(function(){
+        $(".circle_progress").on('circle-animation-progress', function(event, progress) {
+            $(this).find('strong').html(parseInt(progress * $(this).attr("data-value") * 100) + '<i>%</i>');
+        }); 
+    });
+</script>

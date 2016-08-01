@@ -425,6 +425,8 @@ $(document).ready(function () {
     audioElement = document.createElement('audio');
     audioElement.setAttribute('src', 'sounds/notification.ogg');
     //
+    
+    
 });
 
 var audioElement;

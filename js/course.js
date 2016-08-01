@@ -150,6 +150,7 @@ $(document).on("click", ".submit_update_course", function (event) {
         show_status_bar("error", ajax_data.error);
     }, function () {
         show_status_bar("success", ajax_data.success);
+        change_page("find_course");
     });
 });
 

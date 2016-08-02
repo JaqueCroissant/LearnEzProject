@@ -19,6 +19,10 @@ class Lecture extends ORM {
     
     public $points;
     public $advanced;
+    
+    public function calc_progress(){
+        return $this->is_complete == 1 ? 100 : (isset($this->progress) ? $this->progress / $this->time_length * 100 : 0);
+    }
 }
 
 ?>

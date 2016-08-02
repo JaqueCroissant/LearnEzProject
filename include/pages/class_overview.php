@@ -14,35 +14,8 @@ if ($classHandler->_user->user_type_id != 1) {
 <style>
     .dataTables_filter, .dataTables_length, .dataTables_info { display: none !important;}
 </style>
-<div class="col-md-3 pull-right">
-    <div class="widget">
-        <div class="widget-header">
-            <h4 class="widget-title">Shortcuts and general information</h4>
-        </div>
-        <hr class="widget-separator">
-        <div class="widget-body">
-            <div class="col-sm-10">
-                <?php
-                if ($classHandler->_user->user_type_id != 1) {
-                    echo '<h4>' . $schoolHandler->school->name . '</h4>';
-                    echo '<h6>' . $schoolHandler->school->address . '</h6>';
-                    echo '<h6>' . $schoolHandler->school->zip_code . ' ' . $schoolHandler->school->city . '</h6>';
-                }
-                ?>
-            </div>
-            <div class="col-sm-2">
-                <?php if ($classHandler->_user->user_type_id != 1) { ?>
-                    <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                        <div class="p-t-xs">
-                            <i class = "fa fa-edit fa-fw fa-2x edit_school m-r-md a" school_id="<?php echo $schoolHandler->school->id; ?>"></i>
-                        </div>
-                    <?php } ?>
-                <?php } ?>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="col-md-9">
+
+<div class="col-md-9 col-sm-12">
     <div class="widget">
         <div class="widget-header">
             <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
@@ -120,5 +93,56 @@ if ($classHandler->_user->user_type_id != 1) {
             break;
     }
     ?>
+
+</div>
+<div class="col-sm-12 col-md-3">
+    <div class="widget">
+        <div class="widget-header">
+            <h4 class="widget-title">Shortcuts and general information</h4>
+        </div>
+        <hr class="widget-separator">
+        <div class="widget-body">
+            <div class="col-sm-10">
+                <?php
+                if ($classHandler->_user->user_type_id != 1) {
+                    echo '<h4>' . $schoolHandler->school->name . '</h4>';
+                    echo '<h6>' . $schoolHandler->school->address . '</h6>';
+                    echo '<h6>' . $schoolHandler->school->zip_code . ' ' . $schoolHandler->school->city . '</h6>';
+                }
+                ?>
+            </div>
+            <div class="col-sm-2">
+                <?php if ($classHandler->_user->user_type_id != 1) { ?>
+                    <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                        <div class="p-t-xs">
+                            <i class = "fa fa-edit fa-fw fa-2x edit_school m-r-md a" school_id="<?php echo $schoolHandler->school->id; ?>"></i>
+                        </div>
+                    <?php } ?>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+    <?php if ($classHandler->_user->user_type_id != 4 && $classHandler->_user->user_type_id != 1) { ?>
+        <div class="widget">
+            <div class='widget-header'>
+                <h4 class="widget-title">SOON EXPIRING CLASSES</h4>
+            </div>
+            <hr class="widget-separator m-0">
+            <div class="widget-body">
+                <div class="streamline m-l-lg">
+                    <?php foreach ($classHandler->classes as $value) { ?>
+                        <div class="sl-item p-b-md">
+                            <div class="sl-content">
+                                <div class="m-t-0 change_page a text-danger animate-twice animated headShake" page='class_profile' step='' args='&class_id=<?php echo $value->id; ?>'>
+                                    <?php echo $value->title; ?>
+                                </div>
+                                <p><?php echo $value->end_date; ?></p>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>

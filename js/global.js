@@ -101,10 +101,19 @@ $(document).ready(function () {
     // login / logout
     $(document).on("click", ".submit_login", function (event) {
         event.preventDefault();
+
         initiate_submit_form($(this), function () {
-            show_status_bar("error", ajax_data.error);
-            if (ajax_data.user_setup === "true") {
-                // HER
+
+            if (ajax_data.user_setup !== undefined) {
+                $(".main_login").addClass("hidden");
+                $(".first_time_login").removeClass("hidden");
+                $(".activation_token").val($(".login_token").val());
+                $(".activation_username").val($(".login_username").val());
+                $(".activation_password").val($(".login_password").val());
+            }
+            else
+            {
+                show_status_bar("error", ajax_data.error);
             }
         }, function () {
             reload_page();
@@ -425,6 +434,8 @@ $(document).ready(function () {
     audioElement = document.createElement('audio');
     audioElement.setAttribute('src', 'sounds/notification.ogg');
     //
+    
+    
 });
 
 var audioElement;

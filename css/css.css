@@ -499,23 +499,30 @@ a .menu_header {
 }
 
 .course_navigation {
-    margin:12px 12px 0 0;
+    margin:5px 5px 0 5px;
 }
 
 .course_bar {
-    height:60px;
+    height:40px;
     margin-bottom: 0 !important;
     margin:0 auto;
     padding:0;
     color: white;
+    border-bottom: 1px solid #edf0f5;
 }
 
 .course_slide_counter {
-    margin: 20px 15px 0 0;
+    margin: 10px 10px 0 0;
 }
 
 .course_title {
-    margin: 12px 0 0 12px;
+    margin: 10px 0 0 12px;
+}
+
+.course_action {
+    height: 30px;
+    width: 40px;
+    padding:4px 0px !important;
 }
 
 .thumbnail_hover:hover {

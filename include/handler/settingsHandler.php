@@ -13,6 +13,7 @@ class SettingsHandler extends Handler {
         }
         
         self::$_settings = new User_Settings(reset($settings_data));
+        return self::$_settings;
     }
     
     private static function set_settings() {
@@ -113,6 +114,42 @@ class SettingsHandler extends Handler {
         $settings->blocked_students = json_encode($array);
     }
     
+    public function initial_update($language_id, $os_id)
+    {
+        try
+        {
+            if(!SessionKeyHandler::session_exists("user_setup"))
+            {
+                echo "SESSIONJUNK";
+                throw new Exception("INVALID_SETTINGS_INPUT");
+            }
+
+            if(empty($language_id) || empty($os_id) || !is_numeric($language_id) || !is_numeric($os_id))
+            {
+                throw new Exception("INVALID_SETTINGS_INPUT");
+            }
+
+            $this->_current_settings = self::get_settings();
+            $user = SessionKeyHandler::get_from_session("user_setup");
+
+            $this->assign_os($os_id);
+            $this->assign_language($language_id);
+
+            if(!DbHandler::get_instance()->query("UPDATE user_settings SET language_id = :lang_id, os_id = :os_id WHERE user_id = :user_id", $language_id, $os_id, $user["user_id"]))
+            {
+                throw new Exception("DATABASE_UNKNOWN_ERROR");
+            }
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            echo $ex->getMessage();
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
     public function update_settings($settings = null) {
         try 
         {

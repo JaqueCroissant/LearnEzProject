@@ -51,7 +51,7 @@ class LoginHandler
             }
             
             if(!$this->verify_activation()) {
-                //throw new Exception();
+                throw new Exception("ACTIVATE");
             }
 	    
 	    $this->_access = true;
@@ -69,7 +69,7 @@ class LoginHandler
         }
         
         if(!isset($this->_user->last_login) || strtotime($this->_user->last_login) == 0) {
-            SessionKeyHandler::add_to_session("user_setup", array("user_id" => $this->_user->id, "username" => $this->_username, "password" => $this->_password));
+            SessionKeyHandler::add_to_session("user_setup", array("user_id" => $this->_user->id, "username" => $this->_username, "firstname" => $this->_user->firstname, "surname" => $this->_user->surname, "email" => $this->_user->email));
             return false;
         }
         

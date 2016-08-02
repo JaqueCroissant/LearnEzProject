@@ -226,6 +226,211 @@ class CourseHandler extends Handler
     }
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="UPDATE">
+    public function assign_school_course($array = array(), $school_id = 0) {
+        try 
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if(!RightsHandler::has_user_right("COURSE_ASSIGN")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+            
+            if(empty($school_id) || !is_numeric($school_id) || !is_array($array) || !(DbHandler::get_instance()->count_query("SELECT id FROM school WHERE id = :id", $school_id) > 0)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            foreach($array as $value) {
+                if(empty($value) || !is_numeric($value)) {
+                    throw new exception("INVALID_INPUT");
+                }
+            }
+            
+            if(count($array) != DbHandler::get_instance()->count_query("SELECT id FROM course WHERE id IN (".generate_in_query($array).")")) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            DbHandler::get_instance()->query("DELETE FROM school_course WHERE school_id = :school_id", $school_id);
+            foreach($array as $value) {
+                DbHandler::get_instance()->query("INSERT INTO school_course (school_id, course_id) VALUES (:school_id, :course_id)", $school_id, $value);
+            }
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    
+    public function edit_course($course_id = 0, $os_id = 0, $points = 0, $color = null, $sort_order = 0, $thumbnail = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
+        try 
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if(empty($course_id) || !is_numeric($course_id) || empty($os_id) || !is_numeric($os_id) || (!is_numeric($points) && !is_int((int)$points)) || (!is_numeric($sort_order) && !is_int((int)$sort_order))) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(!(DbHandler::get_instance()->count_query("SELECT id FROM course WHERE id = :id", $course_id) > 0)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(empty($color) || !preg_match('/^#[a-f0-9]{6}$/i', $color)) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if(!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
+                throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+            }
+            
+            if(empty($thumbnail) || !is_numeric($thumbnail) || (DbHandler::get_instance()->count_query("SELECT id FROM course_image WHERE id = :id", $thumbnail) < 1)) {
+                $thumbnail = $this->get_default_thumbnail_id();
+            }
+
+            $titles = $this->assign_language_id($titles, $language_ids, "title");
+            $descriptions = $this->assign_language_id($descriptions, $language_ids, "description");
+            $translation_texts = merge_array_recursively($titles, $descriptions);
+
+            if(DbHandler::get_instance()->count_query("SELECT id FROM course_os WHERE id = :os_id", $os_id) < 1) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if(DbHandler::get_instance()->count_query("SELECT id FROM language WHERE id IN (".generate_in_query($language_ids).")") != count($language_ids)) {
+                throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+            }
+            
+            DbHandler::get_instance()->query("UPDATE course SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
+
+            DbHandler::get_instance()->query("UPDATE course SET os_id = :os_id, points = :points, sort_order = :sort_order, color = :color, image_id = :image_id WHERE id = :id", $os_id, $points, ($sort_order + 1), $color, $thumbnail, $course_id);
+            
+            DbHandler::get_instance()->query("DELETE FROM translation_course WHERE course_id = :course_id", $course_id);
+            foreach($translation_texts as $key => $value) {
+                DbHandler::get_instance()->query("INSERT INTO translation_course (course_id, language_id, title, description) VALUES (:course_id, :language_id, :title, :description)", $course_id, $key, $value["title"], $value["description"]);
+            }
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    public function edit_lecture($lecture_id = 0, $course_id = 0, $points = 0, $difficulty = 0, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
+        try 
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if(empty($lecture_id) || !is_numeric($lecture_id) || empty($course_id) || !is_numeric($course_id) || (!is_numeric($points) && !is_int((int)$points)) || (!is_numeric($sort_order) && !is_int((int)$sort_order)) || (!is_numeric($difficulty) && !is_int((int)$difficulty))) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(!(DbHandler::get_instance()->count_query("SELECT id FROM course_lecture WHERE id = :id", $lecture_id) > 0)) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if(!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
+                throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+            }
+
+            $titles = $this->assign_language_id($titles, $language_ids, "title");
+            $descriptions = $this->assign_language_id($descriptions, $language_ids, "description");
+            $translation_texts = merge_array_recursively($titles, $descriptions);
+
+            if(DbHandler::get_instance()->count_query("SELECT id FROM course WHERE id = :course_id", $course_id) < 1) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if(DbHandler::get_instance()->count_query("SELECT id FROM language WHERE id IN (".generate_in_query($language_ids).")") != count($language_ids)) {
+                throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+            }
+            
+            DbHandler::get_instance()->query("UPDATE course_lecture SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
+
+            DbHandler::get_instance()->query("UPDATE course_lecture SET course_id = :course_id, points = :point,  sort_order = :sort_order,  advanced = :advanced WHERE course_lecture.id = :id", $course_id, $points, ($sort_order + 1), $difficulty, $lecture_id);
+
+            DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id = :lecture_id", $lecture_id);
+            foreach($translation_texts as $key => $value) {
+                DbHandler::get_instance()->query("INSERT INTO translation_course_lecture (course_lecture_id, language_id, title, description) VALUES (:course_id, :language_id, :title, :description)", $lecture_id, $key, $value["title"], $value["description"]);
+            }
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    public function edit_test($test_id = 0, $course_id = 0, $points = 0, $difficulty = 0, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
+        try 
+        {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if(empty($test_id) || !is_numeric($test_id) || empty($course_id) || !is_numeric($course_id) || (!is_numeric($points) && !is_int((int)$points)) || (!is_numeric($sort_order) && !is_int((int)$sort_order)) || (!is_numeric($difficulty) && !is_int((int)$difficulty))) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(!(DbHandler::get_instance()->count_query("SELECT id FROM course_test WHERE id = :id", $test_id) > 0)) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if(!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
+                throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+            }
+
+            $titles = $this->assign_language_id($titles, $language_ids, "title");
+            $descriptions = $this->assign_language_id($descriptions, $language_ids, "description");
+            $translation_texts = merge_array_recursively($titles, $descriptions);
+
+            if(DbHandler::get_instance()->count_query("SELECT id FROM course WHERE id = :course_id", $course_id) < 1) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if(DbHandler::get_instance()->count_query("SELECT id FROM language WHERE id IN (".generate_in_query($language_ids).")") != count($language_ids)) {
+                throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
+            }
+            
+            DbHandler::get_instance()->query("UPDATE course_test SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
+
+            DbHandler::get_instance()->query("UPDATE course_test SET course_id = :course_id, points = :points, sort_order = :sort_order, advanced = :advanced WHERE course_test.id = :id", $course_id, $points, ($sort_order + 1), $difficulty, $test_id);
+            DbHandler::get_instance()->query("DELETE FROM translation_course_test WHERE course_test_id = :test_id", $test_id);
+            foreach($translation_texts as $key => $value) {
+                DbHandler::get_instance()->query("INSERT INTO translation_course_test (course_test_id, language_id, title, description) VALUES (:course_id, :language_id, :title, :description)", $test_id, $key, $value["title"], $value["description"]);
+            }
+            return true;
+        }
+        catch (Exception $ex) 
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+        
+    //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="DELETE">
     public function delete($element_id = 0, $element_type = null) {
         try {
@@ -488,6 +693,11 @@ class CourseHandler extends Handler
             $final = array();
             foreach ($courses as $course) {
                 if(!array_key_exists($course["id"], $group)){
+                    $temp = $course;
+                    $temp["overall_progress"] = 100;
+                    $temp["amount_of_lectures"]= 0;
+                    $temp["amount_of_tests"] = 0;
+                    array_push($final, new Course($temp));
                     continue;
                 }
                 $current_progress = 0;
@@ -548,7 +758,7 @@ class CourseHandler extends Handler
                 throw new Exception("INVALID_INPUT");
             }
             if ($is_complete == 1) {
-                $values = "is_complete=1";
+                $values = "is_complete=1,complete_date=NOW()";
             }
             else {
                 $values = "progress=" . $progress;

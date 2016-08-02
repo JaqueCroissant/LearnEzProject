@@ -582,3 +582,13 @@ a .menu_header {
     cursor: pointer;
     background: #158ac5 !important;
 }
+
+.animate-twice {
+    -webkit-animation-iteration-count: 2; 
+    -moz-animation-iteration-count: 2; 
+    animation-iteration-count: 2;
+}
+
+.danger h4 {
+    color:white;
+}

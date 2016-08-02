@@ -17,7 +17,7 @@ $schoolHandler->get_school_types();
             <hr class="widget-separator">
             <div class="widget-body">
                 <?php if (RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
-                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, columnDefs:[{orderable: false, targets: [7,8]}]}" data-plugin="DataTable" role="grid" 
+                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, columnDefs:[{orderable: false, targets: [6, 7]}]}" data-plugin="DataTable" role="grid" 
                            aria-describedby="default-datatable_info">
                         <thead>
                             <tr role="row">
@@ -64,9 +64,9 @@ $schoolHandler->get_school_types();
                                 $i++;
                                 ?>
                                 <tr class="clickable_row">
-                                    <td class="click_me" data-search="<?php echo $value->name ?>"><?php echo (strlen($value->name) > 20 ? substr($value->name, 0, 20) : $value->name); ?></td>
-                                    <td class="click_me" data-search="<?php echo $value->address ?>"><?php echo (strlen($value->address) > 16 ? substr($value->address, 0, 16) : $value->address); ?></td>
-                                    <td class="click_me" data-search="<?php echo $value->city ?>"><?php echo (strlen($value->city) > 20 ? substr($value->city, 0, 20) : $value->city); ?></td>
+                                    <td class="click_me" data-search="<?php echo $value->name ?>"><?php echo (strlen($value->name) > 20 ? substr($value->name, 0, 20) . "..." : $value->name); ?></td>
+                                    <td class="click_me" data-search="<?php echo $value->address ?>"><?php echo (strlen($value->address) > 16 ? substr($value->address, 0, 16) . "..." : $value->address); ?></td>
+                                    <td class="click_me" data-search="<?php echo $value->city ?>"><?php echo (strlen($value->city) > 20 ? substr($value->city, 0, 20) . "..." : $value->city); ?></td>
 
                                     <td class="click_me"><?php echo $value->subscription_start; ?></td>
                                     <td class="click_me"><?php echo $value->subscription_end; ?></td>

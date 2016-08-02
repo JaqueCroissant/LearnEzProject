@@ -12,4 +12,5 @@ class School_Class extends ORM{
     public $school_name;
     public $number_of_students;
     public $number_of_teachers;
+    public $remaining_days;
 }

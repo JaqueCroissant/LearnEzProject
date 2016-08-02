@@ -32,7 +32,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                             <div class="widget-body">
                                 <div class="clearfix">
                                     <div class="pull-left">
-                                        <div class="pieprogress text-primary circle_progress" data-plugin="circleProgress" data-value="<?php echo $value->is_complete == 1 ? 1 : (isset($value->progress) ? $value->progress / $value->time_length : 0); ?>" data-thickness="6" data-size="70" data-start-angle="1.616" data-empty-fill='rgba(0,0,0,0.3)' data-fill='{"gradient": ["#ff0000", "#000000"]}'>
+                                        <div class="pieprogress text-primary circle_progress" data-plugin="circleProgress" data-value="<?php echo $value->calc_progress() / 100 ?>" data-thickness="6" data-size="70" data-start-angle="1.616" data-empty-fill='rgba(0,0,0,0.3)' data-fill='{"gradient": ["#ff0000", "#000000"]}'>
                                             <strong style="color: #6a6c6f !important;margin-top: -14px;font-size: 16px"></strong>
                                         </div>
                                     </div>

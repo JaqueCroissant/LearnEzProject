@@ -5,7 +5,7 @@ class ClassHandler extends Handler {
     public $school_class;
     public $classes;
     public $years;
-    private $format = "Y-m-d";
+    public $format = "Y-m-d";
 
     public function __construct() {
         parent::__construct();
@@ -26,6 +26,7 @@ class ClassHandler extends Handler {
                             WHERE class.id = :id";
 
             $this->school_class = new School_Class(reset(DbHandler::get_instance()->return_query($query, $class_id)));
+            $this->school_class->remaining_days = $this->set_remaining_days($this->school_class);
 
             if (empty($this->school_class)) {
                 throw new Exception("OBJECT_IS_EMPTY");
@@ -53,45 +54,26 @@ class ClassHandler extends Handler {
             switch ($this->_user->user_type_id) {
                 case 1:
                     $array = DbHandler::get_instance()->return_query($base_query);
-
-                    $this->classes = array();
-                    foreach ($array as $value) {
-                        $class = new School_Class($value);
-                        $class->number_of_students = $this->get_number_of_students_in_class($class->id);
-                        $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
-                        $this->classes[] = $class;
-                    }
                     break;
                 case 2:
                     $query = $base_query . " WHERE school.id = :school_id";
-
                     $array = DbHandler::get_instance()->return_query($query, $this->_user->school_id);
-
-                    $this->classes = array();
-                    foreach ($array as $value) {
-                        $class = new School_Class($value);
-                        $class->number_of_students = $this->get_number_of_students_in_class($class->id);
-                        $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
-                        $this->classes[] = $class;
-                    }
                     break;
                 case 3:
                     $query = $base_query . " INNER JOIN user_class ON class.id = user_class.class_id WHERE user_class.users_id = :user_id";
                     $array = DbHandler::get_instance()->return_query($query, $this->_user->id);
-
-                    $this->classes = array();
-                    foreach ($array as $value) {
-                        $class = new School_Class($value);
-                        $class->number_of_students = $this->get_number_of_students_in_class($class->id);
-                        $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
-                        $this->classes[] = $class;
-                    }
                     break;
                 default:
                     break;
             }
-
-
+            $this->classes = array();
+            foreach ($array as $value) {
+                $class = new School_Class($value);
+                $class->number_of_students = $this->get_number_of_students_in_class($class->id);
+                $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
+                $class->remaining_days = $this->set_remaining_days($class);
+                $this->classes[] = $class;
+            }
 
             return true;
         } catch (Exception $exc) {
@@ -124,7 +106,9 @@ class ClassHandler extends Handler {
 
             $this->classes = array();
             foreach ($array as $value) {
-                $this->classes[] = new School_Class($value);
+                $class = new School_Class($value);
+                $class->remaining_days = $this->set_remaining_days($class);
+                $this->classes[] = $class;
             }
 
             return true;
@@ -142,7 +126,7 @@ class ClassHandler extends Handler {
             $this->verify_user_id($user_id);
             $this->verify_user_has_class($user_id);
 
-            $query = "SELECT class.*
+            $query = "SELECT class.*, class_year.year as class_year
                             FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
                             INNER JOIN user_class on class.id = user_class.class_id
                             WHERE user_class.users_id = :user_id";
@@ -150,7 +134,9 @@ class ClassHandler extends Handler {
             $array = DbHandler::get_instance()->return_query($query, $user_id);
             $this->classes = array();
             foreach ($array as $value) {
-                $this->classes[] = new School_Class($value);
+                $class = new School_Class($value);
+                $class->remaining_days = $this->set_remaining_days($class);
+                $this->classes[] = $class;
             }
 
             return true;
@@ -265,6 +251,14 @@ class ClassHandler extends Handler {
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
+        }
+    }
+
+    private function set_remaining_days($class) {
+        if ($class->open == "1" && (strtotime($class->end_date) > strtotime(date($this->format)))) {
+            return date_diff(date_create_from_format($this->format, $class->end_date), date_create_from_format($this->format, date($this->format)))->format("%a");
+        } else {
+            return 0;
         }
     }
 

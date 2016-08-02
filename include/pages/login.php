@@ -34,7 +34,7 @@ $loginHandler = new LoginHandler();
                             <input type="hidden" id="token" name="token" class="login_token" value="<?php echo $loginHandler->get_login_token(); ?>">
                             <input type="button" id="submit_button" name="submit" 
                                    value="<?php echo TranslationHandler::get_static_text("LOGIN"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">  
-                            <a class="change_page pull-right p-r-lg p-t-xs" page="resetpassword" id="resetpassword" href="#">Reset password</a>
+                            <a class="change_page pull-right p-r-lg p-t-xs" page="resetpassword" id="resetpassword" href="#"><?php echo TranslationHandler::get_static_text("RESET_PASS"); ?></a>
                         </div>
                     </div>
                 </form>
@@ -42,18 +42,22 @@ $loginHandler = new LoginHandler();
         </div>
     </div>
     <div class="col-sm-12">
-        <div class="widget first_time_login hidden">
+        <div class="widget first_time_login" style="opacity:0;height:0 !important;">
             <div class="widget-header">
-                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("FIRST_TIME_LOGIN"); ?></h4>
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("ACCOUNT_ACTIVATION"); ?></h4>
             </div>
             <hr class="widget-separator">
             <div class="widget-body">
                 <div class="col-sm-6">
+                    <label class="control-label activation_greeting"><?php echo TranslationHandler::get_static_text("HELLO") . " "; ?></label>
+                    <p><?php echo nl2br(TranslationHandler::get_static_text("ACCOUNT_ACTIVATION_INFO")); ?></p>
+                </div>
+                <div class="col-sm-6">
                     <form method="POST" action="" id="activation_form" url="login.php?init" class="" name="login">
                         <div class="form-group">
-                            <label class="control-label" for="new_email"><?php echo TranslationHandler::get_static_text("EMAIL"); ?></label>
-                                <input class="form-control" type="text" name="new_email" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
-                                placeholder="<?php echo TranslationHandler::get_static_text("EMAIL"); ?>">
+                            <label class="control-label" for="new_email"><?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?></label>
+                                <input class="form-control activation_email" type="text" name="new_email" onkeydown = "if (event.keyCode == 13) document.getElementById('submit_button').click()"
+                                placeholder="<?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?>">
                         </div>
                         <div class="form-group">
                             <label class="control-label" for="new_os"><?php echo TranslationHandler::get_static_text("OS"); ?></label>
@@ -103,14 +107,12 @@ $loginHandler = new LoginHandler();
                                 <input type="hidden" id="username_id" name="username" value="" class="activation_username">
                                 <input type="hidden" id="password_id" name="password" value="" class="activation_password">
                                 <input type="button" id="submit_button" name="submit" 
-                                       value="<?php echo TranslationHandler::get_static_text("CONTINUE"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">  
+                                       value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="col-sm-6">
-                    <p>First time setup!</p>
-                </div>
+
             </div>
         </div>
     </div>

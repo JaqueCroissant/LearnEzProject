@@ -603,7 +603,7 @@ class UserHandler extends Handler
         }
         catch(Exception $ex)
         {
-
+            $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }

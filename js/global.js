@@ -105,11 +105,16 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
 
             if (ajax_data.user_setup !== undefined) {
-                $(".main_login").addClass("hidden");
-                $(".first_time_login").removeClass("hidden");
+
+                $(".main_login").fadeOut(300, function(){
+                    $(".first_time_login").attr("style", "opacity:0;height: auto;");
+                    $(".first_time_login").fadeTo(300, 1);
+                });
                 $(".activation_token").val($(".login_token").val());
                 $(".activation_username").val($(".login_username").val());
                 $(".activation_password").val($(".login_password").val());
+                $(".activation_email").val(ajax_data.email);
+                $(".activation_greeting").text($(".activation_greeting").text() + ajax_data.firstname + "!");
             }
             else
             {

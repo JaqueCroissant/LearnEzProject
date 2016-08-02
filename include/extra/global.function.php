@@ -25,6 +25,24 @@ function generate_in_query($array) {
     return $in_array;
 }
 
+function get_progress_color($progress = 0) {
+    $progress = empty($progress) || !is_numeric($progress) ? 0 : $progress;
+    
+    switch($progress) {
+        case $progress == 100:
+            return "#36ce1c";
+            
+        case $progress > 70:
+            return "#e8e323";
+            
+        case $progress > 40:
+            return "#f3c02c";
+            
+        default:
+            return "#f15530";
+    }
+}
+
 function merge_array_recursively($array1, $array2, $overwrite = true) 
 { 
     foreach($array2 as $key=>$val) 

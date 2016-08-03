@@ -66,19 +66,23 @@ $schoolHandler->get_school_types();
                                 <div class="col-md-6">
                                     <div class="col-md-12">
                                         
-                                        
-                                        <div class="form-group m-b-sm">
-                                            <label class="control-label" for="password"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
-                                            <div style="display: table-cell;width: 100%;">
-                                                <input readonly="" class="form-control" id="edit_password" type="text" name="password" value="" placeholder="********">
-                                                
-                                            </div>
-                                            <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
-                                                <input type="button" name="generate_password" id="generate_password_submit" value="<?php echo TranslationHandler::get_static_text("GEN_PASSWORD"); ?>" class="m-l-sm pull-right btn btn-default update_acc_generate_pass">
-                                            </div>
-                                        </div>
-                                        
                                         <?php
+                                        if(RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD"))
+                                        {
+                                        ?>
+                                            <div class="form-group m-b-sm">
+                                                <label class="control-label" for="password"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
+                                                <div style="display: table-cell;width: 100%;">
+                                                    <input readonly="" class="form-control" id="edit_password" type="text" name="password" value="" placeholder="********">
+
+                                                </div>
+                                                <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
+                                                    <input type="button" name="generate_password" id="generate_password_submit" value="<?php echo TranslationHandler::get_static_text("GEN_PASSWORD"); ?>" class="m-l-sm pull-right btn btn-default update_acc_generate_pass">
+                                                </div>
+                                            </div>
+
+                                        <?php
+                                        }
                                             if($userHandler->temp_user->user_type_id > 2)
                                             {
                                         ?>
@@ -124,17 +128,7 @@ $schoolHandler->get_school_types();
                             </form>
                            
                         </div>
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
              <?php
             } else {
                 echo ErrorHandler::return_error("INSUFFICIENT_RIGHTS")->title;

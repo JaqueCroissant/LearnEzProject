@@ -92,35 +92,21 @@ if (isset($_GET['class_id'])) {
             </div>
         </div>
     </div>
-    <div class="col-sm-12 col-md-6 p-r-0">
-        <div class="widget">
-            <div class='widget-header'>
-                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("HOMEWORK"); ?></h4>
-            </div>
-            <hr class="widget-separator m-0">
-            <div class="widget-body">
-
-            </div>
-        </div>
-    </div>
 </div>
 <div class="col-md-3 col-sm-12">
     <div class="widget">
         <div class="widget-header">
             <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                 <div class="pull-right">
-                    <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>"></i>
+                    <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $classHandler->school_class->id; ?>"></i>
                 </div>
             <?php } ?>
             <h4 class="widget-title"><?php echo isset($_GET['class_id']) ? $classHandler->school_class->title . " - " . $classHandler->school_class->class_year : ""; ?></h4>
-
         </div>
         <hr class="widget-separator m-0">
         <div class="widget-body">
             <?php echo isset($_GET['class_id']) ? $classHandler->school_class->description : ""; ?>
-
         </div>
-
         <div class="widget-body <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "10" ? ($classHandler->school_class->remaining_days == "0" ? "hidden" : "danger animated headShake" ) : ""; ?>">
             <h4 class="widget-title <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "10" ? ($classHandler->school_class->remaining_days == "0" ? "" : "animated flash animate-twice" ) : ""; ?>"><?php echo isset($_GET['class_id']) ? TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END") . ": " . $classHandler->school_class->remaining_days . " " . TranslationHandler::get_static_text("DATE_DAYS") : ""; ?></h4>
         </div>
@@ -131,8 +117,8 @@ if (isset($_GET['class_id'])) {
         </div>
         <hr class="widget-separator m-0">
         <div class="widget-body">
-            <div class="pull-left">
-                <div class="pieprogress text-danger" data-value="<?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "#e23636"}, thickness: 10}'>
+            <div class="pull-left" name="test_average">
+                <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($statisticsHandler->class_average * 100) : "" ?>"}, thickness: 10}'>
                     <strong>%<span class="counter" data-plugin="counterUp"><?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average * 100 : ""; ?></span></strong>
                 </div>
             </div>

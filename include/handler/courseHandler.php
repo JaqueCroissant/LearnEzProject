@@ -94,7 +94,7 @@ class CourseHandler extends Handler
                 throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
             }
             
-            DbHandler::get_instance()->query("UPDATE course SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
+            DbHandler::get_instance()->query("UPDATE course SET sort_order = (sort_order + 1) WHERE sort_order >= :sort_order", $sort_order);
 
             DbHandler::get_instance()->query("INSERT INTO course (os_id, points, sort_order, color, image_id) VALUES (:os_id, :points, :sort_order, :color, :image_id)", $os_id, $points, ($sort_order + 1), $color, $thumbnail);
             $last_inserted_id = DbHandler::get_instance()->last_inserted_id();

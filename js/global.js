@@ -133,7 +133,7 @@ $(document).ready(function () {
         initiate_submit_get($(this), "login.php?logout=true", function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            $.removeCookie("current_page");
+            $.removeCookie("navigation", { path: '/' });
             reload_page();
         });
     });
@@ -420,20 +420,16 @@ $(document).ready(function () {
             return;
         }
         change_page("front", "", "");
-        
-        
-//        var pagename = page_reload === "true" ? "front" : $.cookie("current_page") !== undefined ? $.cookie("current_page") : "front";
-//        var page_step = page_reload === "true" ? "" : $.cookie("current_page_step") !== undefined ? $.cookie("current_page_step") : "";
-//        var page_args = page_reload === "true" ? "" : $.cookie("current_page_args") !== undefined ? $.cookie("current_page_args") : "";
-//        change_page(pagename, page_step, page_args);
     }
     
     $(document).on("click", ".go_back", function() {
+        //alert($.cookie("navigation"));
         if($.cookie("navigation") !== undefined) {
-//            alert($.cookie("navigation"));
+            //alert($.cookie("navigation"));
             var navigation = $.map(JSON.parse($.cookie("navigation")), function(value, index) {
                 return [value];
             });
+            //alert(navigation);
             
             if(navigation.length < 2) {
                 return;
@@ -442,10 +438,14 @@ $(document).ready(function () {
             var current_page = navigation.pop();
             var last_page = navigation.pop();
             
+            //alert(navigation);
+            $.cookie("navigation", JSON.stringify(navigation), {expires: 10, path: '/'});
+            //alert($.cookie("navigation"));
             change_page(last_page.page, last_page.step, last_page.args);
 //            alert(JSON.stringify(navigation));
-            $.cookie("navigation", JSON.stringify(navigation), {expires: 10});
-            return;
+            
+            
+            //return;
         }
     });
 
@@ -453,7 +453,7 @@ $(document).ready(function () {
         var date = new Date();
         date.setTime(date.getTime() + (60 * 1000));
         $.cookie("page_reload", "true", {expires: 10});
-        $.removeCookie("navigation");
+        $.removeCookie("navigation", { path: '/' });
         location.reload();
     }
 

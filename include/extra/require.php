@@ -21,4 +21,5 @@
     $loginHandler = new LoginHandler();
     $userHandler = new UserHandler();
     $pageHandler = new PageHandler();
+    $courseHandler = new CourseHandler();
 ?>

@@ -2,26 +2,30 @@
 require_once 'require.php';
 require_once '../../include/handler/courseHandler.php';
 
-$handler = new courseHandler();
+$courseHandler = new courseHandler();
 
-if (!$handler->get(6, "test")) {
+if (!$courseHandler->get(6, "test")) {
     ErrorHandler::show_error_page();
     die();
 }
 ?>
 
+    <div class="backdrop"></div></div>
+    <div id="iframe_content" class="test_content backdrop_open" style="overflow:hidden;" table_id="<?php echo isset($courseHandler->current_element->user_course_test_id) ? $courseHandler->current_element->user_course_test_id : "" ?>" current_slide="<?php echo (($courseHandler->current_element->is_complete == 1) ? $courseHandler->current_element->total_steps : (isset($courseHandler->current_element->progress) ? $courseHandler->current_element->progress : "1")); ?>">
 
-<div id="iframe_content" style="overflow:hidden;" table_id="<?php echo isset($handler->current_element->user_course_test_id) ? $handler->current_element->user_course_test_id : "" ?>" current_slide="<?php echo (($handler->current_element->is_complete == 1) ? $handler->current_element->total_steps : (isset($handler->current_element->progress) ? $handler->current_element->progress : "1")); ?>">
-    <div class="course_bar widget" style="<?php echo "background-color: " . $handler->current_element->course_color . " !important;" ?>">      
-        <div class="course_title pull-left"><?php echo "<span>" . $handler->current_element->course_title . "<span class='p-v-sm zmdi zmdi-chevron-right fa-sm'></span>" . $handler->current_element->title . "</span>" ?></div>
-        <div class="btn-group pull-right course_navigation">
-            <a href="javascript:void(0)" value="go_backwards" class="course_action course_go_back btn btn-default" title=<?php echo TranslationHandler::get_static_text("PREVIOUS") ?>><i class="fa fa-chevron-left"></i></a>
-            <a href="javascript:void(0)" value="go_forwards" class="course_action course_go_for btn btn-default" title=<?php echo TranslationHandler::get_static_text("NEXT") ?>><i class="fa fa-chevron-right"></i></a>
+        <div class="course_bar primary">      
+            <div class="course_title pull-left"><?php echo "<span>" . $courseHandler->current_element->course_title . "<span class='p-v-sm zmdi zmdi-chevron-right fa-sm'></span>" . $courseHandler->current_element->title . "</span>" ?></div>
+            <div class="btn-group pull-right course_navigation m-l-sm">
+                <a href="javascript:void(0)" value="quit" class="course_action course_go_for btn btn-default" title=<?php echo TranslationHandler::get_static_text("QUIT") ?>><i class="fa fa-sign-out"></i></a>
+            </div>
+            <div class="btn-group pull-right course_navigation">
+                <a href="javascript:void(0)" value="go_backwards" class="course_action course_go_back btn btn-default" title=<?php echo TranslationHandler::get_static_text("PREVIOUS") ?>><i class="fa fa-chevron-left"></i></a>
+                <a href="javascript:void(0)" value="go_forwards" class="course_action course_go_for btn btn-default" title=<?php echo TranslationHandler::get_static_text("NEXT") ?>><i class="fa fa-chevron-right"></i></a>
+            </div>
+            <div class="course_slide_counter pull-right"></div>
         </div>
-        <div class="course_slide_counter pull-right"></div>
+        <iframe scrolling="no" id="scaled-frame" class="course_iframe" src="<?php echo "../../LearnEZ/courses/tests/" . $courseHandler->current_element->path . "/index.php"; ?>"></iframe>
     </div>
-    <iframe scrolling="no" id="scaled-frame" class="course_iframe" src="<?php echo "../../LearnEZ/courses/" . $handler->current_element->path . "/index.php"; ?>"></iframe>
-</div>
 <div id="hidden_element" style="display:none"></div>
 
 <script>
@@ -40,36 +44,22 @@ if (!$handler->get(6, "test")) {
     var interval_function;
 
     function resize(){
-        var ratiow = $(".wrap").width() / 1024;
-        var ratioh = ($(window).height() - 120) / 800;
+        var ratiow = ($(window).width() - 20) / 1024;
+        var ratioh = ($(window).height() - 61) / 740;
         var ratio = ratiow > ratioh ? ratioh : ratiow;
-        if (ratio < 1) {
-            $("#scaled-frame").css({
-                "transform" : "scale(" + ratio + ")",
-                "-webkit-transform" : "scale(" + ratio + ")",
-                "-ms-transform" : "scale(" + ratio + ")"
-            });
-            $("#scaled-frame").css({
-                "margin-top" : -(740 - 740 * ratio) / 2, 
-                "margin-left" : (-(1024 - 1024 * ratio) / 2) + ($(".wrap").width() - ratio * 1024) / 2
-            });
-            $("#iframe_content").height(740 * ratio + 80);
-            $(".course_bar").width(1024 * ratio);
-        } 
-        else {
-            $("#scaled-frame").css({
-                "transform" : "scale(1)",
-                "-webkit-transform" : "scale(1)",
-                "-ms-transform" : "scale(1)"
-            });
-            $("#scaled-frame").css({
-                "margin-top" : 0, 
-                "margin-left" : ($(".wrap").width() - 1024) / 2
-            });
-            $("#iframe_content").height(820);
-            $(".course_bar").width(1024);
-        }
+        $("#scaled-frame").css({
+            "transform" : "scale(" + ratio + ")",
+            "-webkit-transform" : "scale(" + ratio + ")",
+            "-ms-transform" : "scale(" + ratio + ")"
+        });
+        $("#scaled-frame").css({
+            "margin-top" : -(740 - 740 * ratio) / 2, 
+            "margin-left" : (-(1024 - 1024 * ratio) / 2) + ($(window).width() - ratio * 1024) / 2
+        });
+        $("#iframe_content").height(740 * ratio + 40);
+        $(".course_bar").width(1024 * ratio);
     }
+    
 
     $(document).on("click", ".course_action", function(){
         if (can_be_clicked) {
@@ -84,12 +74,16 @@ if (!$handler->get(6, "test")) {
                         $(".course_go_for").attr("disabled", true);
                     } 
                     break;
-                case "go_backwards" : if (current_slide !== 1) {
+                case "go_backwards" : 
+                    if (current_slide !== 1) {
                         window.cpAPIInterface.previous(); 
                     }
                     else {
                         $(".course_go_back").attr("disabled", true);
                     }
+                    break;
+                case "quit" :
+                    
                     break;
                 default : break;
             }
@@ -188,7 +182,6 @@ if (!$handler->get(6, "test")) {
             if(ajax_data.last_inserted_id !== null) {
                 table_id = ajax_data.last_inserted_id;
             }
-
         });
     }
 })();

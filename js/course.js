@@ -217,6 +217,204 @@ $(document).on("change", ".add_tests", function (event) {
     });
 });
 
+//test/lektion vinduet
+(function(){
+    
+    var can_be_clicked = false;
+    var progress_reached = parseInt(($("#iframe_content").attr("current_progress")));
+    var progress_reached_last = progress_reached;
+    var current_progress = parseInt(($("#iframe_content").attr("current_progress")));
+    var max_progress = 0;
+    var update = true;
+    var table_id = ($("#iframe_content").attr("table_id"));
+    var time_since_last_save = 0;
+    var interval_function;
+    var hidden = false;
+    var animating = false;
+    var ratio = 1;
+
+    function resize(){
+        if (!animating) {
+            var ratiow = ($(window).width() - 20) / 1024;
+            var ratioh = ($(window).height() - 60) / 740;
+            ratio = ratiow > ratioh ? ratioh : ratiow;
+            $("#scaled-frame").css({
+                "transform" : "scale(" + ratio + ")",
+                "-webkit-transform" : "scale(" + ratio + ")",
+                "-ms-transform" : "scale(" + ratio + ")"
+            });
+            $("#scaled-frame").css({
+                "margin-top" : -(740 - 740 * ratio) / 2 - 1, 
+                "margin-left" : -(1024 - 1024 * ratio) / 2
+            });
+            if (hidden) {
+                $("#iframe_content").css({
+                    "height" : 740 * ratio + 40,
+                    "width" : 1024 * ratio,
+                    "margin-left" : ($(window).width() - ratio * 1024) / 2,
+                    "margin-bottom" : - (740 * ratio + 40)
+                });
+            }
+            else {
+                $("#iframe_content").css({
+                    "height" : 740 * ratio + 40,
+                    "width" : 1024 * ratio,
+                    "margin-left" : ($(window).width() - ratio * 1024) / 2,
+                    "margin-bottom" : ($(window).height() - 40 - ratio * 740) / 2 - 10
+                });
+            }
+        }
+    }
+    
+
+    $(document).on("click", ".course_action", function(){
+        if (can_be_clicked) {
+            can_be_clicked = false;
+            var window = document.getElementById("scaled-frame").contentWindow;
+            var action = $(this).attr("value");
+            switch (action){
+                case "go_forwards" : 
+                    if (current_progress !== progress_reached && current_progress !== max_progress) { 
+                        window.cpAPIInterface.next(); 
+                    } else {
+                        $(".course_go_for").attr("disabled", true);
+                    } 
+                    break;
+                case "go_backwards" : 
+                    if (current_progress !== 1) {
+                        window.cpAPIInterface.previous(); 
+                    }
+                    else {
+                        $(".course_go_back").attr("disabled", true);
+                    }
+                    break;
+                case "quit" :
+                    
+                    break;
+                default : break;
+            }
+            can_be_clicked = true;
+        }
+    });
+
+    function update_init(){
+        console.log("Attempting to save");
+        if (progress_reached > progress_reached_last) {
+            console.log("Saving");
+            if (progress_reached === max_progress) {
+                update_progress("test", 0, 1, 6);
+            }
+            else {
+                update_progress("test", progress_reached, 0, 6);
+            }
+        }
+        else {
+            console.log("Save not needed");
+        }
+    }
+
+    $(document).ready(function() {
+        resize();
+        $(window).on("resize", resize);
+        var iframe_window = document.getElementById("scaled-frame").contentWindow;
+        
+        $(document).on("click", ".backdrop", function(){
+            if (!hidden) {
+                hidden = true;
+                animating = true;
+                $(".backdrop").animate({opacity:0}, 500, "easeOutQuad", function(){
+                    $(".backdrop").css("display", "none");
+                });
+                $("#iframe_content").animate({"margin-bottom":-($("#iframe_content").height() + 10), bottom:0}, 700, "easeInOutQuad", function(){
+                    animating = false;
+                    resize();
+                });
+                $(".course_return").css("display", "block");
+                update_init();
+                clearInterval(interval_function);
+                $(window).unbind("unload.update_progress");
+            }
+        });
+        
+        $(document).on("click", ".course_return", function(){
+            if (hidden) {
+                animating = true;
+                $(".course_return").css("display", "none");
+                $("#iframe_content").animate({"margin-bottom": (($(window).height() - 40 - ratio * 740) / 2 -10), bottom:10}, 700, "easeInOutQuad", function() {
+                    hidden = false;
+                    animating = false;
+                    resize();
+                });
+                $(".backdrop").css("display", "block");
+                $(".backdrop").animate({opacity:1}, 500, "easeOutCubic");
+            }
+        });
+
+        $(window).one("unload.update_progress", function(event){
+            console.log("window unloaded");
+            update_init();
+            clearInterval(interval_function);
+        });
+
+        iframe_window.addEventListener("moduleReadyEvent", function(){
+            can_be_clicked = true;
+            max_progress = iframe_window.cpAPIInterface.getVariableValue("rdinfoSlideCount");
+            $("#course_slide_counter").html("<p>" + current_progress + "/" +  max_progress + "</p>");
+            if (current_progress === 1) {
+                $(".course_go_back").attr("disabled", true);
+            }
+            if (current_progress === max_progress || current_progress === progress_reached) {
+
+                $(".course_go_for").attr("disabled", true);
+            }
+            iframe_window.cpAPIEventEmitter.addEventListener("CPAPI_SLIDEENTER", function(event){
+                current_progress = event.Data.slideNumber;
+                if (current_progress > progress_reached) {
+                    progress_reached = current_progress;
+                }
+                if (current_progress === 1) {
+                    $(".course_go_back").attr("disabled", true);
+                }
+                else {
+                    $(".course_go_back").attr("disabled", false);
+                }
+                if (current_progress === max_progress || current_progress === progress_reached) {
+                    $(".course_go_for").attr("disabled", true);
+                }
+                else {
+                    $(".course_go_for").attr("disabled", false);
+                }
+                $(".course_slide_counter").html("<b>" + current_progress + "/" +  max_progress + "</b>");
+            });
+            if (current_progress !== max_progress) {
+                iframe_window.cpAPIInterface.setVariableValue("cpCmndGotoSlide", current_progress - 1);
+                if (update) {
+                   interval_function = setInterval(function(){
+                        time_since_last_save++;
+                        if (time_since_last_save >= 30) {
+                            update_init();
+                            progress_reached_last = progress_reached;
+                            time_since_last_save = 0;
+                        }
+                    }, 1000);
+                }
+            }
+            else {
+                update = false;
+            }
+        });
+    });
+
+    function update_progress(type, progress, is_complete, action_id){
+        initiate_submit_get($("#hidden_element"), "course.php?update_progress=" + type + "&progress=" + progress + "&is_complete=" + is_complete + "&table_id=" + table_id + "&action_id= "+ action_id, function () {
+        }, function () {
+            if(ajax_data.last_inserted_id !== null) {
+                table_id = ajax_data.last_inserted_id;
+            }
+        });
+    }
+})();
+
 
 
 

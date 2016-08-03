@@ -34,7 +34,7 @@ if ($classHandler->_user->user_type_id != 1) {
                                     <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("START"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
-                                    <th><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -48,7 +48,7 @@ if ($classHandler->_user->user_type_id != 1) {
                                             <td><?php echo $value->city; ?></td>
                                             <td><?php echo $value->subscription_start; ?></td>
                                             <td><?php echo $value->subscription_end; ?></td>
-                                            <td><?php echo $value->max_students; ?></td>
+                                            <td><?php echo $value->current_students . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $value->max_students; ?></td>
                                         </tr>
                                         <?php
                                     }

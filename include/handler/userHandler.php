@@ -251,12 +251,13 @@ class UserHandler extends Handler
             $new_username .= substr($firstname, 0, 4);
         }
 
-        do
-        {
-            $conc_name = $new_username .= $this->add_random_elements(); 
-        }
-        while($this->username_exists($conc_name));
+        while(true) {
+            $conc_name = $new_username .''. $this->add_random_elements();
 
+            if(!$this->username_exists($conc_name)) {
+                break;
+            }
+        }
         return $conc_name;
     }
 

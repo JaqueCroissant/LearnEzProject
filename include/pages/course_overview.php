@@ -13,7 +13,7 @@ $courseHandler->get_courses();
             foreach($courseHandler->courses as $value) {
             ?>
             <div class="col-md-3 col-sm-6 change_page" style="cursor:pointer;" id="course_show" page="course_show" args="&course_id=<?php echo $value->id; ?>">
-                <div class="widget stats-widget">
+                <div class="widget stats-widget" data-container="body" data-toggle="popover" data-delay='{"show":"300", "hide":"300"}' data-placement="right" data-trigger="hover" data-content="<?= $value->description; ?>">
                     <div class="widget-body clearfix">
                         <div class="pull-left" style="margin-left:-10px;">
                             <img style="width:70px;height:70px;" src="assets/images/thumbnails/<?php echo $value->image_filename; ?>" alt="">
@@ -46,3 +46,9 @@ $courseHandler->get_courses();
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();
+    });
+</script>

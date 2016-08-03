@@ -67,7 +67,7 @@ $schoolHandler->get_school_types();
                                     <div class="col-md-12">
                                         
                                         <?php
-                                        if(RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD"))
+                                        if((RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) || (!RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") && RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD") && $userHandler->temp_user->user_type_id > 3))
                                         {
                                         ?>
                                             <div class="form-group m-b-sm">

@@ -123,5 +123,4 @@ $classHandler->get_all_classes();
         </p>
     </div>
 </div>
-
 <script src="assets/js/include_app.js" type="text/javascript"></script>

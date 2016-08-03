@@ -1,4 +1,5 @@
 <?php
+$begin = microtime(true);
 require_once 'require.php';
 require_once '../../include/handler/classHandler.php';
 require_once '../../include/handler/schoolHandler.php';
@@ -56,38 +57,33 @@ if (isset($_GET['class_id'])) {
             </div>
         </div>
     </div>
-    
+    <?php
+    $i_max = 10;
+    $i = 0;
+    $i_rand = rand(100, 1000);
+    ?>
     <div class="col-sm-12 col-md-6 p-r-0">
         <div class="widget">
             <div class='widget-header'>
-                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " xx " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . $i_max . " " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
             </div>
             <hr class="widget-separator m-0">
             <div class="widget-body">
                 <div class="streamline m-l-lg">
-                    <div class="sl-item p-b-md">
-                        <div class="sl-avatar avatar avatar-sm avatar-circle">
-                            <img class="img-responsive" src="assets/images/profile_images/5.png">
+                    <?php for ($i; $i < $i_max; $i++) { ?>
+                        <div class="sl-item p-b-md">
+                            <div class="sl-avatar avatar avatar-sm avatar-circle">
+                                <img class="img-responsive" src="assets/images/profile_images/5.png">
+                            </div>
+                            <div class="sl-content">
+                                <h5 class="m-t-0">
+                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $i; ?>">John Doe</a>
+                                    <small class="text-muted fz-sm"><?php echo $i == 2 ? "<--- This is you" : ""; ?></small>
+                                </h5>
+                                <p><?php echo $i_rand * (10 - $i); ?> points</p>
+                            </div>
                         </div>
-                        <div class="sl-content">
-                            <h5 class="m-t-0">
-                                <a class="m-r-xs theme-color" href="javascript:void(0)">John Doe</a>
-                            </h5>
-                            <p>9001 points</p>
-                        </div>
-                    </div>
-                    <div class="sl-item p-b-md">
-                        <div class="sl-avatar avatar avatar-sm avatar-circle">
-                            <img class="img-responsive" src="assets/images/profile_images/5.png">
-                        </div>
-                        <div class="sl-content">
-                            <h5 class="m-t-0">
-                                <a class="m-r-xs theme-color" href="javascript:void(0)">John Doe</a>
-                                <small class="text-muted fz-sm"><-- THIS IS YOU</small>
-                            </h5>
-                            <p>2001 points</p>
-                        </div>
-                    </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -130,7 +126,11 @@ if (isset($_GET['class_id'])) {
         </div>
         <hr class="widget-separator m-0">
         <div class="widget-body">
+            <?php
+            $end = microtime(true);
 
+            echo '<br/><br/>Time spent: <strong style="font-size: 40px;">' . floor(($end - $begin) * 1000) . '</strong>ms';
+            ?>
         </div>
     </div>
 </div>

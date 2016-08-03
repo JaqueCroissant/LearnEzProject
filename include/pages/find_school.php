@@ -73,24 +73,25 @@ $schoolHandler->get_school_types();
                                     <td class="click_me"><?php echo $value->max_students; ?></td>
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <td align="center">
-                                            <form method="post" id="alert_form_<?php echo $value->id;; ?>" action="" url="edit_school.php?state=set_availability">
+                                            <form method="post" id="alert_form_<?php echo $value->id;
+                            ; ?>" action="" url="edit_school.php?state=set_availability">
                                                 <input type="hidden" name="school_id" value="<?php echo $value->id; ?>">
                                                 <div class="checkbox">
                                                     <input class="checkbox-circle checkbox-dark btn_alertbox" element_id="<?php echo $value->id; ?>" type="checkbox"
-                                                           <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
+            <?php echo ($value->open == 1 ? 'checked' : "") ?> value="<?php echo ($value->open == 1 ? 'on' : "off"); ?>">
                                                     <label></label>
                                                 </div>
                                                 <input type="hidden" name="submit" value="submit"></input>
                                             </form>
                                         </td>
                                     <?php } ?>
-                                    <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+        <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <td align="center" >
                                             <div class="">
                                                 <i class="zmdi zmdi-hc-lg zmdi-edit change_page center" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
                                             </div>
                                         </td>
-                                    <?php } ?>
+        <?php } ?>
                                     <td class="hidden"><?php echo $value->id; ?></td>
                                 </tr>
                                 <?php

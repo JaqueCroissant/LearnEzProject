@@ -15,6 +15,28 @@ if ($classHandler->_user->user_type_id != 1) {
 <?php
 switch ($classHandler->_user->user_type_id) {
     case "1":
+        ?>
+        <div class="col-md-6 col-sm-12">
+            <div class="widget">
+                <div class="widget-header">
+                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("SCHOOLS")); ?></h4>
+                </div>
+                <hr class="widget-separator m-0">
+                <div class="widget-body">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-12">
+            <div class="widget-header">
+                <h4 class="widget-title"></h4>
+            </div>
+            <hr class="widget-separator m-0">
+            <div class="widget-body">
+
+            </div>
+        </div>
+        <?php
         break;
     case "2": case "3": case "4":
         ?>
@@ -22,7 +44,7 @@ switch ($classHandler->_user->user_type_id) {
             <div class="col-md-12">
                 <div class="widget">
                     <div class="widget-header">
-                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
+                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("SCHOOLS")); ?></h4>
                     </div>
                     <hr class="widget-separator">
                     <div class="widget-body">

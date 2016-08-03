@@ -1,4 +1,5 @@
 <?php
+$begin = microtime(true);
 require_once 'require.php';
 require_once '../../include/handler/classHandler.php';
 require_once '../../include/handler/schoolHandler.php';
@@ -143,6 +144,20 @@ if ($classHandler->_user->user_type_id != 1) {
                 </div>
             </div>
         </div>
+        
     <?php } ?>
+    <div class="widget">
+            <div class='widget-header'>
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("HOMEWORK"); ?></h4>
+            </div>
+            <hr class="widget-separator m-0">
+            <div class="widget-body">
+                <?php
+                $end = microtime(true);
+
+                echo '<br/><br/>Time spent: <strong style="font-size: 40px;">' . floor(($end - $begin) * 1000) . '</strong>ms';
+                ?>
+            </div>
+        </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>

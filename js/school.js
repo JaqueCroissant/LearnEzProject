@@ -47,6 +47,7 @@ $(document).ready(function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
             show_status_bar("success", ajax_data.success);
+            $(".go_back").click();
         });
     });
 

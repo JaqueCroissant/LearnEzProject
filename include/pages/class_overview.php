@@ -39,7 +39,7 @@ if ($classHandler->_user->user_type_id != 1) {
                     foreach ($classHandler->classes as $value) {
                         if ($value->open == "1") {
                             ?>
-                            <tr>
+                            <tr class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>">
                                 <td><?php echo $value->title; ?></td>
                                 <?php if ($classHandler->_user->user_type_id == "1") { ?>
                                     <td><?php echo $value->school_name; ?></td>

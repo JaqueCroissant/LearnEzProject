@@ -2,18 +2,23 @@
 require_once 'require.php';
 require_once '../../include/handler/classHandler.php';
 require_once '../../include/handler/schoolHandler.php';
+require_once '../../include/handler/userHandler.php';
+require_once '../../include/handler/statisticsHandler.php';
 
 $schoolHandler = new SchoolHandler();
 $classHandler = new ClassHandler();
 $classHandler->get_all_classes();
+$userHandler = new UserHandler();
+$statisticsHandler = new StatisticsHandler();
+
 if ($classHandler->_user->user_type_id != 1) {
     $schoolHandler->get_school_by_id($classHandler->_user->school_id);
 }
 
 if (isset($_GET['class_id'])) {
     $classHandler->get_class_by_id($_GET['class_id']);
-    $date_end = date_create_from_format($classHandler->format, $classHandler->school_class->end_date);
-    $interval = date_diff(date_create_from_format($classHandler->format, date($classHandler->format)), $date_end);
+    $userHandler->get_by_class_id($_GET['class_id']);
+    $statisticsHandler->get_average_progress_for_class($_GET['class_id']);
 }
 ?>
 
@@ -21,48 +26,38 @@ if (isset($_GET['class_id'])) {
     .dataTables_filter, .dataTables_length, .dataTables_info { display: none !important;}
 </style>
 <div class="col-md-9 col-sm-12">
-    <div class="widget">
-        <div class="widget-header">
-            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("ALL") . " " . TranslationHandler::get_static_text("STUDENTS"); ?></h4>
-        </div>
-        <hr class='widget-separator m-0'>
-        <div class="widget-body">
-            <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
-                <thead>
-                    <tr>
-                        <th><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
-                        <?php if ($classHandler->_user->user_type_id == "1") { ?>
-                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
-                        <?php } ?>
-                        <th><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
-                        <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
-                        <th><?php echo TranslationHandler::get_static_text("TEACHERS"); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    echo "Venter på en funktion fra Jake til at hente elever ud fra klasse id";
-                    foreach ($classHandler->classes as $value) {
-                        if ($value->open == "1") {
+    <div class="col-sm-12 col-md-6 p-l-0">
+        <div class="widget">
+            <div class='widget-header'>
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("ALL") . " " . TranslationHandler::get_static_text("STUDENTS"); ?></h4>
+            </div>
+            <hr class="widget-separator m-0">
+            <div class="widget-body">
+                <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
+                    <thead>
+                        <tr>
+                            <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        echo "Venter på en funktion fra Jake til at hente elever ud fra klasse id";
+                        foreach ($userHandler->users as $value) {
                             ?>
-                            <tr>
-                                <td><?php echo $value->title; ?></td>
-                                <?php if ($classHandler->_user->user_type_id == "1") { ?>
-                                    <td><?php echo $value->school_name; ?></td>
-                                <?php } ?>
-                                <td><?php echo $value->class_year; ?></td>
-                                <td><?php echo $value->number_of_students; ?></td>
-                                <td><?php echo $value->number_of_teachers; ?></td>
+                            <tr class = "a change_page" page = "account_profile" step = "" args = "&user_id=<?php echo $value->id; ?>">
+                                <td><?php echo $value->firstname . " " . $value->surname; ?></td>
+                                <td><?php echo $value->email; ?></td>
+
                             </tr>
-                            <?php
-                        }
-                    }
-                    ?>
-                </tbody>
-            </table>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="col-sm-12 col-md-6 p-l-0">
+    
+    <div class="col-sm-12 col-md-6 p-r-0">
         <div class="widget">
             <div class='widget-header'>
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " xx " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
@@ -113,12 +108,12 @@ if (isset($_GET['class_id'])) {
     <div class="widget">
         <div class="widget-header">
             <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-            <div class="pull-right">
-                <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>"></i>
-            </div>
+                <div class="pull-right">
+                    <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>"></i>
+                </div>
             <?php } ?>
             <h4 class="widget-title"><?php echo isset($_GET['class_id']) ? $classHandler->school_class->title . " - " . $classHandler->school_class->class_year : ""; ?></h4>
-            
+
         </div>
         <hr class="widget-separator m-0">
         <div class="widget-body">
@@ -137,8 +132,8 @@ if (isset($_GET['class_id'])) {
         <hr class="widget-separator m-0">
         <div class="widget-body">
             <div class="pull-left">
-                <div class="pieprogress text-danger" data-value=".2" data-plugin="circleProgress" data-options='{fill: {color: "#e23636"}, thickness: 10}'>
-                    <strong>%20</strong>
+                <div class="pieprogress text-danger" data-value="<?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "#e23636"}, thickness: 10}'>
+                    <strong>%<span class="counter" data-plugin="counterUp"><?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average * 100 : ""; ?></span></strong>
                 </div>
             </div>
         </div>

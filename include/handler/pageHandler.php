@@ -397,8 +397,11 @@ class pageHandler extends Handler {
         } else {
             $current_page_array = array();
         }
-        //var_dump($_COOKIE["navigation"]);
+        $last_page_element = array_pop((array_slice($current_page_array, -1)));
         
+        if($last_page_element["page"] == $page && $last_page_element["step"] == $step && $last_page_element["args"] == $args) {
+            return;
+        }
         
         if(count($current_page_array) > 9) {
             $current_page_array = array_slice($current_page_array, -9, 9, true);
@@ -407,7 +410,6 @@ class pageHandler extends Handler {
         $new_element = array("page" => $page, "step" => $step, "args" => $args);
         $current_page_array[] = $new_element;
         
-        //var_dump($current_page_array);
         setcookie("navigation", json_encode($current_page_array), time() + (86400 * 30), "/LearnEZ");
     }
     

@@ -410,7 +410,7 @@ class pageHandler extends Handler {
         $new_element = array("page" => $page, "step" => $step, "args" => $args);
         $current_page_array[] = $new_element;
         
-        setcookie("navigation", json_encode($current_page_array), time() + (86400 * 30), "/LearnEZ");
+        setcookie("navigation", json_encode($current_page_array), time() + (86400 * 30), "/LearnEZ/");
     }
     
     public function get_breadcrumbs_array($page = null) {

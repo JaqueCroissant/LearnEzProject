@@ -10,8 +10,8 @@
     "sUrl":          "",
     "oPaginate": {
         "sFirst":    "F&oslash;rste",
-        "sPrevious": "Forrige",
-        "sNext":     "N&aelig;ste",
+        "sPrevious": "<",
+        "sNext":     ">",
         "sLast":     "Sidste"
     }
 }

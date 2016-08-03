@@ -29,7 +29,7 @@ class SchoolHandler extends Handler {
             if ($is_open) {
                 $query .= " AND subscription_end >= curdate() AND subscription_start <= curdate()";
             }
-
+            $this->all_schools = [];
             $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {
                 $this->all_schools[] = new School($value);
@@ -213,6 +213,7 @@ class SchoolHandler extends Handler {
                      school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title as school_type, school.open 
                      FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
             $this->school = new School(reset(DbHandler::get_instance()->return_query($query, $id)));
+            $this->school->remaining_days = $this->set_remaining_days($this->school);
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -444,6 +445,21 @@ class SchoolHandler extends Handler {
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
+        }
+    }
+    
+    private function get_current_students_for_all_schools ($array_of_int) {
+        if (!is_array($array_of_int)) {
+            throw new Exception ("INVALID_INPUT");
+        }
+        $array_students = DbHandler::get_instance()->return_query("SELECT id, COUNT(*) as current_students, school_id FROM users WHERE school_id IN (1,0) AND open = 1 GROUP BY school_id");
+    }
+    
+    private function set_remaining_days($school) {
+        if ($school->open == "1" && (strtotime($school->subscription_end) > strtotime(date($this->format)))) {
+            return date_diff(date_create_from_format($this->format, $school->subscription_end), date_create_from_format($this->format, date($this->format)))->format("%a");
+        } else {
+            return 0;
         }
     }
 

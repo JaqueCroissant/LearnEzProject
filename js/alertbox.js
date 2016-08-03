@@ -89,3 +89,50 @@
         }
         $("#click_alertbox").addClass("hidden");
     }
+
+//ASSIGN PASSWORD CLICK METODER
+
+    $(document).on("click", ".btn_click_alertbox_pass_assign", function (event) {
+        event.preventDefault();
+
+        if(alert_box_open)
+        {
+            return;
+        }
+
+        $("#click_alertbox_exp").removeClass("hidden");
+        $("#click_alertbox_exp").css("top", $(this).offset()["top"] - ($("#click_alertbox_exp").height()));
+        clicked_element_id = $(this).attr("element_id");
+        alert_box_open = true;
+    });
+
+    $(document).on("click", ".accept_click_alertbox_exp_btn", function (event) {
+        event.preventDefault();
+        var form = $("#click_alert_exp_form_" + clicked_element_id);
+        initiate_submit_form(form, function () {
+            show_status_bar("error", ajax_data.error);
+            close_click_alert_exp_box();
+        }, function () {
+
+            $("#pass_assign_confirm_text").addClass("hidden");
+            $("#pass_assigned_text").removeClass("hidden");
+            $("#pass_assigned_text_span").text(ajax_data.password);
+            $("#pass_assign_confirm").addClass("hidden");
+            $("#pass_assign_close").removeClass("hidden");
+        });
+    });
+
+    $(document).on("click", ".cancel_click_alertbox_exp_btn", function (event) {
+        event.preventDefault();
+        close_click_alert_exp_box();
+    });
+
+    function close_click_alert_exp_box() {
+        $("#pass_assign_confirm_text").removeClass("hidden");
+        $("#pass_assigned_text").addClass("hidden");
+        $("#pass_assigned_text_span").text("");
+        $("#pass_assign_confirm").removeClass("hidden");
+        $("#pass_assign_close").addClass("hidden");
+        $("#click_alertbox_exp").addClass("hidden");
+        alert_box_open = false;
+    }

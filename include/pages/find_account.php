@@ -85,13 +85,24 @@ $userHandler = new UserHandler();
                                                     <td align="center">
                                                         <div>
                                                             <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
+                                                                <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
                                                             <?php
                                                             }
+
+                                                            if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) { ?>
+                                                                <form style="display: inline-block;" method="post" id="click_alert_exp_form_<?php echo $value->id; ?>" url="edit_account.php?step=generate_and_insert_password">
+                                                                    <input type="hidden" name="user_id[]" value="<?php echo $value->id; ?>">
+                                                                    <i class="zmdi zmdi-hc-fw zmdi-lock btn_click_alertbox_pass_assign m-r-xs" element_id="<?php echo $value->id; ?>" id="click_alert_btn"></i>
+                                                                    <input type="hidden" name="submit" value="submit"></input>
+                                                                </form>
+
+                                                            <?php
+                                                            }
+
                                                             if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                                             <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="edit_account.php?step=delete_acc">
                                                                 <input type="hidden" name="user_id" value="<?php echo $value->id; ?>">
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" current_datatable="datatable_1" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" current_datatable="datatable_1" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style="" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE")?>"></i>
                                                                 <input type="hidden" name="submit" value="submit"></input>
                                                             </form>
                                                             <?php } ?>
@@ -226,5 +237,23 @@ $userHandler = new UserHandler();
     </div>
 </div>
 
+<div id="click_alertbox_exp" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <div class="" id="pass_assign_confirm_text"><?php echo TranslationHandler::get_static_text("CONFIRM_ASSIGN_PASS"); ?></div>
+        <div class="hidden" id="pass_assigned_text"><span><?php echo TranslationHandler::get_static_text("ASSIGNED_PASSWORD") . " "; ?></span><span id="pass_assigned_text_span"></span></div>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0" id="pass_assign_confirm">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_alertbox_exp_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_click_alertbox_exp_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+        <p class="m-0 hidden" id="pass_assign_close">
+            <input class="btn btn-default btn-sm p-v-lg cancel_click_alertbox_exp_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+        </p>
+    </div>
+</div>
+
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>
+<script>$(document).ready(function(){$("[data-toggle='tooltip']").tooltip()});</script>

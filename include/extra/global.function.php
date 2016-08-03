@@ -1,4 +1,12 @@
 <?php
+function array_sort_by_column(&$arr, $col, $dir = SORT_ASC) {
+    $sort_col = array();
+    foreach ($arr as $key=> $row) {
+        $sort_col[$key] = $row[$col];
+    }
+    array_multisort($sort_col, $dir, $arr);
+}
+
 function array_value_exists_in_key($array, $key, $val) {
     foreach ($array as $item) {
         if (isset($item[$key]) && $item[$key] == $val) {
@@ -23,6 +31,24 @@ function generate_in_query($array) {
         $in_array .= $i > 0 ? ", '" . $array[$i] ."'" : "'" . $array[$i] ."'";
     }
     return $in_array;
+}
+
+function get_progress_color($progress = 0) {
+    $progress = empty($progress) || !is_numeric($progress) ? 0 : $progress;
+    
+    switch($progress) {
+        case $progress == 100:
+            return "#36ce1c";
+            
+        case $progress > 70:
+            return "#e8e323";
+            
+        case $progress > 40:
+            return "#f3c02c";
+            
+        default:
+            return "#f15530";
+    }
 }
 
 function merge_array_recursively($array1, $array2, $overwrite = true) 

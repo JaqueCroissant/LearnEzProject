@@ -251,12 +251,13 @@ class UserHandler extends Handler
             $new_username .= substr($firstname, 0, 4);
         }
 
-        do
-        {
-            $conc_name = $new_username .= $this->add_random_elements(); 
-        }
-        while($this->username_exists($conc_name));
+        while(true) {
+            $conc_name = $new_username .''. $this->add_random_elements();
 
+            if(!$this->username_exists($conc_name)) {
+                break;
+            }
+        }
         return $conc_name;
     }
 
@@ -481,12 +482,9 @@ class UserHandler extends Handler
     {
         try
         {
+            $query = "";
+            $temp_users = "";
             $this->validate_user_logged_in();
-
-            if(!RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD"))
-            {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
 
             if(!is_array($user_ids))
             {
@@ -506,8 +504,33 @@ class UserHandler extends Handler
                 }
             }
 
-            $query = "SELECT * FROM users WHERE id IN (" . generate_in_query($user_ids) . ")";
-            $temp_users = DbHandler::get_instance()->return_query($query);
+            $can_assign_global = RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD");
+            $can_assign_student = RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD");
+
+
+            if(!$can_assign_global && !$can_assign_student)
+            {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                if(!RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") && RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD"))
+                {
+                    $query = "SELECT * FROM users WHERE id IN (" . generate_in_query($user_ids) . ") AND school_id = :school_id AND user_type_id = :type_id";
+                    $temp_users = DbHandler::get_instance()->return_query($query, $this->_user->school_id, 4);
+                }
+                else
+                {
+                    $query = "SELECT * FROM users WHERE id IN (" . generate_in_query($user_ids) . ") AND school_id = :school_id AND user_type_id >= :type_id";
+                    $temp_users = DbHandler::get_instance()->return_query($query, $this->_user->school_id, $this->_user->user_type_id);
+                }
+            }
+            else
+            {
+                $query = "SELECT * FROM users WHERE id IN (" . generate_in_query($user_ids) . ")";
+                $temp_users = DbHandler::get_instance()->return_query($query);
+            }
 
             if(count($user_ids) != count($temp_users))
             {
@@ -881,10 +904,15 @@ class UserHandler extends Handler
                 $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id LEFT JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id AND users.password = ''";
                 $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language());
             }
-            else
+            else if(!RightsHandler::has_user_right("SCHOOL_FIND") && RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD"))
             {
                 $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id INNER JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id AND school.id = :school_id AND users.password = ''";
                 $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language(), $this->_user->school_id);
+            }
+            else if(!RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") && RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD"))
+            {
+                $query = "SELECT users.*, translation_user_type.title as user_type_title, school.name as school_name FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id INNER JOIN school ON school.id = users.school_id WHERE translation_user_type.language_id = :language_id AND school.id = :school_id AND users.user_type_id = :user_type_id AND users.password = ''";
+                $users = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language(), $this->_user->school_id, 4);
             }
 
             $this->users = array();

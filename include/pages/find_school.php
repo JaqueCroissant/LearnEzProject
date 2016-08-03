@@ -88,7 +88,7 @@ $schoolHandler->get_school_types();
         <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <td align="center" >
                                             <div class="">
-                                                <i class="zmdi zmdi-hc-lg zmdi-edit change_page center" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
+                                                <i class="zmdi zmdi-hc-lg zmdi-edit change_page center" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" state="update_school" id="edit_school" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT")?>"></i>
                                             </div>
                                         </td>
         <?php } ?>
@@ -124,3 +124,4 @@ $schoolHandler->get_school_types();
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script>$(document).ready(function(){$("[data-toggle='tooltip']").tooltip()});</script>

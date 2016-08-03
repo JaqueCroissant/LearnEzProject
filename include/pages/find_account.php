@@ -11,7 +11,7 @@ $userHandler = new UserHandler();
             <div class="m-b-lg nav-tabs-horizontal">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" id="find_account_header"><a href="#find_account_tab" class="my_tab_header" id="find_account_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("FIND_ACCOUNT"); ?></a></li>
-                    <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) { ?>
+                    <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") || RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD")) { ?>
                         <li role="presentation" id="assign_pass_header"><a href="#assign_pass_tab" class="my_tab_header" id="assign_pass_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS"); ?></a></li>
                     <?php } ?>
                 </ul>
@@ -84,20 +84,30 @@ $userHandler = new UserHandler();
                                                 <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT") || RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                                     <td align="center">
                                                         <div>
-                                                            <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
-                                                                <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account"></i>
                                                             <?php
-                                                            }
-
-                                                            if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) { ?>
+                                                            if ((RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) || (!RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") && RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD") && $value->user_type_id > 3))
+                                                            { ?>
                                                                 <form style="display: inline-block;" method="post" id="click_alert_exp_form_<?php echo $value->id; ?>" url="edit_account.php?step=generate_and_insert_password">
                                                                     <input type="hidden" name="user_id[]" value="<?php echo $value->id; ?>">
-                                                                    <i class="zmdi zmdi-hc-fw zmdi-lock btn_click_alertbox_pass_assign m-r-xs" element_id="<?php echo $value->id; ?>" id="click_alert_btn"></i>
+                                                                    <i class="zmdi zmdi-hc-fw zmdi-lock btn_click_alertbox_pass_assign m-r-xs" element_id="<?php echo $value->id; ?>" id="click_alert_btn" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS")?>"></i>
                                                                     <input type="hidden" name="submit" value="submit"></input>
                                                                 </form>
-
                                                             <?php
                                                             }
+                                                            else
+                                                            {
+                                                                ?>
+                                                                    <i class="zmdi zmdi-hc-fw zmdi-lock m-r-xs" style="opacity: 0; cursor: default !important;"></i>
+                                                                    <input type="hidden" name="submit" value="submit"></input>
+                                                                <?php
+
+                                                            }
+
+                                                            if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+                                                                <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="edit_account" args="&user_id=<?php echo $value->id; ?>" id="edit_account" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_ACCOUNT")?>"></i>
+                                                            <?php
+                                                            }
+
 
                                                             if (RightsHandler::has_user_right("ACCOUNT_DELETE")) { ?>
                                                             <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="edit_account.php?step=delete_acc">
@@ -130,7 +140,7 @@ $userHandler = new UserHandler();
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
-                                        <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) { ?>
+                                        <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") || RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD")) { ?>
                                             <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("PICK"); ?></th>
                                         <?php } ?>
                                         <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
@@ -149,7 +159,10 @@ $userHandler = new UserHandler();
                                             <th>
                                                 <div class="form-group" style="margin-left:-100px;">
                                                     <div class="col-md-12">
-                                                        <input type="button" name="submit" id="assign_password_submit" value="<?php echo TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS"); ?>" class="btn btn-default account_assign_password">
+                                                        <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") || RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD")) { ?>
+                                                            <input type="button" name="submit" id="assign_password_submit" value="<?php echo TranslationHandler::get_static_text("ACCOUNT_ASSIGN_PASS"); ?>" class="btn btn-default account_assign_password">
+                                                        <?php } ?>
+
                                                     </div>
                                                 </div>
                                             </th>
@@ -172,8 +185,8 @@ $userHandler = new UserHandler();
 
                                                 ?>
                                                 <tr class="clickable_row" >
-                                                    <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD")) { ?>
-                                                        <td align="left">
+                                                    <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") || RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD")) { ?>
+                                                        <td style="text-align: center">
                                                                 <div class="checkbox">
                                                                     <input class="checkbox-circle checkbox-dark" type="checkbox" value="<?php echo $value->id; ?>" name="user_ids[]">
                                                                     <label></label>

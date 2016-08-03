@@ -5,6 +5,7 @@ var content_hidden = false;
 var ready_to_change = true;
 var status_bar_timeout;
 
+var is_error_page = false;
 var current_thumbnail_id;
 var current_datatable;
 var clicked_checkbox_id;
@@ -13,6 +14,9 @@ var delete_class_id;
 var school;
 var ajax_data;
 var current_lang_id;
+
+//ongoing click events
+var alert_box_open = false;
 
 $(document).ready(function () {
     // Load on startup.
@@ -105,11 +109,16 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
 
             if (ajax_data.user_setup !== undefined) {
-                $(".main_login").addClass("hidden");
-                $(".first_time_login").removeClass("hidden");
+
+                $(".main_login").fadeOut(300, function(){
+                    $(".first_time_login").attr("style", "opacity:0;height: auto;");
+                    $(".first_time_login").fadeTo(300, 1);
+                });
                 $(".activation_token").val($(".login_token").val());
                 $(".activation_username").val($(".login_username").val());
                 $(".activation_password").val($(".login_password").val());
+                $(".activation_email").val(ajax_data.email);
+                $(".activation_greeting").text($(".activation_greeting").text() + ajax_data.firstname + "!");
             }
             else
             {
@@ -125,7 +134,7 @@ $(document).ready(function () {
         initiate_submit_get($(this), "login.php?logout=true", function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            $.removeCookie("current_page");
+            $.removeCookie("navigation", { path: '/' });
             reload_page();
         });
     });
@@ -374,10 +383,6 @@ $(document).ready(function () {
     });
     //
 
-    // school
-
-    //
-
 
     // tables
     $(document).on("click", ".clickable_row .click_me", function (event) {
@@ -402,19 +407,47 @@ $(document).ready(function () {
         var page_reload = $.cookie("page_reload");
         $.removeCookie("page_reload");
 
-        var pagename = page_reload === "true" ? "front" : $.cookie("current_page") !== undefined ? $.cookie("current_page") : "front";
-        var page_step = page_reload === "true" ? "" : $.cookie("current_page_step") !== undefined ? $.cookie("current_page_step") : "";
-        var page_args = page_reload === "true" ? "" : $.cookie("current_page_args") !== undefined ? $.cookie("current_page_args") : "";
-        change_page(pagename, page_step, page_args);
+        if($.cookie("navigation") !== undefined) {
+            var navigation = JSON.parse($.cookie("navigation"));
+            var last_element = navigation[Object.keys(navigation)[Object.keys(navigation).length - 1]];
+        }
+        
+        if(page_reload !== "true") {
+            if(last_element !== undefined) {
+                change_page(last_element.page, last_element.step, last_element.args);
+                return;
+            }
+            change_page("front", "", "");
+            return;
+        }
+        change_page("front", "", "");
     }
+    
+    $(document).on("click", ".go_back", function() {
+        if($.cookie("navigation") !== undefined) {
+            var navigation = $.map(JSON.parse($.cookie("navigation")), function(value, index) {
+                return [value];
+            });
+            
+            if((navigation.length < 2 && !is_error_page) || (navigation.length < 1 && is_error_page)) {
+                return;
+            }
+            
+            var last_page = navigation.pop();
+            if(is_error_page !== true) {
+                last_page = navigation.pop();
+            }
+            
+            $.cookie("navigation", JSON.stringify(navigation), {expires: 10, path: '/'});
+            change_page(last_page.page, last_page.step, last_page.args);
+        }
+    });
 
     function reload_page() {
         var date = new Date();
         date.setTime(date.getTime() + (60 * 1000));
         $.cookie("page_reload", "true", {expires: 10});
-        $.removeCookie("current_page");
-        $.removeCookie("current_page_step");
-        $.removeCookie("current_page_args");
+        $.removeCookie("navigation", { path: '/' });
         location.reload();
     }
 
@@ -430,9 +463,6 @@ $(document).ready(function () {
         $('#status_container').css("bottom", 0);
         $('#status_container').addClass("hidden");
     });
-
-    audioElement = document.createElement('audio');
-    audioElement.setAttribute('src', 'sounds/notification.ogg');
     //
     
     
@@ -484,7 +514,7 @@ function show_status_bar(status_type, message, custom_fade_out) {
     }
 }
 
-function cursor_wait()
+function cursor_wait() 
 {
     var elements = $(':hover');
     if (elements.length) {

@@ -35,6 +35,7 @@ function change_page(pagename, step, args, element) {
         dataType: 'json',
         async: true,
         success: function (data) {
+            is_error_page = data.pagename === "error" ? true : false;
             if(data.error_code !== undefined) {
                 var page = "include/pages/" + data.pagename + ".php?redirect_token="+data.pagename+"&step=" + data.error_code;
             } else {
@@ -56,7 +57,7 @@ function change_page(pagename, step, args, element) {
             }
         },
         complete: function() {
-            
+            $(".popover").remove();
             currently_changing_page = false;
             set_clickable(element);
             window.scrollTo(0, 0);

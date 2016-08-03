@@ -8,11 +8,14 @@
 
     switch($_GET['step'])
     {
-        case "1":
+        case "mail_val":
             email_validation($loginHandler);
             break;
-        case "2":
+        case "pass_val":
             password_validation($loginHandler, $userHandler);
+            break;
+        default:
+            die();
             break;
     }
 

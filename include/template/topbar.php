@@ -1,5 +1,5 @@
 <div class="navbar-header pull-left">
-    <button class="hamburger visible-lg-inline-block hamburger--arrowalt is-active js-hamburger p-r-md fz-xl" type="button">
+    <button class="hamburger visible-lg-inline-block hamburger--arrowalt is-active js-hamburger p-r-md fz-xl go_back" type="button">
         <span class="material_font">
             <span class="zmdi-chevron-left"></span>
         </span>

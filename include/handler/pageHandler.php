@@ -370,10 +370,8 @@ class pageHandler extends Handler {
             
             $this->current_page = $this->_pages_raw[$page_index];
             
+            $this->populate_cookies($this->current_page->pagename, $step, $args);
             
-            setcookie("current_page", $this->current_page->pagename, time() + (86400 * 30), "/");
-            setcookie("current_page_step", $step, time() + (86400 * 30), "/");
-            setcookie("current_page_args", $args, time() + (86400 * 30), "/");
             $clone_array = array();
             $this->clone_pages($clone_array, $this->_pages);
             
@@ -387,23 +385,33 @@ class pageHandler extends Handler {
         return false;
     }
     
-//    private function populate_cookies($page = null, $step = null, $args = null) {
-//        if(empty($page) || !is_string($page)) {
-//            return;
-//        }
-//        
-//        $current_page_array = (isset($_COOKIE["navigation"])) ? $_COOKIE["navigation"] : array();
-//        $current_page_array = json_decode($current_page_array);
-//        $current_page_array = json_last_error() === JSON_ERROR_NONE && json_last_error() === 0 ? $current_page_array : array();
-//        
-//        $first_element = array_shift(array_values($current_page_array)); 
-//        if(!empty($first_element)) {
-//            if(!is_array($first_element))
-//        }
-//        array_unshift($current_page_array, "apple", "raspberry");
-//        $current_page_array = 
-//        
-//    }
+    private function populate_cookies($page = null, $step = null, $args = null) {
+        if(empty($page) || !is_string($page)) {
+            return;
+        }
+        
+        $current_page_array = (isset($_COOKIE["navigation"])) ? $_COOKIE["navigation"] : null;
+        if($current_page_array != null) {
+            $current_page_array = json_decode($current_page_array, true);
+            $current_page_array = json_last_error() === JSON_ERROR_NONE && json_last_error() === 0 ? $current_page_array : array();
+        } else {
+            $current_page_array = array();
+        }
+        $last_page_element = array_pop((array_slice($current_page_array, -1)));
+        
+        if($last_page_element["page"] == $page && $last_page_element["step"] == $step && $last_page_element["args"] == $args) {
+            return;
+        }
+        
+        if(count($current_page_array) > 9) {
+            $current_page_array = array_slice($current_page_array, -9, 9, true);
+        }
+        
+        $new_element = array("page" => $page, "step" => $step, "args" => $args);
+        $current_page_array[] = $new_element;
+        
+        setcookie("navigation", json_encode($current_page_array), time() + (86400 * 30), "/", false);
+    }
     
     public function get_breadcrumbs_array($page = null) {
         $this->page_hierarchy_array = $page == null ? array() : $this->page_hierarchy_array;

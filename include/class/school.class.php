@@ -10,10 +10,12 @@ class School extends ORM{
     public $school_type_id;
     public $phone;
     public $email;
+    public $current_students;
     public $max_students;
     public $subscription_start;
     public $subscription_end;
     public $open;
+    public $remaining_days;
     
     public $classes = array();
 }

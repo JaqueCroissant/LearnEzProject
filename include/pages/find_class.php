@@ -89,9 +89,9 @@ $classHandler->get_all_classes();
                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                     <td align="center">
                                         <div class="">
-                                            <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>"></i>
+                                            <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_CLASS_GENERIC")?>"></i>
                                             <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
-                                                <i class="zmdi zmdi-hc-lg zmdi-delete delete_class a" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
+                                                <i class="zmdi zmdi-hc-lg zmdi-delete delete_class a" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE")?>"></i>
                                             <?php } ?>
                                         </div>
                                     </td>
@@ -123,5 +123,5 @@ $classHandler->get_all_classes();
         </p>
     </div>
 </div>
-
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script>$(document).ready(function(){$("[data-toggle='tooltip']").tooltip()});</script>

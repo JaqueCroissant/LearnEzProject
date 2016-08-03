@@ -14,8 +14,9 @@ $classHandler->get_all_classes();
             <?php
             if (RightsHandler::has_user_right("CLASS_EDIT")) {
                 if (isset($_GET['class_id'])) {
-
                     $classHandler->get_class_by_id($_GET['class_id']);
+                } else {
+                    ErrorHandler::show_error_page();
                 }
                 ?>
                 <div class="widget-header">

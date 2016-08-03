@@ -39,10 +39,13 @@ if(isset($_GET["init"]))
                 if($userHandler->init_user_info($email, $password, $password_copy))
                 {
                     $username = isset($_POST["username"]) ? $_POST["username"] : null;
-                    $password = isset($_POST["password"]) ? $_POST["password"] : null;
+                    $new_password = isset($_POST['new_password']) ? $_POST['new_password'] : null;
+                    $old_password = isset($_POST["password"]) ? $_POST["password"] : null;
                     $token = isset($_POST["token"]) ? $_POST["token"] : null;
 
-                    if($loginHandler->check_login($username, $password, $token))
+                    $password_to_use = !empty($new_password) ? $new_password : $old_password;
+
+                    if($loginHandler->check_login($username, $password_to_use, $token))
                     {
                         $jsonArray['status_value'] = true;
                         TranslationHandler::reset();
@@ -84,6 +87,11 @@ if(isset($_POST)) {
         if($loginHandler->error->code == "ACTIVATE")
         {
             $jsonArray['user_setup'] = SessionKeyHandler::session_exists("user_setup");
+            if($jsonArray['user_setup'])
+            {
+                 $jsonArray['email'] = SessionKeyHandler::get_from_session("user_setup")['email'];
+                 $jsonArray['firstname'] = SessionKeyHandler::get_from_session("user_setup")['firstname'];
+            }
         }
         else
         {

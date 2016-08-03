@@ -5,6 +5,7 @@ var content_hidden = false;
 var ready_to_change = true;
 var status_bar_timeout;
 
+var is_error_page = false;
 var current_thumbnail_id;
 var current_datatable;
 var clicked_checkbox_id;
@@ -423,20 +424,19 @@ $(document).ready(function () {
     }
     
     $(document).on("click", ".go_back", function() {
-        //alert($.cookie("navigation"));
         if($.cookie("navigation") !== undefined) {
-            //alert($.cookie("navigation"));
             var navigation = $.map(JSON.parse($.cookie("navigation")), function(value, index) {
                 return [value];
             });
-            //alert(navigation);
             
-            if(navigation.length < 2) {
+            if((navigation.length < 2 && !is_error_page) || (navigation.length < 1 && is_error_page)) {
                 return;
             }
             
-            var current_page = navigation.pop();
             var last_page = navigation.pop();
+            if(is_error_page !== true) {
+                last_page = navigation.pop();
+            }
             
             //alert(navigation);
             $.cookie("navigation", JSON.stringify(navigation), {expires: 10, path: '/'});

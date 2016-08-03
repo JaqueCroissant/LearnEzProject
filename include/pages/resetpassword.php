@@ -4,19 +4,6 @@ require_once 'require.php';
     if(isset($_GET['id']) && isset($_GET['code']) && $loginHandler->validate_reset_password($_GET['id'],$_GET['code']))
     {
         ?>
-
-            <div class="text-center">
-                <div class="col-xs-12"><?php echo TranslationHandler::get_static_text("RESET_PASS_CONFIRM"); ?></div>
-    
-                <div class="col-xs-12">
-                    <form method="POST" action="" id="reset_pass_submit_code" name="reset_pass_submit_code">
-                        <input type="password" id="password" name="password" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>" class="login_input"><br/>
-                        <input type="password" id="password_confirm" name="password_confirm" placeholder="<?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?>" class="login_input"><br/>
-                        <input type="button" id="submit" name="submit" value="<?php echo TranslationHandler::get_static_text("RESET_PASS_SUBMIT"); ?>" class="login_submit">
-                    </form>
-                </div>
-            </div>
-
             <div class="row">
                 <div class="col-md-12 ">
                     <div class="widget main_login">
@@ -25,7 +12,7 @@ require_once 'require.php';
                         </div>
                         <hr class="widget-separator">
                         <div class="widget-body">
-                            <form method="POST" action="" id="reset_pass_submit_email" url="resetpassword.php?step=mail_val" class="form-horizontal" name="reset_pass_submit_email">
+                            <form method="POST" action="" id="reset_pass_submit_code" url="resetpassword.php?step=pass_val" class="form-horizontal" name="reset_pass_submit_email">
 
                                 <div class="form-group">
                                     <label class="col-sm-2 col-sm-offset-2 control-label" for="email"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
@@ -40,7 +27,7 @@ require_once 'require.php';
                                     </div>
                                 </div>
                                 <div class="form-group center">
-                                    <input type="button" id="submit_button" name="submit" value="<?php echo TranslationHandler::get_static_text("RESET_PASS_SUBMIT"); ?>" class="center btn btn-default reset_pass_submit_email2">
+                                    <input type="button" id="submit_button" name="submit" value="<?php echo TranslationHandler::get_static_text("RESET_PASS_SUBMIT"); ?>" class="center btn btn-default create_submit_info">
                                 </div>
 
                             </form>

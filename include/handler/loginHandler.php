@@ -192,7 +192,7 @@ class LoginHandler
 	return $this->_access;
     }
     
-    public function reset_password($email = null)
+    public function reset_password($email)
     {
         $this->_email = $email;
         try
@@ -210,7 +210,7 @@ class LoginHandler
             }
             
             // mail function
-            
+
             DbHandler::get_instance()->query("UPDATE users SET last_password_request = :date, validation_code = :validation_code WHERE id = :id", date ("Y-m-d H:i:s"), md5(uniqid(mt_rand(), true)), $this->_user->id);
             return true;
         }

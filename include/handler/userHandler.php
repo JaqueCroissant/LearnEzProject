@@ -292,8 +292,8 @@ class UserHandler extends Handler
 
     private function username_exists($username)
     {
-        $count = DbHandler::get_instance()->count_query("SELECT * FROM users WHERE username = :name", $username);
-        return $count > 1;
+        $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE username = :name", $username);
+        return $count > 0;
     }
 
     public function set_user_availability($user_id)

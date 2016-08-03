@@ -14,6 +14,9 @@
         case "pass_val":
             password_validation($loginHandler, $userHandler);
             break;
+        default:
+            die();
+            break;
     }
 
     function password_validation($loginHandler, $userHandler)

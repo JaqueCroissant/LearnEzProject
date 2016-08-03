@@ -14,6 +14,9 @@ var school;
 var ajax_data;
 var current_lang_id;
 
+//ongoing click events
+var alert_box_open = false;
+
 $(document).ready(function () {
     // Load on startup.
     initial_page_load();

@@ -438,14 +438,8 @@ $(document).ready(function () {
                 last_page = navigation.pop();
             }
             
-            //alert(navigation);
             $.cookie("navigation", JSON.stringify(navigation), {expires: 10, path: '/'});
-            //alert($.cookie("navigation"));
             change_page(last_page.page, last_page.step, last_page.args);
-//            alert(JSON.stringify(navigation));
-            
-            
-            //return;
         }
     });
 

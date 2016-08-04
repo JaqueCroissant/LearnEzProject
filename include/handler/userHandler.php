@@ -353,15 +353,7 @@ class UserHandler extends Handler
                 throw new Exception("INVALID_INPUT");
             }
 
-            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
-            {
-                $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id AND school_id = :school", $user_id, $this->_user->school_id);
-
-                if($count != 1)
-                {
-                    throw new Exception("INSUFFICIENT_RIGHTS");
-                }
-            }
+            $this->get_user_by_id($user_id);
 
             $queries = array();
             $queries[] = "DELETE FROM users WHERE id = :id";
@@ -1084,7 +1076,15 @@ class UserHandler extends Handler
                 throw new Exception("USER_INVALID_ID");
             }
 
-            $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
+            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id WHERE users.school_id = :school_id AND users.id = :id AND translation_user_type.language_id = :language_id", $this->_user->school_id, $id, TranslationHandler::get_current_language());
+            }
+            else
+            {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id WHERE users.id = :id AND translation_user_type.language_id = :language_id", $id, TranslationHandler::get_current_language());
+            }
+
             if(isset($user_data) && !empty($user_data))
             {
                 $this->temp_user = new User(reset($user_data));

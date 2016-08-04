@@ -5,6 +5,10 @@
     // 0080c0
 }
 
+body {
+    -ms-overflow-style: scrollbar;
+}
+
 html{
     overflow-y: scroll;
 }

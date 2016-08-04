@@ -159,7 +159,7 @@ if(isset($_POST)) {
 
 if(isset($_GET["get_courses"]) && isset($_GET["os_id"])) {
     if($courseHandler->get_multiple(0, "course", $_GET["os_id"])) {
-        $jsonArray["courses"] = "";
+        $jsonArray["courses"] = '<option value="0">'.TranslationHandler::get_static_text("BEGINNING").'</option>';
         for($i = 0; $i < count($courseHandler->courses); $i++) {
             $jsonArray["courses"] .= '<option value="'.$courseHandler->courses[$i]->sort_order.'">'.($i + 1).'. '.$courseHandler->courses[$i]->title.'</option>';
         }
@@ -173,7 +173,7 @@ if(isset($_GET["get_courses"]) && isset($_GET["os_id"])) {
 
 if(isset($_GET["get_lectures"]) && isset($_GET["course_id"])) {
     if($courseHandler->get_multiple($_GET["course_id"], "lecture")) {
-        $jsonArray["lectures"] = "";
+        $jsonArray["lectures"] = '<option value="0">'.TranslationHandler::get_static_text("BEGINNING").'</option>';
         for($i = 0; $i < count($courseHandler->lectures); $i++) {
             $jsonArray["lectures"] .= '<option value="'.$courseHandler->lectures[$i]->sort_order.'">'.($i + 1).'. '.$courseHandler->lectures[$i]->title.'</option>';
         }
@@ -187,7 +187,7 @@ if(isset($_GET["get_lectures"]) && isset($_GET["course_id"])) {
 
 if(isset($_GET["get_tests"]) && isset($_GET["course_id"])) {
     if($courseHandler->get_multiple($_GET["course_id"], "test")) {
-        $jsonArray["tests"] = "";
+        $jsonArray["tests"] = '<option value="0">'.TranslationHandler::get_static_text("BEGINNING").'</option>';
         for($i = 0; $i < count($courseHandler->tests); $i++) {
             $jsonArray["tests"] .= '<option value="'.$courseHandler->tests[$i]->sort_order.'">'.($i + 1).'. '.$courseHandler->tests[$i]->title.'</option>';
         }

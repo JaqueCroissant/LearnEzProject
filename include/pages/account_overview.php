@@ -82,23 +82,35 @@ if (isset($_GET['class_id'])) {
                 </div>
                 <hr class="widget-separator m-0">
                 <div class="widget-body">
-                    <div class="col-md-12 col-sm-12 ">
+                        <?php
+                            $statisticsHandler->get_average_progress_for_student();
+                            ?>
                         <div class="col-md-4 col-sm-4">
-                            <div class="streamline m-l-lg">
-                                <?php  
-                                $statisticsHandler->get_average_progress_for_student();
-                                ?>
-                                <div class="pull-left" style="margin-right: 30px;" name="test_average">
-                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_lecture_average)?>"}, thickness: 10}'>
-                                        <strong>%<span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_lecture_average; ?></span></strong>
+
+                            <div class="user-card p-md">
+
+                                    <div class="media-left">
+                                        <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_lecture_average)?>"}, thickness: 10}' data-size="70">
+                                            <strong style="margin-top: -14px; font-size: 16px;">%<span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_lecture_average; ?></span></strong>
+                                        </div>
                                     </div>
-                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USERNAME") . ":"; ?></label>
-                                </div>
+                                    <div class="media-right">
+                                        <h5 class="media-heading"><a href="javascript:void(0)" class="title-color user_full_name"><?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname; ?></a></h5>
+                                        <small class="media-meta"><?php echo $userHandler->_user->user_type_title; ?></small>
+                                    </div>
+
+                            </div>
+
+
+                            <div class="pull-left" name="test_average">
                                 
                             </div>
+                            <div class="pull-right">
+                                <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USERNAME") . ":"; ?></label>
+                            </div>
                         </div>
-                            <div class="col-md-4 col-sm-4">
-                                <div class="streamline m-l-lg">
+                        <div class="col-md-4 col-sm-4">
+                            <div class="streamline m-l-lg">
                                 <div class="pull-left" name="test_average">
                                     <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_test_average)?>"}, thickness: 10}'>
                                         <strong>%<span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_test_average; ?></span></strong>

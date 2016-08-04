@@ -1084,7 +1084,15 @@ class UserHandler extends Handler
                 throw new Exception("USER_INVALID_ID");
             }
 
-            $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
+            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
+            {
+                $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE school_id = :school_id AND id = :id", $this->_user->school_id, $id);
+            }
+            else
+            {
+                $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
+            }
+
             if(isset($user_data) && !empty($user_data))
             {
                 $this->temp_user = new User(reset($user_data));

@@ -17,7 +17,10 @@ $schoolHandler->get_school_types();
             
             <?php
                 if (RightsHandler::has_user_right("ACCOUNT_EDIT_OTHER") && isset($_GET['user_id'])) {
-                    $userHandler->get_user_by_id($_GET['user_id']);
+                    if(!$userHandler->get_user_by_id($_GET['user_id']))
+                    {
+                        ErrorHandler::show_error_page($userHandler->error);
+                    }
                 ?>
                         <div class="widget-header">
                             <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("EDITING_ACCOUNT") . " " . $userHandler->temp_user->username; ?></h4>

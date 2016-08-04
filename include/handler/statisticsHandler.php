@@ -7,8 +7,12 @@ class StatisticsHandler extends Handler {
     public $class_lecture_average;
     public $student_lecture_average;
     public $student_test_average;
-    public $student_lecture_complete;
-    public $student_test_complete;
+    public $student_lectures_complete;
+    public $student_tests_complete;
+    public $student_lectures_started;
+    public $student_tests_started;
+    public $student_total_tests;
+    public $student_total_lectures;
 
     public function __construct() {
         parent::__construct();
@@ -69,7 +73,7 @@ class StatisticsHandler extends Handler {
         }
     }
 
-    public function get_average_progress_for_student()
+    public function get_student_progress()
     {
         try
         {
@@ -78,34 +82,8 @@ class StatisticsHandler extends Handler {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
 
-            $lectures = [];
-            $tests = [];
-            $data_array = DbHandler::get_instance()->return_query("SELECT * FROM progress_view WHERE user_id = :user_id", $this->_user->id);
-
-            foreach($data_array as $value)
-            {
-                if($value['type'] == 1)
-                {
-                    $progress = isset($value['progress']) ? $value['progress'] : 0;
-
-                    if(!array_key_exists($value['course_id'], $tests))
-                    {
-                        $tests[$value['course_id']] = ($progress / $value['total']) * 100;
-                    }
-                }
-                else
-                {
-                    $progress = isset($value['progress']) ? $value['progress'] : 0;
-
-                    if(!array_key_exists($value['course_id'], $lectures))
-                    {
-                        $lectures[$value['course_id']] = ($progress / $value['total']) * 100;
-                    }
-                }
-            }
-
-            $this->student_lecture_average = round(array_sum($lectures) / count($lectures), 0);
-            $this->student_test_average = round(array_sum($tests) / count($tests), 0);
+            $this->get_student_averages();
+            $this->get_student_totals();
 
         }
         catch (Exception $ex) {
@@ -114,4 +92,58 @@ class StatisticsHandler extends Handler {
         }
     }
 
+    private function get_student_averages()
+    {
+        $lectures = [];
+        $tests = [];
+        $data_array = DbHandler::get_instance()->return_query("SELECT * FROM progress_view WHERE user_id = :user_id", $this->_user->id);
+
+        foreach($data_array as $value)
+        {
+            if($value['type'] == 1)
+            {
+                $progress = isset($value['progress']) ? $value['progress'] : 0;
+
+                if(!array_key_exists($value['course_id'], $tests))
+                {
+                    $tests[$value['course_id']] = ($progress / $value['total']) * 100;
+                }
+            }
+            else
+            {
+                $progress = isset($value['progress']) ? $value['progress'] : 0;
+
+                if(!array_key_exists($value['course_id'], $lectures))
+                {
+                    $lectures[$value['course_id']] = ($progress / $value['total']) * 100;
+                }
+            }
+        }
+
+        $this->student_lecture_average = round(array_sum($lectures) / count($lectures), 0);
+        $this->student_test_average = round(array_sum($tests) / count($tests), 0);
+    }
+
+    private function get_student_totals()
+    {
+        $this->student_total_lectures = DbHandler::get_instance()->count_query("SELECT course_lecture.id FROM course_lecture INNER JOIN school_course ON course_lecture.course_id = school_course.course_id WHERE school_course.school_id  = :school_id", $this->_user->school_id);
+        $this->student_total_tests = DbHandler::get_instance()->count_query("SELECT course_test.id FROM course_test INNER JOIN school_course ON course_test.course_id = school_course.course_id WHERE school_course.school_id  = :school_id", $this->_user->school_id);
+        $lecture_data = DbHandler::get_instance()->return_query("SELECT is_complete FROM user_course_lecture WHERE user_id  = :user_id", $this->_user->id);
+        $test_data = DbHandler::get_instance()->return_query("SELECT is_complete FROM user_course_test WHERE user_id  = :user_id", $this->_user->id);
+
+        $this->student_lectures_started = count($lecture_data);
+        $this->student_tests_started = count($test_data);
+        $this->student_lectures_complete = 0;
+        $this->student_tests_complete = 0;
+
+        foreach($lecture_data as $value)
+        {
+            $this->student_lectures_complete += $value['is_complete'];
+        }
+
+        foreach($test_data as $value)
+        {
+            $this->student_tests_complete += $value['is_complete'];
+        }
+    }
 }

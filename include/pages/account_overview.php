@@ -82,44 +82,52 @@ if (isset($_GET['class_id'])) {
                 </div>
                 <hr class="widget-separator m-0">
                 <div class="widget-body">
-                    <div class></div>
+                    <div class="row">
                         <?php
-                            $statisticsHandler->get_average_progress_for_student();
-                            ?>
-                        <div class="col-md-4 col-sm-4">
-
-                            <div class="user-card p-md">
-
+                            $statisticsHandler->get_student_progress();
+                        ?>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="user-card">
                                     <div class="media-left">
                                         <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_lecture_average)?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 16px;">%<span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_lecture_average; ?></span></strong>
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_lecture_average; ?></span>%    </strong>
                                         </div>
                                     </div>
                                     <div class="media-right">
-                                        <h5 class="media-heading"><a href="javascript:void(0)" class="title-color user_full_name"><?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname; ?></a></h5>
-                                        <small class="media-meta"><?php echo $userHandler->_user->user_type_title; ?></small>
+                                        <div>
+                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("LECTURE")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
+                                        </div>
+                                        <div>
+                                            <?php echo TranslationHandler::get_static_text("LECTURES") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $statisticsHandler->student_lectures_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_lectures; ?>
+                                        </div>
+                                        <div>
+                                            <?php echo TranslationHandler::get_static_text("LECTURES") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $statisticsHandler->student_lectures_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_lectures; ?>
+                                        </div>
                                     </div>
-
-                            </div>
-
-
-                            <div class="pull-left" name="test_average">
-                                
-                            </div>
-                            <div class="pull-right">
-                                <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USERNAME") . ":"; ?></label>
                             </div>
                         </div>
-                        <div class="col-md-4 col-sm-4">
-                            <div class="streamline m-l-lg">
-                                <div class="pull-left" name="test_average">
-                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_test_average)?>"}, thickness: 10}'>
-                                        <strong>%<span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_test_average; ?></span></strong>
+
+                        <div class="col-md-6 col-sm-6">
+                            <div class="user-card">
+                                    <div class="media-left">
+                                        <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_test_average)?>"}, thickness: 10}' data-size="70">
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_test_average; ?></span>%</strong>
+                                        </div>
                                     </div>
-                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USERNAME") . ":"; ?></label>
-                                </div>
+                                    <div class="media-right">
+                                        <div>
+                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("TEST")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
+                                        </div>
+                                        <div>
+                                            <?php echo TranslationHandler::get_static_text("TESTS") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $statisticsHandler->student_tests_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
+                                        </div>
+                                        <div>
+                                            <?php echo TranslationHandler::get_static_text("TESTS") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $statisticsHandler->student_tests_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
+                </div>
                 </div>
             </div>
         </div>

@@ -353,15 +353,7 @@ class UserHandler extends Handler
                 throw new Exception("INVALID_INPUT");
             }
 
-            if(!RightsHandler::has_user_right("SCHOOL_FIND"))
-            {
-                $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id AND school_id = :school", $user_id, $this->_user->school_id);
-
-                if($count != 1)
-                {
-                    throw new Exception("INSUFFICIENT_RIGHTS");
-                }
-            }
+            $this->get_user_by_id($user_id);
 
             $queries = array();
             $queries[] = "DELETE FROM users WHERE id = :id";

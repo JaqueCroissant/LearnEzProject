@@ -82,6 +82,7 @@ if (isset($_GET['class_id'])) {
                 </div>
                 <hr class="widget-separator m-0">
                 <div class="widget-body">
+                    <div class></div>
                         <?php
                             $statisticsHandler->get_average_progress_for_student();
                             ?>
@@ -119,7 +120,6 @@ if (isset($_GET['class_id'])) {
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>

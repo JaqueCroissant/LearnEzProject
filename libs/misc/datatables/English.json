@@ -12,8 +12,8 @@
     "sZeroRecords":    "No matching records found",
     "oPaginate": {
         "sFirst":    "First",
-        "sLast":     "<",
-        "sNext":     ">",
+        "sLast":     "Last",
+        "sNext":     "Next",
         "sPrevious": "Previous"
     },
     "oAria": {

@@ -95,7 +95,6 @@ function initializeCP()
                     });
                 }
                 document.getElementsByTagName('head')[0].appendChild(script);
-                
             },1);
         },false);
     })();

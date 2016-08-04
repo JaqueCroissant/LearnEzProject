@@ -492,6 +492,8 @@ a .menu_header {
     overflow: hidden;
     width:100%;
     z-index: 1100;
+    background-color: white;
+    opacity:0;
     display:none;
 }
 
@@ -625,14 +627,13 @@ a .menu_header {
 .course_return {
     display:none;
     position:fixed;
-    bottom:-10px;
-    left:50%;
-    width:90px;
-    height:45px;
-    margin-left:-45px;
-    border-radius: 70px 70px 0 0;
-    border:1px solid rgba(0,128,192,0.7);
-    color: rgba(0,128,192,0.7);
+    bottom:-1px;
+    right:0;
+    height:35px;
+    background-color: rgba(0,128,192,0.7);
+    border:1px solid #aaa;
+    color: white;
+    padding-top:10px;
 }
 
 .ribbon {

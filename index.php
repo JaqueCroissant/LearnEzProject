@@ -4,6 +4,7 @@ require_once 'include/extra/require.php';
 
 TranslationHandler::reset();
 RightsHandler::reset();
+
 ?>
 <!DOCTYPE html>
 <html style="overflow-y: scroll !important">
@@ -49,7 +50,8 @@ RightsHandler::reset();
             include 'include/template/statusbar.php';
             ?>
         </div>
-
+        
+        <?php include 'include/template/course_player.php'; ?>
 
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
         <script src="libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>

@@ -489,10 +489,16 @@ a .menu_header {
     height:740px;
 }
 
-#iframe_content {
+.test_content {
+    position: fixed;
+    left: 0;
+    bottom:10px;
     overflow: hidden;
-    padding:0;
     width:100%;
+    z-index: 1100;
+    background-color: white;
+    opacity:0;
+    display:none;
 }
 
 .course_iframe {
@@ -509,10 +515,8 @@ a .menu_header {
 .course_bar {
     height:40px;
     margin-bottom: 0 !important;
-    margin:0 auto;
     padding:0;
     color: white;
-    border-bottom: 1px solid #edf0f5;
 }
 
 .course_slide_counter {
@@ -527,6 +531,14 @@ a .menu_header {
     height: 30px;
     width: 40px;
     padding:4px 0px !important;
+}
+
+.course_video {
+    width:100%;
+}
+
+.course_player{
+    margin:0 auto;
 }
 
 .thumbnail_hover:hover {
@@ -602,6 +614,30 @@ a .menu_header {
 
 .danger h4 {
     color:white;
+}
+
+.backdrop {
+    display:none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.75);
+    opacity: 1;
+    z-index: 1000;
+}
+
+.course_return {
+    display:none;
+    position:fixed;
+    bottom:-1px;
+    right:0;
+    height:35px;
+    background-color: rgba(0,128,192,0.7);
+    border:1px solid #aaa;
+    color: white;
+    padding-top:10px;
 }
 
 .ribbon {

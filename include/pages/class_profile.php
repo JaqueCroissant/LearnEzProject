@@ -71,7 +71,7 @@ if (isset($_GET['class_id'])) {
                 <div class="widget-body">
                     <div class="streamline m-l-lg">
                         <?php for ($i; $i < $i_max; $i++) { ?>
-                            <div class="sl-item p-b-md">
+                            <div class="sl-item p-b-md sl-primary">
                                 <div class="sl-avatar avatar avatar-sm avatar-circle">
                                     <img class="img-responsive" src="assets/images/profile_images/5.png">
                                 </div>

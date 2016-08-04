@@ -392,7 +392,7 @@ $(document).ready(function () {
 
     $(document).on("click", ".clickable_row .click_select_me", function (event) {
         event.preventDefault();
-        var current_checkbox = $(this).parent("tr").find("input[type=checkbox]")
+        var current_checkbox = $(this).parent("tr").find("input[type=checkbox]");
         current_checkbox.prop("checked", !current_checkbox.prop("checked"));
     });
 

@@ -216,9 +216,3 @@ $(document).on("change", ".add_tests", function (event) {
         }
     });
 });
-
-
-
-
-
-

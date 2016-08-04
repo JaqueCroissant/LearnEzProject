@@ -98,7 +98,7 @@ class LoginHandler
         }
         
         
-        $user = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE email = :email", $this->_email);
+        $user = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE email = :email AND translation_user_type.language_id = :language_id", $this->_email, TranslationHandler::get_current_language());
            
         if(empty($user)) {
             return false;
@@ -113,13 +113,17 @@ class LoginHandler
             return false;
         }
         
-        $userData = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE username = :username AND password = :password LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username));
-        
+        $userData = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE username = :username AND password = :password AND translation_user_type.language_id = :language_id LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username), TranslationHandler::get_current_language());
+
         if(empty($userData)) {
              return false;
         }
 
         $this->_user = new User(reset($userData), true);
+        $user_language = reset(DbHandler::get_instance()->return_query("SELECT language_id FROM user_settings WHERE user_id = :user_id", $this->_user->id));
+        if(!empty($user_language) && isset($user_language["language_id"])) {
+            $this->_user->user_type_title = reset(DbHandler::get_instance()->return_query("SELECT translation_user_type.title as user_type_title FROM translation_user_type WHERE user_type_id = :user_type_id AND language_id = :language_id", $this->_user->user_type_id, $user_language["language_id"]))["user_type_title"];
+        }
         return true;
     }
     

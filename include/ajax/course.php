@@ -237,8 +237,6 @@ if(isset($_GET["delete_thumbnail"]) && isset($_GET["thumbnail_id"])) {
     echo json_encode($jsonArray);
 }
 
-
-
 if(isset($_GET["update_progress"])) {
     $type = $_GET["update_progress"];
     $progress = isset($_GET["progress"]) ? $_GET["progress"] : 0;
@@ -250,6 +248,22 @@ if(isset($_GET["update_progress"])) {
         $jsonArray['status_value'] = true;
     }
     else {
+        $jsonArray['status_value'] = false;
+        $jsonArray['error'] = $courseHandler->error->title;
+    }
+    echo json_encode($jsonArray);
+}
+
+
+if(isset($_GET["play_test"]) && isset($_GET["test_id"])) {
+    if($courseHandler->get($_GET["test_id"], "test")) {
+        $jsonArray['status_value'] = true;
+        $jsonArray['user_course_table_id'] = $courseHandler->current_element->user_course_test_id;
+        $jsonArray['current_progress'] = (($courseHandler->current_element->is_complete == 1) ? $courseHandler->current_element->total_steps : (isset($courseHandler->current_element->progress) ? $courseHandler->current_element->progress : "1"));
+        $jsonArray['course_title'] = $courseHandler->current_element->course_title;
+        $jsonArray['test_title'] = $courseHandler->current_element->title;
+        $jsonArray['path'] = $courseHandler->current_element->path;
+    } else {
         $jsonArray['status_value'] = false;
         $jsonArray['error'] = $courseHandler->error->title;
     }

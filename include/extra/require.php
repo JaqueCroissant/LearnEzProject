@@ -16,9 +16,11 @@
     require_once 'include/handler/mailHandler.php';
     require_once 'include/handler/schoolHandler.php';
     require_once 'include/handler/classHandler.php';
+    require_once 'include/handler/courseHandler.php';
     require_once 'include/extra/resize.php';
     
     $loginHandler = new LoginHandler();
     $userHandler = new UserHandler();
     $pageHandler = new PageHandler();
+    $courseHandler = new CourseHandler();
 ?>

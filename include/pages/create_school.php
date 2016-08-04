@@ -1,12 +1,20 @@
 <?php
 require_once 'require.php';
 require_once '../../include/handler/schoolHandler.php';
+require_once '../../include/handler/courseHandler.php';
 $schoolHandler = new SchoolHandler();
+$courseHandler = new CourseHandler();
+if (!RightsHandler::has_user_right("SCHOOL_CREATE")) {
+    ErrorHandler::show_error_page(ErrorHandler::return_error("INSUFFICIENT_RIGHTS")->title);
+}
+$courseHandler->get_multiple(0, "course");
+
 $schoolHandler->get_school_types();
 ?>
 <div class="row">
     <div class="col-md-12">
         <div class="widget">
+            
             <header class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("SCHOOL_CREATE_NEW"); ?></h4>
             </header>
@@ -103,9 +111,42 @@ $schoolHandler->get_school_types();
                 </div>
 
                 <div id="step_three" class="hidden">
-                    School created.
+                    <div class="col-md-12">
+                        <form method="POST" id="assign_course_to_school" url="create_school.php" name="create_school_step_3">
+                            <div class="col-md-6 col-md-offset-3">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <th></th>
+                                    <th><?php echo TranslationHandler::get_static_text("TITLE"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("OS"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("SELECT"); ?></th>
+                                    </thead>
+                                    <tbody>
 
-                    Set school rights - TO DO
+                                        <?php foreach ($courseHandler->courses as $value) { ?>
+                                            <tr style="margin-top: 30px !important;">
+                                                <td style="width: 5px !important; background-color: <?php echo $value->color; ?> !important;">
+                                                <td><?php echo (strlen($value->title) > 16 ? substr($value->title, 0, 16) . "..." : $value->title); ?></td>
+                                                <td><?php echo (strlen($value->description) > 16 ? substr($value->description, 0, 16) . "..." : $value->description); ?></td>
+                                                <td><?php echo (strlen($value->os_title) > 16 ? substr($value->os_title, 0, 16) . "..." : $value->os_title); ?></td>
+                                                <td><input class="checkbox-circle a checkbox-dark" type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></td>
+                                            </tr>
+                                        <?php } ?>
+
+                                    </tbody>
+                                </table>
+                                <div class="form-group p-t-md">
+                                    <label class="col-md-2 col-md-offset-5 control-label"></label>
+                                    <div class="col-md-5">
+                                        <input type="hidden" name="step" id="create_school_hidden_field_step_3">
+                                        <input type="button" name="submit" id="create_school_step_three_button" step="3"
+                                               value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_THREE"); ?>" class="pull-right btn btn-default btn-sm create_school">     
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="input-container">

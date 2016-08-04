@@ -4,8 +4,10 @@
 <meta name='viewport' content='initial-scale = 1, minimum-scale = 1, maximum-scale = 1'/>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="x-ua-compatible" content="IE=10">
-<link href="../core/css/course_css.css" rel="stylesheet" type="text/css"/>
+<link href="../../core/css/course_css.css" rel="stylesheet" type="text/css"/>
 <title></title>
+
+<style>#initialLoading{background:url(assets/htmlimages/loader.gif) no-repeat center center;background-color:#ffffff;position:absolute;margin:auto;top:0;left:0;right:0;bottom:0;z-index:10010;}</style>
 
 <script>
 
@@ -85,7 +87,7 @@ function initializeCP()
                         lCSSLoaded = true;
                         constructDIVs();
                     });
-                    var lJSFiles = [  '../core/js/jquery-1.6.1.min.js','assets/js/CPM.js','../core/playbar/playbarScript.js' ];
+                    var lJSFiles = [  '../../core/js/jquery-1.6.1.min.js','assets/js/CPM.js','../../core/playbar/playbarScript.js' ];
                     cpXHRJSLoader.js(lJSFiles,function()
                     {
                         lJSLoaded = true;
@@ -93,6 +95,7 @@ function initializeCP()
                     });
                 }
                 document.getElementsByTagName('head')[0].appendChild(script);
+                
             },1);
         },false);
     })();
@@ -101,7 +104,7 @@ function initializeCP()
 
  </head>
  <body>
-<div id="course" onload="onBodyLoad()">
+<div id="course" style="width:1024px;" onload="onBodyLoad()">
     <div id='initialLoading'></div>
     <noscript style="text-align:center;font-size:24px;">Enable Javascript support in the browser.</noscript>
 </div>

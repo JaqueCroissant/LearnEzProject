@@ -63,11 +63,11 @@ $userHandler = new UserHandler();
                                             ?>
                                             <tr class="clickable_row account_tr_id_<?php echo $value->id; ?>">
 
-                                                <td class="click_me" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? substr($value->firstname . " " . $value->surname, 0, 20) : $value->firstname . " " . $value->surname); ?></td>
-                                                <td class="click_me"><?php echo $value->username; ?></td>
-                                                <td class="click_me"><?php echo $value->user_type_title; ?></td>
-                                                <td class="click_me" data-search="<?php echo $value->email ?>"><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>
-                                                <td class="click_me" data-search="<?php echo $value->school_name ?>"><?php echo (strlen($value->school_name) > 16 ? substr($value->school_name, 0, 16) : $value->school_name); ?></td>
+                                                <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? substr($value->firstname . " " . $value->surname, 0, 20) : $value->firstname . " " . $value->surname); ?></td>
+                                                <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>"><?php echo $value->username; ?></td>
+                                                <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>"><?php echo $value->user_type_title; ?></td>
+                                                <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>" data-search="<?php echo $value->email ?>"><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>
+                                                <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>" data-search="<?php echo $value->school_name ?>"><?php echo (strlen($value->school_name) > 16 ? substr($value->school_name, 0, 16) : $value->school_name); ?></td>
                                                 <?php if (RightsHandler::has_user_right("ACCOUNT_AVAILABILITY")) { ?>
                                                     <td align="center">
                                                         <form method="post" id="alert_form_<?php echo $value->id; ?>" action="" url="edit_account.php?step=set_availability">

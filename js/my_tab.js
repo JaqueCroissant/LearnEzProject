@@ -1,10 +1,20 @@
 var current_tab;
 
 $(document).ready(function () {
-    var page_step = $.cookie("current_page_step") !== undefined ? $.cookie("current_page_step") : undefined;
-    if (page_step !== undefined) {
-        current_tab = "#" + page_step + "_tab";
-        $("#" + page_step + "_a").parent().removeClass("hidden");
+    if($.cookie("navigation") !== undefined) {
+        var navigation = $.map(JSON.parse($.cookie("navigation")), function(value, index) {
+            return [value];
+        });
+
+        if(navigation.length < 1) {
+            return;
+        }
+
+        var last_page = navigation.pop().step;
+    }
+    if (last_page !== undefined && last_page !== "") {
+        current_tab = "#" + last_page + "_tab";
+        $("#" + last_page + "_a").parent().removeClass("hidden");
     } else {
         current_tab = "#" + $(".my_tab").first().attr("id");
     }

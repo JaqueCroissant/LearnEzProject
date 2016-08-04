@@ -64,7 +64,6 @@ $(document).ready(function () {
 
     $(document).on("click", ".btn_class_open", function (event) {
         event.preventDefault();
-
         $("td input[type='checkbox']").attr("disabled", true);
         position = $(this).offset();
         height = $("#close_class_alert").height();

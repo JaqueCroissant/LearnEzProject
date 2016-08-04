@@ -135,7 +135,7 @@ if ($classHandler->_user->user_type_id != 1) {
                 <div class="widget-body">
                     <div class="streamline m-l-lg">
                         <?php foreach ($classHandler->classes as $value) { ?>
-                            <div class="sl-item p-b-md">
+                            <div class="sl-item sl-danger p-b-md">
                                 <div class="sl-content">
                                     <div class="m-t-0 change_page a text-danger animate-twice animated headShake" page='class_profile' step='' args='&class_id=<?php echo $value->id; ?>'>
                                         <?php echo $value->title; ?>

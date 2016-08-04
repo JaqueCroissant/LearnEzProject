@@ -31,6 +31,14 @@ $(document).ready(function () {
                     show_status_bar("success", ajax_data.success);
                 });
                 break;
+            case "3":
+                $("#create_school_hidden_field_step_3").attr("value", $(this).attr("step"));
+                initiate_submit_form($(this), function () {
+                    show_status_bar("error", ajax_data.error);
+                }, function () {
+                    show_status_bar("success", ajax_data.success);
+                });
+                break;
         }
     });
 
@@ -54,7 +62,7 @@ $(document).ready(function () {
     // Close school
     $(document).on("click", ".btn_school_open", function (event) {
         event.preventDefault();
-
+        
         $("td input[type='checkbox']").attr("disabled", true);
         position = $(this).offset();
         height = $("#close_school_alert").height();

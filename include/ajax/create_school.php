@@ -3,7 +3,9 @@
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/schoolHandler.php';
 require_once '../../include/handler/rightsHandler.php';
+require_once '../../include/handler/courseHandler.php';
 $rightsHandler = new RightsHandler();
+$courseHandler = new CourseHandler();
 $schoolHandler = new SchoolHandler();
 $data_array = array();
 
@@ -56,6 +58,17 @@ if (isset($_POST['step'])) {
                 $data_array['status_value'] = true;
             } else {
                 $data_array['error'] = $schoolHandler->error->title;
+                $data_array["status_value"] = false;
+            }
+            break;
+        case "3":
+            $school_id = (isset($_POST['id']) ? $_POST['id'] : "");
+            $course_ids = (isset($_POST['selected']) ? $_POST['selected'] : []);
+            if ($courseHandler->assign_school_course($course_ids, $school_id)) {
+                $data_array['success'] = TranslationHandler::get_static_text("COURSES_ASSIGNED");
+                $data_array['status_value'] = true;
+            } else {
+                $data_array['error'] = $courseHandler->error->title;
                 $data_array["status_value"] = false;
             }
             break;

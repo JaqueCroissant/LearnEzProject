@@ -1078,11 +1078,11 @@ class UserHandler extends Handler
 
             if(!RightsHandler::has_user_right("SCHOOL_FIND"))
             {
-                $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE school_id = :school_id AND id = :id", $this->_user->school_id, $id);
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id WHERE users.school_id = :school_id AND users.id = :id AND translation_user_type.language_id = :language_id", $this->_user->school_id, $id, TranslationHandler::get_current_language());
             }
             else
             {
-                $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id WHERE users.id = :id AND translation_user_type.language_id = :language_id", $id, TranslationHandler::get_current_language());
             }
 
             if(isset($user_data) && !empty($user_data))

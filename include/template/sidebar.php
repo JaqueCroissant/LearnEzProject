@@ -1,12 +1,3 @@
-<!--<a href="#" class="change_page" page="front" id="front">
-    <div class="pull-left title">
-        <img src="assets/images/LearnEZ-Maskot-sort-30-30.png" class="title_icon">
-        <div class="headline">Learn<span id="EZ">EZ</span></div>
-    </div>
-</a>-->
-<?php 
-
-?>
 
 <header class="aside-header">
     <div class="animated">

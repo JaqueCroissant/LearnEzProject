@@ -2,7 +2,9 @@
 
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/schoolHandler.php';
+require_once '../../include/handler/courseHandler.php';
 $schoolHandler = new SchoolHandler();
+$courseHandler = new CourseHandler();
 $array = array();
 $format = "Y-m-d";
 
@@ -20,8 +22,13 @@ if (isset($_POST['state'])) {
             $school_subscription_end = (isset($_POST['school_subscription_end']) ? $_POST['school_subscription_end'] : "");
             $school_type_id = (isset($_POST['school_type_id']) ? $_POST['school_type_id'] : "");
             $school_id = (isset($_POST['school_id']) ? $_POST['school_id'] : "");
+            $school_courses = isset($_POST['selected']) ? $_POST['selected'] : [];
 
             if ($schoolHandler->update_school_by_id($school_id, $school_name, $school_phone, $school_address, $school_zip_code, $school_city, $school_email, $school_type_id, $school_max_students, $school_subscription_start, $school_subscription_end)) {
+                if (!$courseHandler->assign_school_course($school_courses, $school_id)) {
+                    $array['error'] = $courseHandler->error->title;
+                    $array['status_value'] = false;
+                }
                 $array['success'] = TranslationHandler::get_static_text("SCHOOL_UPDATED");
                 $array['status_value'] = true;
             } else {
@@ -43,11 +50,8 @@ if (isset($_POST['state'])) {
         $array['error'] = $schoolHandler->error->title;
         $array['status_value'] = false;
     }
-}
-else if(isset($_GET['state']))
-{
-    switch($_GET['state'])
-    {
+} else if (isset($_GET['state'])) {
+    switch ($_GET['state']) {
         case 'set_availability':
 
             $school_id = (isset($_POST['school_id']) ? $_POST['school_id'] : "");

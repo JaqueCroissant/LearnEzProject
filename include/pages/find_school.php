@@ -25,9 +25,9 @@ $schoolHandler->get_school_types();
                                 <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
                                 <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
 
-                                <th><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
-                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
-                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("START"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                     <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                 <?php } ?>
@@ -44,9 +44,9 @@ $schoolHandler->get_school_types();
                                 <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
                                 <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
 
-                                <th><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></th>
-                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></th>
-                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("START"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
+                                <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                     <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                 <?php } ?>
@@ -64,16 +64,16 @@ $schoolHandler->get_school_types();
                                 $i++;
                                 ?>
                                 <tr class="clickable_row">
-                                    <td class="click_me" data-search="<?php echo $value->name ?>"><?php echo (strlen($value->name) > 20 ? substr($value->name, 0, 20) . "..." : $value->name); ?></td>
-                                    <td class="click_me" data-search="<?php echo $value->address ?>"><?php echo (strlen($value->address) > 16 ? substr($value->address, 0, 16) . "..." : $value->address); ?></td>
-                                    <td class="click_me" data-search="<?php echo $value->city ?>"><?php echo (strlen($value->city) > 20 ? substr($value->city, 0, 20) . "..." : $value->city); ?></td>
+                                    <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>" data-search="<?php echo $value->name ?>"><?php echo (strlen($value->name) > 20 ? substr($value->name, 0, 20) . "..." : $value->name); ?></td>
+                                    <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>" data-search="<?php echo $value->address ?>"><?php echo (strlen($value->address) > 16 ? substr($value->address, 0, 16) . "..." : $value->address); ?></td>
+                                    <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>" data-search="<?php echo $value->city ?>"><?php echo (strlen($value->city) > 20 ? substr($value->city, 0, 20) . "..." : $value->city); ?></td>
 
-                                    <td class="click_me"><?php echo $value->subscription_start; ?></td>
-                                    <td class="click_me"><?php echo $value->subscription_end; ?></td>
-                                    <td class="click_me"><?php echo $value->max_students; ?></td>
+                                    <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>"><?php echo $value->subscription_start; ?></td>
+                                    <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>"><?php echo $value->subscription_end; ?></td>
+                                    <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>"><?php echo $value->current_students . ' ' . strtolower(TranslationHandler::get_static_text("OF")) . ' ' . $value->max_students; ?></td>
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <td align="center">
-                                            <form method="post" id="alert_form_<?php echo $value->id;; ?>" action="" url="edit_school.php?state=set_availability">
+                                            <form method="post" id="alert_form_<?php echo $value->id;?>" action="" url="edit_school.php?state=set_availability">
                                                 <input type="hidden" name="school_id" value="<?php echo $value->id; ?>">
                                                 <div class="checkbox">
                                                     <input class="checkbox-circle checkbox-dark btn_alertbox" element_id="<?php echo $value->id; ?>" type="checkbox"
@@ -87,7 +87,7 @@ $schoolHandler->get_school_types();
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <td align="center" >
                                             <div class="">
-                                                <i class="zmdi zmdi-hc-lg zmdi-edit change_page center" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" state="update_school" id="edit_school"></i>
+                                                <i class="zmdi zmdi-hc-lg zmdi-edit change_page center" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" state="update_school" id="edit_school" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>"></i>
                                             </div>
                                         </td>
                                     <?php } ?>
@@ -123,3 +123,6 @@ $schoolHandler->get_school_types();
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script>$(document).ready(function () {
+        $("[data-toggle='tooltip']").tooltip()
+    });</script>

@@ -6,6 +6,7 @@ class SchoolHandler extends Handler {
     public $all_schools;
     public $this_school_rights;
     public $school_types;
+    public $test;
     public $open_slots;
     public $format = "Y-m-d";
 
@@ -29,7 +30,7 @@ class SchoolHandler extends Handler {
             if ($is_open) {
                 $query .= " AND subscription_end >= curdate() AND subscription_start <= curdate()";
             }
-
+            $this->all_schools = [];
             $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {
                 $this->all_schools[] = new School($value);
@@ -38,7 +39,18 @@ class SchoolHandler extends Handler {
             if (count($this->all_schools) == 0) {
                 throw new Exception("NO_SCHOOL_FOUND");
             }
-
+            $school_ids = [];
+            foreach ($this->all_schools as $value) {
+                $school_ids[] = $value->id;
+            }
+            $students_max_all_schools = $this->get_current_students_for_all_schools($school_ids);
+            foreach ($students_max_all_schools as $value) {
+                foreach ($this->all_schools as $key => $value_nested) {
+                    if ($value['school_id'] == $value_nested->id) {
+                        $this->all_schools[$key]->current_students = $value['current_students'];
+                    }
+                }
+            }
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -213,6 +225,11 @@ class SchoolHandler extends Handler {
                      school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title as school_type, school.open 
                      FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
             $this->school = new School(reset(DbHandler::get_instance()->return_query($query, $id)));
+            $this->school->remaining_days = $this->set_remaining_days($this->school);
+            $id = [];
+            $id[] = $this->school->id;
+            $current_students = $this->get_current_students_for_all_schools($id);
+            $this->school->current_students = !empty($current_students) ? $current_students[0]['current_students'] : 0;
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -327,13 +344,13 @@ class SchoolHandler extends Handler {
             }
 
             $this->verify_school_exists($school_id);
-            
+
             $query = "UPDATE school SET open = NOT open WHERE id=:id;";
-            
+
             if (DbHandler::get_instance()->query($query, $school_id)) {
                 return true;
             } else {
-                throw new Exception ("DEFAULT");
+                throw new Exception("DEFAULT");
             }
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -444,6 +461,30 @@ class SchoolHandler extends Handler {
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
+        }
+    }
+
+    private function get_current_students_for_all_schools($array_of_int) {
+        if (!is_array($array_of_int)) {
+            throw new Exception("INVALID_INPUT");
+        }
+        foreach ($array_of_int as $value) {
+            if (!is_numeric($value)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+        }
+        $in_q = generate_in_query($array_of_int);
+        $array_students = DbHandler::get_instance()->return_query("SELECT COUNT(*) as current_students, school_id FROM users WHERE school_id IN (" . $in_q . ") AND open = 1 AND user_type_id IN (3,4)"
+                . "GROUP BY school_id");
+        $this->test = $in_q;
+        return $array_students;
+    }
+
+    private function set_remaining_days($school) {
+        if ($school->open == "1" && (strtotime($school->subscription_end) > strtotime(date($this->format)))) {
+            return date_diff(date_create_from_format($this->format, $school->subscription_end), date_create_from_format($this->format, date($this->format)))->format("%a");
+        } else {
+            return 0;
         }
     }
 

@@ -186,7 +186,7 @@ $userHandler = new UserHandler();
                                                 ?>
                                                 <tr class="clickable_row" >
                                                     <?php if (RightsHandler::has_user_right("ACCOUNT_ASSIGN_PASSWORD") || RightsHandler::has_user_right("ACCOUNT_ASSIGN_STUDENT_PASSWORD")) { ?>
-                                                        <td align="left">
+                                                        <td style="text-align: center">
                                                                 <div class="checkbox">
                                                                     <input class="checkbox-circle checkbox-dark" type="checkbox" value="<?php echo $value->id; ?>" name="user_ids[]">
                                                                     <label></label>

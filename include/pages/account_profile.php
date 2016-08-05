@@ -2,6 +2,7 @@
 require_once 'require.php';
 require_once '../../include/handler/userHandler.php';
 require_once '../../include/handler/schoolHandler.php';
+require_once '../../include/handler/mailHandler.php';
 
 $userHandler = new UserHandler();
 $schoolHandler = new SchoolHandler();
@@ -24,7 +25,7 @@ if(!empty($current_user->school_id)) {
     <div class="profile-cover">
         <div class="cover-user m-b-lg">
             <div>
-                <span class="cover-icon" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("ACHIEVEMENTS") ?>" style="cursor:pointer"><i class="fa fa-star" style="font-size:16px !important;margin-left:2px;"></i></span>
+                <a href="#achievements" style="color: #6a6c6f !important;"><span class="cover-icon" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("ACHIEVEMENTS") ?>" style="cursor:pointer"><i class="fa fa-star" style="font-size:16px !important;margin-left:2px;"></i></span></a>
             </div>
             <div>
                 <div class="avatar avatar-xl avatar-circle">
@@ -32,7 +33,11 @@ if(!empty($current_user->school_id)) {
                 </div>
             </div>
             <div>
-                <span class="cover-icon" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>" style="cursor:pointer;line-height:38px !important;"><i class="fa fa-envelope" style="margin-left:1px;"></i></span>
+                <?php if(MailHandler::can_send_to_receiver($user_id)) { ?>
+                    <span class="cover-icon change_page" id="mail" page="mail" step="create_mail" args="&receiver_id=USER_ANY_<?= $current_user->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>" style="cursor:pointer;line-height:38px !important;"><i class="fa fa-envelope" style="margin-left:1px;"></i></span>
+                <?php } else { ?>
+                    <span class="cover-icon"  data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>" style="cursor:not-allowed;line-height:38px !important;"><i class="fa fa-envelope" style="margin-left:1px;"></i></span>
+                <?php } ?>
             </div>
         </div>
         <div class="text-center">
@@ -113,7 +118,7 @@ if(!empty($current_user->school_id)) {
     </div>
 </div>
 
-<div class="row">
+<div class="row" id="achievements">
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading p-h-lg p-v-md" >
@@ -145,7 +150,16 @@ if(!empty($current_user->school_id)) {
                         {
                             type : 'category',
                             boundaryGap : false,
-                            data : ['April', 'Maj', 'Juni', 'Juli', 'August']
+                            data : [
+                            <?php
+                            for($i = date('m')-4; $i < date('m')+1; $i++) {
+                                echo "'" . TranslationHandler::get_static_text(strtoupper(month_num_to_string($i))) . "'";
+                                if($i != date('m')) {
+                                    echo ",";
+                                }
+                            }
+                            ?>
+                            ]
                         }
                     ],
                     yAxis : [
@@ -155,27 +169,27 @@ if(!empty($current_user->school_id)) {
                     ],
                     series : [
                         {
-                            name:'Lektioner',
+                            name:'<?= TranslationHandler::get_static_text("LECTURES") ?>',
                             type:'line',
                             smooth:true,
                             itemStyle: {normal: {areaStyle: {type: 'default'}}},
                             data:[10, 12, 21, 54, 260]
                         },
                         {
-                            name:'Test',
+                            name:'<?= TranslationHandler::get_static_text("TESTS") ?>',
                             type:'line',
                             smooth:true,
                             itemStyle: {normal: {areaStyle: {type: 'default'}}},
                             data:[30, 182, 434, 791, 390]
                         }
                     ]
-                }" style="height: 300px;">
+                    }" style="height: 300px;"></div>
                 <!--<div class="center progress-text" style="margin-top: 20px; margin-bottom: 20px;"><?= TranslationHandler::get_static_text("NO_COURSE_PROGRESS") ?></div>-->
             </div>
         </div>
     </div>
 </div>
-
+    
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>
 $(document).ready(function(){

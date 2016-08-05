@@ -19,7 +19,7 @@
         public $school_name;
         public $user_type;
         public $user_type_title;
-
+        public $points;
         public $validation_code;
         public $last_password_request;
         public $unhashed_password;

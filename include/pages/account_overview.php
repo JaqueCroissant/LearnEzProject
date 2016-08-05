@@ -111,13 +111,13 @@ if (isset($_GET['class_id'])) {
                                         </div>
                                     </div>
                                     <div class="media-right ">
-                                        <div style="margin-left: 30px;">
+                                        <div style="margin-left: 25px;">
                                             <label  class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("COURSE")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
                                         </div>
-                                        <div style="margin-left: 30px;">
+                                        <div style="margin-left: 25px;">
                                             <?php echo TranslationHandler::get_static_text("COURSES") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $courses_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $course_count; ?>
                                         </div>
-                                        <div style="margin-left: 30px;">
+                                        <div style="margin-left: 25px;">
                                             <?php echo TranslationHandler::get_static_text("COURSES") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $courses_completed . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $course_count; ?>
                                         </div>
                                     </div>
@@ -132,13 +132,13 @@ if (isset($_GET['class_id'])) {
                                         </div>
                                     </div>
                                     <div class="media-right ">
-                                        <div style="margin-left: 30px;">
+                                        <div style="margin-left: 25px;">
                                             <label  class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("LECTURE")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
                                         </div>
-                                        <div style="margin-left: 30px;">
+                                        <div style="margin-left: 25px;">
                                             <?php echo TranslationHandler::get_static_text("LECTURES") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $statisticsHandler->student_lectures_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_lectures; ?>
                                         </div>
-                                        <div style="margin-left: 30px;">
+                                        <div style="margin-left: 25px;">
                                             <?php echo TranslationHandler::get_static_text("LECTURES") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $statisticsHandler->student_lectures_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_lectures; ?>
                                         </div>
                                     </div>
@@ -153,14 +153,14 @@ if (isset($_GET['class_id'])) {
                                         </div>
                                     </div>
                                     <div class="media-right">
-                                        <div>
-                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("TEST")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
+                                        <div style="margin-left: 25px;">
+                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE_TEST_PROG"); ?></label>
                                         </div>
-                                        <div>
-                                            <?php echo TranslationHandler::get_static_text("TESTS") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $statisticsHandler->student_tests_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("TESTS_STARTED") . ": " . $statisticsHandler->student_tests_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
                                         </div>
-                                        <div>
-                                            <?php echo TranslationHandler::get_static_text("TESTS") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $statisticsHandler->student_tests_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("TESTS_COMPLETED") . ": " . $statisticsHandler->student_tests_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
                                         </div>
                                     </div>
                             </div>
@@ -174,25 +174,26 @@ if (isset($_GET['class_id'])) {
                                         </div>
                                     </div>
                                     <div class="media-right">
-                                        <div>
-                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("TEST")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
+                                        <div style="margin-left: 25px;">
+                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("ACHIEVEMENTS"); ?></label>
                                         </div>
-                                        <div>
-                                            <?php echo TranslationHandler::get_static_text("TESTS") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $statisticsHandler->student_tests_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("BADGES_OBTAINED") . ": " . "NULL" . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . "NULL"; ?>
                                         </div>
-                                        <div>
-                                            <?php echo TranslationHandler::get_static_text("TESTS") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $statisticsHandler->student_tests_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("TOTAL_POINTS") . ": " . $userHandler->_user->points;?>
                                         </div>
                                     </div>
                             </div>
                         </div>
-                        
                         
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!--DISPLAY USER INFO!-->
     <div class="col-md-3 col-sm-12">
         <div class="widget">
             <div class="widget-header">
@@ -226,7 +227,9 @@ if (isset($_GET['class_id'])) {
                 ?>
                     <div>
                         <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("SCHOOL") . ":"; ?></label>
-                        <span class="pull-right"><?php echo $schoolHandler->school->name; ?></span>
+                        <a class="change_page" page="school_profile" step="" args="&school_id=<?php echo $schoolHandler->school->id ?>" href="javascript:void(0)">
+                            <span class="pull-right"><?php echo $schoolHandler->school->name; ?></span>
+                        </a>
                     </div>
                 <?php
                 }
@@ -234,7 +237,7 @@ if (isset($_GET['class_id'])) {
             </div>
         </div>
         
-        
+        <!--DISPLAY CLASSES!-->
         <?php
         if($userHandler->_user->user_type_id > 2)
             {
@@ -251,7 +254,7 @@ if (isset($_GET['class_id'])) {
 
                                     for($i=0; $i < count($classHandler->classes); $i++)
                                     {
-                                        echo '<div>' . $classHandler->classes[$i]->title . '</div>';
+                                        echo '<div><a class="change_page" page="class_profile" step="" args="&class_id=' . $classHandler->classes[$i]->id . '" href="javascript:void(0)">' . $classHandler->classes[$i]->title . '</a></div>';
                                     }
 
                             ?>

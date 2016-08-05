@@ -925,6 +925,7 @@ class UserHandler extends Handler
     
     public function get_users($ids)
     {
+        //SECURE WITH RIGHTS BEFORE USE!!!!!!!!!!!!!!
         try
         {
             $this->validate_user_logged_in();
@@ -1334,7 +1335,7 @@ class UserHandler extends Handler
 
     private function mail_exists($email)
     {
-        $count = DbHandler::get_instance()->count_query("SELECT * FROM users WHERE email = :email", $email);
+        $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE email = :email", $email);
 
         if($count > 0)
         {

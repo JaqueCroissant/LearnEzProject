@@ -728,6 +728,7 @@ class CourseHandler extends Handler {
     }
 
     //</editor-fold>
+    //
     //<editor-fold defaultstate="collapsed" desc="PROGRESS">
     public function get_courses() {
         try {
@@ -752,11 +753,12 @@ class CourseHandler extends Handler {
             $in_array = generate_in_query(array_map(function($o) {
                         return $o["id"];
                     }, $courses));
-            $course_progress = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course_test.total_steps AS total, user_course_test.is_complete, user_course_test.progress, 1 AS type FROM course INNER JOIN course_test ON course_test.course_id = course.id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user WHERE course.id IN(" . $in_array . ") UNION ALL SELECT course.id AS course_id, course_lecture.time_length AS total, user_course_lecture.is_complete, user_course_lecture.progress, 2 AS type FROM course INNER JOIN course_lecture ON course_lecture.course_id = course.id LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user WHERE course.id IN(" . $in_array . ")", $this->_user->id, $this->_user->id);
+            $course_progress = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course_test.total_steps AS total, user_course_test.is_complete, user_course_test.progress, 1 AS type FROM course INNER JOIN course_test ON course_test.course_id = course.id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user WHERE course.id IN(" . $in_array . ") UNION ALL SELECT course.id AS course_id, course_lecture.time_length AS total, user_course_lecture.is_complete, user_course_lecture.progress, 2 AS type FROM course INNER JOIN course_lecture ON course_lecture.course_id = course.id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user WHERE course.id IN(" . $in_array . ")", $this->_user->settings->language_id, $this->_user->id, $this->_user->settings->language_id, $this->_user->id);
             $group = array();
 
             foreach ($course_progress as $course) {
                 $group[$course["course_id"]][] = $course;
+                
             }
 
             $final = array();

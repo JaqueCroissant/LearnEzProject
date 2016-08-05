@@ -685,3 +685,11 @@ a .menu_header {
   border-bottom: 3px solid transparent;
   border-top: 3px solid #36ce1c;
 }
+
+.profile_information_table {
+    width: 100%;
+}
+
+.profile_information_table td {
+    padding-bottom: 6px;
+}

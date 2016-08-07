@@ -28,6 +28,7 @@ require_once '../../include/class/mail_tag.class.php';
 require_once '../../include/class/course.class.php';
 require_once '../../include/class/lecture.class.php';
 require_once '../../include/class/test.class.php';
+require_once '../../include/class/calendar_date.class.php';
 
 if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     die("Direct access not permitted");

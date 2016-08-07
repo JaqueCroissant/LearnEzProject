@@ -17,7 +17,8 @@ $schoolHandler->get_school_types();
             <hr class="widget-separator">
             <div class="widget-body">
                 <?php if (RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
-                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, columnDefs:[{orderable: false, targets: [6, 7]}]}" data-plugin="DataTable" role="grid" 
+                <?php $targets = RightsHandler::has_user_right("SCHOOL_EDIT") ? ", targets: [6, 7]" : ""; ?>
+                    <table id="default-datatable" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>, columnDefs:[{orderable: false<?= $targets ?>}]}" data-plugin="DataTable" role="grid" 
                            aria-describedby="default-datatable_info">
                         <thead>
                             <tr role="row">

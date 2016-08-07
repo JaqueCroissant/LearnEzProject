@@ -62,7 +62,7 @@ $paginationHandler = new PaginationHandler();
         
             switch($current_page) {
                 case 'create_mail':
-                $receiver_id = isset($_GET["receiver_id"]) ? $_GET["receiver_id"] : 0;
+                $receiver_id = isset($_GET["receiver_id"]) ? $_GET["receiver_id"] : null;
                 ?>
         
             <div class="row">

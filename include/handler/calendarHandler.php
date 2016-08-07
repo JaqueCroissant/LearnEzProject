@@ -4,6 +4,9 @@ class CalendarHandler extends Handler
     public $current_date;
     public $current_dates = array();
     
+    public $first_day_to_show;
+    public $last_day_to_show;
+    
     private $_first_date_day;
     private $_last_date_day;
     
@@ -26,14 +29,17 @@ class CalendarHandler extends Handler
         return date('Y-m-d', strtotime(date('Y-m-d') .' ' . $offset . ' months'));
     }
     
-    private function generate_dates() {
+    public function generate_dates() {
         try {
             
             $dates = array();
             
-            for($i = 0; $i < date("t", strtotime($this->current_date->full_date)); $i++) {
-                $fist_month_day = date('Y', strtotime($this->current_date->full_date)) . "-" . date('m', strtotime($this->current_date->full_date)) . "-01";
-                $current_date = date('Y-m-d', strtotime($fist_month_day .' ' . $i . ' days'));
+            $last_month_day = date("t", strtotime($this->current_date->full_date));
+            $this->last_day_to_show = date('Y', strtotime($this->current_date->full_date)) . "-" . date('m', strtotime($this->current_date->full_date)) . "-" . $last_month_day;
+            for($i = 0; $i < $last_month_day; $i++) {
+                $first_month_day = date('Y', strtotime($this->current_date->full_date)) . "-" . date('m', strtotime($this->current_date->full_date)) . "-01";
+                $this->first_day_to_show = $first_month_day;
+                $current_date = date('Y-m-d', strtotime($first_month_day .' ' . $i . ' days'));
                 $dates[] = new Calendar_Date($current_date, $this->current_date->full_date);
             }
             
@@ -59,6 +65,9 @@ class CalendarHandler extends Handler
         $dates = array();
         
         for($i = 0; $i < $this->_first_date_day-1; $i++) {
+            if($i == $this->_first_date_day-2) {
+                $this->first_day_to_show = date('Y-m-d', strtotime($last_month .' -' . $i . ' days'));
+            }
             $current_date = date('Y-m-d', strtotime($last_month .' -' . $i . ' days'));
             $dates[] = new Calendar_Date($current_date, $this->current_date->full_date);
         }
@@ -75,11 +84,30 @@ class CalendarHandler extends Handler
         $dates = array();
         
         for($i = 0; $i < 7-$this->_last_date_day; $i++) {
+            
+            if($i == 7-$this->_last_date_day-1) {
+                $this->last_day_to_show = date('Y-m-d', strtotime($next_month .' +' . $i . ' days'));
+            }
+            
             $current_date = date('Y-m-d', strtotime($next_month .' +' . $i . ' days'));
             $dates[] = new Calendar_Date($current_date, $this->current_date->full_date);
         }
         
         $this->current_dates = array_merge($this->current_dates, $dates);
+    }
+    
+    public function assign_date_content($content = array()) {
+        if(empty($content) || !is_array($content)) {
+            return;
+        }
+        
+        foreach($content as $value) {
+            foreach($this->current_dates as $date) {
+                if($date->full_date == $value->date_expire) {
+                    $date->content[] = clone $value;
+                }
+            }
+        }
     }
 
     public function generate_current_date_string() {

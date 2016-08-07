@@ -739,3 +739,18 @@ a .menu_header {
 .calendar-element-disabled {
     color: #d1d1d1 !important;
 }
+
+.calendar-homework {
+    margin-top:5px;
+    text-align:right;
+    width: auto;
+    padding: 2px;
+    text-align:center;
+    font-size: 11px;
+    border-radius: 2px;
+    border: none;
+    color: #FFF;
+    display: inline-block;
+    float:right;
+    margin:2px 0px 0px 2px;
+}

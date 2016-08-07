@@ -16,4 +16,5 @@
     require_once 'include/class/lecture.class.php';
     require_once 'include/class/test.class.php';
     require_once 'include/class/calendar_date.class.php';
+    require_once 'include/class/homework.class.php';
 ?>

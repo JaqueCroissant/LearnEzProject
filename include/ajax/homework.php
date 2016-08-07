@@ -10,12 +10,14 @@ if(isset($_POST)) {
     switch($step) {
         case "create_homework":
             $description = isset($_POST["description"]) ? $_POST["description"] : null;
+            $title = isset($_POST["title"]) ? $_POST["title"] : null;
+            $color = isset($_POST["color"]) ? $_POST["color"] : null;
             $students = isset($_POST["students"]) ? $_POST["students"] : array();
             $classes = isset($_POST["classes"]) ? $_POST["classes"] : array();
             $date_expire = isset($_POST["date_expire"]) ? $_POST["date_expire"] : null;
             $lectures = isset($_POST["lecture"]) ? $_POST["lecture"] : array();
             $tests = isset($_POST["test"]) ? $_POST["test"] : array();
-            if($homeworkHandler->create_homework($description, $students, $classes, $date_expire, $lectures, $tests)) {
+            if($homeworkHandler->create_homework($description, $title, $color, $classes, $date_expire, $lectures, $tests)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("HOMEWORK_ASSIGNED");
             } else {

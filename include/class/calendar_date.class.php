@@ -11,6 +11,8 @@ class Calendar_Date {
     public $in_current_month;
     public $is_today;
     
+    public $content = array();
+    
     public function __construct($date = null, $current_month = null) {
         
         $date = $this->validate_date($date) ? $date : date('Y-m-d');

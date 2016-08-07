@@ -19,7 +19,8 @@ $userHandler = new UserHandler();
                 <div class="my_tab_content">
                     <div class="my_fade my_tab" id="find_account_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable datatable_1" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [5,6]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                            <?php $targets = RightsHandler::has_user_right("ACCOUNT_AVAILABILITY") && (RightsHandler::has_user_right("ACCOUNT_EDIT") || RightsHandler::has_user_right("ACCOUNT_DELETE")) ? ", targets: [5, 6]" : RightsHandler::has_user_right("ACCOUNT_AVAILABILITY") || (RightsHandler::has_user_right("ACCOUNT_EDIT") || RightsHandler::has_user_right("ACCOUNT_DELETE")) ? ", targets: [5]" : ""; ?>
+                            <table id="default-datatable" class="table dataTable datatable_1" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false<?= $targets ?>}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">

@@ -62,6 +62,7 @@ $paginationHandler = new PaginationHandler();
         
             switch($current_page) {
                 case 'create_mail':
+                $receiver_id = isset($_GET["receiver_id"]) ? $_GET["receiver_id"] : null;
                 ?>
         
             <div class="row">
@@ -79,25 +80,25 @@ $paginationHandler = new PaginationHandler();
                                                 foreach($value as $inner_key => $inner_value) {
                                                     switch($key) {
                                                         case "SCHOOL":
-                                                            echo '<option value="SCHOOL_ADMIN_'.$inner_value->id.'">'. $inner_value->name .': ' .TranslationHandler::get_static_text("ADMINS") .'</option>';
-                                                            echo '<option value="SCHOOL_TEACHER_'.$inner_value->id.'">'. $inner_value->name .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>';
-                                                            echo '<option value="SCHOOL_STUDENT_'.$inner_value->id.'">'. $inner_value->name .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>';
+                                                            echo '<option value="SCHOOL_ADMIN_'.$inner_value->id.'" '. ($receiver_id == 'SCHOOL_ADMIN_'.$inner_value->id ? 'selected' : '') .'>'. $inner_value->name .': ' .TranslationHandler::get_static_text("ADMINS") .'</option>';
+                                                            echo '<option value="SCHOOL_TEACHER_'.$inner_value->id.'" '. ($receiver_id == 'SCHOOL_TEACHER_'.$inner_value->id ? 'selected' : '') .'>'. $inner_value->name .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>';
+                                                            echo '<option value="SCHOOL_STUDENT_'.$inner_value->id.'" '. ($receiver_id == 'SCHOOL_STUDENT_'.$inner_value->id ? 'selected' : '') .'>'. $inner_value->name .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>';
                                                             if(count($inner_value->classes) > 0) {
                                                                 foreach(reset($inner_value->classes) as $class_key => $class_value) {
                                                                     
-                                                                    echo '<option value="CLASS_TEACHER_'.$class_value->id.'">'. $inner_value->name .' - '. $class_value->title .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>'; 
-                                                                    echo '<option value="CLASS_STUDENT_'.$class_value->id.'">'. $inner_value->name .' - '. $class_value->title .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>'; 
+                                                                    echo '<option value="CLASS_TEACHER_'.$class_value->id.'" '. ($receiver_id == 'CLASS_TEACHER_'.$class_value->id ? 'selected' : '') .'>'. $inner_value->name .' - '. $class_value->title .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>'; 
+                                                                    echo '<option value="CLASS_STUDENT_'.$class_value->id.'" '. ($receiver_id == 'CLASS_STUDENT_'.$class_value->id ? 'selected' : '') .'>'. $inner_value->name .' - '. $class_value->title .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>'; 
                                                                 }
                                                             }
                                                             break;
                                                         
                                                         case "USERS":
-                                                            echo '<option value="USER_ANY_'.$inner_value->id.'">'.$inner_value->firstname.' ' . $inner_value->surname.' ('. (empty($inner_value->school_name) ? TranslationHandler::get_static_text("SUPER_ADMIN") : $inner_value->school_name) .')</option>';
+                                                            echo '<option value="USER_ANY_'.$inner_value->id.'" '. ($receiver_id == 'USER_ANY_'.$inner_value->id ? 'selected' : '') .'>'.$inner_value->firstname.' ' . $inner_value->surname.' ('. (empty($inner_value->school_name) ? TranslationHandler::get_static_text("SUPER_ADMIN") : $inner_value->school_name) .')</option>';
                                                             break;
                                                         
                                                         case "CLASS":
-                                                            echo '<option value="CLASS_TEACHER_'.$inner_value->id.'">'. TranslationHandler::get_static_text("CLASS") .' - '. $inner_value->title .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>';
-                                                            echo '<option value="CLASS_STUDENT_'.$inner_value->id.'">'. TranslationHandler::get_static_text("CLASS") .' - '. $inner_value->title .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>'; 
+                                                            echo '<option value="CLASS_TEACHER_'.$inner_value->id.'" '. ($receiver_id == 'CLASS_TEACHER_'.$inner_value->id ? 'selected' : '') .'>'. TranslationHandler::get_static_text("CLASS") .' - '. $inner_value->title .': ' .TranslationHandler::get_static_text("TEACHERS") .'</option>';
+                                                            echo '<option value="CLASS_STUDENT_'.$inner_value->id.'" '. ($receiver_id == 'CLASS_STUDENT_'.$inner_value->id ? 'selected' : '') .'>'. TranslationHandler::get_static_text("CLASS") .' - '. $inner_value->title .': ' .TranslationHandler::get_static_text("STUDENTS") .'</option>'; 
                                                             break;
                                                     }
                                                     

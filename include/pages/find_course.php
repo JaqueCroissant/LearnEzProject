@@ -19,7 +19,8 @@ $courseHandler = new CourseHandler();
                     
                     <div class="my_fade my_tab" id="find_course_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable datatable_1" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [5]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid" aria-describedby="default-datatable_info">
+                            <?php $targets = RightsHandler::has_user_right("COURSE_ADMINISTRATE") ? ", targets: [5]" : ""; ?>
+                            <table id="default-datatable" class="table dataTable datatable_1" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false<?= $targets ?>}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid" aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
                                         <th><?php echo TranslationHandler::get_static_text("TITLE"); ?></th>
@@ -88,7 +89,8 @@ $courseHandler = new CourseHandler();
                     
                     <div class="my_fade my_tab" id="find_lecture_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable datatable_2" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [4]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                            <?php $targets = RightsHandler::has_user_right("COURSE_ADMINISTRATE") ? ", targets: [4]" : ""; ?>
+                            <table id="default-datatable" class="table dataTable datatable_2" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false<?= $targets ?>}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -96,7 +98,9 @@ $courseHandler = new CourseHandler();
                                         <th><?php echo TranslationHandler::get_static_text("DESCRIPTION"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("COURSE"); ?></th>
                                         <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("DURATION"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
                                         <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                        <?php } ?>
                                         <th hidden></th>
                                     </tr>
                                 </thead>
@@ -106,7 +110,9 @@ $courseHandler = new CourseHandler();
                                         <th><?php echo TranslationHandler::get_static_text("DESCRIPTION"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("COURSE"); ?></th>
                                         <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("DURATION"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
                                         <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                        <?php } ?>
                                         <th hidden></th>
                                     </tr>
                                 </tfoot>
@@ -151,7 +157,8 @@ $courseHandler = new CourseHandler();
                     
                     <div class="my_fade my_tab" id="find_test_tab">
                         <div class="widget-body">
-                            <table id="default-datatable" class="table dataTable datatable_3" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [4]}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
+                            <?php $targets = RightsHandler::has_user_right("COURSE_ADMINISTRATE") ? ", targets: [4]" : ""; ?>
+                            <table id="default-datatable" class="table dataTable datatable_3" style="margin:20px 0px 25px 0px !important;" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false<?= $targets ?>}], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}" data-plugin="DataTable" role="grid"
                                    aria-describedby="default-datatable_info">
                                 <thead>
                                     <tr role="row">
@@ -159,7 +166,9 @@ $courseHandler = new CourseHandler();
                                         <th><?php echo TranslationHandler::get_static_text("DESCRIPTION"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("COURSE"); ?></th>
                                         <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("TOTAL_STEPS"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
                                         <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                        <?php } ?>
                                         <th hidden></th>
                                     </tr>
                                 </thead>
@@ -169,7 +178,9 @@ $courseHandler = new CourseHandler();
                                         <th><?php echo TranslationHandler::get_static_text("DESCRIPTION"); ?></th>
                                         <th><?php echo TranslationHandler::get_static_text("COURSE"); ?></th>
                                         <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("TOTAL_STEPS"); ?></th>
+                                        <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
                                         <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                        <?php } ?>
                                         <th hidden></th>
                                     </tr>
                                 </tfoot>

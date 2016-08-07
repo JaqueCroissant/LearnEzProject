@@ -263,6 +263,7 @@ if(isset($_GET["play_test"]) && isset($_GET["test_id"])) {
         $jsonArray['course_title'] = $courseHandler->current_element->course_title;
         $jsonArray['test_title'] = $courseHandler->current_element->title;
         $jsonArray['path'] = $courseHandler->current_element->path;
+        $jsonArray['max_progress'] = $courseHandler->current_element->total_steps;
     } else {
         $jsonArray['status_value'] = false;
         $jsonArray['error'] = $courseHandler->error->title;

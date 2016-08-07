@@ -17,54 +17,44 @@ $(document).ready(function () {
     if ($.cookie("current_task") !== undefined) {
         
         var data = JSON.parse($.cookie("current_task"));
-        var progress = parseInt($.cookie("current_progress"));
-        var a_data;
         $.ajax({
             type: "POST",
             url: "include/ajax/course.php?play_test=1&test_id=" + data.data,
             dataType: "json",
             async: false,
-            complete: function(data) {
-                a_data = $.parseJSON(JSON.stringify(data.responseJSON));
+            complete: function(a_data) {
+                var response = a_data.responseJSON;
+                open(response, false);
             }
         });
-        open(a_data);
-        current_progress = progress <= parseInt(a_data.current_progress) ? progress : 1;
     }
     
     function first_slide_enter(event){
-        if (current_progress === 1) {
-            $(".course_go_back").attr("disabled", true);
-        }
-        else {
-            $(".course_go_back").attr("disabled", false);
-        }
-        if (current_progress === max_progress || current_progress === progress_reached) {
-            $(".course_go_for").attr("disabled", true);
-        }
-        else {
-            $(".course_go_for").attr("disabled", false);
-        }
+        console.log("first slide");
+        current_progress === 1 ? $(".course_go_back").attr("disabled", true) : $(".course_go_back").attr("disabled", false);
+        current_progress === max_progress || current_progress === progress_reached ? $(".course_go_for").attr("disabled", true) : $(".course_go_for").attr("disabled", false);
         $(".course_slide_counter").html("<b>" + current_progress + "/" +  max_progress + "</b>");
         document.getElementById("scaled-frame").contentWindow.cpAPIEventEmitter.removeEventListener("CPAPI_SLIDEENTER", first_slide_enter);
         document.getElementById("scaled-frame").contentWindow.cpAPIEventEmitter.addEventListener("CPAPI_SLIDEENTER", slide_enter);
-        if (current_progress !== max_progress) {
-            console.log("going to correct slide");
-            document.getElementById("scaled-frame").contentWindow.cpAPIInterface.setVariableValue("cpCmndGotoSlide", current_progress - 1);
-            if (update) {
-               interval_function = setInterval(function(){
-                    time_since_last_save++;
-                    if (time_since_last_save >= 30) {
-                        update_init();
-                        progress_reached_last = progress_reached;
-                        time_since_last_save = 0;
-                    }
-                }, 1000);
+        setTimeout(function(){
+            if (current_progress !== max_progress) {
+                console.log("going to correct slide: " + current_progress);
+                document.getElementById("scaled-frame").contentWindow.cpAPIInterface.setVariableValue("cpCmndGotoSlide", current_progress - 1);
+                if (update) {
+                   interval_function = setInterval(function(){
+                        time_since_last_save++;
+                        if (time_since_last_save >= 30) {
+                            update_init();
+                            progress_reached_last = progress_reached;
+                            time_since_last_save = 0;
+                        }
+                    }, 1000);
+                }
             }
-        }
-        else {
-            update = false;
-        }
+            else {
+                update = false;
+            }
+        }, 1);
     }
     
     function slide_enter(event){
@@ -74,18 +64,8 @@ $(document).ready(function () {
         if (current_progress > progress_reached) {
             progress_reached = current_progress;
         }
-        if (current_progress === 1) {
-            $(".course_go_back").attr("disabled", true);
-        }
-        else {
-            $(".course_go_back").attr("disabled", false);
-        }
-        if (current_progress === max_progress || current_progress === progress_reached) {
-            $(".course_go_for").attr("disabled", true);
-        }
-        else {
-            $(".course_go_for").attr("disabled", false);
-        }
+        current_progress === 1 ? $(".course_go_back").attr("disabled", true) : $(".course_go_back").attr("disabled", false);
+        current_progress === max_progress || current_progress === progress_reached ? $(".course_go_for").attr("disabled", true) : $(".course_go_for").attr("disabled", false);
         $(".course_slide_counter").html("<b>" + current_progress + "/" +  max_progress + "</b>");
     }
     
@@ -94,7 +74,6 @@ $(document).ready(function () {
         $(window).on("resize", resize);
         var iframe_window = document.getElementById("scaled-frame").contentWindow;
         iframe_window.addEventListener("moduleReadyEvent", function(){
-            max_progress = iframe_window.cpAPIInterface.getVariableValue("rdinfoSlideCount");
             current_progress = (parseInt(current_progress) === max_progress ? 1 : current_progress);
             iframe_window.cpAPIEventEmitter.addEventListener("CPAPI_SLIDEENTER", first_slide_enter);
             can_be_clicked = true;
@@ -103,7 +82,6 @@ $(document).ready(function () {
                 $(".course_go_back").attr("disabled", true);
             }
             if (current_progress === max_progress || current_progress === progress_reached) {
-
                 $(".course_go_for").attr("disabled", true);
             }
         });
@@ -144,6 +122,8 @@ $(document).ready(function () {
 
     function update_init(){
         console.log("Attempting to save");
+        console.log(progress_reached);
+        console.log(progress_reached_last);
         if (progress_reached > progress_reached_last) {
             console.log("Saving");
             if (progress_reached === max_progress) {
@@ -172,6 +152,7 @@ $(document).ready(function () {
         current_progress = parseInt(data.current_progress);
         progress_reached = parseInt(data.current_progress);
         progress_reached_last = parseInt(data.current_progress);
+        max_progress = data.max_progress;
         table_id = parseInt(data.user_course_table_id);
         course_player_init(data, 500);
         if (open) {
@@ -250,7 +231,7 @@ $(document).ready(function () {
                 $(this).hide();
                 $(".course_return").css("display", "block");
             });
-            
+            document.getElementById("scaled-frame").contentWindow.cpAPIInterface.pause();
         }
     });
 
@@ -262,6 +243,7 @@ $(document).ready(function () {
             $("#iframe_content").animate({"margin-bottom": (($(window).height() - 40 - ratio * 740) / 2 -10), bottom:10}, 700, "easeInOutQuad", function() {
                 hidden = false;
                 can_be_clicked = true;
+                document.getElementById("scaled-frame").contentWindow.cpAPIInterface.play();
             });
             $(".backdrop").show();
             $(".backdrop").animate({opacity:1}, 500, "easeOutCubic");

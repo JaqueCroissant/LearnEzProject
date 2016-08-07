@@ -8,6 +8,9 @@
                 <a href="javascript:void(0)" value="minimize" class="course_action course_minimize btn btn-default" title=<?php echo TranslationHandler::get_static_text("MINIMIZE") ?>><i class="fa fa-minus"></i></a>
                 <a href="javascript:void(0)" value="quit" class="course_action course_quit btn btn-default" title=<?php echo TranslationHandler::get_static_text("QUIT") ?>><i class="fa fa-sign-out"></i></a>
             </div>
+            <div class="pull-right course_navigation checkbox">
+                <input type="checkbox"/>
+            </div>
             <div class="btn-group pull-right course_navigation">
                 <a href="javascript:void(0)" value="go_backwards" class="course_action course_go_back btn btn-default" title=<?php echo TranslationHandler::get_static_text("PREVIOUS") ?>><i class="fa fa-chevron-left"></i></a>
                 <a href="javascript:void(0)" value="go_forwards" class="course_action course_go_for btn btn-default" title=<?php echo TranslationHandler::get_static_text("NEXT") ?>><i class="fa fa-chevron-right"></i></a>

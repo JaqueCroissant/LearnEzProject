@@ -1,6 +1,8 @@
 <?php
 class Homework extends ORM {
     public $user_id;
+    public $firstname;
+    public $surname;
     
     public $id;
     public $title;

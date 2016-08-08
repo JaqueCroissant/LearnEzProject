@@ -714,7 +714,6 @@ a .menu_header {
 }
 
 .calendar-element-container {
-    cursor: pointer;
     border: 1px solid #edf0f5;
     margin: 3px;
 }
@@ -744,9 +743,10 @@ a .menu_header {
     margin-top:5px;
     text-align:right;
     width: auto;
-    padding: 2px;
+    padding: 1px 6px 1px 6px;
     text-align:center;
     font-size: 11px;
+    font-weight:800;
     border-radius: 2px;
     border: none;
     color: #FFF;

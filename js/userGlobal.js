@@ -13,10 +13,12 @@ $(document).ready(function () {
     var interval_function;
     var hidden = true;
     var ratio = 1;
+    var mute = false;
     
     if ($.cookie("current_task") !== undefined) {
         
         var data = JSON.parse($.cookie("current_task"));
+        mute = data.mute;
         $.ajax({
             type: "POST",
             url: "include/ajax/course.php?play_test=1&test_id=" + data.data,
@@ -27,10 +29,10 @@ $(document).ready(function () {
                 open(response, false);
             }
         });
+        console.log("muted | " + mute);
     }
     
-    function first_slide_enter(event){
-        console.log("first slide");
+    function first_slide_enter(){
         current_progress === 1 ? $(".course_go_back").attr("disabled", true) : $(".course_go_back").attr("disabled", false);
         current_progress === max_progress || current_progress === progress_reached ? $(".course_go_for").attr("disabled", true) : $(".course_go_for").attr("disabled", false);
         $(".course_slide_counter").html("<b>" + current_progress + "/" +  max_progress + "</b>");
@@ -38,7 +40,6 @@ $(document).ready(function () {
         document.getElementById("scaled-frame").contentWindow.cpAPIEventEmitter.addEventListener("CPAPI_SLIDEENTER", slide_enter);
         setTimeout(function(){
             if (current_progress !== max_progress) {
-                console.log("going to correct slide: " + current_progress);
                 document.getElementById("scaled-frame").contentWindow.cpAPIInterface.setVariableValue("cpCmndGotoSlide", current_progress - 1);
                 if (update) {
                    interval_function = setInterval(function(){
@@ -59,8 +60,9 @@ $(document).ready(function () {
     
     function slide_enter(event){
         console.log("entering " + event.Data.slideNumber);
+        console.log("table id: " + table_id);
         current_progress = event.Data.slideNumber;
-        $.cookie("current_progress", current_progress);
+        $.cookie("current_progress", (current_progress === max_progress ? 1 : current_progress), {path: "/"});
         if (current_progress > progress_reached) {
             progress_reached = current_progress;
         }
@@ -74,6 +76,8 @@ $(document).ready(function () {
         $(window).on("resize", resize);
         var iframe_window = document.getElementById("scaled-frame").contentWindow;
         iframe_window.addEventListener("moduleReadyEvent", function(){
+            hidden ? iframe_window.cpAPIInterface.pause() : iframe_window.cpAPIInterface.play();
+            check_mute();
             current_progress = (parseInt(current_progress) === max_progress ? 1 : current_progress);
             iframe_window.cpAPIEventEmitter.addEventListener("CPAPI_SLIDEENTER", first_slide_enter);
             can_be_clicked = true;
@@ -114,6 +118,9 @@ $(document).ready(function () {
                 case "minimize" :
                     $(".backdrop").trigger("click");
                     break;
+                case "mute" :
+                    switch_mute();
+                    break;
                 default : break;
             }
             can_be_clicked = true;
@@ -122,8 +129,6 @@ $(document).ready(function () {
 
     function update_init(){
         console.log("Attempting to save");
-        console.log(progress_reached);
-        console.log(progress_reached_last);
         if (progress_reached > progress_reached_last) {
             console.log("Saving");
             if (progress_reached === max_progress) {
@@ -136,23 +141,52 @@ $(document).ready(function () {
         else {
             console.log("Save not needed");
         }
+        var temp = JSON.parse($.cookie("current_task"));
+        temp.mute = mute;
+        $.cookie("current_task", JSON.stringify(temp), {path: "/"});
+        
+    }
+    
+    function check_mute(){
+        if (mute) {
+            switch_mute();
+        }
+    }
+    
+    function switch_mute(){
+        var c_window = document.getElementById("scaled-frame").contentWindow;
+        var current = c_window.cpAPIInterface.getVolume();
+        var i = $(".course_mute").find("i");
+        if (current === 100) {
+            c_window.cpAPIInterface.setVolume(0);
+            i.toggleClass("zmdi-volume-up zmdi-volume-off");
+            mute = true;
+        }
+        else {
+            c_window.cpAPIInterface.setVolume(100);
+            i.toggleClass("zmdi-volume-off zmdi-volume-up");
+            mute = false;
+        }
     }
     
     function close(){
         hide_backdrop();
+        update_init();
         $(".test_content").fadeOut(500, function(){
             $(this).hide();
-            $.removeCookie("current_progress");
-            $.removeCookie("current_task");
+            $.removeCookie("current_progress", {path:"/"});
+            $.removeCookie("current_task", {path:"/"});
         });
-        $("#scaled_frame").attr("src", "");
+        $("#scaled-frame").remove("html");
+        $("#scaled-frame").attr("src", "");
+        $(window).unbind("unload.update_progress");
     }
     
     function open(data, open){
-        current_progress = parseInt(data.current_progress);
+        current_progress = parseInt($.cookie("current_progress"));
         progress_reached = parseInt(data.current_progress);
         progress_reached_last = parseInt(data.current_progress);
-        max_progress = data.max_progress;
+        max_progress = parseInt(data.max_progress);
         table_id = parseInt(data.user_course_table_id);
         course_player_init(data, 500);
         if (open) {
@@ -161,7 +195,11 @@ $(document).ready(function () {
         else {
             $(".course_return").show();
         }
-        
+        $(window).one("unload.update_progress", function(event){
+            console.log("window unloaded");
+            update_init();
+            clearInterval(interval_function);
+        });
     }
 
     function update_progress(type, progress, is_complete, action_id){
@@ -218,9 +256,7 @@ $(document).ready(function () {
         $(".backdrop").animate({opacity:0}, 500, "easeOutQuad", function(){
             $(".backdrop").hide();
         });
-        update_init();
         clearInterval(interval_function);
-        $(window).unbind("unload.update_progress");
     }
         
     $(document).on("click", ".backdrop", function(){      
@@ -243,42 +279,42 @@ $(document).ready(function () {
             $("#iframe_content").animate({"margin-bottom": (($(window).height() - 40 - ratio * 740) / 2 -10), bottom:10}, 700, "easeInOutQuad", function() {
                 hidden = false;
                 can_be_clicked = true;
-                document.getElementById("scaled-frame").contentWindow.cpAPIInterface.play();
             });
             $(".backdrop").show();
             $(".backdrop").animate({opacity:1}, 500, "easeOutCubic");
         }
     });
-
-    $(window).one("unload.update_progress", function(event){
-        console.log("window unloaded");
-        update_init();
-        clearInterval(interval_function);
-    });
     
     function course_player_init(data, wait){
-            $(".course_window_test").show();
-            $(".course_player_test_title").html(data.test_title);
-            $(".course_player_course_title").html(data.course_title);
-            setTimeout(function(){
-                $(".course_iframe").attr("src", "courses/tests/" + data.path + "/index.php");
-                $(".course_iframe").on("load", function(){
-                    init_iframe_window();
-                });
-            }, wait);
-        }
+        $(".course_window_test").show();
+        $(".course_player_test_title").html(data.test_title);
+        $(".course_player_course_title").html(data.course_title);
+        setTimeout(function(){
+            $(".course_iframe").attr("src", "courses/tests/" + data.path + "/index.php");
+            $(".course_iframe").one("load", function(){
+                init_iframe_window();
+            });
+        }, wait);
+    }
 
     $(document).on("click", ".play_test", function(){
         if($(this).attr("element_id") === undefined) {
             return;
         }
-        initiate_submit_get($(this), "course.php?play_test=1&test_id="+$(this).attr("element_id"), function () {
-            show_status_bar("error", ajax_data.error);
-        }, function () {
-            $.cookie("current_task", '{"task" : "test", "data" : "' + 6 + '"}', {expires: 1});
-            $.cookie("current_progress", ajax_data.current_progress, {expires: 1});
-            open(ajax_data, true);
-        });
+        if ($.cookie("current_task") === undefined || JSON.parse($.cookie("current_task")).data !== $(this).attr("element_id")) {
+            console.log("getting new test");
+            initiate_submit_get($(this), "course.php?play_test=1&test_id="+$(this).attr("element_id"), function () {
+                show_status_bar("error", ajax_data.error);
+            }, function () {
+                $.cookie("current_task", '{"task" : "test", "data" : "' + 6 + '", "mute" : "false"}', {expires: 1, path: "/"});
+                $.cookie("current_progress", (ajax_data.current_progress === ajax_data.max_progress ? 1 : ajax_data.current_progress), {expires: 1, path: "/"});
+                mute = false;
+                open(ajax_data, true);
+            });
+        }
+        else {
+            $(".course_return").trigger("click");
+        }
     });
 
     $(document).on("click", ".play_lecture", function(){

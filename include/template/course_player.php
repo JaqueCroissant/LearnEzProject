@@ -4,12 +4,12 @@
     <div id="iframe_content" class="test_content backdrop_open" style="overflow:hidden;">
         <div class="course_bar primary course_window_test">      
             <div class="course_title pull-left"><span class="course_player_course_title"></span><span class='p-v-sm zmdi zmdi-chevron-right fa-sm'></span><span class="course_player_test_title"></span></div>
-            <div class="btn-group pull-right course_navigation m-l-sm">
+            <div class="btn-group pull-right course_navigation">
                 <a href="javascript:void(0)" value="minimize" class="course_action course_minimize btn btn-default" title=<?php echo TranslationHandler::get_static_text("MINIMIZE") ?>><i class="zmdi zmdi-window-minimize"></i></a>
                 <a href="javascript:void(0)" value="quit" class="course_action course_quit btn btn-default" title=<?php echo TranslationHandler::get_static_text("QUIT") ?>><i class="zmdi zmdi-close"></i></a>
             </div>
-            <div class="pull-right course_navigation checkbox">
-                <input type="checkbox"/>
+            <div class="pull-right course_navigation">
+                <a href="javascript:void(0)" value="mute" class="course_action course_mute btn btn-default" title=<?php echo TranslationHandler::get_static_text("MUTE") ?>><i class="zmdi zmdi-volume-up"></i></a>
             </div>
             <div class="btn-group pull-right course_navigation">
                 <a href="javascript:void(0)" value="go_backwards" class="course_action course_go_back btn btn-default" title=<?php echo TranslationHandler::get_static_text("PREVIOUS") ?>><i class="fa fa-chevron-left"></i></a>

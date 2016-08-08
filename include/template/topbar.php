@@ -44,7 +44,7 @@
 
                 if($menu->is_dropdown) {
                     echo '
-                    <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" data-tooltip="tooltip" data-placement="bottom" title="'. $menu->title .'" href="javascript:void(0)">
+                    <a class="dropdown-toggle" aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" data-tooltip="tooltip" data-placement="bottom" data-trigger="hover" title="'. $menu->title .'" href="javascript:void(0)">
                         <i class="zmdi zmdi-hc-lg '. $menu->icon_class .'"></i>
                     </a>
                     <ul class="dropdown-menu animated flipInY">';

@@ -835,7 +835,7 @@ class CourseHandler extends Handler {
                 DbHandler::get_instance()->query("UPDATE " . $table . " SET " . $values . " WHERE id = :id", $table_id);
                 return true;
             } else if ($id != 0) {
-                DbHandler::get_instance()->query("INSERT INTO " . $table . " VALUES (:table_id, :user_id, :id, :progress, :is_complete)", null, $this->_user->id, $id, $progress, $is_complete);
+                DbHandler::get_instance()->query("INSERT INTO " . $table . " VALUES (:table_id, :user_id, :id, :progress, :is_complete, NOW())", null, $this->_user->id, $id, $progress, $is_complete);
                 $this->last_inserted_id = DbHandler::get_instance()->last_inserted_id();
                 return true;
             } else {

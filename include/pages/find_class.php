@@ -15,7 +15,8 @@ $classHandler->get_all_classes();
             </div>
             <hr class="widget-separator">
             <div class="widget-body">
-                <table id="find_class_dt" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false, targets: [6,7]}]}" data-plugin="DataTable" role="grid"
+                <?php $targets = RightsHandler::has_user_right("CLASS_EDIT") ? ", targets: [6, 7]" : ""; ?>
+                <table id="find_class_dt" class="table dataTable" cellspacing="0" data-options="{pageLength: <?php echo SettingsHandler::get_settings()->elements_shown; ?>,columnDefs:[{orderable: false<?= $targets ?>}]}" data-plugin="DataTable" role="grid"
                        aria-describedby="default-datatable_info">
                     <thead>
                         <tr role="row">

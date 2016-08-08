@@ -1,4 +1,21 @@
 <?php
+
+function month_num_to_string($month_num = 0) {
+    if(!is_numeric($month_num) || !is_int((int)$month_num)) {
+        return;
+    }
+    
+    if($month_num > 12 || $month_num < -11) {
+        return;
+    }
+    
+    if($month_num < 1) {
+        $month_num = 12 - $month_num;
+    }
+    
+    return date('F', mktime(0, 0, 0, $month_num, 10));
+}
+
 function array_sort_by_column(&$arr, $col, $dir = SORT_ASC) {
     $sort_col = array();
     foreach ($arr as $key=> $row) {

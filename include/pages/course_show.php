@@ -193,7 +193,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                         }
                         echo '</div></div>';
                     } else {
-                        echo "<p>Du har endnu ikke klaret nogen kurser eller tests.</p>";
+                        echo "<p>".TranslationHandler::get_static_text("NO_COMPLETED_COURSES_OR_TESTS")."</p>";
                     }
                 ?>
                 </div>

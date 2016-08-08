@@ -685,3 +685,72 @@ a .menu_header {
   border-bottom: 3px solid transparent;
   border-top: 3px solid #36ce1c;
 }
+
+.profile_information_table {
+    width: 100%;
+}
+
+.profile_information_table td {
+    padding-bottom: 6px;
+}
+
+.col-center {
+   float: none !important;
+   margin-right: auto;
+   margin-left: auto;
+}
+
+.calendar-element {
+    float:left;
+    width: calc(100% / 7.1);
+}
+
+.calendar-top-element-container {
+    font-weight: bold;
+    text-align:center;
+    background: #edf0f5;
+    margin: 3px;
+    padding: 10px 20px;
+}
+
+.calendar-element-container {
+    cursor: pointer;
+    border: 1px solid #edf0f5;
+    margin: 3px;
+}
+
+.calendar-element-container-today {
+    border: 1px solid #777777 !important;
+}
+
+.calendar-element-date {
+    padding: 8px 16px 0px 0px;
+    font-size: 16px;
+    float:right;
+    text-align:right;
+}
+
+.calendar-element-content {
+    min-height: 30px;
+    padding: 8px 16px 8px 16px;
+    font-size: 16px;
+}
+
+.calendar-element-disabled {
+    color: #d1d1d1 !important;
+}
+
+.calendar-homework {
+    margin-top:5px;
+    text-align:right;
+    width: auto;
+    padding: 2px;
+    text-align:center;
+    font-size: 11px;
+    border-radius: 2px;
+    border: none;
+    color: #FFF;
+    display: inline-block;
+    float:right;
+    margin:2px 0px 0px 2px;
+}

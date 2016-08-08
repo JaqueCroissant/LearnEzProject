@@ -21,6 +21,10 @@ if ($userHandler->_user->user_type_id > 1) {
     {
         $classHandler->get_classes_by_user_id($userHandler->_user->id);
         $courseHandler->get_courses();
+        $courses_average = 0;
+        $courses_completed = 0;
+        $course_count = count($courseHandler->courses);
+        $courses_started = $course_count;
     }
 }
 
@@ -55,6 +59,17 @@ if (isset($_GET['class_id'])) {
                         <tbody>
                             <?php
                             foreach ($courseHandler->courses as $value) {
+
+                                $courses_average += $value->overall_progress;
+
+                                if($value->overall_progress > 99)
+                                {
+                                    $courses_completed++;
+                                }
+                                else if($value->overall_progress < 1)
+                                {
+                                    $courses_started--;
+                                }
                                 ?>
                                 <tr class = "a change_page" page = "account_profile" step = "" args = "&user_id=<?php echo $value->id; ?>">
                                     <td><?php echo $value->title; ?></td>
@@ -63,17 +78,17 @@ if (isset($_GET['class_id'])) {
                                     <td><?php echo $value->overall_progress . "%"; ?></td>
 
                                 </tr>
-                            <?php } ?>
+                            <?php }
+
+                            $courses_average = round($courses_average / count($courseHandler->courses),0);
+
+                            ?>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
-        <?php
-        $i_max = 10;
-        $i = 0;
-        $i_rand = rand(100, 1000);
-        ?>
+
         
         <div class="col-md-12 col-sm-12 ">
             <div class="widget">
@@ -85,7 +100,30 @@ if (isset($_GET['class_id'])) {
                     <div class="row">
                         <?php
                             $statisticsHandler->get_student_progress();
+
+
                         ?>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="user-card">
+                                    <div class="media-left">
+                                        <div class="pieprogress" data-value="<?php echo $courses_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($courses_average)?>"}, thickness: 10}' data-size="70">
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span class="counter" data-plugin="counterUp"><?php echo $courses_average; ?></span>%    </strong>
+                                        </div>
+                                    </div>
+                                    <div class="media-right ">
+                                        <div style="margin-left: 25px;">
+                                            <label  class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("COURSE")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
+                                        </div>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("COURSES") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $courses_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $course_count; ?>
+                                        </div>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("COURSES") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $courses_completed . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $course_count; ?>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                        
                         <div class="col-md-6 col-sm-6">
                             <div class="user-card">
                                     <div class="media-left">
@@ -93,14 +131,14 @@ if (isset($_GET['class_id'])) {
                                             <strong style="margin-top: -14px; font-size: 14px;"><span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_lecture_average; ?></span>%    </strong>
                                         </div>
                                     </div>
-                                    <div class="media-right">
-                                        <div>
-                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("LECTURE")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
+                                    <div class="media-right ">
+                                        <div style="margin-left: 25px;">
+                                            <label  class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("LECTURE")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
                                         </div>
-                                        <div>
+                                        <div style="margin-left: 25px;">
                                             <?php echo TranslationHandler::get_static_text("LECTURES") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $statisticsHandler->student_lectures_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_lectures; ?>
                                         </div>
-                                        <div>
+                                        <div style="margin-left: 25px;">
                                             <?php echo TranslationHandler::get_static_text("LECTURES") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $statisticsHandler->student_lectures_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_lectures; ?>
                                         </div>
                                     </div>
@@ -115,23 +153,47 @@ if (isset($_GET['class_id'])) {
                                         </div>
                                     </div>
                                     <div class="media-right">
-                                        <div>
-                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("TEST")) . " ". strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></label>
+                                        <div style="margin-left: 25px;">
+                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AVERAGE_TEST_PROG"); ?></label>
                                         </div>
-                                        <div>
-                                            <?php echo TranslationHandler::get_static_text("TESTS") . " " . strtolower(TranslationHandler::get_static_text("STARTED")) . ": " . $statisticsHandler->student_tests_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("TESTS_STARTED") . ": " . $statisticsHandler->student_tests_started . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
                                         </div>
-                                        <div>
-                                            <?php echo TranslationHandler::get_static_text("TESTS") . " " . strtolower(TranslationHandler::get_static_text("COMPLETED")) . ": " . $statisticsHandler->student_tests_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("TESTS_COMPLETED") . ": " . $statisticsHandler->student_tests_complete . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $statisticsHandler->student_total_tests; ?>
                                         </div>
                                     </div>
                             </div>
                         </div>
-                </div>
+                        
+                        <div class="col-md-6 col-sm-6">
+                            <div class="user-card">
+                                    <div class="media-left">
+                                        <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_test_average)?>"}, thickness: 10}' data-size="70">
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span class="counter" data-plugin="counterUp"><?php echo $statisticsHandler->student_test_average; ?></span>%</strong>
+                                        </div>
+                                    </div>
+                                    <div class="media-right">
+                                        <div style="margin-left: 25px;">
+                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("ACHIEVEMENTS"); ?></label>
+                                        </div>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("BADGES_OBTAINED") . ": " . "NULL" . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . "NULL"; ?>
+                                        </div>
+                                        <div style="margin-left: 25px;">
+                                            <?php echo TranslationHandler::get_static_text("TOTAL_POINTS") . ": " . $userHandler->_user->points;?>
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!--DISPLAY USER INFO!-->
     <div class="col-md-3 col-sm-12">
         <div class="widget">
             <div class="widget-header">
@@ -165,7 +227,9 @@ if (isset($_GET['class_id'])) {
                 ?>
                     <div>
                         <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("SCHOOL") . ":"; ?></label>
-                        <span class="pull-right"><?php echo $schoolHandler->school->name; ?></span>
+                        <a class="change_page" page="school_profile" step="" args="&school_id=<?php echo $schoolHandler->school->id ?>" href="javascript:void(0)">
+                            <span class="pull-right"><?php echo $schoolHandler->school->name; ?></span>
+                        </a>
                     </div>
                 <?php
                 }
@@ -173,7 +237,7 @@ if (isset($_GET['class_id'])) {
             </div>
         </div>
         
-        
+        <!--DISPLAY CLASSES!-->
         <?php
         if($userHandler->_user->user_type_id > 2)
             {
@@ -190,7 +254,7 @@ if (isset($_GET['class_id'])) {
 
                                     for($i=0; $i < count($classHandler->classes); $i++)
                                     {
-                                        echo '<div>' . $classHandler->classes[$i]->title . '</div>';
+                                        echo '<div><a class="change_page" page="class_profile" step="" args="&class_id=' . $classHandler->classes[$i]->id . '" href="javascript:void(0)">' . $classHandler->classes[$i]->title . '</a></div>';
                                     }
 
                             ?>
@@ -201,32 +265,7 @@ if (isset($_GET['class_id'])) {
                 }
             }
         ?>
-        <div class="widget">
-            <div class='widget-header'>
-                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></h4>
-            </div>
-            <hr class="widget-separator m-0">
-            <div class="widget-body">
-                <div class="pull-left" name="test_average">
-                    <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($statisticsHandler->class_average * 100) : "" ?>"}, thickness: 10}'>
-                        <strong>%<span class="counter" data-plugin="counterUp"><?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average * 100 : ""; ?></span></strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="widget">
-            <div class='widget-header'>
-                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("HOMEWORK"); ?></h4>
-            </div>
-            <hr class="widget-separator m-0">
-            <div class="widget-body">
-                <?php
-                $end = microtime(true);
-
-                echo '<br/><br/>Time spent: <strong style="font-size: 40px;">' . floor(($end - $begin) * 1000) . '</strong>ms';
-                ?>
-            </div>
-        </div>
+        
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>

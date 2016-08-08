@@ -28,7 +28,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                     <?php if(isset($_GET["order_by"])) { ?>
                     <div class="col-md-4 play_lecture" element_id="<?= $value->id; ?>">
                         
-                        <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover" data-delay='{"show":"300", "hide":"300"}' data-placement="right" data-trigger="hover" data-content="<?= $value->description; ?>">
+                        <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= $value->description; ?>">
                             
                             <header class="widget-header" style="padding: 0.7rem 1rem !important;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>">
                                 <?php echo $value->title; ?>
@@ -66,7 +66,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                     </div>
                     <?php } else { ?>
                     <div class="col-md-12 play_lecture" element_id="<?= $value->id; ?>">
-                        <div class="widget" style="cursor:pointer;margin-bottom:1rem !important;" data-container="body" data-toggle="popover" data-delay='{"show":"300", "hide":"300"}' data-placement="top" data-trigger="hover" data-content="<?= $value->description; ?>">
+                        <div class="widget" style="cursor:pointer;margin-bottom:1rem !important;" data-container="body" data-toggle="popover"  data-placement="top" data-trigger="hover" data-content="<?= $value->description; ?>">
                             <div class="widget-body" style="padding: 1.35rem !important">
                                 <?php echo $value->is_complete ? '<div class="ribbon"><span>'. TranslationHandler::get_static_text("COMPLETED") .'</span></div>' : ''; ?>
                                 <div class="clearfix">
@@ -101,7 +101,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                     <?php foreach($courseHandler->tests as $value) { ?>
                     <?php if(isset($_GET["order_by"])) { ?>
                     <div class="col-md-4 play_test" element_id="<?= $value->id; ?>">
-                        <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover" data-delay='{"show":"300", "hide":"300"}' data-placement="right" data-trigger="hover" data-content="<?= $value->description; ?>">
+                        <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= $value->description; ?>">
                             <header class="widget-header" style="padding: 0.7rem 1rem !important;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>">
                                 <?php echo $value->title; ?>
                             </header>
@@ -138,7 +138,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                     </div>
                     <?php } else { ?>
                     <div class="col-md-12 play_test" element_id="<?= $value->id; ?>">
-                        <div class="widget" style="cursor:pointer;margin-bottom:1rem !important;" data-container="body" data-toggle="popover" data-delay='{"show":"300", "hide":"300"}' data-placement="top" data-trigger="hover" data-content="<?= $value->description; ?>">
+                        <div class="widget" style="cursor:pointer;margin-bottom:1rem !important;" data-container="body" data-toggle="popover"  data-placement="top" data-trigger="hover" data-content="<?= $value->description; ?>">
                             <div class="widget-body" style="padding: 1.35rem !important">
                                 <?php echo $value->is_complete ? '<div class="ribbon"><span>'. TranslationHandler::get_static_text("COMPLETED") .'</span></div>' : ''; ?>
                                 <div class="clearfix">
@@ -205,7 +205,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>
     $(document).ready(function(){
-        $('[data-toggle="popover"]').popover();
+        $('[data-toggle="popover"]').popover({trigger: "hover"});
     });
     
     $(document).on("click", ".switch", function() {

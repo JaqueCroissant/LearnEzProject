@@ -341,7 +341,7 @@ $homeworkHandler->get_user_homework();
 <script>
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip(); 
-    $('[data-toggle="popover"]').popover();
+    $('[data-toggle="popover"]').popover({trigger: "hover"});
     
     $('.calendar-element-row').each(function() {
         var maxHeight = -1;

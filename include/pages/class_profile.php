@@ -20,6 +20,8 @@ if (isset($_GET['class_id'])) {
     $classHandler->get_class_by_id($_GET['class_id']);
     $userHandler->get_by_class_id($_GET['class_id']);
     $statisticsHandler->get_average_progress_for_class($_GET['class_id']);
+} else {
+    ErrorHandler::show_error_page(ErrorHandler::return_error("USER_INVALID_CLASS_ID"));
 }
 ?>
 
@@ -141,7 +143,7 @@ if (isset($_GET['class_id'])) {
             <div class="widget-body">
                 <div class="pull-left" name="test_average">
                     <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($statisticsHandler->class_average * 100) : "" ?>"}, thickness: 10}'>
-                        <strong>%<span class="counter" data-plugin="counterUp"><?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average * 100 : ""; ?></span></strong>
+                        <strong><?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average * 100 : ""; ?> %</strong>
                     </div>
                 </div>
             </div>

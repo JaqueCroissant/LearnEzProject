@@ -28,6 +28,8 @@ class ClassHandler extends Handler {
 
             $this->school_class = new School_Class(reset(DbHandler::get_instance()->return_query($query, $class_id)));
             $this->school_class->remaining_days = $this->set_remaining_days($this->school_class);
+            $this->school_class->number_of_students = $this->get_number_of_students_in_class($class_id);
+            $this->school_class->number_of_teachers = $this->get_number_of_teachers_in_class($class_id);
 
             if (empty($this->school_class)) {
                 throw new Exception("OBJECT_IS_EMPTY");
@@ -143,6 +145,8 @@ class ClassHandler extends Handler {
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
+                $class->number_of_students = $this->get_number_of_students_in_class($class->id);
+                $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $this->classes[] = $class;
             }
 

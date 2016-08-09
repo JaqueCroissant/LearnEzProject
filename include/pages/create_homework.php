@@ -7,6 +7,7 @@ $courseHandler = new CourseHandler();
 
 $current_user = SessionKeyHandler::get_from_session("user", true);
 $class_id = isset($_GET["class_id"]) ? $_GET["class_id"] : null;
+$date = isset($_GET["date"]) ? $_GET["date"] : null;
 if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
     ErrorHandler::show_error_page();
     die();
@@ -57,7 +58,7 @@ if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
                             <div class="form-group m-b-sm">
                                 <label for="date_expire" class="control-label">Deadline:</label>
                                 <div class="col-md-12  m-b-sm" style="padding-left:0px !important; padding-right: 0px !important;">
-                                    <input class="form-control" id="date_expire" type="text" name="date_expire" data-options="{format: 'YYYY-MM-DD', showTodayButton:false}" data-plugin="datetimepicker" />
+                                    <input class="form-control" id="date_expire" type="text" name="date_expire" data-options="{format: 'YYYY-MM-DD', showTodayButton:false}" data-plugin="datetimepicker" value=<?= $date ?> />
                                 </div>
                             </div>
                             

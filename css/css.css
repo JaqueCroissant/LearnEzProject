@@ -729,6 +729,28 @@ a .menu_header {
     text-align:right;
 }
 
+.calendar-element-create-homework {
+    margin: 8px 0px 0px 8px;
+    font-size: 16px;
+    float:left;
+    text-align:left;
+    width: auto !important;
+    text-align:center;
+    z-index: 1000000;
+    background: #38b955 !important; 
+    color: #FFF !important; 
+    line-height: 1 !important;
+    -webkit-border-radius: 3px; 
+    -moz-border-radius: 3px; 
+    border-radius: 3px;
+    min-width: 16px;
+    cursor:pointer;
+}
+
+.calendar-element-create-homehover:hover {
+    background: #4cde6d !important;
+}
+
 .calendar-element-content {
     min-height: 30px;
     padding: 8px 16px 8px 16px;
@@ -753,4 +775,18 @@ a .menu_header {
     display: inline-block;
     float:right;
     margin:2px 0px 0px 2px;
+}
+
+.calendar-homework-big {
+    width: 100px;
+    height: 90px;
+    display: block;
+    padding: 1px 6px 1px 6px;
+    text-align: center;
+    font-size: 70px;
+    font-weight: 800;
+    border-radius: 10px;
+    border: none;
+    color: #FFF;
+    line-height: 90px;
 }

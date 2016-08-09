@@ -4,15 +4,53 @@ class HomeworkHandler extends Handler {
 
     public $available_classes = array();
     public $classes = array();
+    
+    public $specific_homework;
     public $homework = array();
     public $incomplete_homework = array();
     
+    private $homework_id;
     private $homework_data = array();
     private $homework_ids = array();
     private $class_ids = array();
     
     private $date_from;
     private $date_to;
+    
+    public function get_homework($homework_id = 0) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if(empty($homework_id) || !is_numeric($homework_id) || !is_int((int)$homework_id)) {
+                throw new exception("INVALID INPUT");
+            }
+            
+            $this->homework_id = $homework_id;
+            
+            if(!$this->fetch_homework_data()) {
+                return true;
+            }
+            
+            $this->iterate_homework_data();
+            $this->assign_homework_classes();
+            $this->fetch_homework_content();
+            
+            if(empty($this->homework)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            $this->specific_homework = array_shift(array_values($this->homework));
+            
+            return true;
+            
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
 
     public function get_user_homework($date_from = null, $date_to = null) {
         try {
@@ -155,24 +193,31 @@ class HomeworkHandler extends Handler {
     }
     
     private function fetch_homework_data() {
+        
+        $is_specific_homework = isset($this->homework_id) && !empty($this->homework_id);
+        $specific_homework = $is_specific_homework ? "homework.id = :homework_id AND" : "";
         switch ($this->_user->user_type_id) {
             case 1:
                 throw new exception("INSUFFICIENT_RIGHTS");
 
             case 2:
                 if(!empty($this->date_from) && !empty($this->date_to)) {
-                    $this->homework_data = DbHandler::get_instance()->return_query("SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class ON class.id = class_homework.class_id WHERE class.school_id = :school_id AND homework.date_expire >= :date_from AND homework.date_expire <= :date_to GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC", $this->_user->school_id, $this->date_from, $this->date_to);
+                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class ON class.id = class_homework.class_id WHERE ". $specific_homework . " class.school_id = :school_id AND homework.date_expire >= :date_from AND homework.date_expire <= :date_to GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
+                    $this->homework_data = !$is_specific_homework ? DbHandler::get_instance()->return_query($query, $this->_user->school_id, $this->date_from, $this->date_to) : DbHandler::get_instance()->return_query($query, $this->homework_id, $this->_user->school_id, $this->date_from, $this->date_to);
                 } else {
-                    $this->homework_data = DbHandler::get_instance()->return_query("SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class ON class.id = class_homework.class_id WHERE class.school_id = :school_id GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC", $this->_user->school_id);
+                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class ON class.id = class_homework.class_id WHERE ". $specific_homework . " class.school_id = :school_id GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
+                    $this->homework_data = !$is_specific_homework ? DbHandler::get_instance()->return_query($query, $this->_user->school_id) : DbHandler::get_instance()->return_query($query, $this->homework_id, $this->_user->school_id);
                 }
                 break;
             
             case 3:
             case 4:
                 if(!empty($this->date_from) && !empty($this->date_to)) {
-                    $this->homework_data = DbHandler::get_instance()->return_query("SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN user_class ON user_class.class_id = class_homework.class_id INNER JOIN class ON class.id = user_class.class_id WHERE user_class.users_id = :user_id AND homework.date_expire >= :date_from AND homework.date_expire <= :date_to GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC", $this->_user->id, $this->date_from, $this->date_to);
+                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN user_class ON user_class.class_id = class_homework.class_id INNER JOIN class ON class.id = user_class.class_id WHERE ". $specific_homework . " user_class.users_id = :user_id AND homework.date_expire >= :date_from AND homework.date_expire <= :date_to GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
+                    $this->homework_data = !$is_specific_homework ? DbHandler::get_instance()->return_query($query, $this->_user->id, $this->date_from, $this->date_to) : DbHandler::get_instance()->return_query($query, $this->homework_id, $this->_user->id, $this->date_from, $this->date_to);
                 } else {
-                    $this->homework_data = DbHandler::get_instance()->return_query("SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN user_class ON user_class.class_id = class_homework.class_id INNER JOIN class ON class.id = user_class.class_id WHERE user_class.users_id = :user_id GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC", $this->_user->id);
+                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN user_class ON user_class.class_id = class_homework.class_id INNER JOIN class ON class.id = user_class.class_id WHERE ". $specific_homework . " user_class.users_id = :user_id GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
+                    $this->homework_data = !$is_specific_homework ? DbHandler::get_instance()->return_query($query, $this->_user->id) : DbHandler::get_instance()->return_query($query, $this->homework_id, $this->_user->id);
                 }
                 break;
         }
@@ -219,10 +264,9 @@ class HomeworkHandler extends Handler {
         }
     }
     
-    
     private function fetch_homework_content() {
-        $lecture_data = $this->create_homework_id_array(true, DbHandler::get_instance()->return_query("SELECT course_lecture.*, user_course_lecture.is_complete, translation_course_lecture.title, homework_id FROM homework_lecture INNER JOIN course_lecture ON course_lecture.id = homework_lecture.lecture_id LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user_id INNER JOIN course ON course.id = course_lecture.course_id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id WHERE homework_id IN (".generate_in_query($this->homework_ids).") AND translation_course_lecture.language_id = :language_id AND course.os_id = :os_id", $this->_user->id, TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id));
-        $test_data = $this->create_homework_id_array(false, DbHandler::get_instance()->return_query("SELECT course_test.*, user_course_test.is_complete, translation_course_test.title, homework_id FROM homework_test INNER JOIN course_test ON course_test.id = homework_test.test_id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user_id INNER JOIN course ON course.id = course_test.course_id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id WHERE homework_id IN (".generate_in_query($this->homework_ids).") AND translation_course_test.language_id = :language_id AND course.os_id = :os_id", $this->_user->id, TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id));
+        $lecture_data = $this->create_homework_id_array(true, DbHandler::get_instance()->return_query("SELECT course_lecture.*, user_course_lecture.is_complete, translation_course_lecture.title, translation_course_lecture.description, homework_id, translation_course.title as course_title FROM homework_lecture INNER JOIN course_lecture ON course_lecture.id = homework_lecture.lecture_id LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user_id INNER JOIN course ON course.id = course_lecture.course_id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN translation_course ON translation_course.course_id = course.id  WHERE homework_id IN (".generate_in_query($this->homework_ids).") AND translation_course_lecture.language_id = :language_id AND translation_course.language_id = :language_id AND course.os_id = :os_id", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id));
+        $test_data = $this->create_homework_id_array(false, DbHandler::get_instance()->return_query("SELECT course_test.*, user_course_test.is_complete, translation_course_test.title, translation_course_test.description, homework_id, translation_course.title as course_title FROM homework_test INNER JOIN course_test ON course_test.id = homework_test.test_id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user_id INNER JOIN course ON course.id = course_test.course_id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id INNER JOIN translation_course ON translation_course.course_id = course.id WHERE homework_id IN (".generate_in_query($this->homework_ids).") AND translation_course_test.language_id = :language_id AND translation_course.language_id = :language_id AND course.os_id = :os_id", $this->_user->id, TranslationHandler::get_current_language(), TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id));
         
         foreach($this->homework as $key => $value) {
             $is_complete = true;

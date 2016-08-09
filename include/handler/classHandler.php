@@ -6,6 +6,7 @@ class ClassHandler extends Handler {
     public $classes;
     public $years;
     public $format = "Y-m-d";
+    public $soon_expiring_classes;
 
     public function __construct() {
         parent::__construct();
@@ -75,6 +76,40 @@ class ClassHandler extends Handler {
                 $this->classes[] = $class;
             }
 
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function get_soon_expiring_classes($school_id = 0, $number_of_classes = 5) {
+        try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("CLASS_FIND")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            if (!is_numeric($number_of_classes)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+            $query = "SELECT * FROM class WHERE end_date > curdate() AND open = 1 ";
+            
+            if ($school_id != 0) {
+                $this->verify_school_exists($school_id);
+                $query .= "AND school_id = :school_id ORDER BY end_date LIMIT :limit";
+                $data = DbHandler::get_instance()->return_query($query, $school_id, $number_of_classes);
+            } else {
+                $query .= "ORDER BY end_date LIMIT :limit";
+                $data = DbHandler::get_instance()->return_query($query, $number_of_classes);
+            }
+            $this->soon_expiring_classes = [];
+            foreach ($data as $value) {
+                $class = new School_Class($value);
+                $class->remaining_days = $this->set_remaining_days($class);
+                $this->soon_expiring_classes[] = $class;
+            }
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -170,6 +205,35 @@ class ClassHandler extends Handler {
                 return true;
             }
             return false;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function add_user_to_class($array_of_user_ids_or_single_id, $class_id) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("CLASS_ASSIGN_USER")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            $this->verify_class_exists($class_id);
+            $query = "INSERT INTO user_class (users_id, class_id) VALUES (:user_id, :class_id)";
+
+            if (is_array($array_of_user_ids_or_single_id) && !empty($array_of_user_ids_or_single_id)) {
+                foreach ($array_of_user_ids_or_single_id as $value) {
+                    DbHandler::get_instance()->query($query, $value, $class_id);
+                }
+            } elseif (is_numeric($array_of_user_ids_or_single_id)) {
+                DbHandler::get_instance()->query($query, $array_of_user_ids_or_single_id, $class_id);
+            } else {
+                throw new Exception("OBJECT_IS_EMPTY");
+            }
+
+            return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;

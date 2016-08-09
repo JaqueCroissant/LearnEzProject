@@ -56,7 +56,7 @@
                     } elseif($menu->pagename != "notifications") {
                         echo "change_page";
                     }
-                    echo '" page="'. $menu->pagename .'" step="' . $menu->step . '" id="' . $menu->pagename . '" data-tooltip="tooltip" data-placement="bottom" title="'. $menu->title .'" href="javascript:void(0)">
+                    echo '" page="'. $menu->pagename .'" step="' . $menu->step . '" id="' . $menu->pagename . '" data-tooltip="tooltip" data-placement="bottom" data-trigger="hover" title="'. $menu->title .'" href="javascript:void(0)">
                         <i class="zmdi zmdi-hc-lg '. $menu->icon_class .'"></i>
                     </a>';
                 }

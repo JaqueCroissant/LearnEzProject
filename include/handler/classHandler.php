@@ -175,6 +175,8 @@ class ClassHandler extends Handler {
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
+                $class->number_of_students = $this->get_number_of_students_in_class($class->id);
+                $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $this->classes[] = $class;
             }
 

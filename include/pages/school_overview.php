@@ -11,30 +11,32 @@ if ($classHandler->_user->user_type_id != 1) {
 } elseif ($classHandler->_user->user_type_id = 1) {
     $schoolHandler->get_all_schools();
 }
+$targets = RightsHandler::has_user_right("SCHOOL_EDIT") ? ", targets: [6]" : "";
 ?>
 <div class="row">
     <?php
     switch ($classHandler->_user->user_type_id) {
         case "1":
             ?>
-            <div class="col-md-6 col-sm-12">
+            <div class="col-md-12 col-sm-12">
                 <div class="widget">
                     <div class="widget-header">
                         <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("SCHOOLS")); ?></h4>
                     </div>
                     <hr class="widget-separator m-0">
                     <div class="widget-body">
-                        <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
+                        <table id="classes" class="table display table-hover" data-options="{pageLength: 5, columnDefs:[{orderable: false<?= $targets ?>}]}" data-plugin="DataTable">
                             <thead>
                                 <tr>
                                     <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
-                                    <?php if ($classHandler->_user->user_type_id == "1") { ?>
-                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
-                                    <?php } ?>
+                                    <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("START"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
+                                    <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                    <th class="center"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                    <?php } ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,13 +44,20 @@ if ($classHandler->_user->user_type_id != 1) {
                                 foreach ($schoolHandler->all_schools as $value) {
                                     if ($value->open == "1") {
                                         ?>
-                                        <tr class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>">
-                                            <td><?php echo $value->name; ?></td>
-                                            <td><?php echo $value->address; ?></td>
-                                            <td><?php echo $value->city; ?></td>
-                                            <td><?php echo $value->subscription_start; ?></td>
-                                            <td><?php echo $value->subscription_end; ?></td>
-                                            <td><?php echo $value->current_students . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $value->max_students; ?></td>
+                                        <tr>
+                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->name; ?></td>
+                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->address; ?></td>
+                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->city; ?></td>
+                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->subscription_start; ?></td>
+                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->subscription_end; ?></td>
+                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->current_students . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $value->max_students; ?></td>
+                                            <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                                <td>
+                                                    <div class="center">
+                                                        <i class="zmdi zmdi-hc-lg zmdi-edit change_page a" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>"></i>
+                                                    </div>
+                                                </td>
+                                            <?php } ?>
                                         </tr>
                                         <?php
                                     }
@@ -59,17 +68,17 @@ if ($classHandler->_user->user_type_id != 1) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 col-sm-12">
-                <div class="widget">
-                    <div class="widget-header">
-                        <h4 class="widget-title">dsds</h4>
-                    </div>
-                    <hr class="widget-separator m-0">
-                    <div class="widget-body">
-
-                    </div>
-                </div>
-            </div>
+            <!--            <div class="col-md-6 col-sm-12">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <h4 class="widget-title">dsds</h4>
+                                </div>
+                                <hr class="widget-separator m-0">
+                                <div class="widget-body">
+            
+                                </div>
+                            </div>
+                        </div>-->
             <?php
             break;
         case "2": case "3": case "4":

@@ -224,7 +224,6 @@ class HomeworkHandler extends Handler {
         $lecture_data = $this->create_homework_id_array(true, DbHandler::get_instance()->return_query("SELECT course_lecture.*, user_course_lecture.is_complete, translation_course_lecture.title, homework_id FROM homework_lecture INNER JOIN course_lecture ON course_lecture.id = homework_lecture.lecture_id LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user_id INNER JOIN course ON course.id = course_lecture.course_id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id WHERE homework_id IN (".generate_in_query($this->homework_ids).") AND translation_course_lecture.language_id = :language_id AND course.os_id = :os_id", $this->_user->id, TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id));
         $test_data = $this->create_homework_id_array(false, DbHandler::get_instance()->return_query("SELECT course_test.*, user_course_test.is_complete, translation_course_test.title, homework_id FROM homework_test INNER JOIN course_test ON course_test.id = homework_test.test_id LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user_id INNER JOIN course ON course.id = course_test.course_id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id WHERE homework_id IN (".generate_in_query($this->homework_ids).") AND translation_course_test.language_id = :language_id AND course.os_id = :os_id", $this->_user->id, TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id));
         
-        
         foreach($this->homework as $key => $value) {
             $is_complete = true;
             $has_content = false;
@@ -296,8 +295,9 @@ class HomeworkHandler extends Handler {
                     }
                 }
                 
+
                 foreach($classes as $class) {
-                    $class->homework = $class_homework[$class->id];
+                    $class->homework = array_key_exists($class->id, $class_homework) ? $class_homework[$class->id] : null;
                 }
                 $this->classes = $classes;
                 break;

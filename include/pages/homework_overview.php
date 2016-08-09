@@ -260,7 +260,7 @@ $homeworkHandler->get_user_homework();
                 <hr class="widget-separator m-0">
                 <div class="panel-body user-description panel-collapse collapse in" id="collapse-class-<?= $class->id ?>"  role="tabpanel">
                     <?php if(empty($class->homework)) {
-                        echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Denne klasse har ingen lektier i øjeblikket.</div>';
+                        echo '<div class="center latest-homework-empty" class_id="'. $class->id .'" style="margin-top:20px;margin-bottom:20px;"> Denne klasse har ingen lektier i øjeblikket.</div>';
                     } else {
                     ?>
                         <div class="incomplete-homework">
@@ -399,6 +399,11 @@ $(document).ready(function(){
         } else {
             icon.toggleClass("zmdi-minus zmdi-plus");
         }
+    });
+    
+    $(".latest-homework-empty").each(function() {
+        var class_id = $(this).attr("class_id");
+        $(".switcher-" + class_id).trigger("click");
     });
     
     $(".table").on("init.dt", function() {

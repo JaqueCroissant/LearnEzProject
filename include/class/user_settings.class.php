@@ -45,8 +45,6 @@
             }
             $this->blocked_students = array();
             } catch(Exception $ex) {
-                echo $ex->getMessage();
-                echo "lol";
             }
         }
     }

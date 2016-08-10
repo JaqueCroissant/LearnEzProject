@@ -31,6 +31,7 @@ $courses_completed = 0;
         case "1":
 
             $schoolHandler->get_all_schools();
+            $statisticsHandler->get_top_students();
             ?>
 
             <div class="col-md-9 col-sm-12 p-v-0">
@@ -83,25 +84,32 @@ $courses_completed = 0;
                 <div class="col-md-6 col-sm-12 ">
                     <div class="widget">
                         <div class='widget-header'>
-                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . $i_max . " " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
                             <div class="streamline m-l-lg">
-                                <?php for ($i; $i < $i_max; $i++) { ?>
-                                    <div class="sl-item p-b-md">
-                                        <div class="sl-avatar avatar avatar-sm avatar-circle">
-                                            <img class="img-responsive" src="assets/images/profile_images/5.png">
+                                <?php
+                                if(count($statisticsHandler->top_students) > 0)
+                                {
+                                    //var_dump($statisticsHandler->top_students);
+                                    foreach($statisticsHandler->top_students as $value)
+                                    { ?>
+                                        <div class="sl-item p-b-md">
+                                            <div class="sl-avatar avatar avatar-sm avatar-circle">
+                                                <img class="img-responsive" src="<?php echo "assets/images/profile_images/" . $value['image_id'] . ".png"?>">
+                                            </div>
+                                            <div class="sl-content">
+                                                <h5 class="m-t-0">
+                                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo $value['firstname'] . " " . $value['surname']?></a>
+                                                    <small class="text-muted fz-sm"><?php echo $value['username'] ?></small>
+                                                </h5>
+                                                <p><?php echo $value['points']; ?> points</p>
+                                            </div>
                                         </div>
-                                        <div class="sl-content">
-                                            <h5 class="m-t-0">
-                                                <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $i; ?>">John Doe</a>
-                                                <small class="text-muted fz-sm"><?php echo $i == 2 ? "<--- This is you" : ""; ?></small>
-                                            </h5>
-                                            <p><?php echo $i_rand * (10 - $i); ?> points</p>
-                                        </div>
-                                    </div>
-                                <?php } ?>
+                                <?php
+                                    }
+                                } ?>
                             </div>
                         </div>
                     </div>

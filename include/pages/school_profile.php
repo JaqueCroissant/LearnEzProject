@@ -40,7 +40,7 @@ if (isset($_GET['school_id'])) {
             </div>
             <div class="text-center">
                 <?php if (RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) { ?>
-                    <span class="cover-icon change_page a" id="mail" page="mail" step="create_mail" args="&receiver_id=SCHOOL_ADMIN_<?= isset($_GET['school_id']) ? $_GET['school_id'] : "" ; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>"><i class="fa fa-envelope"></i></span>
+                    <span class="cover-icon change_page a" id="mail" page="mail" step="create_mail" args="&receiver_id=SCHOOL_ADMIN_<?= isset($_GET['school_id']) ? $_GET['school_id'] : ""; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>"><i class="fa fa-envelope"></i></span>
                 <?php } ?>
             </div>
         </div>
@@ -103,9 +103,12 @@ if (isset($_GET['school_id'])) {
                                     <?php } ?>
                                 </tbody>
                             </table>
+                        <?php } else {
+                            ?>
+                        <div class="center description" onload="resize()">
+                                <?php echo TranslationHandler::get_static_text("NO_STUDENTS_FOUND"); ?>
+                            </div>
                             <?php
-                        } else {
-                            echo TranslationHandler::get_static_text("NO_STUDENTS_FOUND");
                         }
                         ?>
                     </div>
@@ -144,46 +147,47 @@ if (isset($_GET['school_id'])) {
                     </div>
                 </div>
             </div>
-            
+
         </div>
         <?php if (RightsHandler::has_user_right("SCHOOL_STATISTICS")) { ?>
-        <div class="row" id="statistic">
-            <div class="col-sm-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <?php echo TranslationHandler::get_static_text("STATISTICS"); ?>
-                        </h4>
-                    </div>
-                    <hr class="widget-separator m-0">
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <div class="user-card">
-                                    <div class="center">
-                                        <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
-                                        <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_average; ?>%    </strong>
+            <div class="row" id="statistic">
+                <div class="col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <?php echo TranslationHandler::get_static_text("STATISTICS"); ?>
+                            </h4>
+                        </div>
+                        <hr class="widget-separator m-0">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="user-card">
+                                        <div class="center">
+                                            <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
+                                            <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
+                                                <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_average; ?>%    </strong>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="user-card">
-                                    <div class="center">
-                                        <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
-                                        <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_lecture_average; ?>%    </strong>
+                                <div class="col-sm-4">
+                                    <div class="user-card">
+                                        <div class="center">
+                                            <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
+                                            <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
+                                                <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_lecture_average; ?>%    </strong>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="user-card">
-                                    <div class="center">
-                                        <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
-                                        <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_test_average; ?>%    </strong>
+                                <div class="col-sm-4">
+                                    <div class="user-card">
+                                        <div class="center">
+                                            <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
+                                            <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">
+                                                <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_test_average; ?>%    </strong>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -192,24 +196,13 @@ if (isset($_GET['school_id'])) {
                     </div>
                 </div>
             </div>
-        </div>
         <?php } ?>
     </div>
-
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>
     $(document).ready(function () {
-        $('[data-toggle="tooltip"]').tooltip();
-        if ($(".user-description").height() > $(".user-information").height()) {
-            $(".user-information").height($(".user-description").height());
-        } else {
-            var padding = Math.floor(($(".user-information").height() - $('.description').height()) / 2);
-            $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
-            $(".user-description").height($(".user-information").height());
-        }
-
-        $(document).on("init.dt", function () {
+        function resize() {
             if ($(".students_stream").height() > $(".students_list").height()) {
                 if ($('.progress-text').length) {
                     var padding = Math.floor(($(".students_stream").height() - $('.progress-text').height()) / 2);
@@ -217,12 +210,13 @@ if (isset($_GET['school_id'])) {
                 }
                 $(".students_list").height($(".students_stream").height());
             } else {
-                if ($('.achievements-text').length) {
-                    var padding = Math.floor(($(".students_list").height() - $('.achievements-text').height()) / 2);
-                    $('.achievements-text').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
-                }
+                console.log($(".students_list").height());
                 $(".students_stream").height($(".students_list").height());
+                var padding = Math.floor(($(".students_list").height()) / 2);
+                $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
             }
-        });
+        }
+        $('[data-toggle="tooltip"]').tooltip();
+        $(document).on("draw.dt", resize);
     });
 </script>

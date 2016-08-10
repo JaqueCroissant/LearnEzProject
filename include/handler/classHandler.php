@@ -46,22 +46,22 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            $base_query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
+            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
                             class.start_date, class.end_date, class.open, class.school_id, school.name as school_name
                             FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
-                            INNER JOIN school ON class.school_id = school.id";
+                            INNER JOIN school ON class.school_id = school.id ";
 
             switch ($this->_user->user_type_id) {
                 case 1:
-                    $array = DbHandler::get_instance()->return_query($base_query);
+                    $array = DbHandler::get_instance()->return_query($query);
                     break;
                 case 2:
-                    $query = $base_query . " WHERE school.id = :school_id";
+                    $query .= " WHERE school.id = :school_id";
                     $array = DbHandler::get_instance()->return_query($query, $this->_user->school_id);
                     break;
                 case 3: case 4:
-                    $query = $base_query . " INNER JOIN user_class ON class.id = user_class.class_id WHERE user_class.users_id = :user_id";
-                    $array = DbHandler::get_instance()->return_query($query, $this->_user->id);
+                    $query .= " INNER JOIN user_class ON class.id = user_class.class_id WHERE school.id = :school_id AND user_class.users_id = :user_id";
+                    $array = DbHandler::get_instance()->return_query($query, $this->_user->school_id, $this->_user->id);
                     break;
                 default:
                     break;
@@ -93,15 +93,28 @@ class ClassHandler extends Handler {
             if (!is_numeric($number_of_classes)) {
                 throw new Exception("INVALID_INPUT_IS_NOT_INT");
             }
-            $query = "SELECT * FROM class WHERE end_date > curdate() AND open = 1 ";
-            
+            if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
+                $query = "SELECT class.* FROM class INNER JOIN user_class ON class.id = user_class.class_id WHERE end_date > curdate() AND open = 1 AND user_class.users_id = :user_id ";
+            } else {
+                $query = "SELECT class.* FROM class WHERE end_date > curdate() AND open = 1 ";
+            }
             if ($school_id != 0) {
                 $this->verify_school_exists($school_id);
                 $query .= "AND school_id = :school_id ORDER BY end_date LIMIT :limit";
-                $data = DbHandler::get_instance()->return_query($query, $school_id, $number_of_classes);
+                if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
+                    $data = DbHandler::get_instance()->return_query($query, $this->_user->id, $school_id, $number_of_classes);
+                } else {
+                    $data = DbHandler::get_instance()->return_query($query, $school_id, $number_of_classes);
+                }
             } else {
                 $query .= "ORDER BY end_date LIMIT :limit";
-                $data = DbHandler::get_instance()->return_query($query, $number_of_classes);
+                if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
+                    
+                    $data = DbHandler::get_instance()->return_query($query, $this->_user->id, $number_of_classes);
+                } else {
+                    
+                    $data = DbHandler::get_instance()->return_query($query, $number_of_classes);
+                }
             }
             $this->soon_expiring_classes = [];
             foreach ($data as $value) {

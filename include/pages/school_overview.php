@@ -9,7 +9,7 @@ $classHandler->get_all_classes();
 if ($classHandler->_user->user_type_id != 1) {
     $schoolHandler->get_school_by_id($classHandler->_user->school_id);
 } elseif ($classHandler->_user->user_type_id = 1) {
-    $schoolHandler->get_all_schools();
+    $schoolHandler->get_all_schools(true);
 }
 $targets = RightsHandler::has_user_right("SCHOOL_EDIT") ? ", targets: [6]" : "";
 ?>
@@ -95,7 +95,7 @@ switch ($classHandler->_user->user_type_id) {
         </div>
         <?php
         break;
-    case "2": case "3":
+    case "2":
         ?>
         <div class="row">
             <div class="col-md-9 col-sm-12">
@@ -143,7 +143,7 @@ switch ($classHandler->_user->user_type_id) {
                         </div>
                         <div class="widget">
                             <div class="widget-header">
-                                <h4 class="widget-title">ELEVER</h4>
+                                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></h4>
                             </div>
                             <hr class="widget-separator">
                             <div class="widget-body">
@@ -170,18 +170,13 @@ switch ($classHandler->_user->user_type_id) {
                     <div class="col-md-12">
                         <div class="widget">
                             <div class="widget-header">
-                                <h4 class="widget-title">Shortcuts and general information</h4>
+                                <h4 class="widget-title"><?php echo $schoolHandler->school->name; ?></h4>
                             </div>
                             <hr class="widget-separator">
                             <div class="widget-body">
                                 <div class="col-sm-10">
-                                    <?php
-                                    if ($classHandler->_user->user_type_id != 1) {
-                                        echo '<h4>' . $schoolHandler->school->name . '</h4>';
-                                        echo '<h6>' . $schoolHandler->school->address . '</h6>';
-                                        echo '<h6>' . $schoolHandler->school->zip_code . ' ' . $schoolHandler->school->city . '</h6>';
-                                    }
-                                    ?>
+                                    <h6 class="text-muted"><?php echo $schoolHandler->school->address; ?></h6>
+                                    <h6 class="text-muted"><?php echo $schoolHandler->school->zip_code . " " . $schoolHandler->school->city; ?></h6>
                                 </div>
                                 <div class="col-sm-2">
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
@@ -199,7 +194,7 @@ switch ($classHandler->_user->user_type_id) {
 
         <?php
         break;
-    case "4":
+    case "3": case "4":
         ?>
         <div class="row">
             <div class="col-sm-3">
@@ -207,13 +202,12 @@ switch ($classHandler->_user->user_type_id) {
                     <div class="col-md-12">
                         <div class="widget">
                             <div class="widget-header">
-                                <h4 class="widget-title">Shortcuts and general information</h4>
+                                <h4 class="widget-title"><?php echo $schoolHandler->school->name; ?></h4>
                             </div>
                             <hr class="widget-separator">
                             <div class="widget-body">
                                 <div class="col-sm-10">
-                                    <h4><?php echo $schoolHandler->school->name; ?></h4>
-                                    <h6 class='text-muted'><?php echo $schoolHandler->school->address; ?></h4>
+                                    <h6 class='text-muted'><?php echo $schoolHandler->school->address; ?></h6>
                                     <h6 class='text-muted'><?php echo $schoolHandler->school->zip_code . ' ' . $schoolHandler->school->city; ?></h6>
                                 </div>
                                 <div class="col-sm-2">

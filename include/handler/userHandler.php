@@ -1002,16 +1002,22 @@ class UserHandler extends Handler
                 throw new exception("USER_NOT_LOGGED_IN");
             }
 
-            if (!RightsHandler::has_user_right("ACCOUNT_FIND") || !RightsHandler::has_user_right("SCHOOL_FIND")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
-            
             if(empty($school_id) || !is_numeric($school_id))
             {
                 throw new Exception("INVALID_INPUT");
             }
             
-            $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE school_id = :id", $school_id);
+            if (!RightsHandler::has_user_right("ACCOUNT_FIND")) {
+                        throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if (!RightsHandler::has_user_right("SCHOOL_FIND") && $school_id != $this->_user->school_id) {
+                        throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+
+
+
+            $user_data = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE users.school_id = :school_id AND translation_user_type.language_id = :language_id AND users.user_type_id >= :user_type_id", $school_id, TranslationHandler::get_current_language(), $this->_user->user_type_id);
             
             $this->users = array();
             if(count($user_data > 0))

@@ -2,9 +2,12 @@
 
 class StatisticsHandler extends Handler {
 
+    //CLASS STATS
     public $class_average;
     public $class_test_average;
     public $class_lecture_average;
+
+    //STUDENT STATS
     public $student_lecture_average;
     public $student_test_average;
     public $student_lectures_complete;
@@ -13,6 +16,16 @@ class StatisticsHandler extends Handler {
     public $student_tests_started;
     public $student_total_tests;
     public $student_total_lectures;
+
+    //TEACHER STATS
+    public $teacher_course_average;
+    public $teacher_test_average;
+    public $teacher_lectures_complete;
+    public $teacher_tests_complete;
+    public $teacher_lectures_started;
+    public $teacher_tests_started;
+    public $teacher_total_tests;
+    public $teacher_total_lectures;
 
     private $_school_id;
     private $_class_id;
@@ -138,7 +151,7 @@ class StatisticsHandler extends Handler {
         }
     }
 
-    public function get_student_progress()
+    public function get_student_stats()
     {
         try
         {
@@ -171,7 +184,7 @@ class StatisticsHandler extends Handler {
 
                 if(!array_key_exists($value['course_id'], $tests))
                 {
-                    $tests[$value['course_id']] = ($progress / $value['total']) * 100;
+                    $tests[$value['course_id']] = $value['total'] != 0 ? ($progress / $value['total']) * 100 : 0;
                 }
             }
             else
@@ -180,7 +193,7 @@ class StatisticsHandler extends Handler {
 
                 if(!array_key_exists($value['course_id'], $lectures))
                 {
-                    $lectures[$value['course_id']] = ($progress / $value['total']) * 100;
+                    $lectures[$value['course_id']] = $value['total'] != 0 ? ($progress / $value['total']) * 100 : 0;
                 }
             }
         }
@@ -210,5 +223,87 @@ class StatisticsHandler extends Handler {
         {
             $this->student_tests_complete += $value['is_complete'];
         }
+    }
+
+    public function get_teacher_stats()
+    {
+        try
+        {
+            if (!$this->user_exists())
+            {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            $this->get_teacher_averages();
+            $this->get_teacher_totals();
+
+        }
+        catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    private function get_teacher_averages()
+    {
+        $data_array = DbHandler::get_instance()->return_query("SELECT progress_view.* FROM progress_view INNER JOIN user_class ON progress_view.class_id = user_class.class_id WHERE user_class.users_id  = :user_id", $this->_user->id);
+        $students = [];
+        $courses = [];
+        $tests = [];
+        $course_progress = 0;
+        $course_total = 0;
+        $test_progress = 0;
+        $test_total = 0;
+
+        foreach($data_array as $value)
+        {
+            if($value['user_id'] != $this->_user->id)
+            {
+                $student_exists = array_key_exists($value['user_id'], $students);
+                $course_exists = array_key_exists($value['course_id'], $courses);
+                $test_exists = array_key_exists($value['course_id'], $tests);
+
+                if(!$student_exists)
+                {
+                    $students[] = $value['user_id'];
+                }
+
+                if($value['type'] == 1)
+                {
+                    if(!$test_exists)
+                    {
+                        $tests[] = $value['course_id'];
+                    }
+
+                    if((!$student_exists && !$test_exists) || ($student_exists && !$test_exists) || (!$student_exists && $test_exists))
+                    {
+                        $test_progress += $value['progress'];
+                        $test_total += $value['total'];
+                    }
+                }
+                else
+                {
+                    if(!$course_exists)
+                    {
+                        $courses[] = $value['course_id'];
+                    }
+
+                    if((!$student_exists && !$course_exists) || ($student_exists && !$course_exists) || (!$student_exists && $course_exists))
+                    {
+                        $course_progress += $value['progress'];
+                        $course_total += $value['total'];
+                    }
+                }
+
+            }
+        }
+
+        $this->teacher_course_average = $course_total != 0 ? round(($course_progress / $course_total) * 100, 0) : 0;
+        $this->teacher_test_average = $test_total != 0 ? round(($test_progress / $test_total) * 100, 0) : 0;
+    }
+
+    private function get_teacher_totals()
+    {
+
     }
 }

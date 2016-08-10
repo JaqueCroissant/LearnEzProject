@@ -14,7 +14,7 @@
     if (SessionKeyHandler::session_exists("user")) {
 ?>
     <div class="aside-user">
-        <div class="media">
+        <div class="media change_page" page="account_profile" args="&user_id=<?= $userHandler->_user->id ?>" style="cursor:pointer;">
             <div class="media-left">
                 <div class="avatar avatar-md avatar-circle">
                     <a href="javascript:void(0)">

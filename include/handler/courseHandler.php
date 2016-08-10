@@ -235,7 +235,7 @@ class CourseHandler extends Handler {
                 throw new exception("INSUFFICIENT_RIGHTS");
             }
 
-            if (empty($school_id) || !is_numeric($school_id) || !is_array($array) || !(DbHandler::get_instance()->count_query("SELECT id FROM school WHERE id = :id", $school_id) > 0)) {
+            if (empty($school_id) || !is_numeric($school_id) || empty($array) || !is_array($array) || !(DbHandler::get_instance()->count_query("SELECT id FROM school WHERE id = :id", $school_id) > 0)) {
                 throw new exception("INVALID_INPUT");
             }
 

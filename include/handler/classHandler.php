@@ -6,6 +6,7 @@ class ClassHandler extends Handler {
     public $classes;
     public $years;
     public $format = "Y-m-d";
+    public $soon_expiring_classes;
 
     public function __construct() {
         parent::__construct();
@@ -27,6 +28,8 @@ class ClassHandler extends Handler {
 
             $this->school_class = new School_Class(reset(DbHandler::get_instance()->return_query($query, $class_id)));
             $this->school_class->remaining_days = $this->set_remaining_days($this->school_class);
+            $this->school_class->number_of_students = $this->get_number_of_students_in_class($class_id);
+            $this->school_class->number_of_teachers = $this->get_number_of_teachers_in_class($class_id);
 
             if (empty($this->school_class)) {
                 throw new Exception("OBJECT_IS_EMPTY");
@@ -43,25 +46,22 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("CLASS_FIND")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
-            $base_query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
+            $query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
                             class.start_date, class.end_date, class.open, class.school_id, school.name as school_name
                             FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
-                            INNER JOIN school ON class.school_id = school.id";
+                            INNER JOIN school ON class.school_id = school.id ";
 
             switch ($this->_user->user_type_id) {
                 case 1:
-                    $array = DbHandler::get_instance()->return_query($base_query);
+                    $array = DbHandler::get_instance()->return_query($query);
                     break;
                 case 2:
-                    $query = $base_query . " WHERE school.id = :school_id";
+                    $query .= " WHERE school.id = :school_id";
                     $array = DbHandler::get_instance()->return_query($query, $this->_user->school_id);
                     break;
-                case 3:
-                    $query = $base_query . " INNER JOIN user_class ON class.id = user_class.class_id WHERE user_class.users_id = :user_id";
-                    $array = DbHandler::get_instance()->return_query($query, $this->_user->id);
+                case 3: case 4:
+                    $query .= " INNER JOIN user_class ON class.id = user_class.class_id WHERE school.id = :school_id AND user_class.users_id = :user_id";
+                    $array = DbHandler::get_instance()->return_query($query, $this->_user->school_id, $this->_user->id);
                     break;
                 default:
                     break;
@@ -75,6 +75,53 @@ class ClassHandler extends Handler {
                 $this->classes[] = $class;
             }
 
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function get_soon_expiring_classes($school_id = 0, $number_of_classes = 5) {
+        try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (!RightsHandler::has_user_right("CLASS_FIND")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            if (!is_numeric($number_of_classes)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+            if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
+                $query = "SELECT class.* FROM class INNER JOIN user_class ON class.id = user_class.class_id WHERE end_date > curdate() AND open = 1 AND user_class.users_id = :user_id ";
+            } else {
+                $query = "SELECT class.* FROM class WHERE end_date > curdate() AND open = 1 ";
+            }
+            if ($school_id != 0) {
+                $this->verify_school_exists($school_id);
+                $query .= "AND school_id = :school_id ORDER BY end_date LIMIT :limit";
+                if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
+                    $data = DbHandler::get_instance()->return_query($query, $this->_user->id, $school_id, $number_of_classes);
+                } else {
+                    $data = DbHandler::get_instance()->return_query($query, $school_id, $number_of_classes);
+                }
+            } else {
+                $query .= "ORDER BY end_date LIMIT :limit";
+                if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
+                    
+                    $data = DbHandler::get_instance()->return_query($query, $this->_user->id, $number_of_classes);
+                } else {
+                    
+                    $data = DbHandler::get_instance()->return_query($query, $number_of_classes);
+                }
+            }
+            $this->soon_expiring_classes = [];
+            foreach ($data as $value) {
+                $class = new School_Class($value);
+                $class->remaining_days = $this->set_remaining_days($class);
+                $this->soon_expiring_classes[] = $class;
+            }
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -108,6 +155,8 @@ class ClassHandler extends Handler {
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
+                $class->number_of_students = $this->get_number_of_students_in_class($class->id);
+                $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $this->classes[] = $class;
             }
 
@@ -136,6 +185,8 @@ class ClassHandler extends Handler {
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
+                $class->number_of_students = $this->get_number_of_students_in_class($class->id);
+                $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $this->classes[] = $class;
             }
 
@@ -170,6 +221,35 @@ class ClassHandler extends Handler {
                 return true;
             }
             return false;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function add_user_to_class($array_of_user_ids_or_single_id, $class_id) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("CLASS_ASSIGN_USER")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            $this->verify_class_exists($class_id);
+            $query = "INSERT INTO user_class (users_id, class_id) VALUES (:user_id, :class_id)";
+
+            if (is_array($array_of_user_ids_or_single_id) && !empty($array_of_user_ids_or_single_id)) {
+                foreach ($array_of_user_ids_or_single_id as $value) {
+                    DbHandler::get_instance()->query($query, $value, $class_id);
+                }
+            } elseif (is_numeric($array_of_user_ids_or_single_id)) {
+                DbHandler::get_instance()->query($query, $array_of_user_ids_or_single_id, $class_id);
+            } else {
+                throw new Exception("OBJECT_IS_EMPTY");
+            }
+
+            return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;

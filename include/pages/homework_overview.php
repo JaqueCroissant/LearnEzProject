@@ -60,6 +60,7 @@ $homeworkHandler->get_user_homework();
         echo '<div class="calendar-element" data-toggle="tooltip" data-trigger="hover" title="'. $value->day_title .' - '. $value->day .' '. $value->month_title .'">
                 <div class="calendar-element-container '. ($value->is_today ? 'calendar-element-container-today' : '') .' '. (!$value->in_current_month ? 'calendar-element-disabled' : '') .'">
                     <div class="calendar-element-date">'. $value->day .'</div>
+                    '. (RightsHandler::has_user_right("HOMEWORK_CREATE") ? '<div class="calendar-element-create-homework change_page" page="create_homework" args="&date='. $value->full_date .'" style="visibility:hidden;" data-toggle="tooltip" data-trigger="manual" title="Opret lektie"><i class="zmdi zmdi-plus" style="display:initial !important;"></i></div>' : '') .'
                     <div style="clear:both;"></div>
                     <div class="calendar-element-content">';
         if(!empty($value->content)) {
@@ -102,12 +103,12 @@ $homeworkHandler->get_user_homework();
                         <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength: 5,columnDefs:[{orderable: false, targets: [3,4,5]}], order:[], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}">
                             <thead>
                                 <tr>
-                                    <th>Titel</th>
-                                    <th>Klasser</th>
-                                    <th>Dato slut</th>
-                                    <th style='text-align:center;'>Lektioner</th>
-                                    <th style='text-align:center;'>Tests</th>
-                                    <th style='text-align:center;'>Status</th>
+                                    <th><?= TranslationHandler::get_static_text("TITLE") ?></th>
+                                    <th><?= TranslationHandler::get_static_text("CLASSES") ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("END") ?> <?= strtolower(TranslationHandler::get_static_text("DATE_DATE")) ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("LECTURES") ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("TESTS") ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("STATUS") ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -139,7 +140,7 @@ $homeworkHandler->get_user_homework();
                                         ?>">
                                         <td><?php echo $value->title; ?></td>
                                         <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 40 ? substr($classes, 0, 40) . "..." : $classes ?></span></td>
-                                        <td><?php echo $value->date_expire; ?></td>
+                                        <td style='text-align:center;'><?php echo $value->date_expire; ?></td>
                                         <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                         <td style='text-align:center;'><?= count($value->tests) ?></td>
                                         <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
@@ -168,12 +169,12 @@ $homeworkHandler->get_user_homework();
                         <table id="classes" class="table display table-hover" data-plugin="DataTable"  data-options="{pageLength: 5,columnDefs:[{orderable: false, targets: [3,4,5]}], order:[], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}">
                             <thead>
                                 <tr>
-                                    <th>Titel</th>
-                                    <th>Klasser</th>
-                                    <th>Dato slut</th>
-                                    <th style='text-align:center;'>Lektioner</th>
-                                    <th style='text-align:center;'>Tests</th>
-                                    <th style='text-align:center;'>Status</th>
+                                    <th><?= TranslationHandler::get_static_text("TITLE") ?></th>
+                                    <th><?= TranslationHandler::get_static_text("CLASSES") ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("END") ?> <?= strtolower(TranslationHandler::get_static_text("DATE_DATE")) ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("LECTURES") ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("TESTS") ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("STATUS") ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -205,7 +206,7 @@ $homeworkHandler->get_user_homework();
                                         ?>">
                                         <td><?php echo $value->title; ?></td>
                                         <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 40 ? substr($classes, 0, 40) . "..." : $classes ?></span></td>
-                                        <td><?php echo $value->date_expire; ?></td>
+                                        <td style='text-align:center;'><?php echo $value->date_expire; ?></td>
                                         <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                         <td style='text-align:center;'><?= count($value->tests) ?></td>
                                         <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
@@ -260,29 +261,22 @@ $homeworkHandler->get_user_homework();
                 <hr class="widget-separator m-0">
                 <div class="panel-body user-description panel-collapse collapse in" id="collapse-class-<?= $class->id ?>"  role="tabpanel">
                     <?php if(empty($class->homework)) {
-                        echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Denne klasse har ingen lektier i øjeblikket.</div>';
+                        echo '<div class="center latest-homework-empty" class_id="'. $class->id .'" style="margin-top:20px;margin-bottom:20px;"> Denne klasse har ingen lektier i øjeblikket.</div>';
                     } else {
                     ?>
                         <div class="incomplete-homework">
                         <table class="my_data_table table display table-hover" class_id="<?= $class->id ?>" data-plugin="DataTable" data-options="{pageLength: 5,columnDefs:[{orderable: false, targets: [3,4]}], order:[], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}">
                             <thead>
                                 <tr>
-                                    <th>Titel</th>
+                                    <th><?= TranslationHandler::get_static_text("TITLE") ?></th>
                                     <th>Udstedt af</th>
-                                    <th>Dato slut</th>
-                                    <th style='text-align:center;'>Lektioner</th>
-                                    <th style='text-align:center;'>Tests</th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("END") ?> <?= strtolower(TranslationHandler::get_static_text("DATE_DATE")) ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("LECTURES") ?></th>
+                                    <th style='text-align:center;'><?= TranslationHandler::get_static_text("TESTS") ?></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($class->homework as $value) {
-                                    $classes = "";
-                                    for($i = 0; $i < count($value->classes); $i++) {
-                                        $classes .= $value->classes[$i]->title;
-                                        $classes .= $i != count($value->classes)-1 ? ", " : "";
-                                    }
-
-                                    ?>
+                                <?php foreach ($class->homework as $value) { ?>
                                     <tr class="a change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="
                                         <?php
                                         if(!empty($value->lectures)) {
@@ -303,7 +297,7 @@ $homeworkHandler->get_user_homework();
                                         ?>">
                                         <td><?php echo $value->title; ?></td>
                                         <td><span data-toggle="tooltip" title="<?= $value->firstname. ' ' . $value->surname ?>"><?= strlen($value->firstname. ' ' . $value->surname) > 40 ? substr($value->firstname. ' ' . $value->surname, 0, 40) . "..." : $value->firstname. ' ' . $value->surname ?></span></td>
-                                        <td><?php echo $value->date_expire; ?></td>
+                                        <td style='text-align:center;'><?php echo $value->date_expire; ?></td>
                                         <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                         <td style='text-align:center;'><?= count($value->tests) ?></td>
                                     </tr>
@@ -341,7 +335,7 @@ $homeworkHandler->get_user_homework();
 <script>
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip(); 
-    $('[data-toggle="popover"]').popover();
+    $('[data-toggle="popover"]').popover({trigger: "hover"});
     
     $('.calendar-element-row').each(function() {
         var maxHeight = -1;
@@ -381,6 +375,25 @@ $(document).ready(function(){
        });
     });
    
+   $(document).on("mouseover", ".calendar-element", function() {
+       var element = $(this).find(".calendar-element-create-homework");
+       element.removeAttr('style').css("visibility","visibile");
+   });
+   
+   $(document).on("mouseleave", ".calendar-element", function() {
+       var element = $(this).find(".calendar-element-create-homework");
+       element.removeAttr('style').css("visibility","hidden");
+   });
+   
+   $(document).on("mouseover", ".calendar-element-create-homework", function() {
+       $(this).tooltip("show");
+       $(this).closest(".calendar-element").tooltip("hide");
+   });
+   
+   $(document).on("mouseleave", ".calendar-element-create-homework", function() {
+       $(this).tooltip("hide");
+       $(this).closest(".calendar-element").tooltip("show");
+   });
     
    $(document).on("mouseover", ".calendar-homework", function() {
        $(this).tooltip("show");
@@ -399,6 +412,11 @@ $(document).ready(function(){
         } else {
             icon.toggleClass("zmdi-minus zmdi-plus");
         }
+    });
+    
+    $(".latest-homework-empty").each(function() {
+        var class_id = $(this).attr("class_id");
+        $(".switcher-" + class_id).trigger("click");
     });
     
     $(".table").on("init.dt", function() {

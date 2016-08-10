@@ -13,12 +13,14 @@ if ($classHandler->_user->user_type_id != 1) {
 }
 $targets = RightsHandler::has_user_right("SCHOOL_EDIT") ? ", targets: [6]" : "";
 ?>
-<div class="row">
-    <?php
-    switch ($classHandler->_user->user_type_id) {
-        case "1":
-            ?>
-            <div class="col-md-12 col-sm-12">
+
+<?php
+switch ($classHandler->_user->user_type_id) {
+    case "1":
+        $schoolHandler->get_soon_expiring_schools();
+        ?>
+        <div class="row">
+            <div class="col-md-9 col-sm-12">
                 <div class="widget">
                     <div class="widget-header">
                         <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("SCHOOLS")); ?></h4>
@@ -35,7 +37,7 @@ $targets = RightsHandler::has_user_right("SCHOOL_EDIT") ? ", targets: [6]" : "";
                                     <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                                    <th class="center"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
+                                        <th class="center"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                     <?php } ?>
                                 </tr>
                             </thead>
@@ -68,119 +70,168 @@ $targets = RightsHandler::has_user_right("SCHOOL_EDIT") ? ", targets: [6]" : "";
                     </div>
                 </div>
             </div>
-            <!--            <div class="col-md-6 col-sm-12">
-                            <div class="widget">
-                                <div class="widget-header">
-                                    <h4 class="widget-title">dsds</h4>
+            <div class="col-md-3 col-sm-12">
+                <div class="widget">
+                    <div class='widget-header'>
+                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("SOON_EXPIRING"); ?></h4>
+                    </div>
+                    <hr class="widget-separator m-0">
+                    <div class="widget-body">
+                        <div class="streamline m-l-lg">
+                            <?php foreach ($schoolHandler->soon_expiring_schools as $value) { ?>
+                                <div class="sl-item <?php echo $value->remaining_days <= 30 ? "sl-danger" : "sl-primary" ?> p-b-md">
+                                    <div class="sl-content">
+                                        <div class="m-t-0 change_page a <?php echo $value->remaining_days <= 30 ? "text-danger animate-twice animated headShake" : "text-primary" ?>" page='school_profile' step='' args='&school_id=<?php echo $value->id; ?>'>
+                                            <?php echo $value->name; ?>
+                                        </div>
+                                        <p class="text-muted"><?php echo $value->remaining_days . " " . strtolower(TranslationHandler::get_static_text("DAYS_REMAINING")); ?></p>
+                                    </div>
                                 </div>
-                                <hr class="widget-separator m-0">
-                                <div class="widget-body">
-            
-                                </div>
-                            </div>
-                        </div>-->
-            <?php
-            break;
-        case "2": case "3": case "4":
-            ?>
-            <div class="col-md-9 col-sm-12">
-                <div class="col-md-12">
-                    <div class="widget">
-                        <div class="widget-header">
-                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
-                        </div>
-                        <hr class="widget-separator">
-                        <div class="widget-body">
-                            <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
-                                <thead>
-                                    <tr>
-                                        <th><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
-                                        <?php if ($classHandler->_user->user_type_id == "1") { ?>
-                                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
-                                        <?php } ?>
-                                        <th><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
-                                        <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
-                                        <th><?php echo TranslationHandler::get_static_text("TEACHERS"); ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    foreach ($classHandler->classes as $value) {
-                                        if ($value->open == "1") {
-                                            ?>
-                                            <tr>
-                                                <td><?php echo $value->title; ?></td>
-                                                <?php if ($classHandler->_user->user_type_id == "1") { ?>
-                                                    <td><?php echo $value->school_name; ?></td>
-                                                <?php } ?>
-                                                <td><?php echo $value->class_year; ?></td>
-                                                <td><?php echo $value->number_of_students; ?></td>
-                                                <td><?php echo $value->number_of_teachers; ?></td>
-                                            </tr>
-                                            <?php
-                                        }
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
+                            <?php } ?>
                         </div>
                     </div>
-                    <div class="widget">
-                        <div class="widget-header">
-                            <h4 class="widget-title">ELEVER</h4>
+                </div>
+            </div>
+        </div>
+        <?php
+        break;
+    case "2": case "3":
+        ?>
+        <div class="row">
+            <div class="col-md-9 col-sm-12">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
+                            </div>
+                            <hr class="widget-separator">
+                            <div class="widget-body">
+                                <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
+                                            <?php if ($classHandler->_user->user_type_id == "1") { ?>
+                                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                            <?php } ?>
+                                            <th><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("TEACHERS"); ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($classHandler->classes as $value) {
+                                            if ($value->open == "1") {
+                                                ?>
+                                                <tr>
+                                                    <td><?php echo $value->title; ?></td>
+                                                    <?php if ($classHandler->_user->user_type_id == "1") { ?>
+                                                        <td><?php echo $value->school_name; ?></td>
+                                                    <?php } ?>
+                                                    <td><?php echo $value->class_year; ?></td>
+                                                    <td><?php echo $value->number_of_students; ?></td>
+                                                    <td><?php echo $value->number_of_teachers; ?></td>
+                                                </tr>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <hr class="widget-separator">
-                        <div class="widget-body">
-                            <table id="students" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
-                                <thead>
-                                    <tr>
-                                        <th><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
-                                        <?php if ($classHandler->_user->user_type_id == "1") { ?>
-                                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
-                                        <?php } ?>
-                                        <th><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
-                                        <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
-                                        <th><?php echo TranslationHandler::get_static_text("TEACHERS"); ?></th>
-                                    </tr>
-                                </thead>
-                            </table>
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h4 class="widget-title">ELEVER</h4>
+                            </div>
+                            <hr class="widget-separator">
+                            <div class="widget-body">
+                                <table id="students" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo TranslationHandler::get_static_text("CLASS_TITLE"); ?></th>
+                                            <?php if ($classHandler->_user->user_type_id == "1") { ?>
+                                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
+                                            <?php } ?>
+                                            <th><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("TEACHERS"); ?></th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-12">
-                <div class="col-md-12">
-                    <div class="widget">
-                        <div class="widget-header">
-                            <h4 class="widget-title">Shortcuts and general information</h4>
-                        </div>
-                        <hr class="widget-separator">
-                        <div class="widget-body">
-                            <div class="col-sm-10">
-                                <?php
-                                if ($classHandler->_user->user_type_id != 1) {
-                                    echo '<h4>' . $schoolHandler->school->name . '</h4>';
-                                    echo '<h6>' . $schoolHandler->school->address . '</h6>';
-                                    echo '<h6>' . $schoolHandler->school->zip_code . ' ' . $schoolHandler->school->city . '</h6>';
-                                }
-                                ?>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h4 class="widget-title">Shortcuts and general information</h4>
                             </div>
-                            <div class="col-sm-2">
-                                <?php if ($classHandler->_user->user_type_id != 1) { ?>
+                            <hr class="widget-separator">
+                            <div class="widget-body">
+                                <div class="col-sm-10">
+                                    <?php
+                                    if ($classHandler->_user->user_type_id != 1) {
+                                        echo '<h4>' . $schoolHandler->school->name . '</h4>';
+                                        echo '<h6>' . $schoolHandler->school->address . '</h6>';
+                                        echo '<h6>' . $schoolHandler->school->zip_code . ' ' . $schoolHandler->school->city . '</h6>';
+                                    }
+                                    ?>
+                                </div>
+                                <div class="col-sm-2">
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <div class="p-t-xs">
                                             <i class = "fa fa-edit fa-fw fa-2x edit_school m-r-md a" school_id="<?php echo $schoolHandler->school->id; ?>"></i>
                                         </div>
                                     <?php } ?>
-                                <?php } ?>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <?php
-            break;
-    }
-    ?>
+        </div>
+
+        <?php
+        break;
+    case "4":
+        ?>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="widget">
+                            <div class="widget-header">
+                                <h4 class="widget-title">Shortcuts and general information</h4>
+                            </div>
+                            <hr class="widget-separator">
+                            <div class="widget-body">
+                                <div class="col-sm-10">
+                                    <h4><?php echo $schoolHandler->school->name; ?></h4>
+                                    <h6 class='text-muted'><?php echo $schoolHandler->school->address; ?></h4>
+                                    <h6 class='text-muted'><?php echo $schoolHandler->school->zip_code . ' ' . $schoolHandler->school->city; ?></h6>
+                                </div>
+                                <div class="col-sm-2">
+                                    <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                        <div class="p-t-xs">
+                                            <i class = "fa fa-edit fa-fw fa-2x edit_school m-r-md a" school_id="<?php echo $schoolHandler->school->id; ?>"></i>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+        break;
+}
+?>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>

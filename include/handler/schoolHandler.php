@@ -8,6 +8,7 @@ class SchoolHandler extends Handler {
     public $school_types;
     public $test;
     public $open_slots;
+    public $soon_expiring_schools;
     public $format = "Y-m-d";
 
     public function __construct() {
@@ -33,7 +34,9 @@ class SchoolHandler extends Handler {
             $this->all_schools = [];
             $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {
-                $this->all_schools[] = new School($value);
+                $school = new School($value);
+                $school->remaining_days = $this->set_remaining_days($school);
+                $this->all_schools[] = $school;
             }
 
             if (count($this->all_schools) == 0) {
@@ -72,117 +75,6 @@ class SchoolHandler extends Handler {
             }
 
             return true;
-        } catch (Exception $exc) {
-            $this->error = ErrorHandler::return_error($exc->getMessage());
-            return false;
-        }
-    }
-
-    public function get_school_rights($school_id) {
-        try {
-            if (!$this->user_exists()) {
-                throw new Exception("USER_NOT_LOGGED_IN");
-            }
-            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
-            $this->verify_school_exists($school_id);
-
-            $query = "SELECT * FROM school_rights WHERE school_id = :school_id";
-            $school_rights_id_array = DbHandler::get_instance()->return_query($query, $school_id);
-
-            if (count($school_rights_id_array) == 0) {
-                throw new Exception("NO_RIGHTS_FOUND_FOR_THIS_SCHOOL");
-            }
-
-            $query_rights = "SELECT * FROM rights WHERE id = :id";
-            foreach ($school_rights_id_array as $rights_id) {
-                $right = reset(DbHandler::get_instance()->return_query($query_rights, $rights_id["rights_id"]));
-                $this->this_school_rights[] = $right["prefix"];
-            }
-            return true;
-        } catch (Exception $exc) {
-            $this->error = ErrorHandler::return_error($exc->getMessage());
-            return false;
-        }
-    }
-
-    public function update_school_rights_by_id($school_id, $array_of_rights_prefixes) {
-        try {
-            if (!$this->user_exists()) {
-                throw new Exception("USER_NOT_LOGGED_IN");
-            }
-            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
-            $this->verify_school_exists($school_id);
-            if (!$this->delete_school_rights_by_school_id($school_id)) {
-                return false;
-            }
-
-            if ($this->assign_school_rights_by_school_id($school_id, $array_of_rights_prefixes)) {
-                return true;
-            }
-
-            return false;
-        } catch (Exception $exc) {
-            $this->error = ErrorHandler::return_error($exc->getMessage());
-            return false;
-        }
-    }
-
-    public function assign_school_rights_by_school_id($school_id, $array_of_rights_prefixes) {
-        try {
-            if (!$this->user_exists()) {
-                throw new Exception("USER_NOT_LOGGED_IN");
-            }
-            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
-            $this->verify_array_contains_strings($array_of_rights_prefixes);
-            $query_rights_id = "SELECT id FROM rights WHERE prefix in (";
-            if (empty($array_of_rights_prefixes)) {
-                throw new Exception("RIGHTS_ARRAY_IS_EMPTY");
-            }
-
-            foreach ($array_of_rights_prefixes as $value) {
-                $query_rights_id .= "'" . $value . "', ";
-            }
-
-            $query_rights_id = rtrim($query_rights_id, ', ');
-            $query_rights_id .= ")";
-            $rights_id_array = DbHandler::get_instance()->return_query($query_rights_id);
-            $query_assign_rights = "INSERT INTO school_rights (school_id, rights_id) VALUES (:school_id, :rights_id)";
-
-            foreach ($rights_id_array as $value) {
-                DbHandler::get_instance()->query($query_assign_rights, $school_id, $value['id']);
-            }
-
-            $this->get_school_rights($school_id);
-            return true;
-        } catch (Exception $exc) {
-            $this->error = ErrorHandler::return_error($exc->getMessage());
-            return false;
-        }
-    }
-
-    private function delete_school_rights_by_school_id($school_id) {
-        try {
-            if (!$this->user_exists()) {
-                throw new Exception("USER_NOT_LOGGED_IN");
-            }
-            if (!RightsHandler::has_user_right("SCHOOL_SET_RIGHTS")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
-            $this->verify_school_exists($school_id);
-
-            $query = "DELETE FROM school_rights WHERE school_id = :school_id";
-
-            if (DbHandler::get_instance()->query($query, $school_id)) {
-                return true;
-            } else {
-                throw new Exception("SCHOOL_RIGHTS_COULD_NOT_BE_DELETED_UNKNOWN_ERROR");
-            }
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
@@ -460,6 +352,32 @@ class SchoolHandler extends Handler {
             return true;
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    public function get_soon_expiring_schools($limit = 60) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            if (!is_numeric($limit)) {
+                throw new Exception("INVALID_INPUT");
+            }
+            if ($this->_user->user_type_id != 1) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            $query = "SELECT * FROM school WHERE subscription_end BETWEEN curdate() AND curdate() + INTERVAL :limit DAY AND open = 1 ORDER BY subscription_end";
+            $data = DbHandler::get_instance()->return_query($query, $limit);
+            $this->soon_expiring_schools = [];
+            foreach ($data as $value) {
+                $school = new School($value);
+                $school->remaining_days = $this->set_remaining_days($school);
+                $this->soon_expiring_schools[] = $school;
+            }
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
     }

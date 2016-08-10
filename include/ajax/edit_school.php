@@ -25,9 +25,11 @@ if (isset($_POST['state'])) {
             $school_courses = isset($_POST['selected']) ? $_POST['selected'] : [];
 
             if ($schoolHandler->update_school_by_id($school_id, $school_name, $school_phone, $school_address, $school_zip_code, $school_city, $school_email, $school_type_id, $school_max_students, $school_subscription_start, $school_subscription_end)) {
-                if (!$courseHandler->assign_school_course($school_courses, $school_id)) {
-                    $array['error'] = $courseHandler->error->title;
-                    $array['status_value'] = false;
+                if (count($school_courses) > 0) {
+                    if (!$courseHandler->assign_school_course($school_courses, $school_id)) {
+                        $array['error'] = $courseHandler->error->title;
+                        $array['status_value'] = false;
+                    }
                 }
                 $array['success'] = TranslationHandler::get_static_text("SCHOOL_UPDATED");
                 $array['status_value'] = true;

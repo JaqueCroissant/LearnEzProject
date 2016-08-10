@@ -55,7 +55,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                                             </tr>
                                             <tr>
                                                 <td><small class="text-color"><?= TranslationHandler::get_static_text("DIFFICULTY"); ?>:</small></td>
-                                                <td style="padding-left:15px;"><small class="text-color"><?php echo  $value->advanced ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD")  ?></small></td>
+                                                <td style="padding-left:15px;"><small class="text-color"><?php echo  $value->advanced < 1 ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD")  ?></small></td>
                                             </tr>
                                         </tbody></table>
                                         </div>
@@ -76,7 +76,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                                             <td></td>
                                             <td style="<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><?= $value->title; ?></td>
                                             <td style="text-align:right;padding-left:20px;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><small class="text-color"><?= TranslationHandler::get_static_text("POINT_AMOUNT"); ?>:</small><small class="text-color" style="padding-left:10px;"><?= $value->points; ?></small></td>
-                                            <td style="text-align:right;width:20%;padding-left:20px;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><small class="text-color"><?= TranslationHandler::get_static_text("DIFFICULTY"); ?>:</small><small class="text-color" style="padding-left:10px;"><?php echo  $value->advanced ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD")  ?></small></td>
+                                            <td style="text-align:right;width:20%;padding-left:20px;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><small class="text-color"><?= TranslationHandler::get_static_text("DIFFICULTY"); ?>:</small><small class="text-color" style="padding-left:10px;"><?php echo  $value->advanced < 1 ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD")  ?></small></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -127,7 +127,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                                             </tr>
                                             <tr>
                                                 <td><small class="text-color"><?= TranslationHandler::get_static_text("DIFFICULTY"); ?>:</small></td>
-                                                <td style="padding-left:15px;"><small class="text-color"><?php echo  $value->advanced ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD")  ?></small></td>
+                                                <td style="padding-left:15px;"><small class="text-color"><?php echo  $value->advanced < 1 ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD")  ?></small></td>
                                             </tr>
                                         </tbody></table>
                                         </div>
@@ -148,7 +148,7 @@ if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($
                                             <td></td>
                                             <td style="<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><?= $value->title; ?></td>
                                             <td style="text-align:right;padding-left:20px;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><small class="text-color"><?= TranslationHandler::get_static_text("POINT_AMOUNT"); ?>:</small><small class="text-color" style="padding-left:10px;"><?= $value->points; ?></small></td>
-                                            <td style="text-align:right;width:20%;padding-left:20px;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><small class="text-color"><?= TranslationHandler::get_static_text("DIFFICULTY"); ?>:</small><small class="text-color" style="padding-left:10px;"><?php echo  $value->advanced ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD")  ?></small></td>
+                                            <td style="text-align:right;width:20%;padding-left:20px;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><small class="text-color"><?= TranslationHandler::get_static_text("DIFFICULTY"); ?>:</small><small class="text-color" style="padding-left:10px;"><?php echo  $value->advanced < 1 ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD")  ?></small></td>
                                         </tr>
                                     </table>
                                 </div>

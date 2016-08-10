@@ -59,7 +59,7 @@ if(isset($_POST)) {
             $description = isset($_POST["description"]) ? $_POST["description"] : array();
             $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
 
-            if($courseHandler->create_lecture($course_id, $points, $sort_order, $difficulty, $title, $description, $language_ids)) {
+            if($courseHandler->create_lecture($course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("LECTURE_CREATED");
             } else {
@@ -79,7 +79,7 @@ if(isset($_POST)) {
             $description = isset($_POST["description"]) ? $_POST["description"] : array();
             $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
 
-            if($courseHandler->edit_lecture($lecture_id, $course_id, $points, $sort_order, $difficulty, $title, $description, $language_ids)) {
+            if($courseHandler->edit_lecture($lecture_id, $course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("LECTURE_UPDATED");
             } else {
@@ -99,7 +99,7 @@ if(isset($_POST)) {
             $description = isset($_POST["description"]) ? $_POST["description"] : array();
             $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
 
-            if($courseHandler->create_test($course_id, $points, $sort_order, $difficulty, $title, $description, $language_ids)) {
+            if($courseHandler->create_test($course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("TEST_CREATED");
             } else {
@@ -119,7 +119,7 @@ if(isset($_POST)) {
             $description = isset($_POST["description"]) ? $_POST["description"] : array();
             $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
 
-            if($courseHandler->edit_test($test_id, $course_id, $points, $sort_order, $difficulty, $title, $description, $language_ids)) {
+            if($courseHandler->edit_test($test_id, $course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("TEST_UPDATED");
             } else {

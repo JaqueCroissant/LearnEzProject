@@ -32,6 +32,9 @@ class StatisticsHandler extends Handler {
     public $teacher_total_tests;
     public $teacher_total_lectures;
 
+    //TOP STUDENTS
+    public $top_students;
+
     private $_school_id;
     private $_class_id;
     private $_account_type_bool;
@@ -247,12 +250,13 @@ class StatisticsHandler extends Handler {
 
             $this->get_teacher_averages();
             $this->get_teacher_totals();
-
+            return true;
         }
         catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
+
     }
 
     private function get_teacher_averages()
@@ -316,5 +320,71 @@ class StatisticsHandler extends Handler {
     private function get_teacher_totals()
     {
 
+    }
+
+    public function get_top_students($limit = 5, $school = null, $class = null)
+    {
+        try
+        {
+            $has_school = false;
+            $has_class = false;
+
+            if(!is_numeric($limit))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+
+            if(!empty($school))
+            {
+                if(!is_numeric($school))
+                {
+                    throw new Exception("INVALID_INPUT");
+                }
+                else
+                {
+                    $has_school = true;
+                }
+            }
+
+            if(!empty($class))
+            {
+                if(!is_numeric($class))
+                {
+                    throw new Exception("INVALID_INPUT");
+                }
+                else
+                {
+                    $has_class = true;
+                }
+            }
+
+
+            $data = array();
+
+            if($has_school && !$has_class)
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id, GROUP_CONCAT(class.title SEPARATOR ', ') AS classes FROM users INNER JOIN school INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class ON class.id = user_class.class_id WHERE school.id = :school_id AND users.user_type_id = 4 GROUP BY users.id, users.username, users.firstname, users.surname, users.points ORDER BY users.points DESC LIMIT :limit", $school, $limit);
+            }
+            else if($has_school && $has_class)
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id FROM users INNER JOIN class WHERE class.id = :class_id AND users.user_type_id = 4 AND users.school_id = :school_id ORDER BY points DESC LIMIT :limit", $class, $school, $limit);
+            }
+            else if(!$has_school && !$has_class)
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id, school.name, GROUP_CONCAT(class.title SEPARATOR ', ') AS classes FROM users INNER JOIN school INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class ON class.id = user_class.class_id WHERE school.id = users.school_id AND users.user_type_id = 4 GROUP BY users.id, users.username, users.firstname, users.surname, users.points ORDER BY users.points DESC LIMIT :limit", $limit);
+            }
+            else
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+            $this->top_students = $data;
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
     }
 }

@@ -387,4 +387,27 @@ class StatisticsHandler extends Handler {
             return false;
         }
     }
+
+    public function get_login_stats()
+    {
+        try
+        {
+            $dates = [];
+            $data = DbHandler::get_instance()->return_query("SELECT last_login FROM users");
+            foreach($data as $value)
+            {
+                $dates[] = date("w", strtotime($value['last_login']));
+            }
+
+            echo '<pre>';
+            var_dump($dates);
+            echo '</pre>';
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
 }

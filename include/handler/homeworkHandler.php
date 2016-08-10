@@ -71,8 +71,43 @@ class HomeworkHandler extends Handler {
     }
     
     public function get_specific_user_homework($user_id = 0) {
-        $this->user_id = $user_id;
-        $this->get_user_homework(null, null, $this->user_id);
+        try {
+            $this->user_id = $user_id;
+            
+            if(!is_numeric($user_id) && !is_int((int)$user_id)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id", $user_id) < 1) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            $this->get_user_homework(null, null, $this->user_id);
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    public function get_specific_user_homework($user_id = 0) {
+        try {
+            $this->user_id = $user_id;
+            
+            if(!is_numeric($user_id) && !is_int((int)$user_id)) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            if(DbHandler::get_instance()->count_query("SELECT id FROM users WHERE id = :id", $user_id) < 1) {
+                throw new exception("INVALID_INPUT");
+            }
+            
+            $this->get_user_homework(null, null, $this->user_id);
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
     }
 
     public function get_user_homework($date_from = null, $date_to = null, $user_id = 0) {
@@ -81,10 +116,6 @@ class HomeworkHandler extends Handler {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
             
-            if(!is_numeric($user_id) && !is_int((int)$user_id)) {
-                throw new exception("INVALID_INPUT");
-            }
-
             $this->reset();
 
             if (!empty($date_from) && !empty($date_to)) {

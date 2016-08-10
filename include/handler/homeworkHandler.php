@@ -7,6 +7,8 @@ class HomeworkHandler extends Handler {
     public $specific_homework;
     public $homework = array();
     public $incomplete_homework = array();
+    
+    private $user_id;
     private $homework_id;
     private $homework_data = array();
     private $homework_ids = array();
@@ -14,6 +16,25 @@ class HomeworkHandler extends Handler {
     private $date_from;
     private $date_to;
 
+    public function delete_homework($homework_id = 0) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (empty($homework_id) || !is_numeric($homework_id) || !is_int((int) $homework_id)) {
+                throw new exception("INVALID INPUT");
+            }
+
+
+            return true;
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
     public function get_homework($homework_id = 0) {
         try {
             if (!$this->user_exists()) {
@@ -48,11 +69,20 @@ class HomeworkHandler extends Handler {
         }
         return false;
     }
+    
+    public function get_specific_user_homework($user_id = 0) {
+        $this->user_id = $user_id;
+        $this->get_user_homework(null, null, $this->user_id);
+    }
 
-    public function get_user_homework($date_from = null, $date_to = null) {
+    public function get_user_homework($date_from = null, $date_to = null, $user_id = 0) {
         try {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if(!is_numeric($user_id) && !is_int((int)$user_id)) {
+                throw new exception("INVALID_INPUT");
             }
 
             $this->reset();
@@ -75,7 +105,6 @@ class HomeworkHandler extends Handler {
 
             return true;
         } catch (Exception $ex) {
-            echo $ex->getMessage();
             $this->error = ErrorHandler::return_error($ex->getMessage());
         }
         return false;
@@ -192,16 +221,17 @@ class HomeworkHandler extends Handler {
 
         $is_specific_homework = isset($this->homework_id) && !empty($this->homework_id);
         $specific_homework = $is_specific_homework ? "homework.id = :homework_id AND" : "";
+        $specific_user = !empty($this->user_id) ? "users.id = ". $this->user_id ." AND " : "";
         switch ($this->_user->user_type_id) {
             case 1:
                 throw new exception("INSUFFICIENT_RIGHTS");
 
             case 2:
                 if (!empty($this->date_from) && !empty($this->date_to)) {
-                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class ON class.id = class_homework.class_id WHERE " . $specific_homework . " class.school_id = :school_id AND homework.date_expire >= :date_from AND homework.date_expire <= :date_to GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
+                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class ON class.id = class_homework.class_id WHERE " . $specific_homework . " " . $specific_user . " class.school_id = :school_id AND homework.date_expire >= :date_from AND homework.date_expire <= :date_to GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
                     $this->homework_data = !$is_specific_homework ? DbHandler::get_instance()->return_query($query, $this->_user->school_id, $this->date_from, $this->date_to) : DbHandler::get_instance()->return_query($query, $this->homework_id, $this->_user->school_id, $this->date_from, $this->date_to);
                 } else {
-                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class ON class.id = class_homework.class_id WHERE " . $specific_homework . " class.school_id = :school_id GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
+                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class ON class.id = class_homework.class_id WHERE " . $specific_homework . " " . $specific_user ." class.school_id = :school_id GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
                     $this->homework_data = !$is_specific_homework ? DbHandler::get_instance()->return_query($query, $this->_user->school_id) : DbHandler::get_instance()->return_query($query, $this->homework_id, $this->_user->school_id);
                 }
                 break;
@@ -209,10 +239,10 @@ class HomeworkHandler extends Handler {
             case 3:
             case 4:
                 if (!empty($this->date_from) && !empty($this->date_to)) {
-                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN user_class ON user_class.class_id = class_homework.class_id INNER JOIN class ON class.id = user_class.class_id WHERE " . $specific_homework . " user_class.users_id = :user_id AND homework.date_expire >= :date_from AND homework.date_expire <= :date_to GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
+                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN user_class ON user_class.class_id = class_homework.class_id INNER JOIN class ON class.id = user_class.class_id WHERE " . $specific_homework . " " . $specific_user . " user_class.users_id = :user_id AND homework.date_expire >= :date_from AND homework.date_expire <= :date_to GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
                     $this->homework_data = !$is_specific_homework ? DbHandler::get_instance()->return_query($query, $this->_user->id, $this->date_from, $this->date_to) : DbHandler::get_instance()->return_query($query, $this->homework_id, $this->_user->id, $this->date_from, $this->date_to);
                 } else {
-                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN user_class ON user_class.class_id = class_homework.class_id INNER JOIN class ON class.id = user_class.class_id WHERE " . $specific_homework . " user_class.users_id = :user_id GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
+                    $query = "SELECT homework.*, GROUP_CONCAT(class_homework.class_id), users.firstname, users.surname  FROM homework INNER JOIN users ON users.id = homework.user_id INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN user_class ON user_class.class_id = class_homework.class_id INNER JOIN class ON class.id = user_class.class_id WHERE " . $specific_homework . " " . $specific_user . " user_class.users_id = :user_id GROUP BY users.firstname, users.surname, homework.id, homework.user_id, homework.title, homework.description, homework.date_assigned, homework.date_expire, homework.color ORDER BY homework.date_expire DESC";
                     $this->homework_data = !$is_specific_homework ? DbHandler::get_instance()->return_query($query, $this->_user->id) : DbHandler::get_instance()->return_query($query, $this->homework_id, $this->_user->id);
                 }
                 break;

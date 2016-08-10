@@ -54,6 +54,7 @@ $courseHandler = new CourseHandler();
                                             <label for="sort_order" class="control-label"><?php echo TranslationHandler::get_static_text("INSERT_AFTER"); ?>:</label>
                                             <select id="sort_order" name="sort_order" class="form-control" data-options="{minimumResultsForSearch: Infinity}" data-plugin="select2">
                                                 <?php
+                                                echo '<option value="0">'.TranslationHandler::get_static_text("BEGINNING").'</option>';
                                                 $courseHandler->get_multiple(0, "course", $courseHandler->current_element->os_id);
                                                 for($i = 0; $i < count($courseHandler->courses); $i++) {
                                                     if($courseHandler->courses[$i]->id == $courseHandler->current_element->id) {
@@ -232,6 +233,7 @@ $courseHandler = new CourseHandler();
                                         <div class="form-group m-b-sm sort_order" style="<?php echo $select_boxes != "" ? "" : "opacity: 0;height:0px;margin-top:-10px !important;"; ?>">
                                             <label for="sort_order" class="control-label"><?php echo TranslationHandler::get_static_text("INSERT_AFTER"); ?>:</label>
                                             <select id="sort_order" name="sort_order" class="form-control" data-options="{minimumResultsForSearch: Infinity}" data-plugin="select2">
+                                                <?php echo '<option value="0">'.TranslationHandler::get_static_text("BEGINNING").'</option>'; ?>
                                                 <?php echo $select_boxes; ?>;
                                             </select>
                                         </div>
@@ -359,6 +361,7 @@ $courseHandler = new CourseHandler();
                                         <div class="form-group m-b-sm sort_order" style="<?php echo $select_boxes != "" ? "" : "opacity: 0;height:0px;margin-top:-10px !important;"; ?>">
                                             <label for="sort_order" class="control-label"><?php echo TranslationHandler::get_static_text("INSERT_AFTER"); ?>:</label>
                                             <select id="sort_order" name="sort_order" class="form-control" data-options="{minimumResultsForSearch: Infinity}" data-plugin="select2">
+                                                <?php echo '<option value="0">'.TranslationHandler::get_static_text("BEGINNING").'</option>'; ?>
                                                 <?php echo $select_boxes; ?>;
                                             </select>
                                         </div>

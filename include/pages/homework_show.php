@@ -12,6 +12,22 @@ if (!$homeworkHandler->get_homework(isset($_GET["homework_id"]) ? $_GET["homewor
 $current_homework = $homeworkHandler->specific_homework;
 $incomplete_lectures = 0;
 $incomplete_tests = 0;
+
+//$date_difference = time() - strtotime($current_homework->date_expire);
+//
+//echo $date_until . "<br />";
+//if(floor($date_difference / (60 * 60 * 24)) < 0) {
+//    echo "1. yes <br />";
+//} else {
+//    echo "1. " . floor($date_difference / (60 * 60 * 24));
+//    echo "<br />";
+//}
+//if(strtotime($current_homework->date_expire) == strtotime(date("Y-m-d"))) {
+//    echo "2. yes<br />";
+//}
+//if(strtotime($current_homework->date_expire) == strtotime(date("Y-m-d"))) {
+//    echo "3. yes<br />";
+//}
 ?>
 
 <div class="profile-header" style="margin: -1.5rem -1.5rem 1.5rem -1.5rem !important;background: #fff;padding: 64px 0px 0px 64px;">
@@ -70,9 +86,9 @@ $incomplete_tests = 0;
                     <small>Udløber om</small>
                     <?php
                     $date_difference = time() - strtotime($current_homework->date_expire);
-                    $date_until = floor($date_difference / (60 * 60 * 24)) < 0 && strtotime($current_homework->date_expire) >= strtotime(date("Y-m-d")) ? ((strtotime($current_homework->date_expire) == strtotime(date("Y-m-d")) ? -1 : floor($date_difference / (60 * 60 * 24)) * -1)) : 0;
+                    $date_until = floor($date_difference / (60 * 60 * 24)) < 0 ? floor($date_difference / (60 * 60 * 24)) * -1 : (strtotime($current_homework->date_expire) == strtotime(date("Y-m-d")) ? -1 : 0);
                     ?>
-                    <h4 class="m-0 m-t-xs" style="color: <?= $date_until > 1 ? "#36ce1c" : ($date_until > 0 ? "#f3c02c" : "#f15530") ?>"><?= ($date_until > 0 ? ($date_until . " ") : "") ?><?= ($date_until > 1 ? TranslationHandler::get_static_text("DATE_DAYS") : ($date_until > 0 ? TranslationHandler::get_static_text("DATE_DAY") : "Udløbet")) ?></h4>
+                    <h4 class="m-0 m-t-xs" style="color: <?= $date_until > 1 ? "#36ce1c" : ($date_until > 0 || $date_until == -1 ? "#f3c02c" : "#f15530") ?>"><?= ($date_until > 0 ? ($date_until . " ") : "") ?><?= ($date_until > 1 ? TranslationHandler::get_static_text("DATE_DAYS") : ($date_until > 0 ? TranslationHandler::get_static_text("DATE_DAY") : ($date_until == -1 ? "I dag" : "Udløbet"))) ?></h4>
                 </div>
             </div>
         </div>

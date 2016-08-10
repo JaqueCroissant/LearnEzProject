@@ -46,9 +46,6 @@ class ClassHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            if (!RightsHandler::has_user_right("CLASS_FIND")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
             $base_query = "SELECT class.id, class.title, class.description, class_year.year as class_year,
                             class.start_date, class.end_date, class.open, class.school_id, school.name as school_name
                             FROM class INNER JOIN class_year ON class.class_year_id = class_year.id
@@ -62,7 +59,7 @@ class ClassHandler extends Handler {
                     $query = $base_query . " WHERE school.id = :school_id";
                     $array = DbHandler::get_instance()->return_query($query, $this->_user->school_id);
                     break;
-                case 3:
+                case 3: case 4:
                     $query = $base_query . " INNER JOIN user_class ON class.id = user_class.class_id WHERE user_class.users_id = :user_id";
                     $array = DbHandler::get_instance()->return_query($query, $this->_user->id);
                     break;

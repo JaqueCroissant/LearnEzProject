@@ -10,7 +10,6 @@ $schoolHandler->get_all_schools();
 $schoolHandler->get_school_types();
 $all_courses = [];
 $school_courses = [];
-
 ?>
 
 <div class="row">   
@@ -75,18 +74,23 @@ $school_courses = [];
                                     <input class="form-control" id="edit_school_max_students" type="text" name="school_max_students" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_MAX_STUDENTS"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->max_students : ""; ?>">
                                 </div>
                             </div>
-                            <div class="form-group" >
-                                <label class="col-md-3 control-label" for="school_subscription_start"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></label>
-                                <div class="col-md-7">
-                                    <input class="form-control"  id="edit_school_subscription_start" type="text" name="school_subscription_start" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->subscription_start : ""; ?>">
+                            <?php if ($schoolHandler->_user->user_type_id == "1") { ?>
+                                <div class="form-group" >
+                                    <label class="col-md-3 control-label" for="school_subscription_start"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></label>
+                                    <div class="col-md-7">
+                                        <input class="form-control"  id="edit_school_subscription_start" type="text" name="school_subscription_start" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->subscription_start : ""; ?>">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group" >
-                                <label class="col-md-3 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
-                                <div class="col-md-7">
-                                    <input class="form-control" id="edit_school_subscription_end" type="text" name="school_subscription_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->subscription_end : ""; ?>">
+                                <div class="form-group" >
+                                    <label class="col-md-3 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" id="edit_school_subscription_end" type="text" name="school_subscription_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->subscription_end : ""; ?>">
+                                    </div>
                                 </div>
-                            </div>
+                            <?php } else { ?>
+                                <input class="form-control"  id="edit_school_subscription_start" type="hidden" name="school_subscription_start" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->subscription_start : ""; ?>">
+                                <input class="form-control" id="edit_school_subscription_end" type="hidden" name="school_subscription_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->subscription_end : ""; ?>">
+                            <?php } ?>
                             <div class="form-group">
                                 <label class="col-md-3 control-label" for="school_type_id"><?php echo TranslationHandler::get_static_text("SCHOOL_TYPE"); ?></label>
                                 <div class="col-md-7">
@@ -120,10 +124,10 @@ $school_courses = [];
                                                 <td><?php echo (strlen($value->description) > 16 ? substr($value->description, 0, 16) . "..." : $value->description); ?></td>
                                                 <td><?php echo (strlen($value->os_title) > 16 ? substr($value->os_title, 0, 16) . "..." : $value->os_title); ?></td>
                                                 <td><input class="checkbox-circle a checkbox-dark" <?php
-                                                    foreach ($school_courses as $n_val) {
-                                                        echo $value->id == $n_val->id ? " checked " : "";
-                                                    }
-                                                    ?> type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></td>
+                                            foreach ($school_courses as $n_val) {
+                                                echo $value->id == $n_val->id ? " checked " : "";
+                                            }
+                                            ?> type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></td>
                                             </tr>
                                         <?php } ?>
 

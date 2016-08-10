@@ -29,6 +29,96 @@ $courses_completed = 0;
     switch($userHandler->_user->user_type_id)
     {
         case "1":
+
+            $schoolHandler->get_all_schools();
+            $statisticsHandler->get_top_students();
+            ?>
+
+            <div class="col-md-9 col-sm-12 p-v-0">
+                <div class="col-sm-12">
+                    <div class="widget">
+                        <div class='widget-header'>
+                            <h4 class="widget-title a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("FIND_SCHOOL")?>"><?php echo TranslationHandler::get_static_text("SCHOOLS"); ?></h4>
+                        </div>
+                        <hr class="widget-separator m-0">
+                        <div class="widget-body">
+                            <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5, columnDefs:[{orderable: false, targets: [4]}]}">
+                                            <thead>
+                                                <tr>
+                                                    <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                                                    <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
+                                                    <th><?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?></th>
+                                                    <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
+
+
+                                                    <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("STATUS"); ?></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                    if(count($schoolHandler->all_schools) > 0)
+                                                    {
+                                                        foreach ($schoolHandler->all_schools as $value) {
+
+                                                        ?>
+                                                        <tr class = "a change_page" page="school_profile" step = "" args = "&school_id=<?php echo $value->id; ?>">
+                                                            <td><?php echo (strlen($value->name) > 20 ? substr($value->name, 0, 20) : $value->name); ?></td>
+                                                            <td><?php echo (strlen($value->address) > 20 ? substr($value->address, 0, 20) : $value->address); ?></td>
+                                                            <td><?php echo $value->zip_code; ?></td>
+                                                            <td><?php echo (strlen($value->city) > 15 ? substr($value->city, 0, 15) : $value->city); ?></td>
+                                                            
+                                                            <td style="text-align: center;"><?php echo !$value->open ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("CLOSED") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("OPEN") . '"></i>'; ?></td>
+                                                        </tr>
+                                                     
+                                                <?php 
+                                                    }
+                                                }
+                                                ?>
+                                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="col-md-6 col-sm-12 ">
+                    <div class="widget">
+                        <div class='widget-header'>
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
+                        </div>
+                        <hr class="widget-separator m-0">
+                        <div class="widget-body">
+                            <div class="streamline m-l-lg">
+                                <?php
+                                if(count($statisticsHandler->top_students) > 0)
+                                {
+                                    //var_dump($statisticsHandler->top_students);
+                                    foreach($statisticsHandler->top_students as $value)
+                                    { ?>
+                                        <div class="sl-item p-b-md">
+                                            <div class="sl-avatar avatar avatar-sm avatar-circle">
+                                                <img class="img-responsive" src="<?php echo "assets/images/profile_images/" . $value['image_id'] . ".png"?>">
+                                            </div>
+                                            <div class="sl-content">
+                                                <h5 class="m-t-0">
+                                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo $value['firstname'] . " " . $value['surname']?></a>
+                                                    <small class="text-muted fz-sm"><?php echo $value['username'] ?></small>
+                                                </h5>
+                                                <p><?php echo $value['points']; ?> points</p>
+                                            </div>
+                                        </div>
+                                <?php
+                                    }
+                                } ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+            </div>
+    
+            <?php        
             break;
         
         //LOKAL ADMIN DASHBOARD
@@ -198,6 +288,8 @@ $courses_completed = 0;
         case "3":
             //TEACHER DASHBOARD
             
+            $schoolHandler->get_school_by_id($userHandler->_user->school_id);
+            $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
             $homeworkHandler->get_user_homework();
             $classHandler->get_classes_by_user_id($userHandler->_user->id);
             $courseHandler->get_courses();
@@ -321,6 +413,8 @@ $courses_completed = 0;
         //STUDENT DASHBOARD    
         case "4":
             
+            $schoolHandler->get_school_by_id($userHandler->_user->school_id);
+            $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
             $homeworkHandler->get_user_homework();
             $classHandler->get_classes_by_user_id($userHandler->_user->id);
             $courseHandler->get_courses();
@@ -332,7 +426,7 @@ $courses_completed = 0;
                 <div class="col-sm-12">
                     <div class="widget">
                         <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="find_course" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("FIND_COURSE")?>"><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("COURSES")); ?></h4>
+                            <h4 class="widget-title a change_page" page="course_overview" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("FIND_COURSE")?>"><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("COURSES")); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">

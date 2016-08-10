@@ -2,7 +2,12 @@
 
 class StatisticsHandler extends Handler {
 
-    //CLASS STATS
+    // SCHOOL STATS
+    public $school_average;
+    public $school_test_average;
+    public $school_lecture_average;
+
+    // CLASS STATS
     public $class_average;
     public $class_test_average;
     public $class_lecture_average;
@@ -27,6 +32,9 @@ class StatisticsHandler extends Handler {
     public $teacher_total_tests;
     public $teacher_total_lectures;
 
+    //TOP STUDENTS
+    public $top_students;
+
     private $_school_id;
     private $_class_id;
     private $_account_type_bool;
@@ -40,56 +48,40 @@ class StatisticsHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("CLASS_STATISTICS")) {
+                throw new Exception ("INSUFFICIENT_RIGHTS");
+            }
             $this->set_class_id($class_id);
 
             $this->set_account_type_bool($student_and_teacher_bool);
 
-            $base_query = "SELECT * FROM progress_view WHERE user_type_id ";
+            $base_query = "SELECT course_id, GROUP_CONCAT(total) as total, GROUP_CONCAT(progress) as progress, type from progress_view WHERE user_type_id ";
             if ($this->_account_type_bool) {
                 $query = $base_query . "IN (3, 4) AND class_id = :class_id";
             } else {
                 $query = $base_query . "= 4 AND class_id = :class_id";
             }
+            $query .= ' group by course_id, type'; 
             $data_array = DbHandler::get_instance()->return_query($query, $this->_class_id);
-            $progress_array = [];
-
-            $array_of_course_id = [];
+            
+            $lecture_avg = [];
+            $lecture_total = [];
+            $test_avg = [];
+            $test_total = [];
             foreach ($data_array as $value) {
-                if (isset($value['course_id'])) {
-                    $array_of_course_id[] = $value['course_id'];
-                    $progress_array[$value['user_id']]['courses'][$value['course_id']]['course_id'] = $value['course_id'];
-                    $progress_array[$value['user_id']]['user_id'] = $value['user_id'];
-                    isset($progress_array[$value['user_id']]['courses'][$value['course_id']]["test_progress"]) ? : $progress_array[$value['user_id']]['courses'][$value['course_id']]["test_progress"] = 0;
-                    isset($progress_array[$value['user_id']]['courses'][$value['course_id']]['lecture_progress']) ? : $progress_array[$value['user_id']]['courses'][$value['course_id']]['lecture_progress'] = 0;
-                    isset($progress_array[$value['user_id']]['courses'][$value['course_id']]['test_total']) ? : $progress_array[$value['user_id']]['courses'][$value['course_id']]['test_total'] = 0;
-                    isset($progress_array[$value['user_id']]['courses'][$value['course_id']]['lecture_total']) ? : $progress_array[$value['user_id']]['courses'][$value['course_id']]['lecture_total'] = 0;
-                    if ($value['type'] == "1") {
-                        $progress_array[$value['user_id']]['courses'][$value['course_id']]["test_progress"] += $value['progress'] != null ? $value['progress'] : 0;
-                        $progress_array[$value['user_id']]['courses'][$value['course_id']]["test_total"] += $value['total'] != null ? $value['total'] : 0;
-                    } elseif ($value['type'] == "2") {
-                        $progress_array[$value['user_id']]['courses'][$value['course_id']]['lecture_progress'] += $value['progress'] != null ? $value['progress'] : 0;
-                        $progress_array[$value['user_id']]['courses'][$value['course_id']]["lecture_total"] += $value['total'] != null ? $value['total'] : 0;
-                    }
+                if ($value['type'] == "1") {
+                    $test_avg[] = array_sum(explode(',', $value['progress']));
+                    $test_total[] = array_sum(explode(',', $value['total']));
+                } elseif ($value['type'] == "2") {
+                    $lecture_avg[] = array_sum(explode(',', $value['progress']));
+                    $lecture_total[] = array_sum(explode(',', $value['total']));
                 }
             }
-
-            $lect_progress = 0;
-            $lect_total = 0;
-            $test_prog = 0;
-            $test_total = 0;
-            foreach ($progress_array as $key => $value) {
-                foreach ($value['courses'] as $nested_key => $nested) {
-                    $progress_array[$key][$nested_key]['test_average'] = $nested['test_progress'] != 0 && $nested['test_total'] != 0 ? round($nested['test_progress'] / $nested['test_total'], 2) : 0;
-                    $progress_array[$key][$nested_key]['lecture_average'] = $nested['lecture_progress'] != 0 && $nested['lecture_total'] != 0 ? round($nested['lecture_progress'] / $nested['lecture_total'], 2) : 0;
-                    $lect_progress += $nested['lecture_progress'];
-                    $lect_total += $nested['lecture_total'];
-                    $test_prog += $nested['test_progress'];
-                    $test_total += $nested['test_total'];
-                }
-            }
-            $this->class_lecture_average = $lect_progress != 0 && $lect_total != 0 ? round($lect_progress / $lect_total, 2) : 0;
-            $this->class_test_average = $test_prog != 0 && $test_total != 0 ? round($test_prog / $test_total, 2) : 0;
-            $this->class_average = $this->class_lecture_average != 0 && $this->class_test_average != 0 ? round(($this->class_lecture_average + $this->class_test_average) / 2, 2) : 0;
+            $this->class_lecture_average = !empty($lecture_avg) && !empty($lecture_total) ? round(array_sum($lecture_avg) * 100 / array_sum($lecture_total), 0)  : 0;
+            $this->class_test_average = !empty($test_avg) && !empty($test_total) ? round(array_sum($test_avg) * 100 / array_sum($test_total), 0)  : 0;
+            $this->class_average = $this->class_lecture_average != 0 && $this->class_test_average != 0 ? round(($this->class_lecture_average + $this->class_test_average) / 2, 0) : 0;
+            
+            
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -102,23 +94,43 @@ class StatisticsHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
+            if (!RightsHandler::has_user_right("SCHOOL_STATISTICS")) {
+                throw new Exception ("INSUFFICIENT_RIGHTS");
+            }
             $this->set_school_id($school_id);
             $this->set_account_type_bool($student_and_teacher_bool);
-            $base_query = "SELECT * FROM progress_view WHERE user_type_id ";
+            $base_query = "SELECT course_id, GROUP_CONCAT(total) as total, GROUP_CONCAT(progress) as progress, type from progress_view WHERE user_type_id ";
             if ($this->_account_type_bool) {
                 $query = $base_query . "IN (3, 4) AND school_id = :school_id";
             } else {
                 $query = $base_query . "= 4 AND school_id = :school_id";
             }
+            $query .= ' group by course_id, type'; 
             $data_array = DbHandler::get_instance()->return_query($query, $this->_school_id);
+
+            $lecture_avg = [];
+            $lecture_total = [];
+            $test_avg = [];
+            $test_total = [];
+            foreach ($data_array as $value) {
+                if ($value['type'] == "1") {
+                    $test_avg[] = array_sum(explode(',', $value['progress']));
+                    $test_total[] = array_sum(explode(',', $value['total']));
+                } elseif ($value['type'] == "2") {
+                    $lecture_avg[] = array_sum(explode(',', $value['progress']));
+                    $lecture_total[] = array_sum(explode(',', $value['total']));
+                }
+            }
+            $this->school_lecture_average = !empty($lecture_avg) && !empty($lecture_total) * 100 ? round(array_sum($lecture_avg) / array_sum($lecture_total), 0) : 0;
+            $this->school_test_average = !empty($test_avg) && !empty($test_total) ? round(array_sum($test_avg) * 100 / array_sum($test_total), 0) : 0;
+            $this->school_average = $this->school_lecture_average != 0 && $this->school_test_average != 0 ? round(($this->school_lecture_average + $this->school_test_average) / 2, 2) : 0;
             
-            // MANGLER DATABEHANDLING
+            return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
     }
-
 
     private function set_account_type_bool($bool) {
         if (!is_bool($bool)) {
@@ -151,7 +163,7 @@ class StatisticsHandler extends Handler {
         }
     }
 
-    public function get_student_stats()
+    public function get_student_stats($user_id = 0)
     {
         try
         {
@@ -159,36 +171,40 @@ class StatisticsHandler extends Handler {
             {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-
-            $this->get_student_averages();
-            $this->get_student_totals();
-
-        }
-        catch (Exception $ex) {
+            if ($user_id == 0) {
+                $user_id = $this->_user->id;
+            } else {
+                $this->verify_user_exist($user_id);
+            }
+            $this->get_student_averages($user_id);
+            $this->get_student_totals($user_id);
+        } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
     }
+    
+    private function verify_user_exist($user_id) {
+        $count = DbHandler::get_instance()->count_query("SELECT * from users where id = :id", $user_id);
+        if ($count == 0) {
+            throw new Exception ("USER_INVALID_ID");
+        }
+    }
 
-    private function get_student_averages()
-    {
+    private function get_student_averages($user_id) {
         $lectures = [];
         $tests = [];
-        $data_array = DbHandler::get_instance()->return_query("SELECT * FROM progress_view WHERE user_id = :user_id", $this->_user->id);
-
-        foreach($data_array as $value)
-        {
-            if($value['type'] == 1)
-            {
+        $data_array = DbHandler::get_instance()->return_query("SELECT * FROM progress_view WHERE user_id = :user_id", $user_id);
+        
+        foreach ($data_array as $value) {
+            if ($value['type'] == 1) {
                 $progress = isset($value['progress']) ? $value['progress'] : 0;
 
                 if(!array_key_exists($value['course_id'], $tests))
                 {
                     $tests[$value['course_id']] = $value['total'] != 0 ? ($progress / $value['total']) * 100 : 0;
                 }
-            }
-            else
-            {
+            } else {
                 $progress = isset($value['progress']) ? $value['progress'] : 0;
 
                 if(!array_key_exists($value['course_id'], $lectures))
@@ -202,25 +218,23 @@ class StatisticsHandler extends Handler {
         $this->student_test_average = round(array_sum($tests) / count($tests), 0);
     }
 
-    private function get_student_totals()
-    {
-        $this->student_total_lectures = DbHandler::get_instance()->count_query("SELECT course_lecture.id FROM course_lecture INNER JOIN school_course ON course_lecture.course_id = school_course.course_id WHERE school_course.school_id  = :school_id", $this->_user->school_id);
-        $this->student_total_tests = DbHandler::get_instance()->count_query("SELECT course_test.id FROM course_test INNER JOIN school_course ON course_test.course_id = school_course.course_id WHERE school_course.school_id  = :school_id", $this->_user->school_id);
-        $lecture_data = DbHandler::get_instance()->return_query("SELECT is_complete FROM user_course_lecture WHERE user_id  = :user_id", $this->_user->id);
-        $test_data = DbHandler::get_instance()->return_query("SELECT is_complete FROM user_course_test WHERE user_id  = :user_id", $this->_user->id);
+    private function get_student_totals($user_id) {
+        $school_id = DbHandler::get_instance()->return_query("SELECT school_id FROM users where id = :id", $user_id)[0]['school_id'];
+        $this->student_total_lectures = DbHandler::get_instance()->count_query("SELECT course_lecture.id FROM course_lecture INNER JOIN school_course ON course_lecture.course_id = school_course.course_id WHERE school_course.school_id  = :school_id", $school_id);
+        $this->student_total_tests = DbHandler::get_instance()->count_query("SELECT course_test.id FROM course_test INNER JOIN school_course ON course_test.course_id = school_course.course_id WHERE school_course.school_id  = :school_id", $school_id);
+        $lecture_data = DbHandler::get_instance()->return_query("SELECT is_complete FROM user_course_lecture WHERE user_id  = :user_id", $user_id);
+        $test_data = DbHandler::get_instance()->return_query("SELECT is_complete FROM user_course_test WHERE user_id  = :user_id", $user_id);
 
         $this->student_lectures_started = count($lecture_data);
         $this->student_tests_started = count($test_data);
         $this->student_lectures_complete = 0;
         $this->student_tests_complete = 0;
 
-        foreach($lecture_data as $value)
-        {
+        foreach ($lecture_data as $value) {
             $this->student_lectures_complete += $value['is_complete'];
         }
 
-        foreach($test_data as $value)
-        {
+        foreach ($test_data as $value) {
             $this->student_tests_complete += $value['is_complete'];
         }
     }
@@ -236,12 +250,13 @@ class StatisticsHandler extends Handler {
 
             $this->get_teacher_averages();
             $this->get_teacher_totals();
-
+            return true;
         }
         catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
+
     }
 
     private function get_teacher_averages()
@@ -305,5 +320,71 @@ class StatisticsHandler extends Handler {
     private function get_teacher_totals()
     {
 
+    }
+
+    public function get_top_students($limit = 5, $school = null, $class = null)
+    {
+        try
+        {
+            $has_school = false;
+            $has_class = false;
+
+            if(!is_numeric($limit))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+
+            if(!empty($school))
+            {
+                if(!is_numeric($school))
+                {
+                    throw new Exception("INVALID_INPUT");
+                }
+                else
+                {
+                    $has_school = true;
+                }
+            }
+
+            if(!empty($class))
+            {
+                if(!is_numeric($class))
+                {
+                    throw new Exception("INVALID_INPUT");
+                }
+                else
+                {
+                    $has_class = true;
+                }
+            }
+
+
+            $data = array();
+
+            if($has_school && !$has_class)
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id, GROUP_CONCAT(class.title SEPARATOR ', ') AS classes FROM users INNER JOIN school INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class ON class.id = user_class.class_id WHERE school.id = :school_id AND users.user_type_id = 4 GROUP BY users.id, users.username, users.firstname, users.surname, users.points ORDER BY users.points DESC LIMIT :limit", $school, $limit);
+            }
+            else if($has_school && $has_class)
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id FROM users INNER JOIN class WHERE class.id = :class_id AND users.user_type_id = 4 AND users.school_id = :school_id ORDER BY points DESC LIMIT :limit", $class, $school, $limit);
+            }
+            else if(!$has_school && !$has_class)
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id, school.name, GROUP_CONCAT(class.title SEPARATOR ', ') AS classes FROM users INNER JOIN school INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class ON class.id = user_class.class_id WHERE school.id = users.school_id AND users.user_type_id = 4 GROUP BY users.id, users.username, users.firstname, users.surname, users.points ORDER BY users.points DESC LIMIT :limit", $limit);
+            }
+            else
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+            $this->top_students = $data;
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
     }
 }

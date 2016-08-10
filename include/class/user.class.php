@@ -25,6 +25,9 @@
         public $unhashed_password;
         
         public $settings;
+        public $homework_complete;
+        public $lectures = array();
+        public $tests = array();
         
         public function __construct() {
             

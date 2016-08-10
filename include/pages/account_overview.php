@@ -84,7 +84,7 @@ $courses_completed = 0;
                 <div class="col-md-6 col-sm-12 ">
                     <div class="widget">
                         <div class='widget-header'>
-                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")); ?> </h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
@@ -102,7 +102,7 @@ $courses_completed = 0;
                                             <div class="sl-content">
                                                 <h5 class="m-t-0">
                                                     <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo $value['firstname'] . " " . $value['surname']?></a>
-                                                    <small class="text-muted fz-sm"><?php echo $value['username'] ?></small>
+                                                    <small class="text-muted fz-sm"><?php echo $value['name'] ?></small>
                                                 </h5>
                                                 <p><?php echo $value['points']; ?> points</p>
                                             </div>
@@ -115,6 +115,64 @@ $courses_completed = 0;
                     </div>
                 </div>
                 
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading p-h-lg p-v-md" >
+                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-trending-up zmdi-hc-lg" style="padding-right:30px;"></i><?= TranslationHandler::get_static_text("COURSE_PROGRESS") ?></h4>
+                        </div>
+                        <hr class="widget-separator m-0">
+                        <div class="panel-body user-progress">
+                            <div data-plugin="chart" data-options="{
+                                tooltip : {
+                                    trigger: 'axis'
+                                },
+                                legend: {
+                                data:['<?= TranslationHandler::get_static_text("LECTURES") ?>','<?= TranslationHandler::get_static_text("TESTS") ?>']
+                                },
+                                calculable : true,
+                                xAxis : [
+                                    {
+                                        type : 'category',
+                                        boundaryGap : false,
+                                        data : [
+                                        <?php
+                                        for($i = date('m')-4; $i < date('m')+1; $i++) {
+                                            echo "'" . TranslationHandler::get_static_text(strtoupper(month_num_to_string($i))) . "'";
+                                            if($i != date('m')) {
+                                                echo ",";
+                                            }
+                                        }
+                                        ?>
+                                        ]
+                                    }
+                                ],
+                                yAxis : [
+                                    {
+                                        type : 'value'
+                                    }
+                                ],
+                                series : [
+                                    {
+                                        name:'<?= TranslationHandler::get_static_text("LECTURES") ?>',
+                                        type:'line',
+                                        smooth:true,
+                                        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                        data:[10, 12, 21, 54, 260]
+                                    },
+                                    {
+                                        name:'<?= TranslationHandler::get_static_text("TESTS") ?>',
+                                        type:'line',
+                                        smooth:true,
+                                        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                        data:[30, 182, 434, 791, 390]
+                                    }
+                                ]
+                                }" style="height: 300px;"></div>
+                            <!--<div class="center progress-text" style="margin-top: 20px; margin-bottom: 20px;"><?= TranslationHandler::get_static_text("NO_COURSE_PROGRESS") ?></div>-->
+                        </div>
+                    </div>
+                </div>
+
                 
             </div>
     
@@ -123,7 +181,7 @@ $courses_completed = 0;
         
         //LOKAL ADMIN DASHBOARD
         case "2":
-            
+            $homeworkHandler->get_specific_user_homework($userHandler->_user->id);
             $schoolHandler->get_school_by_id($userHandler->_user->school_id);
             $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
             $userHandler->get_by_school_id($userHandler->_user->school_id);
@@ -222,7 +280,7 @@ $courses_completed = 0;
                         <div class="widget-body">
                             <div class="panel-body">
                             <?php if(empty($homeworkHandler->homework)) {
-                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ingen lektier i øjeblikket.</div>';
+                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ikke oprettet nogen lektier!</div>';
                             } else {
                             ?>
                                 <div class="latest-homework">
@@ -290,7 +348,7 @@ $courses_completed = 0;
             
             $schoolHandler->get_school_by_id($userHandler->_user->school_id);
             $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
-            $homeworkHandler->get_user_homework();
+            $homeworkHandler->get_specific_user_homework($userHandler->_user->id);
             $classHandler->get_classes_by_user_id($userHandler->_user->id);
             $courseHandler->get_courses();
             $course_count = count($courseHandler->courses);
@@ -347,7 +405,7 @@ $courses_completed = 0;
                         <div class="widget-body">
                             <div class="panel-body">
                             <?php if(empty($homeworkHandler->homework)) {
-                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ingen lektier i øjeblikket.</div>';
+                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ikke oprettet nogen lektier!</div>';
                             } else {
                             ?>
                                 <div class="latest-homework">

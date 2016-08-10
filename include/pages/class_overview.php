@@ -118,7 +118,7 @@ if ($classHandler->_user->user_type_id != 1) {
         <?php if ($classHandler->_user->user_type_id != 4 && $classHandler->_user->user_type_id != 1) { ?>
             <div class="widget">
                 <div class='widget-header'>
-                    <h4 class="widget-title">SOON EXPIRING CLASSES</h4>
+                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("SOON_EXPIRING"); ?></h4>
                 </div>
                 <hr class="widget-separator m-0">
                 <div class="widget-body">

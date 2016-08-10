@@ -142,8 +142,8 @@ if (isset($_GET['class_id'])) {
             <hr class="widget-separator m-0">
             <div class="widget-body">
                 <div class="pull-left" name="test_average">
-                    <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($statisticsHandler->class_average * 100) : "" ?>"}, thickness: 10}'>
-                        <strong><?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average * 100 : ""; ?> %</strong>
+                    <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average / 100 : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($statisticsHandler->class_average) : "" ?>"}, thickness: 10}'>
+                        <strong><?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average : ""; ?> %</strong>
                     </div>
                 </div>
             </div>
@@ -154,11 +154,7 @@ if (isset($_GET['class_id'])) {
             </div>
             <hr class="widget-separator m-0">
             <div class="widget-body">
-                <?php
-                $end = microtime(true);
 
-                echo '<br/><br/>Time spent: <strong style="font-size: 40px;">' . floor(($end - $begin) * 1000) . '</strong>ms';
-                ?>
             </div>
         </div>
     </div>

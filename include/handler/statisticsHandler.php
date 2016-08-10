@@ -306,4 +306,9 @@ class StatisticsHandler extends Handler {
     {
 
     }
+
+    public function get_top_ten()
+    {
+
+    }
 }

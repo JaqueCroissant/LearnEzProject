@@ -92,7 +92,6 @@ $courses_completed = 0;
                                 <?php
                                 if(count($statisticsHandler->top_students) > 0)
                                 {
-                                    //var_dump($statisticsHandler->top_students);
                                     foreach($statisticsHandler->top_students as $value)
                                     { ?>
                                         <div class="sl-item p-b-md">

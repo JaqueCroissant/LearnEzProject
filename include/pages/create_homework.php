@@ -8,10 +8,12 @@ $courseHandler = new CourseHandler();
 $current_user = SessionKeyHandler::get_from_session("user", true);
 $class_id = isset($_GET["class_id"]) ? $_GET["class_id"] : null;
 $date = isset($_GET["date"]) ? $_GET["date"] : null;
-if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
-    ErrorHandler::show_error_page();
+
+if ($current_user->user_type_id == 1) {
+    ErrorHandler::show_error_page($homeworkHandler->error);
     die();
 }
+
 ?>
 <div class="row">
     <div class="col-md-12">

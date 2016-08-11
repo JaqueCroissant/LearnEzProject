@@ -42,7 +42,6 @@ class HomeworkHandler extends Handler {
             return true;
             
         } catch (Exception $ex) {
-            echo $ex->getMessage();
             $this->error = ErrorHandler::return_error($ex->getMessage());
         }
         return false;
@@ -61,7 +60,7 @@ class HomeworkHandler extends Handler {
             $this->homework_id = $homework_id;
 
             if (!$this->fetch_homework_data()) {
-                return true;
+                return false;
             }
 
             $this->iterate_homework_data();
@@ -72,12 +71,10 @@ class HomeworkHandler extends Handler {
                 throw new exception("INVALID_INPUT");
             }
 
-
             $this->specific_homework = array_shift(array_values($this->homework));
             $this->assign_homework_students();
             return true;
         } catch (Exception $ex) {
-            echo $ex->getMessage();
             $this->error = ErrorHandler::return_error($ex->getMessage());
         }
         return false;
@@ -192,7 +189,6 @@ class HomeworkHandler extends Handler {
             $this->available_classes = $this->fetch_attached_classes();
             return true;
         } catch (Exception $ex) {
-            echo $ex->getMessage();
             $this->error = ErrorHandler::return_error($ex->getMessage());
         }
         return false;
@@ -612,7 +608,7 @@ class HomeworkHandler extends Handler {
             case 2:
                 $homework = DbHandler::get_instance()->return_query("SELECT homework.id FROM homework INNER JOIN class_homework ON class_homework.homework_id = homework.id INNER JOIN class on class.id = class_homework.class_id WHERE class.school_id = :school_id AND homework.id = :homework_id", $this->_user->school_id, $this->homework_id);
                 if(empty($homework)) {
-                    throw new exception("INVALID_INPUT");
+                    throw new exception("INSUFFICIENT_RIGHTS");
                 }
                 break;
 
@@ -620,7 +616,7 @@ class HomeworkHandler extends Handler {
             case 4:
                 $homework = DbHandler::get_instance()->return_query("SELECT homework.id FROM homework WHERE homework.user_id = :user_id AND homework.id = :homework_id", $this->_user->id, $this->homework_id);
                 if(empty($homework)) {
-                    throw new exception("INVALID_INPUT");
+                    throw new exception("INSUFFICIENT_RIGHTS");
                 }
                 break;
                 

@@ -4,6 +4,12 @@ require_once '../../include/handler/homeworkHandler.php';
 
 $current_user = SessionKeyHandler::get_from_session("user", true);
 $homeworkHandler = new HomeworkHandler();
+
+if ($current_user->user_type_id == 1) {
+    ErrorHandler::show_error_page($homeworkHandler->error);
+    die();
+}
+
 if (!$homeworkHandler->get_homework(isset($_GET["homework_id"]) ? $_GET["homework_id"] : null)) {
     ErrorHandler::show_error_page($homeworkHandler->error);
     die();
@@ -112,7 +118,7 @@ $incomplete_tests = 0;
                                                 $incomplete_lectures++;
                                             }
                                             ?>
-                                            <tr class="a change_page" page="course_show" args="&course_id=<?= $value->course_id ?>" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="<?= $value->description ?>">
+                                            <tr class="a play_lecture" element_id="<?= $value->id ?>" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="<?= $value->description ?>">
                                                 <td><span data-toggle="tooltip" title="<?= $value->title ?>"><?= strlen($value->title) > 40 ? substr($value->title, 0, 40) . "..." : $value->title ?></span></td>
                                                 <td><?php echo $value->course_title; ?></td>
                                                 <td style="text-align:center;"><?php echo $value->points; ?></td>
@@ -284,6 +290,19 @@ $incomplete_tests = 0;
         </div>
     </div>
 <?php } ?>
+
+<div id="click_alertbox" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <div id="delete_text"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")) . "?"; ?></div>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+    </div>
+</div>
 
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>

@@ -26,16 +26,16 @@ if(isset($_POST)) {
             }
             echo json_encode($jsonArray);
             break;
+            
+        case "delete_homework":
+            if($homeworkHandler->delete_homework(isset($_POST["homework_id"]) ? $_POST["homework_id"] : 0)) {
+                $jsonArray["success"] = TranslationHandler::get_static_text("HOMEWORK_DELETED");
+                $jsonArray['status_value'] = true;
+            } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $homeworkHandler->error->title;
+            }
+            echo json_encode($jsonArray);
+            break;
     }
-}
-
-if(isset($_GET["delete_homework"]) && isset($_GET["homework_id"])) {
-    if($homeworkHandler->delete_homework($_GET["homework_id"])) {
-        $jsonArray["success"] = TranslationHandler::get_static_text("HOMEWORK_DELETED");
-        $jsonArray['status_value'] = true;
-    } else {
-        $jsonArray['status_value'] = false;
-        $jsonArray['error'] = $homeworkHandler->error->title;
-    }
-    echo json_encode($jsonArray);
 }

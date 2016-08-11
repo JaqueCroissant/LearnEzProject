@@ -35,6 +35,10 @@ class StatisticsHandler extends Handler {
     //TOP STUDENTS
     public $top_students;
 
+    //LECTURE & TEST
+    public $global_tests_complete;
+    public $global_lectures_complete;
+
     private $_school_id;
     private $_class_id;
     private $_account_type_bool;
@@ -390,20 +394,24 @@ class StatisticsHandler extends Handler {
         }
     }
 
-    public function get_login_stats()
+    public function get_completion_stats($limit)
     {
         try
         {
-            $dates = [];
-            $data = DbHandler::get_instance()->return_query("SELECT last_login FROM users");
-            foreach($data as $value)
+            if(!is_numeric($limit))
             {
-                $dates[] = date("w", strtotime($value['last_login']));
+                throw new Exception("INVALID_INPUT");
             }
 
-            echo '<pre>';
-            var_dump($dates);
-            echo '</pre>';
+            $lecture_data = DbHandler::get_instance()->return_query("SELECT complete_date FROM user_course_lecture WHERE complete_date >= CURDATE() - INTERVAL :limit DAY", $limit);
+            $test_data = DbHandler::get_instance()->return_query("SELECT complete_date FROM user_course_test WHERE complete_date >= CURDATE() - INTERVAL :limit DAY", $limit);
+
+            $lecture_dates = $this->convert_to_date_array($lecture_data);
+            $test_dates = $this->convert_to_date_array($test_data);
+
+            $this->global_lectures_complete = $this->sort_and_count($lecture_dates);
+            $this->global_tests_complete = $this->sort_and_count($test_dates);
+
             return true;
         }
         catch(Exception $ex)
@@ -412,4 +420,54 @@ class StatisticsHandler extends Handler {
             return false;
         }
     }
+
+    private function convert_to_date_array($data)
+    {
+        $dates = array();
+        foreach($data as $value)
+        {
+            $month = date("m", strtotime($value['complete_date']));
+            $day = date("j", strtotime($value['complete_date']));
+
+            if(!key_exists($month, $dates))
+            {
+                $dates[$month] = array();
+            }
+
+            if(!key_exists($day, $dates[$month]))
+            {
+                $dates[$month][$day] = 0;
+            }
+            $dates[$month][$day]++;
+        }
+
+        return $dates;
+    }
+
+    private function sort_and_count($dates)
+    {
+        $output = array();
+
+        if(count($dates) > 1)
+        {
+            foreach($dates as $month)
+            {
+
+                asort($month);
+                $output += $month;
+            }
+        }
+        else if(count($dates) > 0)
+        {
+            $key = key($dates);
+            asort($dates[$key]);
+
+            $output += $dates[$key];
+        }
+
+        return $output;
+    }
+
+
+
 }

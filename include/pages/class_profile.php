@@ -113,21 +113,21 @@ $i_rand = rand(100, 1000);
             </div>
         </div>
         <div class="col-sm-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title">
+            <div class="widget">
+                <div class="widget-header">
+                    <h4 class="widget-title">
                         <?php echo TranslationHandler::get_static_text("STATISTICS"); ?>
                     </h4>
                 </div>
                 <hr class="widget-separator m-0">
-                <div class="panel-body">
+                <div class="widget-body">
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="user-card">
                                 <div class="center">
                                     <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
-                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
-                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_average; ?>%    </strong>
+                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->class_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->class_average) ?>"}, thickness: 10}' data-size="70">
+                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->class_average; ?>%    </strong>
                                     </div>
                                 </div>
                             </div>
@@ -136,8 +136,8 @@ $i_rand = rand(100, 1000);
                             <div class="user-card">
                                 <div class="center">
                                     <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
-                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
-                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_lecture_average; ?>%    </strong>
+                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->class_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->class_lecture_average) ?>"}, thickness: 10}' data-size="70">
+                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->class_lecture_average; ?>%    </strong>
                                     </div>
                                 </div>
                             </div>
@@ -146,8 +146,8 @@ $i_rand = rand(100, 1000);
                             <div class="user-card">
                                 <div class="center">
                                     <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
-                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">
-                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_test_average; ?>%    </strong>
+                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->class_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->class_test_average) ?>"}, thickness: 10}' data-size="70">
+                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->class_test_average; ?>%    </strong>
                                     </div>
                                 </div>
                             </div>
@@ -177,7 +177,7 @@ $i_rand = rand(100, 1000);
         </div>
         <div class="widget">
             <div class='widget-header'>
-                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("DAYS_REMAINING"); ?></h4>
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("DAYS_REMAINING") . ": " . $classHandler->school_class->remaining_days; ?></h4>
             </div>
             <hr class="widget-separator m-0">
             <div class="widget-body">

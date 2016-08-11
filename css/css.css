@@ -667,6 +667,20 @@ a .menu_header {
   top: 19px; right: -21px;
 }
 
+.homework-ribbon span {
+    background: linear-gradient(#f3c02c 0%, #f3c02c 100%) !important;
+}
+
+.homework-ribbon span::before {
+    border-left: 3px solid #f3c02c !important;
+    border-top: 3px solid #f3c02c !important;
+}
+
+.homework-ribbon span::after {
+    border-right: 3px solid #f3c02c !important;
+    border-top: 3px solid #f3c02c !important;
+}
+
 .ribbon span::before {
   content: "";
   position: absolute; left: 0px; top: 100%;
@@ -789,4 +803,8 @@ a .menu_header {
     border: none;
     color: #FFF;
     line-height: 90px;
+}
+
+.no-transform {
+    text-transform: none !important;
 }

@@ -46,8 +46,18 @@
                 $last_page_submenu = false;
                 foreach ($pageHandler->get_menu(1) as $menu) {
                     if ($menu->display_menu) {
-                        $has_submenu = (count($menu->children) > 0) ? true : false;
+                        
+                        $has_submenu = false;
+                        foreach($menu->children as $child) {
+                            if($child->display_menu) {
+                                $has_submenu = true;
+                                break;
+                            }
+                        }
                         if (empty($menu->master_page_id) || ((int)$menu->master_page_id) < 1){
+                            if(!$has_submenu && $menu->is_dropdown) {
+                                continue;
+                            }
                             if($last_page_submenu) {
                                 echo '</ul>';
                                 $last_page_submenu = false;

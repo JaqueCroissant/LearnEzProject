@@ -13,6 +13,7 @@ class School_Class extends ORM{
     public $number_of_students;
     public $number_of_teachers;
     public $remaining_days;
+    public $total_days;
     
     public $homework = array();
     public $students = array();

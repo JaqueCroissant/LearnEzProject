@@ -17,18 +17,18 @@ if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
     <div class="col-md-12">
         <div class="widget">
             <header class="widget-header">
-                <h4 class="widget-title">Opret lektier</h4>
+                <h4 class="widget-title"><?= TranslationHandler::get_static_text("CREATE_HOMEWORK") ?></h4>
             </header>
             <hr class="widget-separator">
             <div class="widget-body" style="padding-top: 32px !important;">
                 <form method="post" action="" url="homework.php?step=create_homework" id="new_create_homework" name="submit_create_homework">
                     <input type="hidden" name="color" class="pick_color" value="#000000"/>
                     <div class="col-md-6">
-                        <h4 class="widget-title">Lektie information</h4>
+                        <h4 class="widget-title"><?= TranslationHandler::get_static_text("HOMEWORK_INFORMATION") ?></h4>
                         <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
                         <div class="col-md-12" style="margin-bottom: 16px !important;">
                             <div class="form-group m-b-sm">
-                                <label for="available_classes" class="control-label">Tildel klasser:</label>
+                                <label for="available_classes" class="control-label"><?= TranslationHandler::get_static_text("ASSIGN_CLASSES") ?>:</label>
                                 <select id="available_classes" name="classes[]" class="form-control" data-plugin="select2" multiple>
                                     <?php
                                     if ($homeworkHandler->get_available_classes()) {
@@ -41,12 +41,12 @@ if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
                             </div>
                             
                             <div class="form-group m-b-sm">
-                                <label for="title" class="control-label">Titel:</label>
+                                <label for="title" class="control-label"><?= TranslationHandler::get_static_text("TITLE") ?>:</label>
                                 <input class="form-control" id="title" name="title" type="text" />
                             </div>
 
                             <div class="form-group m-b-sm">
-                                <label for="description" class="control-label">Besked:</label>
+                                <label for="description" class="control-label"><?= TranslationHandler::get_static_text("MESSAGE") ?>:</label>
                                 <textarea class="form-control" name="description" id="description" cols="40" rows="5"></textarea>
                             </div>
                             
@@ -56,7 +56,7 @@ if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
                             </div>
                             
                             <div class="form-group m-b-sm">
-                                <label for="date_expire" class="control-label">Deadline:</label>
+                                <label for="date_expire" class="control-label"><?= TranslationHandler::get_static_text("DEADLINE") ?>:</label>
                                 <div class="col-md-12  m-b-sm" style="padding-left:0px !important; padding-right: 0px !important;">
                                     <input class="form-control" id="date_expire" type="text" name="date_expire" data-options="{format: 'YYYY-MM-DD', showTodayButton:false}" data-plugin="datetimepicker" value=<?= $date ?> />
                                 </div>
@@ -66,14 +66,14 @@ if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
                     </div>
 
                     <div class="col-md-6">
-                        <h4 class="widget-title">Tildel lektier</h4>
+                        <h4 class="widget-title"><?= TranslationHandler::get_static_text("ASSIGN_HOMEWORK") ?></h4>
                         <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px 24px 0px !important;">
                         <?php foreach($courseHandler->get_os_options() as $value) { ?>
                         <div class="panel-group accordion" id="accordion" style="margin-bottom: 30px !important;">
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="heading-<?= $value["title"] ?>">
                                     <a class="accordion-toggle collapsed" style="padding: 0px 0.75rem 0px 0.75rem !important;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-<?= $value["title"] ?>" aria-expanded="false" aria-controls="collapse-<?= $value["title"] ?>">
-                                        <h4 class="panel-title" style="color: #6a6c6f !important;text-transform:none !important;"><?= $value["title"] ?> brugere</h4>
+                                        <h4 class="panel-title" style="color: #6a6c6f !important;text-transform:none !important;"><?= $value["title"] ?> <?= TranslationHandler::get_static_text("USERS") ?></h4>
                                         <i class="fa acc-switch" style="padding-right: 40px;"></i>
                                     </a>
                                 </div>
@@ -105,7 +105,7 @@ if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
                                                             <div style="clear:both;"></div>
                                                             <div style="float:right;width:95%;padding-bottom:20px;">
                                                                 <div style="float:left;width:50%;">
-                                                                    <div class="text-color fw-500" style="margin-bottom:5px;">Lektioner:</div>
+                                                                    <div class="text-color fw-500" style="margin-bottom:5px;"><?= TranslationHandler::get_static_text("LECTURES") ?>:</div>
                                                                     <?php 
                                                                     if($courseHandler->get_for_school($current_user->school_id, $course->id, "lecture", $value["id"])) {
                                                                         foreach($courseHandler->lectures as $lecture) { ?>
@@ -126,7 +126,7 @@ if(SessionKeyHandler::get_from_session("user", true)->user_type_id == 1) {
                                                                     <?php } } ?>
                                                                 </div>
                                                                 <div style="float:left;width:50%;">
-                                                                    <div class="text-color fw-500" style="margin-bottom:5px;">Test:</div>
+                                                                    <div class="text-color fw-500" style="margin-bottom:5px;"><?= TranslationHandler::get_static_text("TESTS") ?>:</div>
                                                                     <?php 
                                                                     if($courseHandler->get_for_school($current_user->school_id, $course->id, "test", $value["id"])) {
                                                                         foreach($courseHandler->tests as $test) { ?>

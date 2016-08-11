@@ -1054,7 +1054,7 @@ class UserHandler extends Handler
                 throw new Exception("INVALID_INPUT");
             }
             
-            $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users INNER JOIN user_class WHERE users.id = user_class.users_id AND user_class.class_id = :id", $class_id);
+            $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class WHERE users.id = user_class.users_id AND user_class.class_id = :id", $class_id);
             
             $this->users = array();
             if(count($user_data > 0))

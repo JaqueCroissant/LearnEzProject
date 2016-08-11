@@ -1,5 +1,10 @@
 <?php
 
+function cmp($a, $b)
+{
+    return strcmp($a->date_assigned, $b->date_assigned);
+}
+
 function month_num_to_string($month_num = 0) {
     if(!is_numeric($month_num) || !is_int((int)$month_num)) {
         return;

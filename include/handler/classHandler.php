@@ -28,6 +28,7 @@ class ClassHandler extends Handler {
 
             $this->school_class = new School_Class(reset(DbHandler::get_instance()->return_query($query, $class_id)));
             $this->school_class->remaining_days = $this->set_remaining_days($this->school_class);
+            $this->school_class->total_days = $this->set_total_days($this->school_class);
             $this->school_class->number_of_students = $this->get_number_of_students_in_class($class_id);
             $this->school_class->number_of_teachers = $this->get_number_of_teachers_in_class($class_id);
 
@@ -72,6 +73,7 @@ class ClassHandler extends Handler {
                 $class->number_of_students = $this->get_number_of_students_in_class($class->id);
                 $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $class->remaining_days = $this->set_remaining_days($class);
+                $class->total_days = $this->set_total_days($class);
                 $this->classes[] = $class;
             }
 
@@ -109,10 +111,10 @@ class ClassHandler extends Handler {
             } else {
                 $query .= "ORDER BY end_date LIMIT :limit";
                 if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
-                    
+
                     $data = DbHandler::get_instance()->return_query($query, $this->_user->id, $number_of_classes);
                 } else {
-                    
+
                     $data = DbHandler::get_instance()->return_query($query, $number_of_classes);
                 }
             }
@@ -120,6 +122,7 @@ class ClassHandler extends Handler {
             foreach ($data as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
+                $class->total_days = $this->set_total_days($class);
                 $this->soon_expiring_classes[] = $class;
             }
             return true;
@@ -155,6 +158,7 @@ class ClassHandler extends Handler {
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
+                $class->total_days = $this->set_total_days($class);
                 $class->number_of_students = $this->get_number_of_students_in_class($class->id);
                 $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $this->classes[] = $class;
@@ -185,6 +189,7 @@ class ClassHandler extends Handler {
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
+                $class->total_days = $this->set_total_days($class);
                 $class->number_of_students = $this->get_number_of_students_in_class($class->id);
                 $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $this->classes[] = $class;
@@ -340,6 +345,10 @@ class ClassHandler extends Handler {
         } else {
             return 0;
         }
+    }
+
+    private function set_total_days($class) {
+        return date_diff(date_create_from_format($this->format, $class->end_date), date_create_from_format($this->format, $class->start_date))->format("%a");
     }
 
     private function get_number_of_students_in_class($class_id) {

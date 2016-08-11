@@ -66,6 +66,6 @@ RightsHandler::reset();
         <script src="libs/bower/moment/moment.js"></script>
         <script src="libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
         <script src="assets/js/fullcalendar.js"></script>
-        <script src="js/back.js"></script>
+<!--        <script src="js/back.js"></script>-->
     </body>
 </html>

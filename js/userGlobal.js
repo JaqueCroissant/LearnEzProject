@@ -9,27 +9,32 @@ $(document).ready(function () {
     var max_progress = 0;
     var update = false;
     var table_id = 0;
+    var action_id = 0;
+    var task = "";
     var time_since_last_save = 0;
     var interval_function;
     var hidden = true;
+    var paused = false;
     var ratio = 1;
     var mute = false;
+    var time_between_saves = 15;
+    var cookie_expiration_time = 1;
     
     if ($.cookie("current_task") !== undefined) {
         
         var data = JSON.parse($.cookie("current_task"));
+        task = data.task;
         mute = data.mute;
+        action_id = parseInt(data.data);
         $.ajax({
             type: "POST",
-            url: "include/ajax/course.php?play_test=1&test_id=" + data.data,
+            url: "include/ajax/course.php?" + (task === "test" ? "play_test=1&test_id=" : "play_lecture=1&lecture_id=") + data.data,
             dataType: "json",
             async: false,
             complete: function(a_data) {
-                var response = a_data.responseJSON;
-                open(response, false);
+                open(a_data.responseJSON, false);
             }
         });
-        console.log("muted | " + mute);
     }
     
     function first_slide_enter(){
@@ -41,39 +46,108 @@ $(document).ready(function () {
         setTimeout(function(){
             if (current_progress !== max_progress) {
                 document.getElementById("scaled-frame").contentWindow.cpAPIInterface.setVariableValue("cpCmndGotoSlide", current_progress - 1);
-                if (update) {
-                   interval_function = setInterval(function(){
-                        time_since_last_save++;
-                        if (time_since_last_save >= 30) {
-                            update_init();
-                            progress_reached_last = progress_reached;
-                            time_since_last_save = 0;
-                        }
-                    }, 1000);
-                }
-            }
-            else {
-                update = false;
             }
         }, 1);
     }
     
     function slide_enter(event){
-        console.log("entering " + event.Data.slideNumber);
-        console.log("table id: " + table_id);
         current_progress = event.Data.slideNumber;
-        $.cookie("current_progress", (current_progress === max_progress ? 1 : current_progress), {path: "/"});
         if (current_progress > progress_reached) {
             progress_reached = current_progress;
         }
+        if (current_progress >= max_progress) {
+            update_init();
+            update = false;
+            clearInterval(interval_function);
+        }
+        set_test_buttons();
+    }
+    
+    function set_test_buttons(){
         current_progress === 1 ? $(".course_go_back").attr("disabled", true) : $(".course_go_back").attr("disabled", false);
         current_progress === max_progress || current_progress === progress_reached ? $(".course_go_for").attr("disabled", true) : $(".course_go_for").attr("disabled", false);
+        $(".course_mute").attr("disabled", false);
+        $(".course_unmute").attr("disabled", false);
         $(".course_slide_counter").html("<b>" + current_progress + "/" +  max_progress + "</b>");
     }
     
+    function set_lecture_buttons(){
+        $(".course_lecture_button").attr("disabled", false);
+        update_lecture_counter();
+        if (current_progress >= progress_reached - 2) {
+            $(".course_continue").attr("disabled", true);
+        }
+        else {
+            $(".course_continue").attr("disabled", false);
+        }
+    }
+    
+    function set_menu_buttons(){
+        task === "test" ? set_test_buttons() : set_lecture_buttons();
+        $(".course_default").attr("disabled", false);
+    }
+    
+    function switch_play_pause(){
+        var player = $(".course_video")[0];
+        if(player.ended) {
+            update_init();
+            update = false;
+            clearInterval(interval_function);
+            $(".course_pause").hide();
+            $(".course_play").show();
+        }
+        else if (player.paused) {
+            $(".course_pause").show();
+            $(".course_play").hide();
+            paused = false;
+            player.play();
+        }
+        else {
+            $(".course_pause").hide();
+            $(".course_play").show();
+            paused = true;
+            player.pause();
+        }
+    }
+    
+    function start_lecture_interval(){
+        if (update) {
+            time_since_last_save = 0;
+            interval_function = setInterval(function(){
+                time_since_last_save++;
+                progress_reached = current_progress > progress_reached ? current_progress : progress_reached;
+                if (time_since_last_save >= time_between_saves) {
+                    update_init();
+                    progress_reached_last = progress_reached;
+                    time_since_last_save = 0;
+                }
+            }, 1000);
+        }
+    }
+    
+    function start_test_interval(){
+        if (update) {
+            time_since_last_save = 0;
+            interval_function = setInterval(function(){
+                 time_since_last_save++;
+                 if (time_since_last_save >= time_between_saves) {
+                     update_init();
+                     progress_reached_last = progress_reached;
+                     time_since_last_save = 0;
+                 }
+             }, 1000);
+        }
+    }
+    
+    function update_lecture_counter(){
+        $(".course_slide_counter").html("<p>" 
+            + (Math.floor(current_progress / 60) < 10 ? "0" + Math.floor(current_progress / 60) : Math.floor(current_progress / 60))  
+            + ":" + (current_progress % 60 < 10 ? "0" + current_progress % 60 : current_progress % 60) 
+            + "/" + (Math.floor(max_progress / 60) < 10 ? "0" + Math.floor(max_progress / 60) : Math.floor(max_progress / 60)) 
+            + ":" + (max_progress % 60 < 10 ? "0" + max_progress % 60 : max_progress % 60 + "</p>"));  
+    }
+    
     function init_iframe_window(){
-        console.log("frame init");
-        $(window).on("resize", resize);
         var iframe_window = document.getElementById("scaled-frame").contentWindow;
         iframe_window.addEventListener("moduleReadyEvent", function(){
             hidden ? iframe_window.cpAPIInterface.pause() : iframe_window.cpAPIInterface.play();
@@ -92,7 +166,7 @@ $(document).ready(function () {
     }
 
     $(document).on("click", ".course_action", function(){
-        if (can_be_clicked) {
+        if (can_be_clicked && $(this).attr("disabled") !== true) {
             can_be_clicked = false;
             var window = document.getElementById("scaled-frame").contentWindow;
             var action = $(this).attr("value");
@@ -121,6 +195,31 @@ $(document).ready(function () {
                 case "mute" :
                     switch_mute();
                     break;
+                case "continue" :
+                    $(".course_video")[0].currentTime = progress_reached < max_progress ? progress_reached : progress_reached - 1;
+                    break;
+                case "play" :
+                    if( $(".course_video")[0].ended) {
+                        $(".course_video")[0].play();
+                        paused = false;
+                        $(".course_pause").show();
+                        $(".course_play").hide();
+                    }
+                    else {
+                        switch_play_pause();
+                    }
+                    break;
+                case "pause" :
+                    switch_play_pause();
+                    break;
+                case "repeat" :
+                    $(".course_video")[0].currentTime = 0;
+                    current_progress = 0;
+                    update_lecture_counter();
+                    if ($(".course_video")[0].paused) {
+                        switch_play_pause();
+                    }
+                    break;
                 default : break;
             }
             can_be_clicked = true;
@@ -128,23 +227,14 @@ $(document).ready(function () {
     });
 
     function update_init(){
-        console.log("Attempting to save");
-        if (progress_reached > progress_reached_last) {
-            console.log("Saving");
-            if (progress_reached === max_progress) {
-                update_progress("test", 0, 1, 6);
+        if (update && progress_reached > progress_reached_last) {
+            if (progress_reached >= max_progress) {
+                update_progress(task, 0, 1);
             }
             else {
-                update_progress("test", progress_reached, 0, 6);
+                update_progress(task, progress_reached, 0);
             }
         }
-        else {
-            console.log("Save not needed");
-        }
-        var temp = JSON.parse($.cookie("current_task"));
-        temp.mute = mute;
-        $.cookie("current_task", JSON.stringify(temp), {path: "/"});
-        
     }
     
     function check_mute(){
@@ -156,17 +246,21 @@ $(document).ready(function () {
     function switch_mute(){
         var c_window = document.getElementById("scaled-frame").contentWindow;
         var current = c_window.cpAPIInterface.getVolume();
-        var i = $(".course_mute").find("i");
         if (current === 100) {
             c_window.cpAPIInterface.setVolume(0);
-            i.toggleClass("zmdi-volume-up zmdi-volume-off");
+            $(".course_mute").hide();
+            $(".course_unmute").show();
             mute = true;
         }
         else {
             c_window.cpAPIInterface.setVolume(100);
-            i.toggleClass("zmdi-volume-off zmdi-volume-up");
+            $(".course_unmute").hide();
+            $(".course_mute").show();
             mute = false;
         }
+        var temp = JSON.parse($.cookie("current_task"));
+        temp.mute = mute;
+        $.cookie("current_task", JSON.stringify(temp), {path: "/", expires:cookie_expiration_time});
     }
     
     function close(){
@@ -174,35 +268,34 @@ $(document).ready(function () {
         update_init();
         $(".test_content").fadeOut(500, function(){
             $(this).hide();
-            $.removeCookie("current_progress", {path:"/"});
             $.removeCookie("current_task", {path:"/"});
         });
         $("#scaled-frame").remove("html");
         $("#scaled-frame").attr("src", "");
+        $(".course_video").attr("src", "");
         $(window).unbind("unload.update_progress");
     }
     
     function open(data, open){
-        current_progress = parseInt($.cookie("current_progress"));
+        current_progress = parseInt(data.current_progress);
         progress_reached = parseInt(data.current_progress);
         progress_reached_last = parseInt(data.current_progress);
-        max_progress = parseInt(data.max_progress);
-        table_id = parseInt(data.user_course_table_id);
-        course_player_init(data, 500);
+        max_progress = task === "test" ? parseInt(data.max_progress) : parseInt(data.max_progress) - 1;
+        update = !(progress_reached >= max_progress + 1);
+        table_id = data.user_course_table_id === undefined ? null : parseInt(data.user_course_table_id);
+        course_player_init(data, 1000);
         if (open) {
             $(".course_return").trigger("click");
         }
         else {
             $(".course_return").show();
         }
-        $(window).one("unload.update_progress", function(event){
-            console.log("window unloaded");
-            update_init();
+        $(window).one("unload.update_progress", function(){
             clearInterval(interval_function);
         });
     }
 
-    function update_progress(type, progress, is_complete, action_id){
+    function update_progress(type, progress, is_complete){
         initiate_submit_get($("#hidden_element"), "course.php?update_progress=" + type + "&progress=" + progress + "&is_complete=" + is_complete + "&table_id=" + table_id + "&action_id= "+ action_id, function () {
         }, function () {
             if(ajax_data.last_inserted_id !== null) {
@@ -212,10 +305,10 @@ $(document).ready(function () {
     }
     
     function resize(){
-        var ratiow = ($(window).width() - 20) / 1024;
-        var ratioh = ($(window).height() - 60) / 740;
-        ratio = ratiow > ratioh ? ratioh : ratiow;
-        if (!hidden) {
+        if (task === "test") {
+            var ratiow = ($(window).width() - 20) / 1024;
+            var ratioh = ($(window).height() - 60) / 740;
+            ratio = ratiow > ratioh ? ratioh : ratiow;
             $("#scaled-frame").css({
                 "transform" : "scale(" + ratio + ")",
                 "-webkit-transform" : "scale(" + ratio + ")",
@@ -225,29 +318,47 @@ $(document).ready(function () {
                 "margin-top" : -(740 - 740 * ratio) / 2 - 1, 
                 "margin-left" : -(1024 - 1024 * ratio) / 2
             });
-            $("#iframe_content").css({
-                "height" : 740 * ratio + 40,
-                "width" : 1024 * ratio,
-                "margin-left" : ($(window).width() - ratio * 1024) / 2,
-                "margin-bottom" : ($(window).height() - 40 - ratio * 740) / 2 - 10
-            });
+            if (!hidden) {
+                $("#iframe_content").css({
+                    "height" : 740 * ratio + 40,
+                    "width" : 1024 * ratio,
+                    "margin-left" : ($(window).width() - ratio * 1024) / 2,
+                    "margin-bottom" : ($(window).height() - 60 - ratio * 740) / 2
+                });
+            }
+            else {
+                $("#iframe_content").css({
+                    "height" : 740 * ratio + 40,
+                    "width" : 1024 * ratio,
+                    "margin-left" : ($(window).width() - ratio * 1024) / 2,
+                    "margin-bottom" : -(740 * ratio + 60)
+                });
+            }
         }
         else {
-            $("#scaled-frame").css({
-                "transform" : "scale(" + ratio + ")",
-                "-webkit-transform" : "scale(" + ratio + ")",
-                "-ms-transform" : "scale(" + ratio + ")"
-            });
-            $("#scaled-frame").css({
-                "margin-top" : -(740 - 740 * ratio) / 2 - 1, 
-                "margin-left" : -(1024 - 1024 * ratio) / 2
-            });
-            $("#iframe_content").css({
-                "height" : 740 * ratio + 40,
-                "width" : 1024 * ratio,
-                "margin-left" : ($(window).width() - ratio * 1024) / 2,
-                "margin-bottom" : -(740 * ratio + 50)
-            });
+            var width = $(".course_video")[0].videoWidth;
+            var height = $(".course_video")[0].videoHeight;
+            width = width === 0 ? 1280 : width;
+            height = height === 0 ? 720 : height;
+            var ratiow = ($(window).width() - 20) / width;
+            var ratioh = ($(window).height() - 60) / height;
+            ratio = ratiow > ratioh ? ratioh : ratiow;
+            if (!hidden) {
+                $("#iframe_content").css({
+                    "height" : height * ratio + 40,
+                    "width" : width * ratio,
+                    "margin-left" : ($(window).width() - ratio * width) / 2,
+                    "margin-bottom" : ($(window).height() - 60 - ratio * height) / 2
+                });
+            }
+            else {
+                $("#iframe_content").css({
+                    "height" : height * ratio + 40,
+                    "width" : width * ratio,
+                    "margin-left" : ($(window).width() - ratio * width) / 2,
+                    "margin-bottom" : -(height * ratio + 60)
+                });
+            }
         }
     }
     
@@ -262,12 +373,19 @@ $(document).ready(function () {
     $(document).on("click", ".backdrop", function(){      
         if (!hidden) {
             hide_backdrop();
-            $("#iframe_content").animate({"margin-bottom":-($("#iframe_content").height() + 10), bottom:0}, 700, "easeInOutQuad", function(){
+            $(".course_action").attr("disabled", true);
+            $("#iframe_content").animate({"margin-bottom":-($("#iframe_content").height() + 10)}, 700, "easeInOutQuad", function(){
                 can_be_clicked = false;
                 $(this).hide();
                 $(".course_return").css("display", "block");
             });
-            document.getElementById("scaled-frame").contentWindow.cpAPIInterface.pause();
+            if(task === "test") {
+                document.getElementById("scaled-frame").contentWindow.cpAPIInterface.pause();
+            }
+            else {
+                $(".course_video")[0].pause();
+            }
+            clearInterval(interval_function);
         }
     });
 
@@ -276,39 +394,115 @@ $(document).ready(function () {
             $(".course_return").hide();
             $("#iframe_content").css({"display" : "block", "opacity" : 1}); 
             resize();
-            $("#iframe_content").animate({"margin-bottom": (($(window).height() - 40 - ratio * 740) / 2 -10), bottom:10}, 700, "easeInOutQuad", function() {
+            $(".course_slide_counter").html("");
+            $(".course_action").attr("disabled", true);
+            $("#iframe_content").animate({"margin-bottom": (($(window).height() - 60 - ratio * (task === "test" ? 740 : ($(".course_video")[0].videoHeight === 0 ? 720 : $(".course_video")[0].videoHeight))) / 2)}, 700, "easeInOutQuad", function() {
+                set_menu_buttons();
                 hidden = false;
                 can_be_clicked = true;
             });
             $(".backdrop").show();
             $(".backdrop").animate({opacity:1}, 500, "easeOutCubic");
+            if (task === "test") {
+                start_test_interval();
+            }
+            else {
+                if ($(".course_video")[0].readyState === 4) {
+                    setTimeout(function(){
+                        if(!paused) $(".course_video")[0].play();
+                        start_lecture_interval();
+                    }, 700);
+                    
+                }
+                else {
+                    $(".course_video").one("loadeddata", function(){
+                        start_lecture_interval();
+                        $(".course_video")[0].play();
+                    });
+                }
+            }
         }
     });
     
     function course_player_init(data, wait){
         $(".course_window_test").show();
-        $(".course_player_test_title").html(data.test_title);
+        $(".course_player_test_title").html(data.action_title);
         $(".course_player_course_title").html(data.course_title);
-        setTimeout(function(){
-            $(".course_iframe").attr("src", "courses/tests/" + data.path + "/index.php");
-            $(".course_iframe").one("load", function(){
-                init_iframe_window();
-            });
-        }, wait);
+        if (task === "test") {
+            $(".course_test_menu").show();
+            $(".course_lecture_menu").hide();
+            $(".course_iframe").show();
+            $(".course_video").hide();
+            setTimeout(function(){
+                $(".course_iframe").attr("src", "courses/tests/" + data.path + "/index.php");
+                $(".course_iframe").one("load", function(){
+                    $(window).on("resize", resize);
+                    init_iframe_window();
+                });
+            }, wait);
+        }
+        else {
+            $(".course_test_menu").hide();
+            $(".course_lecture_menu").show();
+            $(".course_iframe").hide();
+            $(".course_video").show();
+            setTimeout(function(){
+                $(".course_video").attr("src", "courses/lectures/" + data.path);
+                $(".course_video").one("loadeddata", function(){
+                    var width = $(this)[0].videoWidth;
+                    var height = $(this)[0].videoHeight;
+                    var ratiow = ($(window).width() - 20) / width;
+                    var ratioh = ($(window).height() - 60) / height;
+                    ratio = ratiow > ratioh ? ratioh : ratiow;
+                    $("#iframe_content").animate({
+                        "height" : height * ratio + 40,
+                        "width" : width * ratio,
+                        "margin-left" : ($(window).width() - ratio * width) / 2,
+                        "margin-bottom" : ($(window).height() - 60 - ratio * height) / 2
+                    }, 500, "easeInOutQuad");
+                    $(window).on("resize", resize);
+                    $(".course_video")[0].currentTime = current_progress;
+                    update_lecture_counter();
+                    });
+            }, wait);
+        }
+        
     }
+    
+    (function() {
+        $(".course_video").bind("ended", function(){
+            switch_play_pause();
+        });
+        $(".course_video")[0].ontimeupdate = function(){
+            current_progress = $(".course_video")[0].currentTime > max_progress ? max_progress : Math.floor($(".course_video")[0].currentTime);
+            update_lecture_counter();
+            if (current_progress >= progress_reached - 2) {
+                $(".course_continue").attr("disabled", true);
+            }
+            else {
+                $(".course_continue").attr("disabled", false);
+            }
+        };
+    })();
 
     $(document).on("click", ".play_test", function(){
         if($(this).attr("element_id") === undefined) {
             return;
         }
-        if ($.cookie("current_task") === undefined || JSON.parse($.cookie("current_task")).data !== $(this).attr("element_id")) {
-            console.log("getting new test");
+        if ($.cookie("current_task") === undefined || !(JSON.parse($.cookie("current_task")).data === $(this).attr("element_id") && JSON.parse($.cookie("current_task")).task === "test")) {
+            if ($.cookie("current_task") !== undefined) {
+                update_init();
+                $(".course_video").attr("src", "");
+                $(".course_video").load();
+            }
+            
+            action_id = $(this).attr("element_id");
             initiate_submit_get($(this), "course.php?play_test=1&test_id="+$(this).attr("element_id"), function () {
                 show_status_bar("error", ajax_data.error);
             }, function () {
-                $.cookie("current_task", '{"task" : "test", "data" : "' + 6 + '", "mute" : "false"}', {expires: 1, path: "/"});
-                $.cookie("current_progress", (ajax_data.current_progress === ajax_data.max_progress ? 1 : ajax_data.current_progress), {expires: 1, path: "/"});
+                $.cookie("current_task", '{"task" : "test", "data" : "' + action_id + '", "mute" : "false"}', {expires: cookie_expiration_time, path: "/"});
                 mute = false;
+                task = "test";
                 open(ajax_data, true);
             });
         }
@@ -318,6 +512,29 @@ $(document).ready(function () {
     });
 
     $(document).on("click", ".play_lecture", function(){
+        if($(this).attr("element_id") === undefined) {
+            return;
+        }
+        if ($.cookie("current_task") === undefined || !(JSON.parse($.cookie("current_task")).data === $(this).attr("element_id") && JSON.parse($.cookie("current_task")).task === "lecture")) {
+            if ($.cookie("current_task") !== undefined) {
+                update_init();
+                $(".course_iframe").attr("src", "");
+            }
+            
+            action_id = $(this).attr("element_id");
+            initiate_submit_get($(this), "course.php?play_lecture=1&lecture_id="+$(this).attr("element_id"), function () {
+                show_status_bar("error", ajax_data.error);
+            }, function () {
+                $.cookie("current_task", '{"task" : "lecture", "data" : "' + action_id + '", "mute" : "false"}', {expires: cookie_expiration_time, path: "/"});
+                mute = false;
+                paused = false;
+                task = "lecture";
+                open(ajax_data, true);
+            });
+        }
+        else {
+            $(".course_return").trigger("click");
+        }
     });
 });
 

@@ -10,29 +10,28 @@ $schoolHandler->get_all_schools();
 $schoolHandler->get_school_types();
 $all_courses = [];
 $school_courses = [];
-?>
+if (RightsHandler::has_user_right("SCHOOL_EDIT") && ($classHandler->_user->user_type_id == 1 || $classHandler->_user->school_id == $_GET['school_id'])) {
+    if (isset($_GET['school_id'])) {
+        $schoolHandler->get_school_by_id($_GET['school_id']);
+        $all_courses = $courseHandler->get_multiple(0, "course") ? $courseHandler->courses : [];
+        $school_courses = $courseHandler->get_for_school($_GET['school_id'], 0, "course") ? $courseHandler->courses : [];
+    }
+    ?>
 
-<div class="row">   
-    <div class="col-md-12">
-        <div class="widget">
-            <div class="widget-header">
-                <h4 class="widget-title">
-                    <div class="col-md-6"><?php echo TranslationHandler::get_static_text("SCHOOL_EDIT"); ?></div>
-                    <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
-                        <div class="col-md-6"><?php echo TranslationHandler::get_static_text("COURSES"); ?></div>
-                    <?php } ?>
-                </h4>
-            </div>
-            <hr class="widget-separator">
-            <div class="widget-body">
-                <?php
-                if (RightsHandler::has_user_right("SCHOOL_EDIT")) {
-                    if (isset($_GET['school_id'])) {
-                        $schoolHandler->get_school_by_id($_GET['school_id']);
-                        $all_courses = $courseHandler->get_multiple(0, "course") ? $courseHandler->courses : [];
-                        $school_courses = $courseHandler->get_for_school($_GET['school_id'], 0, "course") ? $courseHandler->courses : [];
-                    }
-                    ?>
+    <div class="row">   
+        <div class="col-md-12">
+            <div class="widget">
+                <div class="widget-header">
+                    <h4 class="widget-title">
+                        <div class="col-md-6"><?php echo TranslationHandler::get_static_text("SCHOOL_EDIT"); ?></div>
+                        <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
+                            <div class="col-md-6"><?php echo TranslationHandler::get_static_text("COURSES"); ?></div>
+                        <?php } ?>
+                    </h4>
+                </div>
+                <hr class="widget-separator">
+                <div class="widget-body">
+
                     <form method="post" id="update_school" action="" name="update_school_step_one" class="form-horizontal" url="edit_school.php">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -124,10 +123,10 @@ $school_courses = [];
                                                 <td><?php echo (strlen($value->description) > 16 ? substr($value->description, 0, 16) . "..." : $value->description); ?></td>
                                                 <td><?php echo (strlen($value->os_title) > 16 ? substr($value->os_title, 0, 16) . "..." : $value->os_title); ?></td>
                                                 <td><input class="checkbox-circle a checkbox-dark" <?php
-                                            foreach ($school_courses as $n_val) {
-                                                echo $value->id == $n_val->id ? " checked " : "";
-                                            }
-                                            ?> type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></td>
+                                                    foreach ($school_courses as $n_val) {
+                                                        echo $value->id == $n_val->id ? " checked " : "";
+                                                    }
+                                                    ?> type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></td>
                                             </tr>
                                         <?php } ?>
 
@@ -145,13 +144,13 @@ $school_courses = [];
                             </div>
                         </div>
                     </form>
-                    <?php
-                } else {
-                    ErrorHandler::show_error_page(ErrorHandler::return_error("INSUFFICIENT_RIGHTS")->title);
-                }
-                ?>
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <?php
+} else {
+    ErrorHandler::show_error_page(ErrorHandler::return_error("INSUFFICIENT_RIGHTS")->title);
+}
+?>
 <script src="assets/js/include_app.js" type="text/javascript"></script>

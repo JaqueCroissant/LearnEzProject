@@ -26,12 +26,15 @@ if ($classHandler->_user->user_type_id != 1) {
     <div class="<?php echo $classHandler->_user->user_type_id != "1" ? "col-md-9" : "" ?> col-sm-12">
         <div class="row">
             <div class="col-sm-12">
-                <div class="widget">
-                    <div class="widget-header">
-                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title no-transform">
+                            <i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg m-r-md"></i>
+                            <?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?>
+                        </h4>
                     </div>
-                    <hr class="widget-separator">
-                    <div class="widget-body">
+                    <hr class="widget-separator m-0">
+                    <div class="panel-body">
                         <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5, columnDefs:[{orderable: false<?= $targets ?>}]}">
                             <thead>
                                 <tr>
@@ -93,12 +96,14 @@ if ($classHandler->_user->user_type_id != 1) {
                     $homeworkHandler->get_user_homework();
                     ?>
                     <div class="col-sm-12">
-                        <div class="widget">
-                            <div class='widget-header'>
-                                <h4 class="widget-title a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("HOMEWORK_OVERVIEW") ?>"><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
+                        <div class="panel panel-default">
+                            <div class='panel-heading'>
+                                <h4 class="panel-title no-transform a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("HOMEWORK_OVERVIEW") ?>">
+                                    <i class="zmdi-hc-fw zmdi zmdi-assignment zmdi-hc-lg m-r-md"></i>
+                                    <?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
                             </div>
                             <hr class="widget-separator m-0">
-                            <div class="widget-body">
+                            <div class="panel-body">
                                 <div class="panel-body">
                                     <?php
                                     if (empty($homeworkHandler->homework)) {
@@ -167,12 +172,15 @@ if ($classHandler->_user->user_type_id != 1) {
     </div>
     <div class="col-sm-12 col-md-3">
         <?php if ($classHandler->_user->user_type_id != "1") { ?>
-            <div class="widget">
-                <div class="widget-header">
-                    <h4 class="widget-title"><?php echo $schoolHandler->school->name; ?></h4>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title no-transform">
+                        <i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg m-r-md"></i>
+                        <?php echo $schoolHandler->school->name; ?>
+                    </h4>
                 </div>
-                <hr class="widget-separator">
-                <div class="widget-body">
+                <hr class="widget-separator m-0">
+                <div class="panel-body">
                     <div class="col-sm-10">
                         <h6 class="text-muted"><?php echo $schoolHandler->school->address; ?></h6>
                         <h6 class="text-muted"><?php echo $schoolHandler->school->zip_code . " " . $schoolHandler->school->city; ?></h6>
@@ -186,12 +194,15 @@ if ($classHandler->_user->user_type_id != 1) {
             </div>
         <?php } ?>
         <?php if ($classHandler->_user->user_type_id != 4 && $classHandler->_user->user_type_id != 1) { ?>
-            <div class="widget">
-                <div class='widget-header'>
-                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("SOON_EXPIRING"); ?></h4>
+            <div class="panel panel-default">
+                <div class='panel-heading'>
+                    <h4 class="panel-title no-transform">
+                        <i class="zmdi-hc-fw zmdi zmdi-calendar-note zmdi-hc-lg m-r-md"></i>
+                        <?php echo TranslationHandler::get_static_text("SOON_EXPIRING"); ?>
+                    </h4>
                 </div>
                 <hr class="widget-separator m-0">
-                <div class="widget-body">
+                <div class="panel-body">
                     <div class="streamline m-l-lg">
                         <?php foreach ($classHandler->soon_expiring_classes as $value) { ?>
                             <div class="sl-item <?php echo $value->remaining_days <= 31 ? "sl-danger" : "sl-primary" ?> p-b-md">
@@ -199,7 +210,7 @@ if ($classHandler->_user->user_type_id != 1) {
                                     <div class="m-t-0 change_page a <?php echo $value->remaining_days <= 31 ? "text-danger animate-twice animated headShake" : "text-primary" ?>" page='class_profile' step='' args='&class_id=<?php echo $value->id; ?>'>
                                         <?php echo $value->title; ?>
                                     </div>
-                                    <p class="text-muted"><?php echo $value->remaining_days . " " . strtolower(TranslationHandler::get_static_text("DAYS_REMAINING")); ?></p>
+                                    <p class="text-muted"><?php echo $value->remaining_days == 0 ? TranslationHandler::get_static_text("TODAY") : $value->remaining_days == 1 ? TranslationHandler::get_static_text("TOMORROW") : $value->remaining_days . " " . strtolower(TranslationHandler::get_static_text("DAYS_REMAINING")); ?></p>
                                 </div>
                             </div>
                         <?php } ?>

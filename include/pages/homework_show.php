@@ -4,6 +4,12 @@ require_once '../../include/handler/homeworkHandler.php';
 
 $current_user = SessionKeyHandler::get_from_session("user", true);
 $homeworkHandler = new HomeworkHandler();
+
+if ($current_user->user_type_id == 1) {
+    ErrorHandler::show_error_page($homeworkHandler->error);
+    die();
+}
+
 if (!$homeworkHandler->get_homework(isset($_GET["homework_id"]) ? $_GET["homework_id"] : null)) {
     ErrorHandler::show_error_page($homeworkHandler->error);
     die();
@@ -26,8 +32,8 @@ $incomplete_tests = 0;
             <div class="fc-toolbar">
                 <table style="width:100%;">
                     <tr>
-                        <td style="text-align:left;font-size:15px;font-weight:600;">Relaterede klasser:</td>
-                        <td style="text-align:right;font-size:15px;font-weight:600;">Oprettet d.</td>
+                        <td style="text-align:left;font-size:15px;font-weight:600;"><?= TranslationHandler::get_static_text("RELATED_CLASSES") ?>:</td>
+                        <td style="text-align:right;font-size:15px;font-weight:600;"><?= TranslationHandler::get_static_text("DATE_CREATED") ?></td>
                     </tr>
                     <tr>
                         <td style="text-align:left;padding-bottom:15px;">
@@ -43,10 +49,10 @@ $incomplete_tests = 0;
                         <td style="text-align:right;padding-bottom:15px;"><?= $current_homework->date_assigned; ?></td>
                     </tr>
                     <tr>
-                        <td style="text-align:left;font-size:15px;font-weight:600;" colspan="2">Besked</td>
+                        <td style="text-align:left;font-size:15px;font-weight:600;" colspan="2"><?= TranslationHandler::get_static_text("MESSAGE") ?></td>
                     </tr>
                     <tr>
-                        <td style="text-align:left;" colspan="2"><?= empty($current_homework->description) ? 'Der er ikke vedhæftet en besked til denne lektie' : $current_homework->description; ?></td>
+                        <td style="text-align:left;" colspan="2"><?= empty($current_homework->description) ? TranslationHandler::get_static_text("NO_HOMEWORK_MESSAGE") : $current_homework->description; ?></td>
                     </tr>
                 </table>
             </div>
@@ -56,24 +62,24 @@ $incomplete_tests = 0;
         <div class="row no-gutter">
             <div class="col-sm-2 col-sm-offset-3 col-xs-6 promo-tab">
                 <div class="text-center">
-                    <small>Deadline</small>
+                    <small><?= TranslationHandler::get_static_text("DEADLINE") ?></small>
                     <h4 class="m-0 m-t-xs"><?= $current_homework->date_expire ?></h4>
                 </div>
             </div>
             <div class="col-sm-2 col-xs-6 promo-tab">
                 <div class="text-center">
-                    <small>Oprettet af</small>             
+                    <small><?= TranslationHandler::get_static_text("CREATED_BY") ?></small>             
                     <h4 class="m-0 m-t-xs change_page" page="account_profile" args="&user_id=<?= $current_homework->user_id ?>" style="cursor:pointer;"><?= $current_homework->firstname . " " . $current_homework->surname ?></h4>
                 </div>
             </div>
             <div class="col-sm-2 col-xs-12 promo-tab">
                 <div class="text-center">
-                    <small>Udløber om</small>
+                    <small><?= TranslationHandler::get_static_text("EXPIRES_IN") ?></small>
                     <?php
                     $date_difference = time() - strtotime($current_homework->date_expire);
                     $date_until = floor($date_difference / (60 * 60 * 24)) < 0 ? floor($date_difference / (60 * 60 * 24)) * -1 : (strtotime($current_homework->date_expire) == strtotime(date("Y-m-d")) ? -1 : 0);
                     ?>
-                    <h4 class="m-0 m-t-xs" style="color: <?= $date_until > 1 ? "#36ce1c" : ($date_until > 0 || $date_until == -1 ? "#f3c02c" : "#f15530") ?>"><?= ($date_until > 0 ? ($date_until . " ") : "") ?><?= ($date_until > 1 ? TranslationHandler::get_static_text("DATE_DAYS") : ($date_until > 0 ? TranslationHandler::get_static_text("DATE_DAY") : ($date_until == -1 ? "I dag" : "Udløbet"))) ?></h4>
+                    <h4 class="m-0 m-t-xs" style="color: <?= $date_until > 1 ? "#36ce1c" : ($date_until > 0 || $date_until == -1 ? "#f3c02c" : "#f15530") ?>"><?= ($date_until > 0 ? ($date_until . " ") : "") ?><?= ($date_until > 1 ? TranslationHandler::get_static_text("DATE_DAYS") : ($date_until > 0 ? TranslationHandler::get_static_text("DATE_DAY") : ($date_until == -1 ? TranslationHandler::get_static_text("TODAY") : TranslationHandler::get_static_text("EXPIRED")))) ?></h4>
                 </div>
             </div>
         </div>
@@ -117,7 +123,7 @@ $incomplete_tests = 0;
                                                 <td><?php echo $value->course_title; ?></td>
                                                 <td style="text-align:center;"><?php echo $value->points; ?></td>
                                                 <td style='text-align:center;'><?php echo $value->advanced ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD") ?></td>
-                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
+                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' .TranslationHandler::get_static_text("INCOMPLETE") .'"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="'.TranslationHandler::get_static_text("COMPLETE").'"></i>' ?></td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
@@ -125,7 +131,7 @@ $incomplete_tests = 0;
                             </div>
                             <?php
                         } else {
-                            echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Der er ingen lektioner knyttet til denne lektie.</div>';
+                            echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> '. TranslationHandler::get_static_text("NO_HOMEWORK_LECTURES") .'</div>';
                         }
                         ?>
                     </div>
@@ -163,7 +169,7 @@ $incomplete_tests = 0;
                                                 <td><?php echo $value->course_title; ?></td>
                                                 <td style="text-align:center;"><?php echo $value->points; ?></td>
                                                 <td style='text-align:center;'><?php echo $value->advanced ? TranslationHandler::get_static_text("EASY") : TranslationHandler::get_static_text("HARD") ?></td>
-                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
+                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="'.TranslationHandler::get_static_text("INCOMPLETE").'"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="'.TranslationHandler::get_static_text("COMPLETE").'"></i>' ?></td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
@@ -171,7 +177,7 @@ $incomplete_tests = 0;
                             </div>
                             <?php
                         } else {
-                            echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Der er ingen lektioner knyttet til denne lektie.</div>';
+                            echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> '. TranslationHandler::get_static_text("NO_HOMEWORK_TESTS") .'</div>';
                         }
                         ?>
                     </div>
@@ -185,14 +191,14 @@ $incomplete_tests = 0;
                 </div>
                 <hr class="widget-separator m-0">
                 <div class="panel-body">
-                    <?= ($incomplete_lectures > 0 || $incomplete_tests > 0) ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg" style="color: #f15530;margin: 10px auto 40px auto; display: block; text-align: center;font-size: 130px;width: auto !important;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg" style="color: #36ce1c;margin: 10px auto 40px auto; display: block; text-align: center;font-size: 130px;width: auto !important;" data-toggle="tooltip" title="Udført"></i>' ?>
+                    <?= ($incomplete_lectures > 0 || $incomplete_tests > 0) ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg" style="color: #f15530;margin: 10px auto 40px auto; display: block; text-align: center;font-size: 130px;width: auto !important;" data-toggle="tooltip" title="'.TranslationHandler::get_static_text("INCOMPLETE").'"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg" style="color: #36ce1c;margin: 10px auto 40px auto; display: block; text-align: center;font-size: 130px;width: auto !important;" data-toggle="tooltip" title="'.TranslationHandler::get_static_text("COMPLETE").'"></i>' ?>
                     <table class="profile_information_table">
                         <tr>
-                            <td>Ufuldendte lektioner:</td>
+                            <td><?= TranslationHandler::get_static_text("INCOMPLETE_LECTURES") ?>:</td>
                             <td style="text-align:right;"><?= $incomplete_lectures ?></td>
                         </tr>
                         <tr>
-                            <td>Ufuldendte tests:</td>
+                            <td><?= TranslationHandler::get_static_text("INCOMPLETE_TESTS") ?>:</td>
                             <td style="text-align:right;"><?= $incomplete_tests ?></td>
                         </tr>
                     </table>
@@ -216,7 +222,7 @@ $incomplete_tests = 0;
                         <div class="panel-body user-description panel-collapse collapse in" id="collapse-class-<?= $class->id ?>"  role="tabpanel">
                             <?php
                             if (empty($class->students)) {
-                                echo '<div class="center latest-homework-empty" class_id="' . $class->id . '" style="margin-top:20px;margin-bottom:20px;"> Der er ingen elever knyttet til denne klasse</div>';
+                                echo '<div class="center latest-homework-empty" class_id="' . $class->id . '" style="margin-top:20px;margin-bottom:20px;"> '. TranslationHandler::get_static_text("NO_HOMEWORK_STUDENTS") .'</div>';
                             } else {
                                 ?>
                                 <div class="incomplete-homework">
@@ -234,21 +240,21 @@ $incomplete_tests = 0;
                                                 <tr class="a change_page" page="account_profile" args="&user_id=<?= $value->id ?>">
                                                     <td><span data-toggle="tooltip" title="<?= $value->firstname . ' ' . $value->surname ?>"><?= strlen($value->firstname . ' ' . $value->surname) > 40 ? substr($value->firstname . ' ' . $value->surname, 0, 40) . "..." : $value->firstname . ' ' . $value->surname ?></span></td>
                                                     <td><?php echo $value->username; ?></td>
-                                                    <td style='text-align:center;'><i class="fa fa-envelope change_page" data-toggle="tooltip" title="Send besked" page="mail" step="create_mail" args="&receiver_id=USER_ANY_<?= $value->id ?>"></i></td>
+                                                    <td style='text-align:center;'><i class="fa fa-envelope change_page" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>" page="mail" step="create_mail" args="&receiver_id=USER_ANY_<?= $value->id ?>"></i></td>
                                                     <td style='text-align:center;' data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="
                                                         <?php
                                                         if(!empty($value->lectures)) {
-                                                            echo '<b>Lektioner:</b>';
+                                                            echo '<b>'.TranslationHandler::get_static_text("LECTURES").':</b>';
                                                             foreach($value->lectures as $lecture) {
-                                                                echo '<br />- ' . $lecture->title . ' (' . ($lecture->is_complete ? '<b>Udført</b>' : '<b>Mangler</b>') . ')';
+                                                                echo '<br />- ' . $lecture->title . ' (' . ($lecture->is_complete ? '<b>'.TranslationHandler::get_static_text("COMPLETE").'</b>' : '<b>'.TranslationHandler::get_static_text("INCOMPLETE").'</b>') . ')';
                                                             }
                                                             echo '<br />';
                                                         }
 
                                                         if(!empty($value->tests)) {
-                                                            echo '<b>Tests:</b>';
+                                                            echo '<b>'.TranslationHandler::get_static_text("TESTS").':</b>';
                                                             foreach($value->tests as $test) {
-                                                                echo '<br />- ' . $test->title . ' (' . ($test->is_complete ? '<b>Udført</b>' : '<b>Mangler</b>') . ')';
+                                                                echo '<br />- ' . $test->title . ' (' . ($test->is_complete ? '<b>'.TranslationHandler::get_static_text("COMPLETE").'</b>' : '<b>'.TranslationHandler::get_static_text("INCOMPLETE").'</b>') . ')';
                                                             }
                                                         }
 
@@ -284,6 +290,19 @@ $incomplete_tests = 0;
         </div>
     </div>
 <?php } ?>
+
+<div id="click_alertbox" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <div id="delete_text"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")) . "?"; ?></div>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+    </div>
+</div>
 
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>

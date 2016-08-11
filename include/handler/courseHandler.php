@@ -827,6 +827,7 @@ class CourseHandler extends Handler {
             }
             if ($is_complete == 1) {
                 $values = "is_complete=1,complete_date=NOW()";
+                DbHandler::get_instance()->query("UPDATE users SET points =(CASE WHEN(SELECT COUNT(id) FROM user_course_" . $type . " WHERE user_id = :user_id AND " . $type . "_id = :type_id AND is_complete = 1) = 0 THEN points + (SELECT points FROM course_" . $type . " WHERE id = :type_id) ELSE points END) WHERE id = :user_id", $this->_user->id, $id, $id, $this->_user->id);
             } else {
                 $values = "progress=" . $progress;
             }

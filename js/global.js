@@ -124,6 +124,7 @@ $(document).ready(function () {
                 show_status_bar("error", ajax_data.error);
             }
         }, function () {
+            $.removeCookie("current_task", {path: '/'});
             reload_page();
         });
     });
@@ -135,7 +136,6 @@ $(document).ready(function () {
         }, function () {
             $.removeCookie("navigation", {path: '/'});
             $.removeCookie("current_task", {path: '/'});
-            $.removeCookie("current_progress", {path: '/'});
             reload_page();
         });
     });

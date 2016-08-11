@@ -5,12 +5,14 @@ require_once '../../include/handler/classHandler.php';
 require_once '../../include/handler/schoolHandler.php';
 require_once '../../include/handler/userHandler.php';
 require_once '../../include/handler/statisticsHandler.php';
+require_once '../../include/handler/homeworkHandler.php';
 
 $schoolHandler = new SchoolHandler();
 $classHandler = new ClassHandler();
 $classHandler->get_all_classes();
 $userHandler = new UserHandler();
 $statisticsHandler = new StatisticsHandler();
+$homeworkHandler = new HomeworkHandler();
 
 if ($classHandler->_user->user_type_id != 1) {
     $schoolHandler->get_school_by_id($classHandler->_user->school_id);
@@ -152,13 +154,75 @@ $i_rand = rand(100, 1000);
             <div class="panel panel-default accordion">
                 <div class='panel-heading'>
                     <a class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-1" aria-expanded="false" aria-controls="collapse-1">
+                        <i class="zmdi-hc-fw zmdi zmdi-assignment zmdi-hc-lg m-r-md"></i>
                         <label><?php echo TranslationHandler::get_static_text("HOMEWORK"); ?></label>
                         <i class="fa acc-switch"></i>
                     </a>
                 </div>
                 <div id="collapse-1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-1" aria-expanded="false">
                     <div class="panel-body">
+                        <?php
+                        if (isset($_GET['class_id'])) {
+                            $homeworkHandler->get_class_homework($_GET['class_id']);
+                            if (empty($homeworkHandler->homework)) {
+                                ?>
+                                <div class="center latest-homework-empty m-h-md"><?php echo TranslationHandler::get_static_text("CLASS_NO_HOMEWORK_AT_THE_MOMENT"); ?></div>
+                                <?php } else { ?>
+                                
+                                    
+                                <div class="latest-homework">
+                                    <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength: 5,columnDefs:[{orderable: false, targets: [3,4,5]}], order:[], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json" : "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}">
+                                        <thead>
+                                            <tr>
+                                                <th><?php echo TranslationHandler::get_static_text("TITLE") ?></th>
+                                                <th><?php echo TranslationHandler::get_static_text("CLASSES") ?></th>
+                                                <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("END") . " " . TranslationHandler::get_static_text("DATE_DATE") ?></th>
+                                                <th style='text-align:center;'><?php echo TranslationHandler::get_static_text("LECTURES") ?></th>
+                                                <th style='text-align:center;'><?php echo TranslationHandler::get_static_text("TESTS") ?></th>
+                                                <th style='text-align:center;'><?php echo TranslationHandler::get_static_text("STATUS") ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            foreach ($homeworkHandler->homework as $value) {
+                                                $classes = "";
+                                                for ($i = 0; $i < count($value->classes); $i++) {
+                                                    $classes .= $value->classes[$i]->title;
+                                                    $classes .= $i != count($value->classes) - 1 ? ", " : "";
+                                                }
+                                                ?>
+                                                <tr class="a change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" data-container="body" data-toggle="popover" data-delay='{"show":"100", "hide":"100"}' data-placement="top" data-trigger="hover" data-html="true" data-content="
+                                                <?php
+                                                if (!empty($value->lectures)) {
+                                                    echo '<b>Lektioner:</b>';
+                                                    foreach ($value->lectures as $lecture) {
+                                                        echo '<br />- ' . $lecture->title . '';
+                                                    }
+                                                    echo '<br />';
+                                                }
 
+                                                if (!empty($value->tests)) {
+                                                    echo '<b>Tests:</b>';
+                                                    foreach ($value->tests as $test) {
+                                                        echo '<br />- ' . $test->title . '';
+                                                    }
+                                                }
+                                                ?>">
+                                                    <td><?php echo $value->title; ?></td>
+                                                    <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 30 ? substr($classes, 0, 30) . "..." : $classes ?></span></td>
+                                                    <td style="text-align: center;"><?php echo $value->date_expire; ?></td>
+                                                    <td style='text-align:center;'><?= count($value->lectures) ?></td>
+                                                    <td style='text-align:center;'><?= count($value->tests) ?></td>
+                                                    <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php }
+                            ?>
+
+                        <?php } ?>
                     </div>
                 </div>
             </div>

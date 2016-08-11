@@ -465,6 +465,21 @@ $(document).ready(function () {
 
 var audioElement;
 
+function reload_page_content() {
+    if ($.cookie("navigation") !== undefined) {
+        var navigation = $.map(JSON.parse($.cookie("navigation")), function (value, index) {
+            return [value];
+        });
+
+        if (navigation.length < 1) {
+            return;
+        }
+
+        var last_page = navigation.pop();
+        change_page(last_page.page, last_page.step, last_page.args);
+    }
+}
+
 function table_footer(api) {
     if (api.page.len() > 15) {
         $("tfoot").removeClass("hidden");

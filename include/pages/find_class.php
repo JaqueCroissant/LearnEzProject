@@ -89,12 +89,14 @@ $classHandler->get_all_classes();
                                 <?php } ?>
                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                     <td align="center">
-                                        <div class="">
-                                            <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_CLASS_GENERIC")?>"></i>
-                                            <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
-                                                <i class="zmdi zmdi-hc-lg zmdi-delete delete_class a" school_id="<?php echo $value->id; ?>" state="update_school" id="edit_school" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE")?>"></i>
-                                            <?php } ?>
-                                        </div>
+                                        <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_CLASS_GENERIC") ?>"></i>
+                                        <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
+                                            <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="edit_class.php?state=delete_class">
+                                                <input type="hidden" name="class_id" value="<?php echo $value->id; ?>">
+                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox" current_datatable="find_class_dt" element_id="<?php echo $value->id; ?>" id="click_alert_btn_<?php echo $value->id; ?>" style="" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE") ?>"></i>
+                                                <input type="hidden" name="submit" value="submit"></input>
+                                            </form>
+                                        <?php } ?>
                                     </td>
                                 <?php } ?>
                                 <td hidden id="<?php echo $value->id ?>"></td>
@@ -124,5 +126,19 @@ $classHandler->get_all_classes();
         </p>
     </div>
 </div>
+<div id="click_alertbox" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <div id="delete_text"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("CLASS")) . "?"; ?></div>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+    </div>
+</div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
-<script>$(document).ready(function(){$("[data-toggle='tooltip']").tooltip()});</script>
+<script>$(document).ready(function () {
+        $("[data-toggle='tooltip']").tooltip()
+    });</script>

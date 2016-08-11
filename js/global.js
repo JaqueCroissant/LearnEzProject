@@ -6,6 +6,7 @@ var ready_to_change = true;
 var status_bar_timeout;
 
 var is_error_page = false;
+var current_form;
 var current_thumbnail_id;
 var current_datatable;
 var clicked_checkbox_id;

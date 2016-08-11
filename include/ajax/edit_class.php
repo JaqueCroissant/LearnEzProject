@@ -27,9 +27,17 @@ if (isset($_POST['state'])) {
                 $array['status_value'] = false;
             }
             break;
-
-
-
+        case "delete_class":
+            $class_id = (isset($_POST['class_id']) ? $_POST['class_id'] : "");
+            if ($classHandler->delete_class_by_id($class_id)) {
+                $array['success'] = TranslationHandler::get_static_text("CLASS_DELETED");
+                $array['status_value'] = true;
+            } else {
+                $array['error'] = $classHandler->error->title;
+                $array['status_value'] = false;
+            }
+            
+            break;
     }
 } elseif (isset($_GET['state'])) {
     $class_id = (isset($_GET['class_id']) ? $_GET['class_id'] : "");
@@ -46,6 +54,7 @@ if (isset($_POST['state'])) {
             break;
 
         case "delete_class":
+            $class_id = (isset($_POST['class_id']) ? $_POST['class_id'] : "");
             if ($classHandler->delete_class_by_id($class_id)) {
                 $array['success'] = TranslationHandler::get_static_text("CLASS_DELETED");
                 $array['status_value'] = true;
@@ -58,19 +67,15 @@ if (isset($_POST['state'])) {
 
         case "set_availability":
 
-            if ($classHandler->update_class_open((int) $_POST['class_id']))
-            {
+            if ($classHandler->update_class_open((int) $_POST['class_id'])) {
                 $array['success'] = TranslationHandler::get_static_text("CLASS_UPDATED");
                 $array["status_value"] = true;
-
-            }
-            else
-            {
+            } else {
                 $array['error'] = $classHandler->error->title;
                 $array['status_value'] = false;
             }
 
-        break;
+            break;
     }
 }
 echo json_encode($array);

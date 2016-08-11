@@ -1,4 +1,22 @@
 // Open/close
+    $(document).on("click", ".accept_click_close_alertbox_btn", function (event) {
+        event.preventDefault();
+        
+        initiate_submit_form(current_form, function () {
+           show_status_bar("error", ajax_data.error);
+            $("#click_close_alertbox").addClass("hidden");
+        }, function () {
+            show_status_bar("success", ajax_data.success);
+            $("#click_close_alertbox").addClass("hidden");
+            $(".go_back").click();
+        });
+    });
+    
+    $(document).on("click", ".cancel_click_close_alertbox_btn", function (event) {
+        event.preventDefault();
+        $("#click_close_alertbox").addClass("hidden");
+    });
+    
     $(document).on("change", ".btn_alertbox", function (event) {
         event.preventDefault();
         $("td input[type='checkbox']").attr("disabled", true);
@@ -53,9 +71,27 @@
         $("#click_alertbox").css("top", $(this).offset()["top"] - ($("#click_alertbox").height()));
         clicked_element_id = $(this).attr("element_id");
     });
+    
+    $(document).on("click", ".btn_click_close_alertbox", function (event) {
+        event.preventDefault();
+        var state = $(this).attr("element_state");
+        current_form = $(this).closest("form");
+        $("#click_close_alertbox").removeClass("hidden");
+        if (state == 0) {
+            $("#close_text").removeClass("hidden");
+        } else if (state == 1) {
+            $("#open_text").removeClass("hidden");
+        }
+        var offset = $(this).offset()["top"] - ($("#click_alertbox").height());
+        if (offset < 0) {
+            offset = 25;
+        }
+        console.log(offset);
+        $("#click_close_alertbox").css("top", offset);
+        clicked_element_id = $(this).attr("element_id");
+    });
 
     $(document).on("click", ".btn_click_alertbox", function (event) {
-
         event.preventDefault();
         current_datatable = $("." + $(this).attr("current_datatable"));
         $("#click_alertbox").removeClass("hidden");
@@ -89,6 +125,8 @@
         }
         $("#click_alertbox").addClass("hidden");
     }
+    
+    
 
 //ASSIGN PASSWORD CLICK METODER
 

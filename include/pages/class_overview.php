@@ -174,22 +174,32 @@ if ($classHandler->_user->user_type_id != 1) {
         <?php if ($classHandler->_user->user_type_id != "1") { ?>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title no-transform">
-                        <i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg m-r-md"></i>
-                        <?php echo $schoolHandler->school->name; ?>
-                    </h4>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4 class="panel-title no-transform">
+                                <i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg m-r-md"></i>
+                                <?php echo $schoolHandler->school->name; ?>
+                            </h4>
+                        </div>
+                        <div class="col-md-4">
+                            <?php if (RightsHandler::has_user_right("SCHOOL_CLOSE")) { ?>
+                                <i class="zmdi zmdi-hc-lg zmdi-close-circle m-r-sm btn_alertbox a pull-right" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("CLOSE") ?>">
+                                    <form method="post" id="alert_form_<?php echo $schoolHandler->school->id; ?>" action="" url="edit_school.php?state=set_availability">
+                                        <input type="hidden" name="school_id" value="<?php echo $value->id; ?>">
+                                        <input type="hidden" name="submit" value="submit">
+                                    </form>
+                                </i>
+                            <?php } ?>
+                            <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a pull-right" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>" page="edit_school" step="" args="&school_id=<?php echo $classHandler->school_class->id; ?>"></i>
+                            <?php } ?>
+                        </div>
+                    </div>
                 </div>
                 <hr class="widget-separator m-0">
                 <div class="panel-body">
-                    <div class="col-sm-10">
-                        <h6 class="text-muted"><?php echo $schoolHandler->school->address; ?></h6>
-                        <h6 class="text-muted"><?php echo $schoolHandler->school->zip_code . " " . $schoolHandler->school->city; ?></h6>
-                    </div>
-                    <div class="col-sm-2">
-                        <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
-                            <i class="zmdi zmdi-hc-lg zmdi-edit change_page a m-t-sm" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>"></i>
-                        <?php } ?>
-                    </div>
+                    <h6 class="text-muted"><?php echo $schoolHandler->school->address; ?></h6>
+                    <h6 class="text-muted"><?php echo $schoolHandler->school->zip_code . " " . $schoolHandler->school->city; ?></h6>
                 </div>
             </div>
         <?php } ?>

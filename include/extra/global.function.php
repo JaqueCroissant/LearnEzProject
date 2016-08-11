@@ -21,6 +21,23 @@ function month_num_to_string($month_num = 0) {
     return date('F', mktime(0, 0, 0, $month_num, 10));
 }
 
+function day_num_to_string($day_num = 0) {
+    if(!is_numeric($day_num) || !is_int((int)$day_num)) {
+        return;
+    }
+
+    if($day_num > 6)
+    {
+        $day_num = $day_num % 7;
+    }
+
+    if($day_num < 0) {
+        $day_num = 7 + $day_num;
+    }
+
+    return jddayofweek($day_num-1,2);
+}
+
 function array_sort_by_column(&$arr, $col, $dir = SORT_ASC) {
     $sort_col = array();
     foreach ($arr as $key=> $row) {

@@ -166,7 +166,7 @@ $(document).ready(function () {
     }
 
     $(document).on("click", ".course_action", function(){
-        if (can_be_clicked && $(this).attr("disabled") !== true) {
+        if (can_be_clicked && $(this).attr("disabled") !== "disabled") {
             can_be_clicked = false;
             var window = document.getElementById("scaled-frame").contentWindow;
             var action = $(this).attr("value");
@@ -269,6 +269,7 @@ $(document).ready(function () {
         $(".test_content").fadeOut(500, function(){
             $(this).hide();
             $.removeCookie("current_task", {path:"/"});
+            reload_page_content();
         });
         $("#scaled-frame").remove("html");
         $("#scaled-frame").attr("src", "");
@@ -403,13 +404,17 @@ $(document).ready(function () {
             });
             $(".backdrop").show();
             $(".backdrop").animate({opacity:1}, 500, "easeOutCubic");
+            console.log(paused);
             if (task === "test") {
                 start_test_interval();
             }
             else {
                 if ($(".course_video")[0].readyState === 4) {
                     setTimeout(function(){
-                        if(!paused) $(".course_video")[0].play();
+                        if(!paused) {
+                            $(".course_video")[0].play();
+                            console.log("playing");
+                        }
                         start_lecture_interval();
                     }, 700);
                     
@@ -513,12 +518,14 @@ $(document).ready(function () {
 
     $(document).on("click", ".play_lecture", function(){
         if($(this).attr("element_id") === undefined) {
+            console.log("test1");
             return;
         }
         if ($.cookie("current_task") === undefined || !(JSON.parse($.cookie("current_task")).data === $(this).attr("element_id") && JSON.parse($.cookie("current_task")).task === "lecture")) {
+            
             if ($.cookie("current_task") !== undefined) {
                 update_init();
-                $(".course_iframe").attr("src", "");
+                $(".course_video").attr("src", "");
             }
             
             action_id = $(this).attr("element_id");

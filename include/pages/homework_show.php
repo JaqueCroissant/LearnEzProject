@@ -118,7 +118,7 @@ $incomplete_tests = 0;
                                                 $incomplete_lectures++;
                                             }
                                             ?>
-                                            <tr class="a change_page" page="course_show" args="&course_id=<?= $value->course_id ?>" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="<?= $value->description ?>">
+                                            <tr class="a play_lecture" element_id="<?= $value->id ?>" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="<?= $value->description ?>">
                                                 <td><span data-toggle="tooltip" title="<?= $value->title ?>"><?= strlen($value->title) > 40 ? substr($value->title, 0, 40) . "..." : $value->title ?></span></td>
                                                 <td><?php echo $value->course_title; ?></td>
                                                 <td style="text-align:center;"><?php echo $value->points; ?></td>

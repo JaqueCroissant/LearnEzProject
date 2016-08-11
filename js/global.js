@@ -465,7 +465,7 @@ $(document).ready(function () {
 
 var audioElement;
 
-function reload_page_content() {
+function reload_page_content(pagename) {
     if ($.cookie("navigation") !== undefined) {
         var navigation = $.map(JSON.parse($.cookie("navigation")), function (value, index) {
             return [value];
@@ -476,7 +476,13 @@ function reload_page_content() {
         }
 
         var last_page = navigation.pop();
-        change_page(last_page.page, last_page.step, last_page.args);
+        if(pagename !== undefined) {
+            return;
+        }
+        
+        if(pagename === last_page.page) {
+            change_page(last_page.page, last_page.step, last_page.args);
+        }
     }
 }
 

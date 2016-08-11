@@ -10,7 +10,6 @@ require_once '../../include/handler/homeworkHandler.php';
 
 $schoolHandler = new SchoolHandler();
 $classHandler = new ClassHandler();
-$classHandler->get_all_classes();
 $userHandler = new UserHandler();
 $courseHandler = new CourseHandler();
 $statisticsHandler = new StatisticsHandler();
@@ -25,56 +24,57 @@ $courses_completed = 0;
 </style>
 <div class="row">
     
-    <?php
+<?php
     switch($userHandler->_user->user_type_id)
     {
         case "1":
 
             $schoolHandler->get_all_schools();
             $statisticsHandler->get_top_students();
+            $statisticsHandler->get_completion_stats(7);
             ?>
 
             <div class="col-md-9 col-sm-12 p-v-0">
                 <div class="col-sm-12">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("FIND_SCHOOL")?>"><?php echo TranslationHandler::get_static_text("SCHOOLS"); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("SCHOOL_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_SCHOOL") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("SCHOOLS"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
                             <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5, columnDefs:[{orderable: false, targets: [4]}]}">
-                                            <thead>
-                                                <tr>
-                                                    <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
-                                                    <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
-                                                    <th><?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?></th>
-                                                    <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
+                                <thead>
+                                    <tr>
+                                        <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
 
 
-                                                    <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("STATUS"); ?></th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                    if(count($schoolHandler->all_schools) > 0)
-                                                    {
-                                                        foreach ($schoolHandler->all_schools as $value) {
+                                        <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("STATUS"); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                        if(count($schoolHandler->all_schools) > 0)
+                                        {
+                                            foreach ($schoolHandler->all_schools as $value) {
 
-                                                        ?>
-                                                        <tr class = "a change_page" page="school_profile" step = "" args = "&school_id=<?php echo $value->id; ?>">
-                                                            <td><?php echo (strlen($value->name) > 20 ? substr($value->name, 0, 20) : $value->name); ?></td>
-                                                            <td><?php echo (strlen($value->address) > 20 ? substr($value->address, 0, 20) : $value->address); ?></td>
-                                                            <td><?php echo $value->zip_code; ?></td>
-                                                            <td><?php echo (strlen($value->city) > 15 ? substr($value->city, 0, 15) : $value->city); ?></td>
-                                                            
-                                                            <td style="text-align: center;"><?php echo !$value->open ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("CLOSED") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("OPEN") . '"></i>'; ?></td>
-                                                        </tr>
-                                                     
-                                                <?php 
-                                                    }
-                                                }
-                                                ?>
-                                            </tbody>
+                                            ?>
+                                            <tr class = "a change_page" page="school_profile" step = "" args = "&school_id=<?php echo $value->id; ?>">
+                                                <td><?php echo (strlen($value->name) > 20 ? substr($value->name, 0, 20) : $value->name); ?></td>
+                                                <td><?php echo (strlen($value->address) > 20 ? substr($value->address, 0, 20) : $value->address); ?></td>
+                                                <td><?php echo $value->zip_code; ?></td>
+                                                <td><?php echo (strlen($value->city) > 15 ? substr($value->city, 0, 15) : $value->city); ?></td>
+
+                                                <td style="text-align: center;"><?php echo !$value->open ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("CLOSED") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("OPEN") . '"></i>'; ?></td>
+                                            </tr>
+
+                                    <?php
+                                        }
+                                    }
+                                    ?>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -82,9 +82,9 @@ $courses_completed = 0;
                 
                 
                 <div class="col-md-6 col-sm-12 ">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")); ?> </h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("TOP") . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")); ?> </h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
@@ -134,14 +134,14 @@ $courses_completed = 0;
                                         type : 'category',
                                         boundaryGap : false,
                                         data : [
-                                        <?php
-                                        for($i = date('m')-4; $i < date('m')+1; $i++) {
-                                            echo "'" . TranslationHandler::get_static_text(strtoupper(month_num_to_string($i))) . "'";
-                                            if($i != date('m')) {
-                                                echo ",";
+                                            <?php
+                                            for($i = date('w')-6; $i < date('w')+1; $i++) {
+                                                echo "'" . TranslationHandler::get_static_text("WEEK_DAY_" . strtoupper(day_num_to_string($i))) . "'";
+                                                if($i != date('w')) {
+                                                    echo ",";
+                                                }
                                             }
-                                        }
-                                        ?>
+                                            ?>
                                         ]
                                     }
                                 ],
@@ -156,18 +156,57 @@ $courses_completed = 0;
                                         type:'line',
                                         smooth:true,
                                         itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                                        data:[10, 12, 21, 54, 260]
+                                        data:
+                                        [
+                                            <?php
+                                            for($i = date('j')-6; $i < date('j')+1; $i++) {
+
+                                                $num = $i > 0 ? $i : date("t", strtotime(date("Y-m-d -1 months"))) + $i;
+                                                if(array_key_exists($num, $statisticsHandler->global_lectures_complete))
+                                                {
+                                                    echo $statisticsHandler->global_lectures_complete[$num];
+                                                }
+                                                else
+                                                {
+                                                    echo "0";
+                                                }
+                                                
+                                                if($i != date('j')) {
+                                                    echo ",";
+                                                }
+                                            }
+                                            ?>
+                                        ]
                                     },
                                     {
                                         name:'<?= TranslationHandler::get_static_text("TESTS") ?>',
                                         type:'line',
                                         smooth:true,
                                         itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                                        data:[30, 182, 434, 791, 390]
+                                        data:[
+                                            <?php
+                                            for($i = date('j')-6; $i < date('j')+1; $i++) {
+                                                
+                                                $num = $i > 0 ? $i : date("t", strtotime(date("Y-m-d -1 months"))) + $i; 
+                                                if(array_key_exists($num, $statisticsHandler->global_tests_complete))
+                                                {
+                                                    echo $statisticsHandler->global_tests_complete[$num];
+                                                }
+                                                else
+                                                {
+                                                    echo "0";
+                                                }
+                                                
+                                                if($i != date('j')) {
+                                                    echo ",";
+                                                }
+                                            }
+                                            ?>
+                                        ]
                                     }
                                 ]
                                 }" style="height: 300px;"></div>
-                            <!--<div class="center progress-text" style="margin-top: 20px; margin-bottom: 20px;"><?= TranslationHandler::get_static_text("NO_COURSE_PROGRESS") ?></div>-->
+                            
                         </div>
                     </div>
                 </div>
@@ -188,9 +227,9 @@ $courses_completed = 0;
  
             <div class="col-md-9 col-sm-12 p-v-0">
                 <div class="col-sm-12">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="find_class" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("FIND_CLASS")?>"><?php echo TranslationHandler::get_static_text("CLASSES"); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("CLASS_FIND") ? ' a change_page" page="find_class" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_CLASS") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("CLASSES"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
@@ -229,9 +268,9 @@ $courses_completed = 0;
                 
                 
                 <div class="col-sm-12">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="find_account" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("FIND_ACCOUNT")?>"><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_account" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
@@ -271,15 +310,15 @@ $courses_completed = 0;
                 
 
                 <div class="col-sm-12">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("HOMEWORK_OVERVIEW")?>"><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title<?= (RightsHandler::has_page_right("HOMEWORK_OVERVIEW") ? ' a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("HOMEWORK_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-assignment-o zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
                             <div class="panel-body">
                             <?php if(empty($homeworkHandler->homework)) {
-                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ikke oprettet nogen lektier!</div>';
+                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> ' . TranslationHandler::get_static_text("NO_HOMEWORK") . '</div>';
                             } else {
                             ?>
                                 <div class="latest-homework">
@@ -306,7 +345,7 @@ $courses_completed = 0;
                                             <tr class="a change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" data-container="body" data-toggle="popover" data-delay='{"show":"100", "hide":"100"}' data-placement="top" data-trigger="hover" data-html="true" data-content="
                                                 <?php
                                                 if(!empty($value->lectures)) {
-                                                    echo '<b>Lektioner:</b>';
+                                                    echo TranslationHandler::get_static_text("LECTURES") . ":";
                                                     foreach($value->lectures as $lecture) {
                                                         echo '<br />- ' . $lecture->title . '';
                                                     }
@@ -314,7 +353,7 @@ $courses_completed = 0;
                                                 }
 
                                                 if(!empty($value->tests)) {
-                                                    echo '<b>Tests:</b>';
+                                                    echo TranslationHandler::get_static_text("TESTS") . ":";
                                                     foreach($value->tests as $test) {
                                                         echo '<br />- ' . $test->title . '';
                                                     }
@@ -322,11 +361,11 @@ $courses_completed = 0;
 
                                                 ?>">
                                                 <td><?php echo $value->title; ?></td>
-                                                <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 30 ? substr($classes, 0, 30) . "..." : $classes ?></span></td>
+                                                <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 25 ? substr($classes, 0, 25) . "..." : $classes ?></span></td>
                                                 <td style="text-align: center;"><?php echo $value->date_expire; ?></td>
                                                 <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                                 <td style='text-align:center;'><?= count($value->tests) ?></td>
-                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
+                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("INCOMPLETE") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("COMPLETE") . '"></i>' ?></td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
@@ -355,9 +394,9 @@ $courses_completed = 0;
             ?>
             <div class="col-md-9 col-sm-12 p-v-0">
                 <div class="col-sm-12">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="find_class" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("FIND_CLASS")?>"><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("CLASS_FIND") ? ' a change_page" page="find_class" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_CLASS") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
@@ -396,15 +435,15 @@ $courses_completed = 0;
 
 
                 <div class="col-sm-12">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("HOMEWORK_OVERVIEW")?>"><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title<?= (RightsHandler::has_page_right("HOMEWORK_OVERVIEW") ? ' a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("HOMEWORK_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-assignment-o zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
                             <div class="panel-body">
                             <?php if(empty($homeworkHandler->homework)) {
-                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ikke oprettet nogen lektier!</div>';
+                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;">' . TranslationHandler::get_static_text("NO_HOMEWORK") . '</div>';
                             } else {
                             ?>
                                 <div class="latest-homework">
@@ -431,7 +470,7 @@ $courses_completed = 0;
                                             <tr class="a change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" data-container="body" data-toggle="popover" data-delay='{"show":"100", "hide":"100"}' data-placement="top" data-trigger="hover" data-html="true" data-content="
                                                 <?php
                                                 if(!empty($value->lectures)) {
-                                                    echo '<b>Lektioner:</b>';
+                                                    echo '<b>' . TranslationHandler::get_static_text("LECTURES") .'</b>';
                                                     foreach($value->lectures as $lecture) {
                                                         echo '<br />- ' . $lecture->title . '';
                                                     }
@@ -439,7 +478,7 @@ $courses_completed = 0;
                                                 }
 
                                                 if(!empty($value->tests)) {
-                                                    echo '<b>Tests:</b>';
+                                                    echo '<b>' . TranslationHandler::get_static_text("TESTS") .'</b>';
                                                     foreach($value->tests as $test) {
                                                         echo '<br />- ' . $test->title . '';
                                                     }
@@ -451,7 +490,7 @@ $courses_completed = 0;
                                                 <td style="text-align: center;"><?php echo $value->date_expire; ?></td>
                                                 <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                                 <td style='text-align:center;'><?= count($value->tests) ?></td>
-                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
+                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("INCOMPLETE") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("COMPLETE") . '"></i>' ?></td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
@@ -481,14 +520,15 @@ $courses_completed = 0;
             ?>
             <div class="col-md-9 col-sm-12 p-v-0">
                 <div class="col-sm-12">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="course_overview" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("FIND_COURSE")?>"><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("COURSES")); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title<?= (RightsHandler::has_page_right("COURSE_OVERVIEW") ? ' a change_page" page="course_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("COURSE_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("COURSES")); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
+                            
                             <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
-                                            <thead>
+                                <thead>
                                                 <tr>
                                                     <th><?php echo TranslationHandler::get_static_text("COURSE"); ?></th>
                                                     <th><?php echo TranslationHandler::get_static_text("LECTURES"); ?></th>
@@ -514,7 +554,7 @@ $courses_completed = 0;
                                                         <td><?php echo $value->title; ?></td>
                                                         <td><?php echo $value->amount_of_lectures; ?></td>
                                                         <td><?php echo $value->amount_of_tests; ?></td>
-                                                        <td><?php echo$value->overall_progress?>%</td>;
+                                                        <td><?php echo$value->overall_progress?>%</td>
                                                     </tr>
                                                 <?php }
                                                 $courses_average = $course_count > 0 ? round($courses_average / $course_count,0) : 0;
@@ -527,27 +567,27 @@ $courses_completed = 0;
 
 
                 <div class="col-sm-12">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="<?= TranslationHandler::get_static_text("HOMEWORK_OVERVIEW")?>"><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title<?= (RightsHandler::has_page_right("HOMEWORK_OVERVIEW") ? ' a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("HOMEWORK_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-assignment-o zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
                             <div class="panel-body">
                             <?php if(empty($homeworkHandler->homework)) {
-                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ingen lektier i øjeblikket.</div>';
+                                echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;">' . TranslationHandler::get_static_text("NO_HOMEWORK") . '</div>';
                             } else {
                             ?>
                                 <div class="latest-homework">
                                 <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength: 5,columnDefs:[{orderable: false, targets: [3,4,5]}], order:[], language: {url: '<?php echo TranslationHandler::get_current_language() == 1 ? "//cdn.datatables.net/plug-ins/1.10.12/i18n/Danish.json": "//cdn.datatables.net/plug-ins/1.10.12/i18n/English.json"; ?>'}}">
                                     <thead>
                                         <tr>
-                                            <th>Titel</th>
-                                            <th>Klasser</th>
-                                            <th>Dato slut</th>
-                                            <th style='text-align:center;'>Lektioner</th>
-                                            <th style='text-align:center;'>Tests</th>
-                                            <th style='text-align:center;'>Status</th>
+                                            <th><?=TranslationHandler::get_static_text("TITLE")?></th>
+                                            <th><?=TranslationHandler::get_static_text("CLASSES")?></th>
+                                            <th><?=TranslationHandler::get_static_text("END") . " " . strtolower(TranslationHandler::get_static_text("DATE_DATE"))?></th>
+                                            <th style='text-align:center;'><?=TranslationHandler::get_static_text("LECTURES")?></th>
+                                            <th style='text-align:center;'><?=TranslationHandler::get_static_text("TESTS")?></th>
+                                            <th style='text-align:center;'><?=TranslationHandler::get_static_text("STATUS")?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -562,7 +602,7 @@ $courses_completed = 0;
                                             <tr class="a change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" data-container="body" data-toggle="popover" data-delay='{"show":"100", "hide":"100"}' data-placement="top" data-trigger="hover" data-html="true" data-content="
                                                 <?php
                                                 if(!empty($value->lectures)) {
-                                                    echo '<b>Lektioner:</b>';
+                                                    echo '<b>' . TranslationHandler::get_static_text("LECTURES") . ":" . '</b>';
                                                     foreach($value->lectures as $lecture) {
                                                         echo '<br />- ' . $lecture->title . '';
                                                     }
@@ -570,7 +610,7 @@ $courses_completed = 0;
                                                 }
 
                                                 if(!empty($value->tests)) {
-                                                    echo '<b>Tests:</b>';
+                                                    echo '<b>' . TranslationHandler::get_static_text("TESTS") . ":" . '</b>';
                                                     foreach($value->tests as $test) {
                                                         echo '<br />- ' . $test->title . '';
                                                     }
@@ -582,7 +622,7 @@ $courses_completed = 0;
                                                 <td><?php echo $value->date_expire; ?></td>
                                                 <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                                 <td style='text-align:center;'><?= count($value->tests) ?></td>
-                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
+                                                <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("INCOMPLETE") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("COMPLETE") . '"></i>' ?></td>
                                             </tr>
                                         <?php } ?>
                                     </tbody>
@@ -596,9 +636,9 @@ $courses_completed = 0;
 
 
                 <div class="col-md-12 col-sm-12 ">
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("STATISTICS"); ?> </h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-trending-up zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("STATISTICS"); ?> </h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
@@ -769,19 +809,17 @@ $courses_completed = 0;
                 if(count($classHandler->classes) > 0)
                 {
                 ?>
-                    <div class="widget">
-                        <div class='widget-header'>
-                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("CLASSES"); ?></h4>
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("CLASSES"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
                             <?php
-
-                                    for($i=0; $i < count($classHandler->classes); $i++)
-                                    {
-                                        echo '<div><a class="change_page" page="class_profile" step="" args="&class_id=' . $classHandler->classes[$i]->id . '" href="javascript:void(0)">' . $classHandler->classes[$i]->title . '</a></div>';
-                                    }
-
+                                for($i=0; $i < count($classHandler->classes); $i++)
+                                {
+                                    echo '<div><a class="change_page" page="class_profile" step="" args="&class_id=' . $classHandler->classes[$i]->id . '" href="javascript:void(0)">' . $classHandler->classes[$i]->title . '</a></div>';
+                                }
                             ?>
                         </div>
                     </div>

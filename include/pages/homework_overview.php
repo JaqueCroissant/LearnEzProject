@@ -96,7 +96,7 @@ $homeworkHandler->get_user_homework();
                 <hr class="widget-separator m-0">
                 <div class="panel-body">
                     <?php if(empty($homeworkHandler->homework)) {
-                        echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ingen lektier i øjeblikket.</div>';
+                        echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> '. TranslationHandler::get_static_text("NO_HOMEWORK_AT_THE_MOMENT") .'</div>';
                     } else {
                     ?>
                         <div class="latest-homework">
@@ -123,7 +123,7 @@ $homeworkHandler->get_user_homework();
                                     <tr class="a change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" data-container="body" data-toggle="popover" data-delay='{"show":"100", "hide":"100"}' data-placement="top" data-trigger="hover" data-html="true" data-content="
                                         <?php
                                         if(!empty($value->lectures)) {
-                                            echo '<b>Lektioner:</b>';
+                                            echo '<b>'. TranslationHandler::get_static_text("LECTURES") .':</b>';
                                             foreach($value->lectures as $lecture) {
                                                 echo '<br />- ' . $lecture->title . '';
                                             }
@@ -131,7 +131,7 @@ $homeworkHandler->get_user_homework();
                                         }
 
                                         if(!empty($value->tests)) {
-                                            echo '<b>Tests:</b>';
+                                            echo '<b>'. TranslationHandler::get_static_text("TESTS") .':</b>';
                                             foreach($value->tests as $test) {
                                                 echo '<br />- ' . $test->title . '';
                                             }
@@ -143,7 +143,7 @@ $homeworkHandler->get_user_homework();
                                         <td style='text-align:center;'><?php echo $value->date_expire; ?></td>
                                         <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                         <td style='text-align:center;'><?= count($value->tests) ?></td>
-                                        <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
+                                        <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="'. TranslationHandler::get_static_text("INCOMPLETE") .'"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="'. TranslationHandler::get_static_text("COMPLETE") .'"></i>' ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -162,7 +162,7 @@ $homeworkHandler->get_user_homework();
                 <hr class="widget-separator m-0">
                 <div class="panel-body user-description">
                     <?php if(empty($homeworkHandler->incomplete_homework)) {
-                        echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ingen ufuldendte lektier i øjeblikket.</div>';
+                        echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> '. TranslationHandler::get_static_text("NO_INCOMPLETE_HOMEWORK_AT_THE_MOMENT") .'</div>';
                     } else {
                     ?>
                         <div class="incomplete-homework">
@@ -189,7 +189,7 @@ $homeworkHandler->get_user_homework();
                                     <tr class="a change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="
                                         <?php
                                         if(!empty($value->lectures)) {
-                                            echo '<b>Lektioner:</b>';
+                                            echo '<b>'. TranslationHandler::get_static_text("LECTURES") .':</b>';
                                             foreach($value->lectures as $lecture) {
                                                 echo '<br />- ' . $lecture->title . '';
                                             }
@@ -197,7 +197,7 @@ $homeworkHandler->get_user_homework();
                                         }
 
                                         if(!empty($value->tests)) {
-                                            echo '<b>Tests:</b>';
+                                            echo '<b>'. TranslationHandler::get_static_text("TESTS") .':</b>';
                                             foreach($value->tests as $test) {
                                                 echo '<br />- ' . $test->title . '';
                                             }
@@ -209,7 +209,7 @@ $homeworkHandler->get_user_homework();
                                         <td style='text-align:center;'><?php echo $value->date_expire; ?></td>
                                         <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                         <td style='text-align:center;'><?= count($value->tests) ?></td>
-                                        <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="Ufuldendt"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="Udført"></i>' ?></td>
+                                        <td style='text-align:center;'><?= !$value->is_complete ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="'. TranslationHandler::get_static_text("INCOMPLETE") .'"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="'. TranslationHandler::get_static_text("COMPLETE") .'"></i>' ?></td>
                                     </tr>
                                 <?php } ?>
                             </tbody>
@@ -230,15 +230,15 @@ $homeworkHandler->get_user_homework();
             <div class="panel-body">
                 <table class="profile_information_table">
                     <tr>
-                        <td>Antal lektier:</td>
+                        <td><?= TranslationHandler::get_static_text("HOMEWORK_AMOUNT") ?>:</td>
                         <td style="text-align:right;"><?= count($homeworkHandler->homework) ?></td>
                     </tr>
                      <tr>
-                        <td>Udførte lektier:</td>
+                        <td><?= TranslationHandler::get_static_text("COMPLETE_HOMEWORK") ?>:</td>
                         <td style="text-align:right;"><?= count($homeworkHandler->homework)- count($homeworkHandler->incomplete_homework) ?></td>
                     </tr>
                      <tr>
-                        <td>Udfuldendte lektier:</td>
+                        <td><?= TranslationHandler::get_static_text("INCOMPLETE_HOMEWORK") ?>:</td>
                         <td style="text-align:right;"><?= count($homeworkHandler->incomplete_homework) ?></td>
                     </tr>
                 </table>
@@ -261,7 +261,7 @@ $homeworkHandler->get_user_homework();
                 <hr class="widget-separator m-0">
                 <div class="panel-body user-description panel-collapse collapse in" id="collapse-class-<?= $class->id ?>"  role="tabpanel">
                     <?php if(empty($class->homework)) {
-                        echo '<div class="center latest-homework-empty" class_id="'. $class->id .'" style="margin-top:20px;margin-bottom:20px;"> Denne klasse har ingen lektier i øjeblikket.</div>';
+                        echo '<div class="center latest-homework-empty" class_id="'. $class->id .'" style="margin-top:20px;margin-bottom:20px;"> '. TranslationHandler::get_static_text("CLASS_NO_HOMEWORK_AT_THE_MOMENT").'</div>';
                     } else {
                     ?>
                         <div class="incomplete-homework">
@@ -269,7 +269,7 @@ $homeworkHandler->get_user_homework();
                             <thead>
                                 <tr>
                                     <th><?= TranslationHandler::get_static_text("TITLE") ?></th>
-                                    <th>Udstedt af</th>
+                                    <th><?= TranslationHandler::get_static_text("CREATED_BY") ?></th>
                                     <th style='text-align:center;'><?= TranslationHandler::get_static_text("END") ?> <?= strtolower(TranslationHandler::get_static_text("DATE_DATE")) ?></th>
                                     <th style='text-align:center;'><?= TranslationHandler::get_static_text("LECTURES") ?></th>
                                     <th style='text-align:center;'><?= TranslationHandler::get_static_text("TESTS") ?></th>
@@ -280,7 +280,7 @@ $homeworkHandler->get_user_homework();
                                     <tr class="a change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="
                                         <?php
                                         if(!empty($value->lectures)) {
-                                            echo '<b>Lektioner:</b>';
+                                            echo '<b>'. TranslationHandler::get_static_text("LECTURES") . ':</b>';
                                             foreach($value->lectures as $lecture) {
                                                 echo '<br />- ' . $lecture->title . '';
                                             }
@@ -288,7 +288,7 @@ $homeworkHandler->get_user_homework();
                                         }
 
                                         if(!empty($value->tests)) {
-                                            echo '<b>Tests:</b>';
+                                            echo '<b>'. TranslationHandler::get_static_text("TESTS") . ':</b>';
                                             foreach($value->tests as $test) {
                                                 echo '<br />- ' . $test->title . '';
                                             }

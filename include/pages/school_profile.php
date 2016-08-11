@@ -72,72 +72,80 @@ if (isset($_GET['school_id'])) {
 <div class="row" id="students">
     <div class="col-sm-12">
         <div class="row">
-            <div class="col-md-6 col-sm-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <?php echo TranslationHandler::get_static_text("ALL") . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")); ?>
-                        </h4>
-                    </div>
-                    <hr class="widget-separator m-0">
-                    <div class="panel-body students_list">
-                        <?php if ($schoolHandler->school->current_students > 0 && RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
-                            <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
-                                <thead>
-                                    <tr>
-                                        <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
-                                        <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                    foreach ($userHandler->users as $value) {
-                                        ?>
-                                        <tr class = "a change_page" page = "account_profile" step = "" args = "&user_id=<?php echo $value->id; ?>">
-                                            <td><?php echo $value->firstname . " " . $value->surname; ?></td>
-                                            <td><?php echo $value->email; ?></td>
+            <?php if (RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
+                <div class="col-md-6 col-sm-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
 
+                            <h4 class="panel-title no-transform">
+                                <i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg m-r-md"></i>
+                                <?php echo TranslationHandler::get_static_text("ALL") . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")); ?>
+                            </h4>
+                        </div>
+                        <hr class="widget-separator m-0">
+                        <div class="panel-body students_list">
+                            <?php if ($schoolHandler->school->current_students > 0) { ?>
+                                <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
                                         </tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
-                        <?php } else {
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($userHandler->users as $value) {
+                                            ?>
+                                            <tr class = "a change_page" page = "account_profile" step = "" args = "&user_id=<?php echo $value->id; ?>">
+                                                <td><?php echo $value->firstname . " " . $value->surname; ?></td>
+                                                <td><?php echo $value->email; ?></td>
+
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody>
+                                </table>
+                            <?php } else {
+                                ?>
+                                <div class="center description" onload="resize()">
+                                    <?php echo TranslationHandler::get_static_text("NO_STUDENTS_FOUND"); ?>
+                                </div>
+                                <?php
+                            }
                             ?>
-                            <div class="center description">
-                                <?php echo TranslationHandler::get_static_text("NO_STUDENTS_FOUND"); ?>
-                            </div>
-                            <?php
-                        }
-                        ?>
+                        </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
             <?php
             $i_max = 5;
-            $i = 0;
-            $i_rand = rand(100, 1000);
             ?>
             <div class="col-md-6 col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <?php echo TranslationHandler::get_static_text("TOP") . " " . $i_max . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")) . " - Husk at tjekke om brugertype = 4"; ?>
+                        <h4 class="panel-title no-transform">
+                            <i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg m-r-md"></i>
+                            <?php echo TranslationHandler::get_static_text("TOP") . " " . $i_max . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")); ?>
                         </h4>
                     </div>
                     <hr class="widget-separator m-0">
                     <div class="panel-body students_stream">
                         <div class="streamline m-l-lg">
-                            <?php for ($i = 0; $i < $i_max; $i++) { ?>
+                            <?php
+                            if (isset($_GET['school_id'])) {
+                                $statisticsHandler->get_top_students($i_max, $_GET['school_id']);
+                            }
+                            foreach ($statisticsHandler->top_students as $value) {
+                                ?>
                                 <div class="sl-item p-b-md sl-primary">
                                     <div class="sl-avatar avatar avatar-sm avatar-circle">
-                                        <img class="img-responsive" src="assets/images/profile_images/5.png">
+                                        <img class="img-responsive a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>" src="assets/images/profile_images/<?php echo $value['image_id']; ?>.png">
                                     </div>
                                     <div class="sl-content">
                                         <h5 class="m-t-0">
-                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $i; ?>">John Doe</a>
-                                            <small class="text-muted fz-sm"><?php echo $i == 2 ? "<--- This is you" : ""; ?></small>
+                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= $value['firstname'] . ' ' . $value['surname'] ?></a>
+                                            <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i> " . TranslationHandler::get_static_text("THIS_IS_YOU") : ""; ?></small>
                                         </h5>
-                                        <p><?php echo $i_rand * (10 - $i); ?> points</p>
+                                        <p><?php echo $value['points']; ?> points</p>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -145,14 +153,14 @@ if (isset($_GET['school_id'])) {
                     </div>
                 </div>
             </div>
-
         </div>
         <?php if (RightsHandler::has_user_right("SCHOOL_STATISTICS")) { ?>
             <div class="row" id="statistic">
                 <div class="col-sm-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">
+                            <h4 class="panel-title no-transform">
+                                <i class="zmdi-hc-fw zmdi zmdi-trending-up zmdi-hc-lg m-r-md"></i>
                                 <?php echo TranslationHandler::get_static_text("STATISTICS"); ?>
                             </h4>
                         </div>
@@ -199,20 +207,20 @@ if (isset($_GET['school_id'])) {
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>
-    $(document).ready(function () {
-        function resize() {
-            if ($(".students_stream").height() > $(".students_list").height()) {
-                var padding = Math.floor(($(".students_stream").height()) / 2);
-                $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
-                $(".students_list").height($(".students_stream").height());
-            } else {
-                $(".students_stream").height($(".students_list").height());
-                var padding = Math.floor(($(".students_list").height()) / 2);
-                $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
-            }
-        }
-        $('[data-toggle="tooltip"]').tooltip();
-        resize();
-        $(document).on("draw.dt", resize);
-    });
+                            $(document).ready(function () {
+                                function resize() {
+                                    if ($(".students_stream").height() > $(".students_list").height()) {
+                                        var padding = Math.floor(($(".students_stream").height()) / 2);
+                                        $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+                                        $(".students_list").height($(".students_stream").height());
+                                    } else {
+                                        $(".students_stream").height($(".students_list").height());
+                                        var padding = Math.floor(($(".students_list").height()) / 2);
+                                        $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+                                    }
+                                }
+                                $('[data-toggle="tooltip"]').tooltip();
+
+                                $(document).on("draw.dt", resize);
+                            });
 </script>

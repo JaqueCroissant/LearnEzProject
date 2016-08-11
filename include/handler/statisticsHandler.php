@@ -363,17 +363,17 @@ class StatisticsHandler extends Handler {
 
             if($has_school && !$has_class)
             {
-                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id, GROUP_CONCAT(class.title SEPARATOR ', ') AS classes FROM users INNER JOIN school INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class ON class.id = user_class.class_id WHERE school.id = :school_id AND users.user_type_id = 4 GROUP BY users.id, users.username, users.firstname, users.surname, users.points ORDER BY users.points DESC LIMIT :limit", $school, $limit);
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id, GROUP_CONCAT(class.title SEPARATOR ', ') AS classes FROM users INNER JOIN school ON users.school_id = school.id INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class ON class.id = user_class.class_id WHERE school.id = :school_id AND users.user_type_id = 4 GROUP BY users.id, users.username, users.firstname, users.surname, users.points ORDER BY users.points DESC LIMIT :limit", $school, $limit);
             }
             else if($has_school && $has_class)
             {
-                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id FROM users INNER JOIN class WHERE class.id = :class_id AND users.user_type_id = 4 AND users.school_id = :school_id ORDER BY points DESC LIMIT :limit", $class, $school, $limit);
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id FROM users INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class on user_class.class_id = class.id WHERE class.id = :class_id AND users.user_type_id = 4 AND users.school_id = :school_id ORDER BY points DESC LIMIT :limit", $class, $school, $limit);
             }
             else if(!$has_school && !$has_class)
             {
-                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id, school.name, GROUP_CONCAT(class.title SEPARATOR ', ') AS classes FROM users INNER JOIN school INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class ON class.id = user_class.class_id WHERE school.id = users.school_id AND users.user_type_id = 4 GROUP BY users.id, users.username, users.firstname, users.surname, users.points ORDER BY users.points DESC LIMIT :limit", $limit);
-            } else if (!$has_school && $has_class && RightsHandler::has_user_right("CLASS_STATISTICS")) {
-                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id FROM users INNER JOIN class WHERE class.id = :class_id AND users.user_type_id = 4 ORDER BY points DESC LIMIT :limit", $class, $limit);
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id, school.name, GROUP_CONCAT(class.title SEPARATOR ', ') AS classes FROM users INNER JOIN school on users.school_id = school.id INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class ON class.id = user_class.class_id WHERE users.user_type_id = 4 GROUP BY users.id, users.username, users.firstname, users.surname, users.points ORDER BY users.points DESC LIMIT :limit", $limit);
+            } else if (!$has_school && $has_class) {
+                $data = DbHandler::get_instance()->return_query("SELECT users.id, users.username, users.firstname, users.surname, users.points, users.image_id FROM users INNER JOIN user_class ON users.id = user_class.users_id INNER JOIN class on user_class.class_id = class.id WHERE class.id = :class_id AND users.user_type_id = 4 ORDER BY points DESC LIMIT :limit", $class, $limit);
             }
             else
             {

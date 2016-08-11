@@ -7,7 +7,7 @@
     height: auto; 
 }
 
-.widget-body {
+.panel-body, .widget-body {
     height: inherit;
     overflow: hidden;
 }

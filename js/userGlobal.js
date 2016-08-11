@@ -14,8 +14,11 @@ $(document).ready(function () {
     var time_since_last_save = 0;
     var interval_function;
     var hidden = true;
+    var paused = false;
     var ratio = 1;
     var mute = false;
+    var time_between_saves = 15;
+    var cookie_expiration_time = 1;
     
     if ($.cookie("current_task") !== undefined) {
         
@@ -47,12 +50,15 @@ $(document).ready(function () {
         }, 1);
     }
     
-    //fix save at max
     function slide_enter(event){
         current_progress = event.Data.slideNumber;
-        $.cookie("current_progress", (current_progress === max_progress ? 1 : current_progress), {path: "/"});
         if (current_progress > progress_reached) {
             progress_reached = current_progress;
+        }
+        if (current_progress >= max_progress) {
+            update_init();
+            update = false;
+            clearInterval(interval_function);
         }
         set_test_buttons();
     }
@@ -61,12 +67,19 @@ $(document).ready(function () {
         current_progress === 1 ? $(".course_go_back").attr("disabled", true) : $(".course_go_back").attr("disabled", false);
         current_progress === max_progress || current_progress === progress_reached ? $(".course_go_for").attr("disabled", true) : $(".course_go_for").attr("disabled", false);
         $(".course_mute").attr("disabled", false);
+        $(".course_unmute").attr("disabled", false);
         $(".course_slide_counter").html("<b>" + current_progress + "/" +  max_progress + "</b>");
     }
     
     function set_lecture_buttons(){
         $(".course_lecture_button").attr("disabled", false);
         update_lecture_counter();
+        if (current_progress >= progress_reached - 2) {
+            $(".course_continue").attr("disabled", true);
+        }
+        else {
+            $(".course_continue").attr("disabled", false);
+        }
     }
     
     function set_menu_buttons(){
@@ -77,38 +90,52 @@ $(document).ready(function () {
     function switch_play_pause(){
         var player = $(".course_video")[0];
         if(player.ended) {
-            console.log("ended");
+            update_init();
+            update = false;
+            clearInterval(interval_function);
             $(".course_pause").hide();
             $(".course_play").show();
         }
         else if (player.paused) {
-            console.log("playing");
             $(".course_pause").show();
             $(".course_play").hide();
+            paused = false;
             player.play();
         }
         else {
-            console.log("pausing");
             $(".course_pause").hide();
             $(".course_play").show();
+            paused = true;
             player.pause();
         }
     }
     
     function start_lecture_interval(){
         if (update) {
+            time_since_last_save = 0;
             interval_function = setInterval(function(){
                 time_since_last_save++;
-                current_progress = Math.floor($(".course_video")[0].currentTime);
                 progress_reached = current_progress > progress_reached ? current_progress : progress_reached;
-                update_lecture_counter(); 
-                if (time_since_last_save >= 5) {
-                    console.log("saving");
+                if (time_since_last_save >= time_between_saves) {
                     update_init();
                     progress_reached_last = progress_reached;
                     time_since_last_save = 0;
                 }
             }, 1000);
+        }
+    }
+    
+    function start_test_interval(){
+        if (update) {
+            time_since_last_save = 0;
+            interval_function = setInterval(function(){
+                 time_since_last_save++;
+                 if (time_since_last_save >= time_between_saves) {
+                     update_init();
+                     progress_reached_last = progress_reached;
+                     time_since_last_save = 0;
+                 }
+             }, 1000);
         }
     }
     
@@ -118,22 +145,6 @@ $(document).ready(function () {
             + ":" + (current_progress % 60 < 10 ? "0" + current_progress % 60 : current_progress % 60) 
             + "/" + (Math.floor(max_progress / 60) < 10 ? "0" + Math.floor(max_progress / 60) : Math.floor(max_progress / 60)) 
             + ":" + (max_progress % 60 < 10 ? "0" + max_progress % 60 : max_progress % 60 + "</p>"));  
-    }
-    
-    function start_test_interval(){
-        if (update) {
-            setTimeout(function(){
-                interval_function = setInterval(function(){
-                     console.log("test interval");
-                     time_since_last_save++;
-                     if (time_since_last_save >= 30) {
-                         update_init();
-                         progress_reached_last = progress_reached;
-                         time_since_last_save = 0;
-                     }
-                 }, 1000);
-            }, 1000);
-        }
     }
     
     function init_iframe_window(){
@@ -155,7 +166,7 @@ $(document).ready(function () {
     }
 
     $(document).on("click", ".course_action", function(){
-        if (can_be_clicked) {
+        if (can_be_clicked && $(this).attr("disabled") !== true) {
             can_be_clicked = false;
             var window = document.getElementById("scaled-frame").contentWindow;
             var action = $(this).attr("value");
@@ -190,6 +201,7 @@ $(document).ready(function () {
                 case "play" :
                     if( $(".course_video")[0].ended) {
                         $(".course_video")[0].play();
+                        paused = false;
                         $(".course_pause").show();
                         $(".course_play").hide();
                     }
@@ -204,6 +216,9 @@ $(document).ready(function () {
                     $(".course_video")[0].currentTime = 0;
                     current_progress = 0;
                     update_lecture_counter();
+                    if ($(".course_video")[0].paused) {
+                        switch_play_pause();
+                    }
                     break;
                 default : break;
             }
@@ -212,18 +227,14 @@ $(document).ready(function () {
     });
 
     function update_init(){
-        if (progress_reached > progress_reached_last) {
-            if (progress_reached === max_progress) {
+        if (update && progress_reached > progress_reached_last) {
+            if (progress_reached >= max_progress) {
                 update_progress(task, 0, 1);
             }
             else {
                 update_progress(task, progress_reached, 0);
             }
         }
-        var temp = JSON.parse($.cookie("current_task"));
-        temp.mute = mute;
-        $.cookie("current_task", JSON.stringify(temp), {path: "/"});
-        
     }
     
     function check_mute(){
@@ -235,17 +246,21 @@ $(document).ready(function () {
     function switch_mute(){
         var c_window = document.getElementById("scaled-frame").contentWindow;
         var current = c_window.cpAPIInterface.getVolume();
-        var i = $(".course_mute").find("i");
         if (current === 100) {
             c_window.cpAPIInterface.setVolume(0);
-            i.toggleClass("zmdi-volume-up zmdi-volume-off");
+            $(".course_mute").hide();
+            $(".course_unmute").show();
             mute = true;
         }
         else {
             c_window.cpAPIInterface.setVolume(100);
-            i.toggleClass("zmdi-volume-off zmdi-volume-up");
+            $(".course_unmute").hide();
+            $(".course_mute").show();
             mute = false;
         }
+        var temp = JSON.parse($.cookie("current_task"));
+        temp.mute = mute;
+        $.cookie("current_task", JSON.stringify(temp), {path: "/", expires:cookie_expiration_time});
     }
     
     function close(){
@@ -253,7 +268,6 @@ $(document).ready(function () {
         update_init();
         $(".test_content").fadeOut(500, function(){
             $(this).hide();
-            $.removeCookie("current_progress", {path:"/"});
             $.removeCookie("current_task", {path:"/"});
         });
         $("#scaled-frame").remove("html");
@@ -263,11 +277,11 @@ $(document).ready(function () {
     }
     
     function open(data, open){
-        current_progress = parseInt($.cookie("current_progress"));
+        current_progress = parseInt(data.current_progress);
         progress_reached = parseInt(data.current_progress);
         progress_reached_last = parseInt(data.current_progress);
-        max_progress = parseInt(data.max_progress);
-        update = !max_progress <= current_progress;
+        max_progress = task === "test" ? parseInt(data.max_progress) : parseInt(data.max_progress) - 1;
+        update = !(progress_reached >= max_progress + 1);
         table_id = data.user_course_table_id === undefined ? null : parseInt(data.user_course_table_id);
         course_player_init(data, 1000);
         if (open) {
@@ -277,7 +291,6 @@ $(document).ready(function () {
             $(".course_return").show();
         }
         $(window).one("unload.update_progress", function(){
-            update_init();
             clearInterval(interval_function);
         });
     }
@@ -366,7 +379,12 @@ $(document).ready(function () {
                 $(this).hide();
                 $(".course_return").css("display", "block");
             });
-            task === "test" ? document.getElementById("scaled-frame").contentWindow.cpAPIInterface.pause() : $(".course_video")[0].pause();
+            if(task === "test") {
+                document.getElementById("scaled-frame").contentWindow.cpAPIInterface.pause();
+            }
+            else {
+                $(".course_video")[0].pause();
+            }
             clearInterval(interval_function);
         }
     });
@@ -389,14 +407,17 @@ $(document).ready(function () {
                 start_test_interval();
             }
             else {
-                
                 if ($(".course_video")[0].readyState === 4) {
-                    $(".course_video")[0].play();
-                    start_lecture_interval();
+                    setTimeout(function(){
+                        if(!paused) $(".course_video")[0].play();
+                        start_lecture_interval();
+                    }, 700);
+                    
                 }
                 else {
                     $(".course_video").one("loadeddata", function(){
                         start_lecture_interval();
+                        $(".course_video")[0].play();
                     });
                 }
             }
@@ -441,9 +462,6 @@ $(document).ready(function () {
                     }, 500, "easeInOutQuad");
                     $(window).on("resize", resize);
                     $(".course_video")[0].currentTime = current_progress;
-                    setTimeout(function(){
-                        if (!hidden) $(".course_video")[0].play();
-                    }, 500);
                     update_lecture_counter();
                     });
             }, wait);
@@ -451,9 +469,21 @@ $(document).ready(function () {
         
     }
     
-    $(".course_video").bind("ended", function(){
-        switch_play_pause();
-    });
+    (function() {
+        $(".course_video").bind("ended", function(){
+            switch_play_pause();
+        });
+        $(".course_video")[0].ontimeupdate = function(){
+            current_progress = $(".course_video")[0].currentTime > max_progress ? max_progress : Math.floor($(".course_video")[0].currentTime);
+            update_lecture_counter();
+            if (current_progress >= progress_reached - 2) {
+                $(".course_continue").attr("disabled", true);
+            }
+            else {
+                $(".course_continue").attr("disabled", false);
+            }
+        };
+    })();
 
     $(document).on("click", ".play_test", function(){
         if($(this).attr("element_id") === undefined) {
@@ -470,8 +500,7 @@ $(document).ready(function () {
             initiate_submit_get($(this), "course.php?play_test=1&test_id="+$(this).attr("element_id"), function () {
                 show_status_bar("error", ajax_data.error);
             }, function () {
-                $.cookie("current_task", '{"task" : "test", "data" : "' + action_id + '", "mute" : "false"}', {expires: 1, path: "/"});
-                $.cookie("current_progress", (ajax_data.current_progress === ajax_data.max_progress ? 1 : ajax_data.current_progress), {expires: 1, path: "/"});
+                $.cookie("current_task", '{"task" : "test", "data" : "' + action_id + '", "mute" : "false"}', {expires: cookie_expiration_time, path: "/"});
                 mute = false;
                 task = "test";
                 open(ajax_data, true);
@@ -496,9 +525,9 @@ $(document).ready(function () {
             initiate_submit_get($(this), "course.php?play_lecture=1&lecture_id="+$(this).attr("element_id"), function () {
                 show_status_bar("error", ajax_data.error);
             }, function () {
-                $.cookie("current_task", '{"task" : "lecture", "data" : "' + action_id + '", "mute" : "false"}', {expires: 1, path: "/"});
-                $.cookie("current_progress", (ajax_data.current_progress === ajax_data.max_progress ? 1 : ajax_data.current_progress), {expires: 1, path: "/"});
+                $.cookie("current_task", '{"task" : "lecture", "data" : "' + action_id + '", "mute" : "false"}', {expires: cookie_expiration_time, path: "/"});
                 mute = false;
+                paused = false;
                 task = "lecture";
                 open(ajax_data, true);
             });

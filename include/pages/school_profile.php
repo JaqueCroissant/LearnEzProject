@@ -31,7 +31,7 @@ if (isset($_GET['school_id'])) {
     <div class="profile-cover">
         <div class="cover-user m-b-lg">
             <div>
-                <a href="#statistic" style="color: #6a6c6f !important;"><span class="cover-icon" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("STATISTICS") ?>" style="cursor:pointer"><i class="fa fa-star" style="font-size:16px !important;margin-left:2px;"></i></span></a>
+                <a <?php echo RightsHandler::has_user_right("SCHOOL_STATISTICS") ? "href='#statistic'" : "" ?> style="color: #6a6c6f !important;"><span class="cover-icon" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("STATISTICS") ?>" style="cursor:pointer"><i class="fa fa-star" style="font-size:16px !important;margin-left:2px;"></i></span></a>
             </div>
             <div>
                 <div class="avatar avatar-xl avatar-circle">
@@ -39,9 +39,7 @@ if (isset($_GET['school_id'])) {
                 </div>
             </div>
             <div class="text-center">
-                <?php if (RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL")) { ?>
-                    <span class="cover-icon change_page a" id="mail" page="mail" step="create_mail" args="&receiver_id=SCHOOL_ADMIN_<?= isset($_GET['school_id']) ? $_GET['school_id'] : ""; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>"><i class="fa fa-envelope"></i></span>
-                <?php } ?>
+                <span class="cover-icon <?php echo RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL") ? " change_page a" : " disabled" ?>" id="mail" page="mail" step="create_mail" args="&receiver_id=SCHOOL_ADMIN_<?= isset($_GET['school_id']) ? $_GET['school_id'] : ""; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>"><i class="fa fa-envelope"></i></span>
             </div>
         </div>
         <div class="text-center">
@@ -62,7 +60,7 @@ if (isset($_GET['school_id'])) {
                 </div>
             </div>
             <div class="col-sm-2 promo-tab">
-                <div class="text-center ">
+                <div class="text-center">
                     <h6 class="text-muted"><?php echo TranslationHandler::get_static_text("SCHOOL") . " " . strtolower(TranslationHandler::get_static_text("STATUS")); ?></h6>
                     <h4 class="m-0 m-t-xs" style="color: <?= $schoolHandler->school->open == "1" ? '#36ce1c' : '#f15530'; ?>"><?= $schoolHandler->school->open ? TranslationHandler::get_static_text("OPEN") : TranslationHandler::get_static_text("CLOSED"); ?></h4>
                 </div>
@@ -83,7 +81,7 @@ if (isset($_GET['school_id'])) {
                     </div>
                     <hr class="widget-separator m-0">
                     <div class="panel-body students_list">
-                        <?php if ($schoolHandler->school->current_students > 0) { ?>
+                        <?php if ($schoolHandler->school->current_students > 0 && RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
                             <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
                                 <thead>
                                     <tr>
@@ -105,7 +103,7 @@ if (isset($_GET['school_id'])) {
                             </table>
                         <?php } else {
                             ?>
-                        <div class="center description" onload="resize()">
+                            <div class="center description">
                                 <?php echo TranslationHandler::get_static_text("NO_STUDENTS_FOUND"); ?>
                             </div>
                             <?php
@@ -204,19 +202,17 @@ if (isset($_GET['school_id'])) {
     $(document).ready(function () {
         function resize() {
             if ($(".students_stream").height() > $(".students_list").height()) {
-                if ($('.progress-text').length) {
-                    var padding = Math.floor(($(".students_stream").height() - $('.progress-text').height()) / 2);
-                    $('.progress-text').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
-                }
+                var padding = Math.floor(($(".students_stream").height()) / 2);
+                $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
                 $(".students_list").height($(".students_stream").height());
             } else {
-                console.log($(".students_list").height());
                 $(".students_stream").height($(".students_list").height());
                 var padding = Math.floor(($(".students_list").height()) / 2);
                 $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
             }
         }
         $('[data-toggle="tooltip"]').tooltip();
+        resize();
         $(document).on("draw.dt", resize);
     });
 </script>

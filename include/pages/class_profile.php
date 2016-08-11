@@ -23,6 +23,9 @@ if (isset($_GET['class_id'])) {
 } else {
     ErrorHandler::show_error_page(ErrorHandler::return_error("USER_INVALID_CLASS_ID"));
 }
+$i_max = 5;
+$i = 0;
+$i_rand = rand(100, 1000);
 ?>
 
 <style>
@@ -32,86 +35,123 @@ if (isset($_GET['class_id'])) {
     <div class="col-md-9 col-sm-12 p-v-0">
         <div class="col-sm-12">
             <div class="widget">
-                <div class='widget-header'>
-                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("ALL") . " " . TranslationHandler::get_static_text("STUDENTS"); ?></h4>
-                </div>
-                <hr class="widget-separator m-0">
-                <div class="widget-body">
-                    <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
-                        <thead>
-                            <tr>
-                                <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
-                                <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            foreach ($userHandler->users as $value) {
-                                ?>
-                                <tr class = "a change_page" page = "account_profile" step = "" args = "&user_id=<?php echo $value->id; ?>">
-                                    <td><?php echo $value->firstname . " " . $value->surname; ?></td>
-                                    <td><?php echo $value->email; ?></td>
+                <div class="m-b-lg nav-tabs-horizontal">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li id="student_tab_header"><a href="#student_tab" class="my_tab_header" id="student_tab_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></a></li>
+                        <li id="teacher_tab_header"><a href="#teacher_tab" class="my_tab_header" id="teacher_tab_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("TEACHERS"); ?></a></li>
+                    </ul>
+                    <div class="my_tab_content">
+                        <div class="my_fade my_tab" id="student_tab">
+                            <div class="widget-body">
+                                <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($userHandler->users as $value) {
+                                            if ($value->user_type_id == 4) {
+                                                ?>
+                                                <tr class="a change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>">
+                                                    <td><?php echo $value->firstname . " " . $value->surname; ?></td>
+                                                    <td><?php echo $value->email; ?></td>
 
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <?php
-        $i_max = 10;
-        $i = 0;
-        $i_rand = rand(100, 1000);
-        ?>
-        <div class="col-md-6 col-sm-12">
-            <div class="widget">
-                <div class='widget-header'>
-                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . $i_max . " " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
-                </div>
-                <hr class="widget-separator m-0">
-                <div class="widget-body">
-                    <div class="streamline m-l-lg">
-                        <?php for ($i; $i < $i_max; $i++) { ?>
-                            <div class="sl-item p-b-md sl-primary">
-                                <div class="sl-avatar avatar avatar-sm avatar-circle">
-                                    <img class="img-responsive" src="assets/images/profile_images/5.png">
-                                </div>
-                                <div class="sl-content">
-                                    <h5 class="m-t-0">
-                                        <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $i; ?>">John Doe</a>
-                                        <small class="text-muted fz-sm"><?php echo $i == 2 ? "<--- This is you" : ""; ?></small>
-                                    </h5>
-                                    <p><?php echo $i_rand * (10 - $i); ?> points</p>
-                                </div>
+                                                </tr>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
                             </div>
-                        <?php } ?>
+                        </div>
+                        <div class="my_fade my_tab" id="teacher_tab">
+                            <div class="widget-body">
+                                <table id="classes" class="table display table-hover" data-plugin="DataTable" data-options="{pageLength:5}">
+                                    <thead>
+                                        <tr>
+                                            <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
+                                            <th><?php echo TranslationHandler::get_static_text("SCHOOL_EMAIL"); ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($userHandler->users as $value) {
+                                            if ($value->user_type_id == 3) {
+                                                ?>
+                                                <tr class="a change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>">
+                                                    <td><?php echo $value->firstname . " " . $value->surname; ?></td>
+                                                    <td><?php echo $value->email; ?></td>
+
+                                                </tr>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-sm-12 ">
+        <?php
+        ?>
+        <div class="col-sm-12">
             <div class="widget">
                 <div class='widget-header'>
-                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . $i_max . " " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
+                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("HOMEWORK"); ?></h4>
                 </div>
                 <hr class="widget-separator m-0">
                 <div class="widget-body">
-                    <div class="streamline m-l-lg">
-                        <?php for ($i; $i < $i_max; $i++) { ?>
-                            <div class="sl-item p-b-md">
-                                <div class="sl-avatar avatar avatar-sm avatar-circle">
-                                    <img class="img-responsive" src="assets/images/profile_images/5.png">
-                                </div>
-                                <div class="sl-content">
-                                    <h5 class="m-t-0">
-                                        <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $i; ?>">John Doe</a>
-                                        <small class="text-muted fz-sm"><?php echo $i == 2 ? "<--- This is you" : ""; ?></small>
-                                    </h5>
-                                    <p><?php echo $i_rand * (10 - $i); ?> points</p>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <?php echo TranslationHandler::get_static_text("STATISTICS"); ?>
+                    </h4>
+                </div>
+                <hr class="widget-separator m-0">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="user-card">
+                                <div class="center">
+                                    <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
+                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
+                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_average; ?>%    </strong>
+                                    </div>
                                 </div>
                             </div>
-                        <?php } ?>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="user-card">
+                                <div class="center">
+                                    <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
+                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
+                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_lecture_average; ?>%    </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="user-card">
+                                <div class="center">
+                                    <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
+                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">
+                                        <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_test_average; ?>%    </strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -131,32 +171,53 @@ if (isset($_GET['class_id'])) {
             <div class="widget-body">
                 <?php echo isset($_GET['class_id']) ? $classHandler->school_class->description : ""; ?>
             </div>
-            <div class="widget-body <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "10" ? ($classHandler->school_class->remaining_days == "0" ? "hidden" : "danger animated headShake" ) : ""; ?>">
-                <h4 class="widget-title <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "10" ? ($classHandler->school_class->remaining_days == "0" ? "" : "animated flash animate-twice" ) : ""; ?>"><?php echo isset($_GET['class_id']) ? TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END") . ": " . $classHandler->school_class->remaining_days . " " . TranslationHandler::get_static_text("DATE_DAYS") : ""; ?></h4>
+            <div class="widget-body <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "21" ? "danger animated headShake"  : "hidden"; ?>">
+                <h4 class="widget-title <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "21" ? "animated flash animate-twice"  : ""; ?>"><?php echo isset($_GET['class_id']) ? TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END") . ": " . $classHandler->school_class->remaining_days . " " . TranslationHandler::get_static_text("DATE_DAYS") : ""; ?></h4>
             </div>
         </div>
         <div class="widget">
             <div class='widget-header'>
-                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("AVERAGE") . " " . strtolower(TranslationHandler::get_static_text("PROGRESS")); ?></h4>
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("DAYS_REMAINING"); ?></h4>
             </div>
             <hr class="widget-separator m-0">
             <div class="widget-body">
                 <div class="pull-left" name="test_average">
-                    <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average / 100 : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($statisticsHandler->class_average) : "" ?>"}, thickness: 10}'>
-                        <strong><?php echo isset($_GET['class_id']) ? $statisticsHandler->class_average : ""; ?> %</strong>
+                    <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $classHandler->school_class->remaining_days / $classHandler->school_class->total_days : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($classHandler->school_class->remaining_days * 100 / $classHandler->school_class->total_days) : "" ?>"}, thickness: 10}'>
+                        <strong><?php echo isset($_GET['class_id']) ? round($classHandler->school_class->remaining_days * 100 / $classHandler->school_class->total_days, 0) : ""; ?> %</strong>
                     </div>
                 </div>
             </div>
         </div>
         <div class="widget">
             <div class='widget-header'>
-                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("HOMEWORK"); ?></h4>
+                <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . $i_max . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")); ?> </h4>
             </div>
             <hr class="widget-separator m-0">
             <div class="widget-body">
-
+                <div class="streamline m-l-lg">
+                    <?php
+                    if (isset($_GET['class_id'])) {
+                        $statisticsHandler->get_top_students($i_max, null, $_GET['class_id']);
+                    }
+                    foreach ($statisticsHandler->top_students as $value) {
+                        ?>
+                        <div class="sl-item p-b-md sl-primary">
+                            <div class="sl-avatar avatar avatar-sm avatar-circle">
+                                <img class="img-responsive a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>" src="assets/images/profile_images/<?php echo $value['image_id']; ?>.png">
+                            </div>
+                            <div class="sl-content">
+                                <h5 class="m-t-0">
+                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= $value['firstname'] . ' ' . $value['surname'] ?></a>
+                                    <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<--- " . TranslationHandler::get_static_text("ME") : ""; ?></small>
+                                </h5>
+                                <p><?php echo $value['points']; ?> points</p>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script src="js/my_tab.js" type="text/javascript"></script>

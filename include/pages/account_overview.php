@@ -84,7 +84,7 @@ $courses_completed = 0;
                 <div class="col-md-6 col-sm-12 ">
                     <div class="widget">
                         <div class='widget-header'>
-                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . TranslationHandler::get_static_text("STUDENTS") . " - Husk at tjekke om brugertype = 4"; ?> </h4>
+                            <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("TOP") . " " . TranslationHandler::get_static_text("STUDENTS"); ?> </h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
@@ -92,7 +92,6 @@ $courses_completed = 0;
                                 <?php
                                 if(count($statisticsHandler->top_students) > 0)
                                 {
-                                    //var_dump($statisticsHandler->top_students);
                                     foreach($statisticsHandler->top_students as $value)
                                     { ?>
                                         <div class="sl-item p-b-md">

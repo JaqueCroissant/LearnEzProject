@@ -170,7 +170,7 @@ switch ($classHandler->_user->user_type_id) {
                     <div class="col-md-12">
                         <div class="widget">
                             <div class="widget-header">
-                                <h4 class="widget-title"><?php echo $schoolHandler->school->name; ?></h4>
+                                <h4 class="widget-title change_page a" page='school_profile' step='' args='&school_id=<?php echo $classHandler->_user->id; ?>'><?php echo $schoolHandler->school->name; ?></h4>
                             </div>
                             <hr class="widget-separator">
                             <div class="widget-body">
@@ -202,7 +202,7 @@ switch ($classHandler->_user->user_type_id) {
                     <div class="col-md-12">
                         <div class="widget">
                             <div class="widget-header">
-                                <h4 class="widget-title"><?php echo $schoolHandler->school->name; ?></h4>
+                                <h4 class="widget-title change_page a" page='school_profile' step='' args='&school_id=<?php echo $classHandler->_user->id; ?>'><?php echo $schoolHandler->school->name; ?></h4>
                             </div>
                             <hr class="widget-separator">
                             <div class="widget-body">

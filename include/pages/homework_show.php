@@ -4,6 +4,12 @@ require_once '../../include/handler/homeworkHandler.php';
 
 $current_user = SessionKeyHandler::get_from_session("user", true);
 $homeworkHandler = new HomeworkHandler();
+
+if ($current_user->user_type_id == 1) {
+    ErrorHandler::show_error_page($homeworkHandler->error);
+    die();
+}
+
 if (!$homeworkHandler->get_homework(isset($_GET["homework_id"]) ? $_GET["homework_id"] : null)) {
     ErrorHandler::show_error_page($homeworkHandler->error);
     die();

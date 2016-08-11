@@ -60,7 +60,7 @@ class HomeworkHandler extends Handler {
             $this->homework_id = $homework_id;
 
             if (!$this->fetch_homework_data()) {
-                return true;
+                return false;
             }
 
             $this->iterate_homework_data();
@@ -70,7 +70,6 @@ class HomeworkHandler extends Handler {
             if (empty($this->homework)) {
                 throw new exception("INVALID_INPUT");
             }
-
 
             $this->specific_homework = array_shift(array_values($this->homework));
             $this->assign_homework_students();

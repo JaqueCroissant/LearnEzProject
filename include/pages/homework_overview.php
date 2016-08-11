@@ -4,6 +4,12 @@ require_once '../../include/handler/calendarHandler.php';
 require_once '../../include/handler/homeworkHandler.php';
 
 $current_user = SessionKeyHandler::get_from_session("user", true);
+
+if ($current_user->user_type_id == 1) {
+    ErrorHandler::show_error_page($homeworkHandler->error);
+    die();
+}
+
 $selected_date = isset($_GET["selected_date"]) ? $_GET["selected_date"] : 0;
 $homeworkHandler = new HomeworkHandler();
 $calendarHandler = new CalendarHandler($selected_date);

@@ -285,6 +285,19 @@ $incomplete_tests = 0;
     </div>
 <?php } ?>
 
+<div id="click_alertbox" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <div id="delete_text"><?php echo TranslationHandler::get_static_text("CONFIRM_DELETE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")) . "?"; ?></div>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+    </div>
+</div>
+
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>
     $(document).ready(function () {

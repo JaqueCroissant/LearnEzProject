@@ -476,7 +476,7 @@ function reload_page_content(pagename) {
         }
 
         var last_page = navigation.pop();
-        if(pagename !== undefined) {
+        if(pagename === undefined) {
             return;
         }
         

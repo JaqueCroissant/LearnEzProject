@@ -269,7 +269,7 @@ $(document).ready(function () {
         $(".test_content").fadeOut(500, function(){
             $(this).hide();
             $.removeCookie("current_task", {path:"/"});
-            reload_page_content();
+            reload_page_content("course_show");
         });
         $("#scaled-frame").remove("html");
         $("#scaled-frame").attr("src", "");
@@ -404,7 +404,6 @@ $(document).ready(function () {
             });
             $(".backdrop").show();
             $(".backdrop").animate({opacity:1}, 500, "easeOutCubic");
-            console.log(paused);
             if (task === "test") {
                 start_test_interval();
             }
@@ -413,7 +412,6 @@ $(document).ready(function () {
                     setTimeout(function(){
                         if(!paused) {
                             $(".course_video")[0].play();
-                            console.log("playing");
                         }
                         start_lecture_interval();
                     }, 700);

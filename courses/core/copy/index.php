@@ -87,7 +87,7 @@ function initializeCP()
                         lCSSLoaded = true;
                         constructDIVs();
                     });
-                    var lJSFiles = [  '../../core/js/jquery-1.6.1.min.js','assets/js/CPM.js','../../core/playbar/playbarScript.js' ];
+                    var lJSFiles = [  'assets/js/jquery-1.6.1.min.js','assets/js/CPM.js','assets/playbar/playbarScript.js' ];
                     cpXHRJSLoader.js(lJSFiles,function()
                     {
                         lJSLoaded = true;

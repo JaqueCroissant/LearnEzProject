@@ -184,7 +184,7 @@ $courseHandler = new CourseHandler();
                     ?>
                     <div class="my_fade my_tab" id="create_lecture_tab">
                         <div class="widget-body" style="padding-top:32px !important;">
-                            <form method="post" action="" url="course.php?step=create_lecture" id="create_lecture" name="create_lecture">
+                            <form method="post" action="" url="course.php?step=create_lecture" id="create_lecture" name="create_lecture" enctype="multipart/form-data">
                                 <div class="title_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TITLE"); ?></div>
                                 <div class="description_text" style="display:none;"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></div>
                                 <div class="translation_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TRANSLATION"); ?></div>
@@ -233,7 +233,20 @@ $courseHandler = new CourseHandler();
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MEDIA"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
                                     <div class="col-md-12" style="margin-bottom: 16px !important;">
+                                        
+                                        <div class="form-group m-b-sm">
+                                            <div class="form-group m-b-sm">
+                                                <div style="display: table-cell;width: 100%;">
+                                                <input type="file" id="thumbnail_lecture" name="thumbnail_lecture" class="form-control btn btn-default">
+                                                </div>
+                                                <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
+                                                <input type="button" name="submit" id="upload_lecture" value="<?php echo TranslationHandler::get_static_text("UPLOAD"); ?>" class="pull-right btn btn-default btn-md upload_lecture m-l-sm">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                    
+                                    
                                 </div>
 
                                 <div class="col-md-6">
@@ -286,7 +299,10 @@ $courseHandler = new CourseHandler();
                     ?>
                     <div class="my_fade my_tab" id="create_test_tab">
                         <div class="widget-body" style="padding-top:32px !important;">
-                            <form method="post" action="" url="course.php?step=create_test" id="create_test" name="create_test">
+                            <form method="post" action="" url="course.php?step=create_test" id="create_test" name="create_test" enctype="multipart/form-data">
+                                <input type="hidden" id="test_file_name" name="file_name" value="" />
+                                <input type="hidden" id="test_total_steps" name="total_steps" value="" />
+                                
                                 <div class="title_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TITLE"); ?></div>
                                 <div class="description_text" style="display:none;"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></div>
                                 <div class="translation_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TRANSLATION"); ?></div>
@@ -334,6 +350,17 @@ $courseHandler = new CourseHandler();
                                     <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MEDIA"); ?></h4>
                                     <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
                                     <div class="col-md-12" style="margin-bottom: 16px !important;">
+                                        
+                                        <div class="form-group m-b-sm">
+                                            <div class="form-group m-b-sm">
+                                                <div style="display: table-cell;width: 100%;">
+                                                <input type="file" id="thumbnail_test" name="thumbnail_test" class="form-control btn btn-default">
+                                                </div>
+                                                <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
+                                                <input type="button" name="submit" id="upload_test" value="<?php echo TranslationHandler::get_static_text("UPLOAD"); ?>" class="pull-right btn btn-default btn-md upload_test m-l-sm">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -387,6 +414,8 @@ $courseHandler = new CourseHandler();
         </div>
     </div>
 </div>
+
+<iframe src="" id="test_player" style="display:none"></iframe>
 
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>

@@ -19,7 +19,10 @@ if ($classHandler->_user->user_type_id != 1) {
 }
 
 if (isset($_GET['class_id'])) {
-    $classHandler->get_class_by_id($_GET['class_id']);
+    if (!$classHandler->get_class_by_id($_GET['class_id'])) {
+        echo '<script>$(".go_back").click();</script>';
+        die();
+    }
     $userHandler->get_by_class_id($_GET['class_id']);
     $statisticsHandler->get_average_progress_for_class($_GET['class_id']);
 } else {
@@ -231,32 +234,35 @@ $i_rand = rand(100, 1000);
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                         <h4 class="panel-title no-transform">
                             <i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg m-r-md"></i>
                             <?php echo isset($_GET['class_id']) ? $classHandler->school_class->title . " - " . $classHandler->school_class->class_year : ""; ?>
                         </h4>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
-                            <i class="zmdi zmdi-hc-lg zmdi-delete a pull-right" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE") ?>">
-                                <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $classHandler->school_class->id; ?>" url="edit_class.php?state=delete_class">
+                            <div class="pull-right">
+                                <form class="" style="display: inline-block;" method="post" id="click_alert_form_<?php echo $classHandler->school_class->id; ?>" url="edit_class.php?state=delete_class">
+                                    <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox a" element_id='<?php echo $classHandler->school_class->id; ?>' data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE") ?>"></i>
                                     <input type="hidden" name="class_id" value="<?php echo $classHandler->school_class->id; ?>">
                                     <input type="hidden" name="submit" value="submit"></input>
                                 </form>
-                            </i>
+                            </div>
                         <?php } ?>
                         <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                            
+                            <div class="pull-right">
                                 <form method="post" id="alert_form_<?php echo $classHandler->school_class->id; ?>" action="" url="edit_class.php?state=set_availability">
-                                    <i class="zmdi zmdi-hc-lg <?php echo $classHandler->school_class->open == 1 ? "zmdi-close-circle" : "zmdi-check-circle" ?> btn_click_close_alertbox m-r-sm a pull-right" element_state='<?php echo $classHandler->school_class->open; ?>' element_id='<?php echo $classHandler->school_class->id; ?>' data-toggle="tooltip" title="<?= $classHandler->school_class->open == 1 ? TranslationHandler::get_static_text("CLOSE") : TranslationHandler::get_static_text("OPEN") ?>"></i>
+                                    <i style="width:20px; height:20px; margin-top: 3px;" class="zmdi zmdi-hc-lg <?php echo $classHandler->school_class->open == 1 ? "zmdi-close-circle" : "zmdi-check-circle" ?> btn_click_close_alertbox m-r-sm a pull-right" element_state='<?php echo $classHandler->school_class->open; ?>' element_id='<?php echo $classHandler->school_class->id; ?>' data-toggle="tooltip" title="<?= $classHandler->school_class->open == 1 ? TranslationHandler::get_static_text("CLOSE") : TranslationHandler::get_static_text("OPEN") ?>"></i>
                                     <input type="hidden" name="class_id" value="<?php echo $classHandler->school_class->id; ?>">
                                     <input type="hidden" name="submit" value="submit">
                                 </form>
-                            
+                            </div>
                         <?php } ?>
                         <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                            <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a pull-right" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>" page="edit_class" step="" args="&class_id=<?php echo $classHandler->school_class->id; ?>"></i>
+                            <div class="pull-right">
+                                <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>" page="edit_class" step="" args="&class_id=<?php echo $classHandler->school_class->id; ?>"></i>
+                            </div>
                         <?php } ?>
                     </div>
                 </div>
@@ -331,7 +337,7 @@ $i_rand = rand(100, 1000);
     </div>
     <div class="panel-footer p-h-sm">
         <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg accept_click_close_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_close_alertbox_btn" id="" page='class_profile' type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
             <input class="btn btn-default btn-sm p-v-lg cancel_click_close_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
         </p>
     </div>
@@ -343,7 +349,7 @@ $i_rand = rand(100, 1000);
     </div>
     <div class="panel-footer p-h-sm">
         <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg accept_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_alertbox_btn" id="profile_accept_delete" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
             <input class="btn btn-default btn-sm p-v-lg cancel_click_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
         </p>
     </div>

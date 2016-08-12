@@ -76,21 +76,24 @@ class StatisticsHandler extends Handler {
             }
             $query .= ' group by course_id, type'; 
             $data_array = DbHandler::get_instance()->return_query($query, $this->_class_id);
-            
             $lecture_avg = [];
+            $lect_total = 0;
             $test_avg = [];
+            $test_total = 0;
             foreach ($data_array as $value) {
                 if ($value['type'] == "1") {
                     $test = explode(',', $value['progress']);
-                    $test_avg[] = array_sum($test) / $value['total'];
+                    $test_avg[] = $value['total'] != 0 ? array_sum($test) / $value['total'] : 0;
+                    $test_total += $value['total'];
                 } elseif ($value['type'] == "2") {
                     $lect = explode(',', $value['progress']);
-                    $lecture_avg[] = array_sum($lect) / $value['total'];
+                    $lecture_avg[] = $value['total'] != 0 ? array_sum($lect) / $value['total'] : 0;
+                    $lect_total += $value['total'];
                 }
             }
             $this->class_lecture_average = array_sum($lecture_avg) != 0 ? round(array_sum($lecture_avg) * 100 / count($lecture_avg), 0) : 0;
             $this->class_test_average = array_sum($test_avg) != 0 ? round(array_sum($test_avg) * 100 / count($test_avg), 0) : 0;
-            $this->class_average = $this->class_lecture_average != 0 && $this->class_test_average != 0 ? round(($this->class_lecture_average + $this->class_test_average) / 2, 0) : 0;
+            $this->class_average = $test_total != 0 || $lect_total != 0 ? round((($this->class_lecture_average * $lect_total) + ($this->class_test_average * $test_total)) / ($lect_total + $test_total),0) : 0;
             
             
             return true;

@@ -74,7 +74,7 @@ if (isset($_GET['school_id'])) {
         <div class="row no-gutter">
             <div class="col-sm-offset-4 col-sm-2 col-xs-6 promo-tab">
                 <div class="text-center">
-                    <h6 class="text-muted"><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></h6>
+                    <h6 class="text-muted"><?php echo TranslationHandler::get_static_text("STUDENTS") . " " . strtolower(TranslationHandler::get_static_text("AND")) . " " . strtolower(TranslationHandler::get_static_text("TEACHERS")); ?></h6>
                     <h4 class="m-0 m-t-xs"><?php echo isset($_GET['school_id']) ? $schoolHandler->school->current_students . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $schoolHandler->school->max_students : ""; ?></h4>
                 </div>
             </div>
@@ -187,7 +187,7 @@ if (isset($_GET['school_id'])) {
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <div class="user-card">
+                                    <div class="user-card m-b-0">
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
@@ -197,7 +197,7 @@ if (isset($_GET['school_id'])) {
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="user-card">
+                                    <div class="user-card m-b-0">
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
@@ -207,7 +207,7 @@ if (isset($_GET['school_id'])) {
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="user-card">
+                                    <div class="user-card m-b-0">
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">

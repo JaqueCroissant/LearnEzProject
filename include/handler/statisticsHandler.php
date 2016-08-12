@@ -59,7 +59,7 @@ class StatisticsHandler extends Handler {
 
             $this->set_account_type_bool($student_and_teacher_bool);
 
-            $base_query = "SELECT course_id, GROUP_CONCAT(progress / total) as progress, type from progress_view WHERE user_type_id ";
+            $base_query = "SELECT course_id, GROUP_CONCAT(progress / total) as progress, count(total) as total, type from progress_view WHERE user_type_id ";
             if ($this->_account_type_bool) {
                 $query = $base_query . "IN (3, 4) AND class_id = :class_id";
             } else {
@@ -73,10 +73,10 @@ class StatisticsHandler extends Handler {
             foreach ($data_array as $value) {
                 if ($value['type'] == "1") {
                     $test = explode(',', $value['progress']);
-                    $test_avg[] = array_sum($test) / count($test);
+                    $test_avg[] = array_sum($test) / $value['total'];
                 } elseif ($value['type'] == "2") {
                     $lect = explode(',', $value['progress']);
-                    $lecture_avg[] = array_sum($lect) / count($lect);
+                    $lecture_avg[] = array_sum($lect) / $value['total'];
                 }
             }
             $this->class_lecture_average = array_sum($lecture_avg) != 0 ? round(array_sum($lecture_avg) * 100 / count($lecture_avg), 0) : 0;
@@ -101,7 +101,7 @@ class StatisticsHandler extends Handler {
             }
             $this->set_school_id($school_id);
             $this->set_account_type_bool($student_and_teacher_bool);
-            $base_query = "SELECT course_id, GROUP_CONCAT(progress / total) as progress, type from progress_view WHERE user_type_id ";
+            $base_query = "SELECT course_id, GROUP_CONCAT(progress / total) as progress, count(total) as total, type from progress_view WHERE user_type_id ";
             if ($this->_account_type_bool) {
                 $query = $base_query . "IN (3, 4) AND school_id = :school_id";
             } else {
@@ -110,20 +110,23 @@ class StatisticsHandler extends Handler {
             $query .= ' group by course_id, type'; 
             $data_array = DbHandler::get_instance()->return_query($query, $this->_school_id);
             $lecture_avg = [];
+            $lect_total = 0;
             $test_avg = [];
+            $test_total = 0;
             foreach ($data_array as $value) {
                 if ($value['type'] == "1") {
                     $test = explode(',', $value['progress']);
-                    $test_avg[] = array_sum($test) / count($test);
+                    $test_avg[] = $value['total'] != 0 ? array_sum($test) / $value['total'] : 0;
+                    $test_total += $value['total'];
                 } elseif ($value['type'] == "2") {
                     $lect = explode(',', $value['progress']);
-                    $lecture_avg[] = array_sum($lect) / count($lect);
+                    $lecture_avg[] = $value['total'] != 0 ? array_sum($lect) / $value['total'] : 0;
+                    $lect_total += $value['total'];
                 }
             }
             $this->school_lecture_average = array_sum($lecture_avg) != 0 ? round(array_sum($lecture_avg) * 100 / count($lecture_avg), 0) : 0;
             $this->school_test_average = array_sum($test_avg) != 0 ? round(array_sum($test_avg) * 100 / count($test_avg), 0) : 0;
-            $this->school_average = $this->school_lecture_average != 0 || $this->school_test_average != 0 ? round(($this->school_lecture_average + $this->school_test_average) / 2, 0) : 0;
-            
+            $this->school_average = $test_total != 0 || $lect_total != 0 ? round((($this->school_lecture_average * $lect_total) + ($this->school_test_average * $test_total)) / ($lect_total + $test_total),0) : 0;
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());

@@ -14,9 +14,10 @@ function set_clickable(element) {
     }
 }
 
-function change_page(pagename, step, args, element) {
+function change_page(pagename, step, args, element, scroll_to_top) {
     cursor_wait();
     currently_changing_page = true;
+    scroll_to_top = scroll_to_top === undefined;
     
     $("#content_container").add($("#content_breadcrumbs")).fadeTo(300, 0, function() {
         content_hidden = true;
@@ -60,7 +61,9 @@ function change_page(pagename, step, args, element) {
         complete: function() {
             currently_changing_page = false;
             set_clickable(element);
-            window.scrollTo(0, 0);
+            if(scroll_to_top) {
+                window.scrollTo(0, 0);
+            }
         }
     });
 }

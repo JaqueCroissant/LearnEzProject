@@ -1,14 +1,18 @@
 // Open/close
     $(document).on("click", ".accept_click_close_alertbox_btn", function (event) {
         event.preventDefault();
-        
+        page_state = $(this).attr("page");
         initiate_submit_form(current_form, function () {
            show_status_bar("error", ajax_data.error);
             $("#click_close_alertbox").addClass("hidden");
         }, function () {
             show_status_bar("success", ajax_data.success);
             $("#click_close_alertbox").addClass("hidden");
-            $(".go_back").click();
+            if (page_state === undefined || page_state === "") {
+                $(".go_back").click();
+            } else {
+                reload_page_content(page_state);
+            }
         });
     });
     
@@ -23,7 +27,11 @@
         var text = !$(this).is(":checked") ? $("#open_text").text() : $("#close_text").text();
         $("#alertbox").find(".panel-body").text(text);
         $("#alertbox").removeClass("hidden");
-        $("#alertbox").css("top", $(this).offset()["top"] - ($("#alertbox").height()));
+        var offset = $(this).offset()["top"] - ($("#alertbox").height());
+        if (offset < 0) {
+            offset = 25;
+        }
+        $("#alertbox").css("top", offset);
         clicked_checkbox_id = $(this).attr("element_id");
     });
     
@@ -86,7 +94,6 @@
         if (offset < 0) {
             offset = 25;
         }
-        console.log(offset);
         $("#click_close_alertbox").css("top", offset);
         clicked_element_id = $(this).attr("element_id");
     });
@@ -95,7 +102,11 @@
         event.preventDefault();
         current_datatable = $("." + $(this).attr("current_datatable"));
         $("#click_alertbox").removeClass("hidden");
-        $("#click_alertbox").css("top", $(this).offset()["top"] - ($("#click_alertbox").height()));
+        var offset = $(this).offset()["top"] - ($("#click_alertbox").height());
+        if (offset < 0) {
+            offset = 25;
+        }
+        $("#click_alertbox").css("top", offset);
         clicked_element_id = $(this).attr("element_id");
 
     });
@@ -103,14 +114,19 @@
     $(document).on("click", ".accept_click_alertbox_btn", function (event) {
         event.preventDefault();
         var form = $("#click_alert_form_" + clicked_element_id);
+        page_state = $(this).attr("id");
         initiate_submit_form(form, function () {
             show_status_bar("error", ajax_data.error);
             close_alert_box(true);
         }, function () {
             var current_element_tr = $(current_datatable).find(".account_tr_id_" + clicked_element_id);
             $(current_element_tr).remove();
+            if (page_state === "profile_accept_delete") {
+                $(".go_back").click();
+            }
             show_status_bar("success", ajax_data.success);
             close_click_alert_box();
+            
         });
     });
 

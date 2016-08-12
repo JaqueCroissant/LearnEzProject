@@ -1,8 +1,10 @@
 <?php
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/courseHandler.php';
+require_once '../../include/handler/mediaHandler.php';
 
 $courseHandler = new CourseHandler();
+$mediaHandler = new MediaHandler();
 
 if(isset($_POST)) {
     $step = isset($_GET["step"]) ? $_GET["step"] : null;
@@ -98,8 +100,10 @@ if(isset($_POST)) {
             $title = isset($_POST["title"]) ? $_POST["title"] : array();
             $description = isset($_POST["description"]) ? $_POST["description"] : array();
             $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
-
-            if($courseHandler->create_test($course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids)) {
+            $file_name = isset($_POST["file_name"]) ? $_POST["file_name"] : 0;
+            $total_steps = isset($_POST["total_steps"]) ? $_POST["total_steps"] : 0;
+            echo $total_steps;
+            if($courseHandler->create_test($course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids, $file_name, $total_steps)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("TEST_CREATED");
             } else {
@@ -151,6 +155,19 @@ if(isset($_POST)) {
             } else {
                 $jsonArray['status_value'] = false;
                 $jsonArray['error'] = $courseHandler->error->title;
+            }
+            echo json_encode($jsonArray);
+            break;
+            
+        case "upload_test":
+            $file = isset($_FILES["thumbnail_test"]) ? $_FILES["thumbnail_test"] : null;
+            if($mediaHandler->upload_test($file)) {
+                $jsonArray['status_value'] = true;
+                $jsonArray['file_name'] = $mediaHandler->file_name;
+                $jsonArray['success'] = TranslationHandler::get_static_text("TEST_UPLOADED");
+            } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $mediaHandler->error->title;
             }
             echo json_encode($jsonArray);
             break;

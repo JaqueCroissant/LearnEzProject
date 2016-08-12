@@ -30,6 +30,23 @@ if (isset($_GET['school_id'])) {
     .dataTables_filter, .dataTables_length, .dataTables_info { display: none !important;}
 </style>
 <div class="profile-header" style="margin: -1.5rem -1.5rem 1.5rem -1.5rem !important;">
+    <div class="col-md-2 pull-right m-t-lg m-r-lg">
+
+        <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+            <div class="pull-right p-v-xs">
+                <form method="post" id="alert_form_<?php echo $schoolHandler->school->id; ?>" action="" url="edit_school.php?state=set_availability">
+                    <i style="width:20px; height:20px;" class="zmdi zmdi-hc-2x zmdi-hc-lg <?php echo $schoolHandler->school->open == 1 ? "zmdi-close-circle" : "zmdi-check-circle" ?> btn_click_close_alertbox m-r-sm a pull-right" element_state='<?php echo $schoolHandler->school->open; ?>' element_id='<?php echo $schoolHandler->school->id; ?>' data-toggle="tooltip" title="<?= $schoolHandler->school->open == 1 ? TranslationHandler::get_static_text("CLOSE") : TranslationHandler::get_static_text("OPEN") ?>"></i>
+                    <input type="hidden" name="school_id" value="<?php echo $schoolHandler->school->id; ?>">
+                    <input type="hidden" name="submit" value="submit">
+                </form>
+            </div>
+        <?php } ?>
+        <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+            <div class="pull-right p-v-xs">
+                <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg zmdi-hc-2x zmdi-edit m-r-xs change_page a" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>" page="edit_school" step="" args="&school_id=<?php echo $schoolHandler->school->id; ?>"></i>
+            </div>
+        <?php } ?>
+    </div>
     <div class="profile-cover">
         <div class="cover-user m-b-lg">
             <div>
@@ -57,7 +74,7 @@ if (isset($_GET['school_id'])) {
         <div class="row no-gutter">
             <div class="col-sm-offset-4 col-sm-2 col-xs-6 promo-tab">
                 <div class="text-center">
-                    <h6 class="text-muted"><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></h6>
+                    <h6 class="text-muted"><?php echo TranslationHandler::get_static_text("STUDENTS") . " " . strtolower(TranslationHandler::get_static_text("AND")) . " " . strtolower(TranslationHandler::get_static_text("TEACHERS")); ?></h6>
                     <h4 class="m-0 m-t-xs"><?php echo isset($_GET['school_id']) ? $schoolHandler->school->current_students . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $schoolHandler->school->max_students : ""; ?></h4>
                 </div>
             </div>
@@ -170,7 +187,7 @@ if (isset($_GET['school_id'])) {
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-sm-4">
-                                    <div class="user-card">
+                                    <div class="user-card m-b-0">
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
@@ -180,7 +197,7 @@ if (isset($_GET['school_id'])) {
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="user-card">
+                                    <div class="user-card m-b-0">
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
@@ -190,7 +207,7 @@ if (isset($_GET['school_id'])) {
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="user-card">
+                                    <div class="user-card m-b-0">
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">
@@ -205,6 +222,19 @@ if (isset($_GET['school_id'])) {
                 </div>
             </div>
         <?php } ?>
+    </div>
+</div>
+<div id="click_close_alertbox" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <div class="hidden" id="open_text"><?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?></div>
+        <div class="hidden" id="close_text"><?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?></div>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_click_close_alertbox_btn" id="" page='school_profile' type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_click_close_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>

@@ -8,9 +8,12 @@ class CourseHandler extends Handler {
     public $tests = array();
     public $current_element;
     public $last_elements = array();
+    
     private $_current_element_type;
     private $_current_element_id;
     private $_school_id;
+    
+    
 
     CONST COURSE = "COURSE";
     CONST LECTURE = "LECTURE";
@@ -158,7 +161,7 @@ class CourseHandler extends Handler {
         return false;
     }
 
-    public function create_test($course_id = 0, $points = 0, $difficulty = 0, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
+    public function create_test($course_id = 0, $points = 0, $difficulty = 0, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array(), $file_name = null, $total_steps = 0) {
         try {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
@@ -170,6 +173,13 @@ class CourseHandler extends Handler {
 
             if (empty($course_id) || !is_numeric($course_id) || (!is_numeric($points) && !is_int((int) $points)) || (!is_numeric($sort_order) && !is_int((int) $sort_order)) || (!is_numeric($difficulty) && !is_int((int) $difficulty))) {
                 throw new exception("INVALID_INPUT");
+            }
+            
+            if(empty($total_steps) || empty($file_name) || !MediaHandler::file_exists($file_name, "test")) {
+                if(empty($file_name)) {
+                    echo "LOL";
+                }
+                throw new exception("MUST_UPLOAD_TEST");
             }
 
             if (!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
@@ -190,7 +200,7 @@ class CourseHandler extends Handler {
 
             DbHandler::get_instance()->query("UPDATE course_test SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
 
-            DbHandler::get_instance()->query("INSERT INTO course_test (course_id, points, sort_order, advanced) VALUES (:course_id, :points, :sort_order, :difficulty)", $course_id, $points, ($sort_order + 1), $difficulty);
+            DbHandler::get_instance()->query("INSERT INTO course_test (course_id, points, sort_order, advanced, path, total_steps) VALUES (:course_id, :points, :sort_order, :difficulty, :path, :total_steps)", $course_id, $points, ($sort_order + 1), $difficulty, $file_name, $total_steps);
             $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
 
             foreach ($translation_texts as $key => $value) {

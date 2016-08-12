@@ -6,6 +6,7 @@ var ready_to_change = true;
 var status_bar_timeout;
 
 var is_error_page = false;
+var page_state;
 var current_form;
 var current_thumbnail_id;
 var current_datatable;
@@ -482,7 +483,7 @@ function reload_page_content(pagename) {
         }
         
         if(pagename === last_page.page) {
-            change_page(last_page.page, last_page.step, last_page.args);
+            change_page(last_page.page, last_page.step, last_page.args, false);
         }
     }
 }

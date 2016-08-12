@@ -30,6 +30,7 @@ $courses_completed = 0;
         case "1":
 
             $schoolHandler->get_all_schools();
+            $schoolHandler->get_soon_expiring_schools();
             $statisticsHandler->get_top_students();
             $statisticsHandler->get_completion_stats(7);
             ?>
@@ -103,7 +104,7 @@ $courses_completed = 0;
                                                     <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo $value['firstname'] . " " . $value['surname']?></a>
                                                     <small class="text-muted fz-sm"><?php echo $value['name'] ?></small>
                                                 </h5>
-                                                <p><?php echo $value['points']; ?> points</p>
+                                                <p><?php echo $value['points'] . " " . strtolower(TranslationHandler::get_static_text("POINTS")); ?></p>
                                             </div>
                                         </div>
                                 <?php
@@ -802,8 +803,44 @@ $courses_completed = 0;
             </div>
         </div>
         
-        <!--DISPLAY CLASSES!-->
+        
+        
         <?php
+        
+            if($userHandler->_user->user_type_id == 1)
+            {
+            ?>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="panel panel-default">
+                            <div class='panel-heading'>
+                                <h4 class="panel-title no-transform">
+                                    <i class="zmdi-hc-fw zmdi zmdi-calendar-note zmdi-hc-lg m-r-md"></i>
+                                    <?php echo TranslationHandler::get_static_text("SOON_EXPIRING"); ?>
+                                </h4>
+                            </div>
+                            <hr class="widget-separator m-0">
+                            <div class="panel-body">
+                                <div class="streamline m-l-lg">
+                                    <?php foreach ($schoolHandler->soon_expiring_schools as $value) { ?>
+                                        <div class="sl-item <?php echo $value->remaining_days <= 30 ? "sl-danger" : "sl-primary" ?> p-b-md">
+                                            <div class="sl-content">
+                                                <div class="m-t-0 change_page a <?php echo $value->remaining_days <= 30 ? "text-danger animate-twice animated headShake" : "text-primary" ?>" page='school_profile' step='' args='&school_id=<?php echo $value->id; ?>'>
+                                                    <?php echo $value->name; ?>
+                                                </div>
+                                                <p class="text-muted"><?php echo $value->remaining_days == 0 ? TranslationHandler::get_static_text("TODAY") : $value->remaining_days == 1 ? TranslationHandler::get_static_text("TOMORROW") : $value->remaining_days . " " . strtolower(TranslationHandler::get_static_text("DAYS_REMAINING")); ?></p>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php
+            }
+            
+        
             if($userHandler->_user->user_type_id > 3)
             {
                 if(count($classHandler->classes) > 0)

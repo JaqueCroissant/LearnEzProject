@@ -39,6 +39,15 @@ class StatisticsHandler extends Handler {
     public $global_tests_complete;
     public $global_lectures_complete;
 
+    //GLOBAL STATS
+    public $school_count = 0;
+    public $schools_open = 0;
+    public $school_classes_global = 0;
+    public $school_type_amount;
+    public $account_count = 0;
+    public $accounts_open = 0;
+    public $account_type_amount;
+
     private $_school_id;
     private $_class_id;
     private $_account_type_bool;
@@ -391,6 +400,88 @@ class StatisticsHandler extends Handler {
         catch(Exception $exc)
         {
             $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+    
+    public function get_global_school_stats()
+    {
+        try
+        {
+            $this->school_classes_global = DbHandler::get_instance()->count_query("SELECT id FROM class");
+            $data = DbHandler::get_instance()->return_query("SELECT school.open, school_type.title FROM school INNER JOIN school_type ON school_type.id = school.school_type_id");
+            $this->school_count = count($data);
+            
+            $types = [];
+            
+            foreach($data as $value)
+            {
+                if($value['open']=="1")
+                {
+                    $this->schools_open++;
+                }
+                
+                if(!key_exists($value['title'], $types))
+                {
+                    $types[$value['title']] = 1;
+                }
+                else
+                {
+                    $types[$value['title']]++;
+                }                
+            }
+            $this->school_type_amount = $types;
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    public function get_global_account_stats()
+    {
+        try
+        {
+            $data = [];
+            
+            if($this->_user->user_type_id == "1")
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT users.open, translation_user_type.title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id AND translation_user_type.language_id = :current_lang", TranslationHandler::get_current_language());
+            }
+            else
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT user_type_id, open FROM users WHERE user_type_id > 1 AND school_id = :school_id", $this->_user->school_id);
+            }
+            
+            $this->account_count = count($data);
+            
+            $types = [];       
+            foreach($data as $value)
+            {
+                if($value['open']=="1")
+                {
+                    $this->accounts_open++;
+                }
+                
+                if(!key_exists($value['title'], $types))
+                {
+                    $types[$value['title']] = 1;
+                }
+                else
+                {
+                    $types[$value['title']]++;
+                }                
+            }
+            $this->account_type_amount = $types;
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }

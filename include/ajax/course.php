@@ -1,8 +1,10 @@
 <?php
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/courseHandler.php';
+require_once '../../include/handler/mediaHandler.php';
 
 $courseHandler = new CourseHandler();
+$mediaHandler = new MediaHandler();
 
 if(isset($_POST)) {
     $step = isset($_GET["step"]) ? $_GET["step"] : null;
@@ -151,6 +153,18 @@ if(isset($_POST)) {
             } else {
                 $jsonArray['status_value'] = false;
                 $jsonArray['error'] = $courseHandler->error->title;
+            }
+            echo json_encode($jsonArray);
+            break;
+            
+        case "upload_test":
+            $file = isset($_FILES["thumbnail_test"]) ? $_FILES["thumbnail_test"] : null;
+            if($mediaHandler->upload_test($file)) {
+                $jsonArray['status_value'] = true;
+                $jsonArray['success'] = TranslationHandler::get_static_text("TEST_UPLOADED");
+            } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $mediaHandler->error->title;
             }
             echo json_encode($jsonArray);
             break;

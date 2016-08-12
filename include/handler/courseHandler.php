@@ -8,9 +8,12 @@ class CourseHandler extends Handler {
     public $tests = array();
     public $current_element;
     public $last_elements = array();
+    
     private $_current_element_type;
     private $_current_element_id;
     private $_school_id;
+    
+    
 
     CONST COURSE = "COURSE";
     CONST LECTURE = "LECTURE";

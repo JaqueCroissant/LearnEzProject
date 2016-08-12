@@ -1,3 +1,27 @@
+$(document).on("click", ".upload_test", function (event) {
+    var form = $(this).closest("form");
+    event.preventDefault();
+    var formData = new FormData(form[0]);
+    $.ajax({
+        url: 'include/ajax/course.php?step=upload_test',
+        type: 'POST',
+        data: formData,
+        dataType: "json",
+        async: false,
+        complete: function (data) {
+            ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+            if (ajax_data.status_value) {
+                show_status_bar("success", ajax_data.success);
+            } else {
+                show_status_bar("error", ajax_data.error);
+            }
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+});
+
 $(document).on("click", ".upload_thumbnail", function (event) {
     var form = $(this).closest("form");
     event.preventDefault();

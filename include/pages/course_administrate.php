@@ -300,6 +300,9 @@ $courseHandler = new CourseHandler();
                     <div class="my_fade my_tab" id="create_test_tab">
                         <div class="widget-body" style="padding-top:32px !important;">
                             <form method="post" action="" url="course.php?step=create_test" id="create_test" name="create_test" enctype="multipart/form-data">
+                                <input type="hidden" id="test_file_name" name="file_name" value="" />
+                                <input type="hidden" id="test_total_steps" name="total_steps" value="" />
+                                
                                 <div class="title_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TITLE"); ?></div>
                                 <div class="description_text" style="display:none;"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></div>
                                 <div class="translation_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TRANSLATION"); ?></div>
@@ -411,6 +414,8 @@ $courseHandler = new CourseHandler();
         </div>
     </div>
 </div>
+
+<iframe src="" id="test_player" style="display:none"></iframe>
 
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>

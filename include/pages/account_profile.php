@@ -43,8 +43,8 @@ if(!empty($current_user->school_id)) {
         <div class="text-center">
             <h4 class="profile-info-name m-b-lg"><span class="title-color"><?= ucwords($current_user->firstname . " " . $current_user->surname); ?></span></h4>
             <div class="text-primary">
-                <span style="padding-right:10px;"><i class="zmdi-hc-fw zmdi p-r-lg zmdi-device-hub zmdi-hc-lg" style="line-height: 0.4em !important;"></i> <?= $current_user->user_type_title; ?></span>
-                <span data-toggle="tooltip" title="<?= !empty($current_user->school_id) ? $current_school->name : "LearnEZ"; ?>"><i class="zmdi-hc-fw zmdi p-r-lg zmdi-city zmdi-hc-lg" style="line-height: 0.4em !important;"></i><?= !empty($current_user->school_id) ? (strlen($current_school->name) > 40 ? substr($current_school->name, 0, 40) : $current_school->name) : "LearnEZ"; ?></span>
+                <span style="padding-right:10px;"><i class="zmdi-hc-fw zmdi p-r-lg zmdi-device-hub zmdi-hc-lg" style="line-height: 0.4em !important;"></i> <?= htmlentities($current_user->user_type_title); ?></span>
+                <span data-toggle="tooltip" title="<?= !empty($current_user->school_id) ? htmlspecialchars($current_school->name) : "LearnEZ"; ?>"><i class="zmdi-hc-fw zmdi p-r-lg zmdi-city zmdi-hc-lg" style="line-height: 0.4em !important;"></i><?= !empty($current_user->school_id) ? (strlen(htmlspecialchars($current_school->name)) > 40 ? substr(htmlspecialchars($current_school->name), 0, 40) : htmlspecialchars($current_school->name)) : "LearnEZ"; ?></span>
             </div>
         </div>
     </div>
@@ -84,7 +84,7 @@ if(!empty($current_user->school_id)) {
             </div>
             <hr class="widget-separator m-0">
             <div class="panel-body user-description">
-                <div class="center description" ><?= empty($current_user->description) ? TranslationHandler::get_static_text("NO_DESCRIPTION") : nl2br($current_user->description) ?></div>
+                <div class="center description" ><?= empty(htmlspecialchars($current_user->description)) ? TranslationHandler::get_static_text("NO_DESCRIPTION") : htmlspecialchars(nl2br($current_user->description)) ?></div>
             </div>
         </div>
     </div>
@@ -98,7 +98,7 @@ if(!empty($current_user->school_id)) {
                 <table class="profile_information_table">
                     <tr>
                         <td><?= TranslationHandler::get_static_text("NAME") ?>:</td>
-                        <td style="text-align:right;"><?= ucwords($current_user->firstname . " " . $current_user->surname); ?></td>
+                        <td style="text-align:right;"><?= ucwords(htmlspecialchars($current_user->firstname) . " " . htmlspecialchars($current_user->surname)); ?></td>
                     </tr>
                      <tr>
                         <td><?= TranslationHandler::get_static_text("USERNAME") ?>:</td>
@@ -106,11 +106,11 @@ if(!empty($current_user->school_id)) {
                     </tr>
                      <tr>
                         <td><?= TranslationHandler::get_static_text("USER_TYPE") ?>:</td>
-                        <td style="text-align:right;"><?= $current_user->user_type_title; ?></td>
+                        <td style="text-align:right;"><?= htmlspecialchars($current_user->user_type_title); ?></td>
                     </tr>
                     <tr>
                         <td><?= TranslationHandler::get_static_text("AFFILIATION") ?>:</td>
-                        <td style="text-align:right;"><?= !empty($current_user->school_id) ? (strlen($current_school->name) > 40 ? substr($current_school->name, 0, 40) : $current_school->name) : "LearnEZ"; ?></td>
+                        <td style="text-align:right;"><?= !empty($current_user->school_id) ? (strlen(htmlspecialchars($current_school->name)) > 40 ? substr(htmlspecialchars($current_school->name), 0, 40) : htmlspecialchars($current_school->name)) : "LearnEZ " . strtolower(TranslationHandler::get_static_text("STAFF")); ?></td>
                     </tr>
                 </table>
             </div>

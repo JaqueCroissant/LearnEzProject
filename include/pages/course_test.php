@@ -14,7 +14,7 @@ if (!$courseHandler->get(6, "test")) {
     <div id="iframe_content" class="test_content backdrop_open" style="overflow:hidden;" table_id="<?php echo isset($courseHandler->current_element->user_course_test_id) ? $courseHandler->current_element->user_course_test_id : "" ?>" current_slide="<?php echo (($courseHandler->current_element->is_complete == 1) ? $courseHandler->current_element->total_steps : (isset($courseHandler->current_element->progress) ? $courseHandler->current_element->progress : "1")); ?>">
 
         <div class="course_bar primary">      
-            <div class="course_title pull-left"><?php echo "<span>" . $courseHandler->current_element->course_title . "<span class='p-v-sm zmdi zmdi-chevron-right fa-sm'></span>" . $courseHandler->current_element->title . "</span>" ?></div>
+            <div class="course_title pull-left"><?php echo "<span>" . htmlspecialchars($courseHandler->current_element->course_title) . "<span class='p-v-sm zmdi zmdi-chevron-right fa-sm'></span>" . htmlspecialchars($courseHandler->current_element->title) . "</span>" ?></div>
             <div class="btn-group pull-right course_navigation m-l-sm">
                 <a href="javascript:void(0)" value="quit" class="course_action course_go_for btn btn-default" title=<?php echo TranslationHandler::get_static_text("QUIT") ?>><i class="fa fa-sign-out"></i></a>
             </div>
@@ -24,7 +24,7 @@ if (!$courseHandler->get(6, "test")) {
             </div>
             <div class="course_slide_counter pull-right"></div>
         </div>
-        <iframe scrolling="no" id="scaled-frame" class="course_iframe" src="<?php echo "../../LearnEZ/courses/tests/" . $courseHandler->current_element->path . "/index.php"; ?>"></iframe>
+        <iframe scrolling="no" id="scaled-frame" class="course_iframe" src="<?php echo "../../LearnEZ/courses/tests/" . htmlspecialchars($courseHandler->current_element->path) . "/index.php"; ?>"></iframe>
     </div>
 <div id="hidden_element" style="display:none"></div>
 

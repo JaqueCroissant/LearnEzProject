@@ -61,8 +61,8 @@ $i_rand = rand(100, 1000);
                                             if ($value->user_type_id == 4) {
                                                 ?>
                                                 <tr class="a change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>">
-                                                    <td><?php echo $value->firstname . " " . $value->surname; ?></td>
-                                                    <td><?php echo $value->email; ?></td>
+                                                    <td><?php echo htmlspecialchars($value->firstname) . " " . htmlspecialchars($value->surname); ?></td>
+                                                    <td><?php echo htmlspecialchars($value->email); ?></td>
 
                                                 </tr>
                                                 <?php
@@ -88,8 +88,8 @@ $i_rand = rand(100, 1000);
                                             if ($value->user_type_id == 3) {
                                                 ?>
                                                 <tr class="a change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>">
-                                                    <td><?php echo $value->firstname . " " . $value->surname; ?></td>
-                                                    <td><?php echo $value->email; ?></td>
+                                                    <td><?php echo htmlspecialchars($value->firstname) . " " . htmlspecialchars($value->surname); ?></td>
+                                                    <td><?php echo htmlspecialchars($value->email); ?></td>
 
                                                 </tr>
                                                 <?php
@@ -189,7 +189,7 @@ $i_rand = rand(100, 1000);
                                             foreach ($homeworkHandler->homework as $value) {
                                                 $classes = "";
                                                 for ($i = 0; $i < count($value->classes); $i++) {
-                                                    $classes .= $value->classes[$i]->title;
+                                                    $classes .= htmlspecialchars($value->classes[$i]->title);
                                                     $classes .= $i != count($value->classes) - 1 ? ", " : "";
                                                 }
                                                 ?>
@@ -198,7 +198,7 @@ $i_rand = rand(100, 1000);
                                                 if (!empty($value->lectures)) {
                                                     echo '<b>Lektioner:</b>';
                                                     foreach ($value->lectures as $lecture) {
-                                                        echo '<br />- ' . $lecture->title . '';
+                                                        echo '<br />- ' . htmlspecialchars($lecture->title) . '';
                                                     }
                                                     echo '<br />';
                                                 }
@@ -206,12 +206,12 @@ $i_rand = rand(100, 1000);
                                                 if (!empty($value->tests)) {
                                                     echo '<b>Tests:</b>';
                                                     foreach ($value->tests as $test) {
-                                                        echo '<br />- ' . $test->title . '';
+                                                        echo '<br />- ' . htmlspecialchars($test->title) . '';
                                                     }
                                                 }
                                                 ?>">
                                                     <td><?php echo $value->title; ?></td>
-                                                    <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 30 ? substr($classes, 0, 30) . "..." : $classes ?></span></td>
+                                                    <td><span data-toggle="tooltip" title="<?= htmlspecialchars($classes) ?>"><?= strlen(htmlspecialchars($classes)) > 30 ? substr(htmlspecialchars($classes), 0, 30) . "..." : htmlspecialchars($classes) ?></span></td>
                                                     <td style="text-align: center;"><?php echo $value->date_expire; ?></td>
                                                     <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                                     <td style='text-align:center;'><?= count($value->tests) ?></td>
@@ -237,7 +237,7 @@ $i_rand = rand(100, 1000);
                     <div class="col-md-9">
                         <h4 class="panel-title no-transform">
                             <i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg m-r-md"></i>
-                            <?php echo isset($_GET['class_id']) ? $classHandler->school_class->title . " - " . $classHandler->school_class->class_year : ""; ?>
+                            <?php echo isset($_GET['class_id']) ? htmlspecialchars($classHandler->school_class->title) . " - " . htmlspecialchars($classHandler->school_class->class_year) : ""; ?>
                         </h4>
                     </div>
                     <div class="col-md-3">
@@ -269,7 +269,7 @@ $i_rand = rand(100, 1000);
             </div>
             <hr class="widget-separator m-0">
             <div class="panel-body">
-                <?php echo isset($_GET['class_id']) ? $classHandler->school_class->description : ""; ?>
+                <?php echo isset($_GET['class_id']) ? htmlspecialchars($classHandler->school_class->description) : ""; ?>
             </div>
             <div class="panel-body <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "21" ? "danger animated headShake" : "hidden"; ?>">
                 <h4 class="panel-title no-transform <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "21" ? "animated flash animate-twice" : ""; ?>"><?php echo isset($_GET['class_id']) ? TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END") . ": " . $classHandler->school_class->remaining_days . " " . TranslationHandler::get_static_text("DATE_DAYS") : ""; ?></h4>
@@ -313,7 +313,7 @@ $i_rand = rand(100, 1000);
                             </div>
                             <div class="sl-content">
                                 <h5 class="m-t-0">
-                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= $value['firstname'] . ' ' . $value['surname'] ?></a>
+                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= ucwords(htmlspecialchars($value['firstname']) . ' ' . htmlspecialchars($value['surname'])) ?></a>
                                     <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i> " . TranslationHandler::get_static_text("THIS_IS_YOU") : ""; ?></small>
                                 </h5>
                                 <p><?php echo $value['points']; ?> points</p>

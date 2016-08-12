@@ -57,7 +57,7 @@ $courseHandler = new CourseHandler();
                                                 <option disabled selected></option>
                                                 <?php
                                                 foreach(CourseHandler::get_os_options() as $os) {
-                                                    echo '<option value="'.$os["id"].'">'.$os["title"].'</option>';
+                                                    echo '<option value="'.$os["id"].'">'.  htmlspecialchars($os["title"]).'</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -98,7 +98,7 @@ $courseHandler = new CourseHandler();
                                                         <div class="panel-body thumbnail-placeholder" style="padding-left:0px !important;padding-right:0px !important;">
                                                             <?php
                                                             foreach ($courseHandler->get_thumbnails() as $value) {
-                                                                echo '<div class="avatar avatar-xl thumbnail_element" thumbnail_id="' . $value['id'] . '" style="cursor:pointer;z-index:10"><div class="set_default_thumbnail '. (!$value["default_thumbnail"] ? 'hidden' : '') .'" '. ($value["default_thumbnail"] ? 'default_thumbnail="1"' : '') .' title="'.TranslationHandler::get_static_text("DEFAULT_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-home" style="display:initial !important;"></i></div><div class="delete_thumbnail hidden" title="'.TranslationHandler::get_static_text("DELETE_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-close" style="display:initial !important;"></i></div><img src="assets/images/thumbnails/' . $value['filename'] . '"/><div class="active_thumbnail hidden" title="'.TranslationHandler::get_static_text("PICK_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-check" style="display:initial !important;"></i></div></div>';
+                                                                echo '<div class="avatar avatar-xl thumbnail_element" thumbnail_id="' . $value['id'] . '" style="cursor:pointer;z-index:10"><div class="set_default_thumbnail '. (!$value["default_thumbnail"] ? 'hidden' : '') .'" '. ($value["default_thumbnail"] ? 'default_thumbnail="1"' : '') .' title="'.TranslationHandler::get_static_text("DEFAULT_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-home" style="display:initial !important;"></i></div><div class="delete_thumbnail hidden" title="'.TranslationHandler::get_static_text("DELETE_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-close" style="display:initial !important;"></i></div><img src="assets/images/thumbnails/' . htmlspecialchars($value['filename']) . '"/><div class="active_thumbnail hidden" title="'.TranslationHandler::get_static_text("PICK_THUMBNAIL").'" thumbnail_id="' . $value['id'] . '"><i class="zmdi zmdi-check" style="display:initial !important;"></i></div></div>';
                                                             }
                                                             ?>
                                                         </div>
@@ -145,7 +145,7 @@ $courseHandler = new CourseHandler();
                                             <select id="language" name="language" class="form-control pull-left" data-options="{minimumResultsForSearch: Infinity}" data-plugin="select2">
                                                 <?php
                                                 foreach(TranslationHandler::get_language_options() as $language) {
-                                                    echo '<option value="'.$language["id"].'" '. (SettingsHandler::get_settings()->language_id == $language["id"] ? 'selected' : '') .'>'.$language["title"].'</option>';
+                                                    echo '<option value="'.$language["id"].'" '. (SettingsHandler::get_settings()->language_id == $language["id"] ? 'selected' : '') .'>'.  htmlspecialchars($language["title"]).'</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -202,7 +202,7 @@ $courseHandler = new CourseHandler();
                                                 <?php
                                                 $courseHandler->get_multiple(0, "course");
                                                 foreach($courseHandler->courses as $course) {
-                                                    echo '<option value="'.$course->id.'">'.$course->title.'</option>';
+                                                    echo '<option value="'.$course->id.'">'.  htmlspecialchars($course->title).'</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -260,7 +260,7 @@ $courseHandler = new CourseHandler();
                                             <select id="language" name="language" class="form-control pull-left" data-options="{minimumResultsForSearch: Infinity}" data-plugin="select2">
                                                 <?php
                                                 foreach(TranslationHandler::get_language_options() as $language) {
-                                                    echo '<option value="'.$language["id"].'" '. (SettingsHandler::get_settings()->language_id == $language["id"] ? 'selected' : '') .'>'.$language["title"].'</option>';
+                                                    echo '<option value="'.$language["id"].'" '. (SettingsHandler::get_settings()->language_id == $language["id"] ? 'selected' : '') .'>'.  htmlspecialchars($language["title"]).'</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -320,7 +320,7 @@ $courseHandler = new CourseHandler();
                                                 <?php
                                                 $courseHandler->get_multiple(0, "course");
                                                 foreach($courseHandler->courses as $course) {
-                                                    echo '<option value="'.$course->id.'">'.$course->title.'</option>';
+                                                    echo '<option value="'.$course->id.'">'.  htmlspecialchars($course->title).'</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -375,7 +375,7 @@ $courseHandler = new CourseHandler();
                                             <select id="language" name="language" class="form-control pull-left" data-options="{minimumResultsForSearch: Infinity}" data-plugin="select2">
                                                 <?php
                                                 foreach(TranslationHandler::get_language_options() as $language) {
-                                                    echo '<option value="'.$language["id"].'" '. (SettingsHandler::get_settings()->language_id == $language["id"] ? 'selected' : '') .'>'.$language["title"].'</option>';
+                                                    echo '<option value="'.$language["id"].'" '. (SettingsHandler::get_settings()->language_id == $language["id"] ? 'selected' : '') .'>'.  htmlspecialchars($language["title"]).'</option>';
                                                 }
                                                 ?>
                                             </select>

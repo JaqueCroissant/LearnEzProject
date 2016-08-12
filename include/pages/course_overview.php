@@ -13,13 +13,13 @@ $courseHandler->get_courses();
             foreach($courseHandler->courses as $value) {
             ?>
             <div class="col-md-3 col-sm-6 change_page" style="cursor:pointer;" id="course_show" page="course_show" args="&course_id=<?php echo $value->id; ?>">
-                <div class="widget stats-widget" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= $value->description; ?>">
+                <div class="widget stats-widget" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars($value->description); ?>">
                     <div class="widget-body clearfix">
                         <div class="pull-left" style="margin-left:-10px;">
-                            <img style="width:70px;height:70px;" src="assets/images/thumbnails/<?php echo $value->image_filename; ?>" alt="">
+                            <img style="width:70px;height:70px;" src="assets/images/thumbnails/<?php echo htmlspecialchars($value->image_filename); ?>" alt="">
                         </div>
                         <div class="pull-right" style="text-align:right !important;">
-                            <h3 class="widget-title text-primary" style="color: <?php echo $value->color; ?> !important;font-size:18px !important;"><?php echo $value->title; ?></h3>
+                            <h3 class="widget-title text-primary" style="color: <?php echo $value->color; ?> !important;font-size:18px !important;"><?php echo htmlspecialchars($value->title); ?></h3>
                             <table style="width: auto; float:right;">
                                 <tr>
                                     <td><small class="text-color"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_LECTURES"); ?>:</small></td>

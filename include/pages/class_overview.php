@@ -56,11 +56,11 @@ if ($classHandler->_user->user_type_id != 1) {
                                     if ($value->open == "1") {
                                         ?>
                                         <tr>
-                                            <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->title; ?></td>
+                                            <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->title); ?></td>
                                             <?php if ($classHandler->_user->user_type_id == "1") { ?>
-                                                <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->school_name; ?></td>
+                                            <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->school_name); ?></td>
                                             <?php } ?>
-                                            <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->class_year; ?></td>
+                                            <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->class_year); ?></td>
                                             <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_students; ?></td>
                                             <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_teachers; ?></td>
                                             <?php if (RightsHandler::has_user_right("CLASS_ASSIGN_USER")) { ?>
@@ -107,7 +107,7 @@ if ($classHandler->_user->user_type_id != 1) {
                                 <div class="panel-body">
                                     <?php
                                     if (empty($homeworkHandler->homework)) {
-                                        echo '<div class="center latest-homework-empty" style="margin-top:20px;margin-bottom:20px;"> Du har ingen lektier i øjeblikket.</div>';
+                                        echo '<div class="center latest-homework-empty m-h-md"><?php echo TranslationHandler::get_static_text("CLASS_NO_HOMEWORK_AT_THE_MOMENT"); ?></div>';
                                     } else {
                                         ?>
                                         <div class="latest-homework">
@@ -136,7 +136,7 @@ if ($classHandler->_user->user_type_id != 1) {
                                                         if (!empty($value->lectures)) {
                                                             echo '<b>Lektioner:</b>';
                                                             foreach ($value->lectures as $lecture) {
-                                                                echo '<br />- ' . $lecture->title . '';
+                                                                echo '<br />- ' . htmlspecialchars($lecture->title) . '';
                                                             }
                                                             echo '<br />';
                                                         }
@@ -144,12 +144,12 @@ if ($classHandler->_user->user_type_id != 1) {
                                                         if (!empty($value->tests)) {
                                                             echo '<b>Tests:</b>';
                                                             foreach ($value->tests as $test) {
-                                                                echo '<br />- ' . $test->title . '';
+                                                                echo '<br />- ' . htmlspecialchars($test->title) . '';
                                                             }
                                                         }
                                                         ?>">
-                                                            <td><?php echo $value->title; ?></td>
-                                                            <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 30 ? substr($classes, 0, 30) . "..." : $classes ?></span></td>
+                                                            <td><?php echo htmlspecialchars($value->title); ?></td>
+                                                            <td><span data-toggle="tooltip" title="<?= htmlspecialchars($classes) ?>"><?= strlen(htmlspecialchars($classes)) > 30 ? substr(htmlspecialchars($classes), 0, 30) . "..." : htmlspecialchars($classes) ?></span></td>
                                                             <td style="text-align: center;"><?php echo $value->date_expire; ?></td>
                                                             <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                                             <td style='text-align:center;'><?= count($value->tests) ?></td>
@@ -198,8 +198,8 @@ if ($classHandler->_user->user_type_id != 1) {
                 </div>
                 <hr class="widget-separator m-0">
                 <div class="panel-body">
-                    <h6 class="text-muted"><?php echo $schoolHandler->school->address; ?></h6>
-                    <h6 class="text-muted"><?php echo $schoolHandler->school->zip_code . " " . $schoolHandler->school->city; ?></h6>
+                    <h6 class="text-muted"><?php echo htmlspecialchars($schoolHandler->school->address); ?></h6>
+                    <h6 class="text-muted"><?php echo htmlspecialchars($schoolHandler->school->zip_code) . " " . htmlspecialchars($schoolHandler->school->city); ?></h6>
                 </div>
             </div>
         <?php } ?>
@@ -218,7 +218,7 @@ if ($classHandler->_user->user_type_id != 1) {
                             <div class="sl-item <?php echo $value->remaining_days <= 31 ? "sl-danger" : "sl-primary" ?> p-b-md">
                                 <div class="sl-content">
                                     <div class="m-t-0 change_page a <?php echo $value->remaining_days <= 31 ? "text-danger animate-twice animated headShake" : "text-primary" ?>" page='class_profile' step='' args='&class_id=<?php echo $value->id; ?>'>
-                                        <?php echo $value->title; ?>
+                                        <?php echo htmlspecialchars($value->title); ?>
                                     </div>
                                     <p class="text-muted"><?php echo $value->remaining_days == 0 ? TranslationHandler::get_static_text("TODAY") : $value->remaining_days == 1 ? TranslationHandler::get_static_text("TOMORROW") : $value->remaining_days . " " . strtolower(TranslationHandler::get_static_text("DAYS_REMAINING")); ?></p>
                                 </div>

@@ -32,7 +32,7 @@ $classHandler = new ClassHandler();
                                         <?php
                                         if (count($schoolHandler->all_schools) > 0) {
                                             foreach ($schoolHandler->all_schools as $value) {
-                                                echo '<option value="' . $value->id . '">' . $value->name . '</option>';
+                                                echo '<option value="' . $value->id . '">' . htmlspecialchars($value->name) . '</option>';
                                             }
                                         }
                                         ?>

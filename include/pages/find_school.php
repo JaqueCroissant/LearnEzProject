@@ -48,7 +48,7 @@ $schoolHandler->get_school_types();
                                 <th><?php echo TranslationHandler::get_static_text("START"); ?></th>
                                 <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
                                 <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
-                                <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                <?php if (RightsHandler::has_user_right("SCHOOL_CLOSE")) { ?>
                                     <th style="text-align: center;"><?php echo TranslationHandler::get_static_text("OPEN"); ?></th>
                                 <?php } ?>
                                 <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
@@ -72,7 +72,7 @@ $schoolHandler->get_school_types();
                                     <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>"><?php echo $value->subscription_start; ?></td>
                                     <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>"><?php echo $value->subscription_end; ?></td>
                                     <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id; ?>"><?php echo $value->current_students . ' ' . strtolower(TranslationHandler::get_static_text("OF")) . ' ' . $value->max_students; ?></td>
-                                    <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
+                                    <?php if (RightsHandler::has_user_right("SCHOOL_CLOSE")) { ?>
                                         <td align="center">
                                             <form method="post" id="alert_form_<?php echo $value->id;?>" action="" url="edit_school.php?state=set_availability">
                                                 <input type="hidden" name="school_id" value="<?php echo $value->id; ?>">

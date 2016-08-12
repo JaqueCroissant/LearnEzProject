@@ -7,7 +7,12 @@ $schoolHandler = new SchoolHandler();
 $classHandler = new ClassHandler();
 $classHandler->get_all_classes();
 if ($classHandler->_user->user_type_id != 1) {
-    $schoolHandler->get_school_by_id($classHandler->_user->school_id);
+    ?>
+    <script>
+        change_page("school_profile", "", "&school_id=<?php echo $classHandler->_user->school_id; ?>");
+    </script>
+    <?php
+    die();
 } elseif ($classHandler->_user->user_type_id = 1) {
     $schoolHandler->get_all_schools(true);
 }
@@ -109,7 +114,10 @@ switch ($classHandler->_user->user_type_id) {
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4 class="panel-title no-transform"><?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
+                                <h4 class="panel-title no-transform">
+                                    <i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg m-r-md"></i>
+                                    <?php echo TranslationHandler::get_static_text("OPEN_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?>
+                                </h4>
                             </div>
                             <hr class="widget-separator m-0">
                             <div class="panel-body">
@@ -149,7 +157,10 @@ switch ($classHandler->_user->user_type_id) {
                         </div>
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4 class="panel-title no-transform"><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></h4>
+                                <h4 class="panel-title no-transform">
+                                    <i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg m-r-md"></i>
+                                    <?php echo TranslationHandler::get_static_text("STUDENTS"); ?>
+                                </h4>
                             </div>
                             <hr class="widget-separator m-0">
                             <div class="panel-body">
@@ -176,7 +187,10 @@ switch ($classHandler->_user->user_type_id) {
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4 class="panel-title no-transform change_page a" page='school_profile' step='' args='&school_id=<?php echo $classHandler->_user->school_id; ?>'><?php echo $schoolHandler->school->name; ?></h4>
+                                <h4 class="panel-title no-transform change_page a" page='school_profile' step='' args='&school_id=<?php echo $classHandler->_user->school_id; ?>'>
+                                    <i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg m-r-md"></i>
+                                    <?php echo $schoolHandler->school->name; ?>
+                                </h4>
                             </div>
                             <hr class="widget-separator m-0">
                             <div class="panel-body">
@@ -208,7 +222,10 @@ switch ($classHandler->_user->user_type_id) {
                     <div class="col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h4 class="panel-title no-transform change_page a" page='school_profile' step='' args='&school_id=<?php echo $classHandler->_user->school_id; ?>'><?php echo $schoolHandler->school->name; ?></h4>
+                                <h4 class="panel-title no-transform change_page a" page='school_profile' step='' args='&school_id=<?php echo $classHandler->_user->school_id; ?>'>
+                                    <i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg m-r-md"></i>
+                                    <?php echo $schoolHandler->school->name; ?>
+                                </h4>
                             </div>
                             <hr class="widget-separator m-0">
                             <div class="panel-body">

@@ -22,6 +22,8 @@ if (isset($_GET['school_id'])) {
     }
     $userHandler->get_by_school_id($_GET['school_id']);
     $statisticsHandler->get_average_for_school($_GET['school_id']);
+} else {
+    $schoolHandler->get_school_by_id($schoolHandler->_user->school_id);
 }
 ?>
 <style>
@@ -132,7 +134,7 @@ if (isset($_GET['school_id'])) {
                         <div class="streamline m-l-lg">
                             <?php
                             if (isset($_GET['school_id'])) {
-                                $statisticsHandler->get_top_students($i_max, $_GET['school_id']);
+                                $statisticsHandler->get_top_students($i_max, $schoolHandler->school->id);
                             }
                             foreach ($statisticsHandler->top_students as $value) {
                                 ?>

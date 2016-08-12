@@ -994,7 +994,7 @@ class UserHandler extends Handler
         $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
     }
     
-    public function get_by_school_id($school_id)
+    public function get_by_school_id($school_id, $student_and_teacher_bool = false, $only_open = true)
     {
         try
         {
@@ -1014,10 +1014,21 @@ class UserHandler extends Handler
             if (!RightsHandler::has_user_right("SCHOOL_FIND") && $school_id != $this->_user->school_id) {
                         throw new Exception("INSUFFICIENT_RIGHTS");
             }
+            if (!is_bool($student_and_teacher_bool) || !is_bool($only_open)) {
+                throw new Exception("INVALID_INPUT");
+            }
 
+            $query = "SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE users.school_id = :school_id AND translation_user_type.language_id = :language_id ";
+            if ($student_and_teacher_bool) {
+                $query .= "AND users.user_type_id IN (3,4) ";
+            } else {
+                $query .= "AND users.user_type_id = 4 ";
+            }
+            if ($only_open) {
+                $query .= "AND open = 1";
+            }
 
-
-            $user_data = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE users.school_id = :school_id AND translation_user_type.language_id = :language_id AND users.user_type_id >= :user_type_id", $school_id, TranslationHandler::get_current_language(), $this->_user->user_type_id);
+            $user_data = DbHandler::get_instance()->return_query($query, $school_id, TranslationHandler::get_current_language());
             
             $this->users = array();
             if(count($user_data > 0))

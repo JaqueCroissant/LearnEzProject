@@ -611,9 +611,6 @@ class UserHandler extends Handler
                     throw new Exception("DATABASE_UNKNOWN_ERROR");
                 }
             }
-
-
-
             return true;
         }
         catch(Exception $ex)
@@ -1365,6 +1362,11 @@ class UserHandler extends Handler
         if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
+    }
+
+    private function can_add_user($school_id)
+    {
+        $data = DbHandler::get_instance()->return_query("SELECT COUNT(*) OVER (), users.*FROM CUSTOMER c WHERE c.Name");
     }
 }
 ?>

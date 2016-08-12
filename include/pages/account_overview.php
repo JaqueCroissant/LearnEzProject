@@ -63,11 +63,10 @@ $courses_completed = 0;
 
                                             ?>
                                             <tr class = "a change_page" page="school_profile" step = "" args = "&school_id=<?php echo $value->id; ?>">
-                                                <td><?php echo (strlen($value->name) > 20 ? substr($value->name, 0, 20) : $value->name); ?></td>
-                                                <td><?php echo (strlen($value->address) > 20 ? substr($value->address, 0, 20) : $value->address); ?></td>
-                                                <td><?php echo $value->zip_code; ?></td>
-                                                <td><?php echo (strlen($value->city) > 15 ? substr($value->city, 0, 15) : $value->city); ?></td>
-
+                                                <td><?php echo (strlen($value->name) > 20 ? htmlspecialchars(substr($value->name, 0, 20)) : htmlspecialchars($value->name)); ?></td>
+                                                <td><?php echo (strlen($value->address) > 20 ? htmlspecialchars(substr($value->address, 0, 20)) : htmlspecialchars($value->address)); ?></td>
+                                                <td><?php echo htmlspecialchars($value->zip_code); ?></td>
+                                                <td><?php echo (strlen($value->city) > 15 ? htmlspecialchars(substr($value->city, 0, 15)) : htmlspecialchars($value->city)); ?></td>
                                                 <td style="text-align: center;"><?php echo !$value->open ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("CLOSED") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("OPEN") . '"></i>'; ?></td>
                                             </tr>
 
@@ -101,8 +100,8 @@ $courses_completed = 0;
                                             </div>
                                             <div class="sl-content">
                                                 <h5 class="m-t-0">
-                                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo $value['firstname'] . " " . $value['surname']?></a>
-                                                    <small class="text-muted fz-sm"><?php echo $value['name'] ?></small>
+                                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo htmlspecialchars($value['firstname']) . " " . htmlspecialchars($value['surname'])?></a>
+                                                    <small class="text-muted fz-sm"><?php echo htmlspecialchars($value['name']) ?></small>
                                                 </h5>
                                                 <p><?php echo $value['points'] . " " . strtolower(TranslationHandler::get_static_text("POINTS")); ?></p>
                                             </div>
@@ -251,9 +250,9 @@ $courses_completed = 0;
 
                                                         ?>
                                                         <tr class = "a change_page" page="class_profile" step = "" args = "&class_id=<?php echo $value->id; ?>">
-                                                            <td><?php echo $value->title; ?></td>
-                                                            <td style="text-align: center;"><?php echo $value->class_year; ?></td>
-                                                            <td style="text-align: center;"><?php echo $value->number_of_students; ?></td>
+                                                            <td><?php echo htmlspecialchars($value->title); ?></td>
+                                                            <td style="text-align: center;"><?php echo htmlspecialchars($value->class_year); ?></td>
+                                                            <td style="text-align: center;"><?php echo htmlspecialchars($value->number_of_students); ?></td>
                                                             <td style="text-align: center;"><?php echo !$value->open ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("CLOSED") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("OPEN") . '"></i>'; ?></td>
                                                         </tr>
                                                      
@@ -293,10 +292,10 @@ $courses_completed = 0;
 
                                                         ?>
                                                             <tr class = "a change_page" page="account_profile" step = "" args = "&user_id=<?php echo $value->id; ?>">
-                                                                <td><?php echo $value->username; ?></td>
-                                                                <td><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? substr($value->firstname . " " . $value->surname, 0, 20) : $value->firstname . " " . $value->surname); ?></td>
+                                                                <td><?php echo htmlspecialchars($value->username); ?></td>
+                                                                <td><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? htmlspecialchars(substr($value->firstname . " " . $value->surname, 0, 20)) : htmlspecialchars($value->firstname . " " . $value->surname)); ?></td>
                                                                 <td><?php echo $value->user_type_title; ?></td>
-                                                                <td><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>
+                                                                <td><?php echo strlen($value->email) > 20 ? htmlspecialchars(substr($value->email, 0, 20)) : htmlspecialchars($value->email); ?></td>
                                                             </tr>
                                                      
                                                 <?php 
@@ -348,7 +347,7 @@ $courses_completed = 0;
                                                 if(!empty($value->lectures)) {
                                                     echo TranslationHandler::get_static_text("LECTURES") . ":";
                                                     foreach($value->lectures as $lecture) {
-                                                        echo '<br />- ' . $lecture->title . '';
+                                                        echo '<br />- ' . htmlspecialchars($lecture->title) . '';
                                                     }
                                                     echo '<br />';
                                                 }
@@ -356,13 +355,13 @@ $courses_completed = 0;
                                                 if(!empty($value->tests)) {
                                                     echo TranslationHandler::get_static_text("TESTS") . ":";
                                                     foreach($value->tests as $test) {
-                                                        echo '<br />- ' . $test->title . '';
+                                                        echo '<br />- ' . htmlspecialchars($test->title) . '';
                                                     }
                                                 }
 
                                                 ?>">
-                                                <td><?php echo $value->title; ?></td>
-                                                <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 25 ? substr($classes, 0, 25) . "..." : $classes ?></span></td>
+                                                <td><?php echo htmlspecialchars($value->title); ?></td>
+                                                <td><span data-toggle="tooltip" title="<?= htmlspecialchars($classes) ?>"><?= strlen($classes) > 25 ? htmlspecialchars(substr($classes, 0, 25)) . "..." : htmlspecialchars($classes) ?></span></td>
                                                 <td style="text-align: center;"><?php echo $value->date_expire; ?></td>
                                                 <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                                 <td style='text-align:center;'><?= count($value->tests) ?></td>
@@ -418,9 +417,9 @@ $courses_completed = 0;
 
                                                         ?>
                                                         <tr class = "a change_page" page="class_profile" step = "" args = "&class_id=<?php echo $value->id; ?>">
-                                                            <td><?php echo $value->title; ?></td>
-                                                            <td style="text-align: center;"><?php echo $value->class_year; ?></td>
-                                                            <td style="text-align: center;"><?php echo $value->number_of_students; ?></td>
+                                                            <td><?php echo htmlspecialchars($value->title); ?></td>
+                                                            <td style="text-align: center;"><?php echo htmlspecialchars($value->class_year); ?></td>
+                                                            <td style="text-align: center;"><?php echo htmlspecialchars($value->number_of_students); ?></td>
                                                             <td style="text-align: center;"><?php echo !$value->open ? '<i class="zmdi-hc-fw zmdi zmdi-minus-circle zmdi-hc-lg fw-700" style="color: #f15530;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("CLOSED") . '"></i>' : '<i class="zmdi-hc-fw zmdi zmdi-check-circle zmdi-hc-lg fw-700" style="color: #36ce1c;" data-toggle="tooltip" title="' . TranslationHandler::get_static_text("OPEN") . '"></i>'; ?></td>
                                                         </tr>
                                                      
@@ -473,7 +472,7 @@ $courses_completed = 0;
                                                 if(!empty($value->lectures)) {
                                                     echo '<b>' . TranslationHandler::get_static_text("LECTURES") .'</b>';
                                                     foreach($value->lectures as $lecture) {
-                                                        echo '<br />- ' . $lecture->title . '';
+                                                        echo '<br />- ' . htmlspecialchars($lecture->title) . '';
                                                     }
                                                     echo '<br />';
                                                 }
@@ -481,13 +480,13 @@ $courses_completed = 0;
                                                 if(!empty($value->tests)) {
                                                     echo '<b>' . TranslationHandler::get_static_text("TESTS") .'</b>';
                                                     foreach($value->tests as $test) {
-                                                        echo '<br />- ' . $test->title . '';
+                                                        echo '<br />- ' . htmlspecialchars($test->title) . '';
                                                     }
                                                 }
 
                                                 ?>">
-                                                <td><?php echo $value->title; ?></td>
-                                                <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 30 ? substr($classes, 0, 30) . "..." : $classes ?></span></td>
+                                                <td><?php echo htmlspecialchars($value->title); ?></td>
+                                                <td><span data-toggle="tooltip" title="<?= htmlspecialchars($classes) ?>"><?= strlen($classes) > 30 ? htmlspecialchars(substr($classes, 0, 30)) . "..." : htmlspecialchars($classes) ?></span></td>
                                                 <td style="text-align: center;"><?php echo $value->date_expire; ?></td>
                                                 <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                                 <td style='text-align:center;'><?= count($value->tests) ?></td>
@@ -552,10 +551,10 @@ $courses_completed = 0;
                                                     }
                                                     ?>
                                                     <tr class = "a change_page" page="course_show" step = "" args = "&course_id=<?php echo $value->id; ?>">
-                                                        <td><?php echo $value->title; ?></td>
-                                                        <td><?php echo $value->amount_of_lectures; ?></td>
-                                                        <td><?php echo $value->amount_of_tests; ?></td>
-                                                        <td><?php echo$value->overall_progress?>%</td>
+                                                        <td><?php echo htmlspecialchars($value->title); ?></td>
+                                                        <td><?php echo htmlspecialchars($value->amount_of_lectures); ?></td>
+                                                        <td><?php echo htmlspecialchars($value->amount_of_tests); ?></td>
+                                                        <td><?php echo htmlspecialchars($value->overall_progress);?>%</td>
                                                     </tr>
                                                 <?php }
                                                 $courses_average = $course_count > 0 ? round($courses_average / $course_count,0) : 0;
@@ -605,7 +604,7 @@ $courses_completed = 0;
                                                 if(!empty($value->lectures)) {
                                                     echo '<b>' . TranslationHandler::get_static_text("LECTURES") . ":" . '</b>';
                                                     foreach($value->lectures as $lecture) {
-                                                        echo '<br />- ' . $lecture->title . '';
+                                                        echo '<br />- ' . htmlspecialchars($lecture->title) . '';
                                                     }
                                                     echo '<br />';
                                                 }
@@ -613,13 +612,13 @@ $courses_completed = 0;
                                                 if(!empty($value->tests)) {
                                                     echo '<b>' . TranslationHandler::get_static_text("TESTS") . ":" . '</b>';
                                                     foreach($value->tests as $test) {
-                                                        echo '<br />- ' . $test->title . '';
+                                                        echo '<br />- ' . htmlspecialchars($test->title) . '';
                                                     }
                                                 }
 
                                                 ?>">
-                                                <td><?php echo $value->title; ?></td>
-                                                <td><span data-toggle="tooltip" title="<?= $classes ?>"><?= strlen($classes) > 35 ? substr($classes, 0, 35) . "..." : $classes ?></span></td>
+                                                <td><?php echo htmlspecialchars($value->title); ?></td>
+                                                <td><span data-toggle="tooltip" title="<?= htmlspecialchars($classes) ?>"><?= strlen($classes) > 35 ? htmlspecialchars(substr($classes, 0, 35)) . "..." : htmlspecialchars($classes) ?></span></td>
                                                 <td><?php echo $value->date_expire; ?></td>
                                                 <td style='text-align:center;'><?= count($value->lectures) ?></td>
                                                 <td style='text-align:center;'><?= count($value->tests) ?></td>
@@ -755,7 +754,7 @@ $courses_completed = 0;
                 </div>
                 </div>
                 <div class="center">
-                    <b><?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname; ?></b>
+                    <b><?php echo htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname); ?></b>
                 </div>
                 <br/>
                 <div>
@@ -783,7 +782,7 @@ $courses_completed = 0;
                 </div>
                 <div>
                     <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("INFO_EMAIL") . ":"; ?></label>
-                    <span class="pull-right"><?php echo $userHandler->_user->email; ?></span>
+                    <span class="pull-right"><?php echo htmlspecialchars($userHandler->_user->email); ?></span>
                 </div>
                 
                 <?php
@@ -794,7 +793,7 @@ $courses_completed = 0;
                         <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("SCHOOL") . ":"; ?></label>
                         
                         <a class="change_page" page="school_profile" step="" args="&school_id=<?php echo $schoolHandler->school->id ?>" href="javascript:void(0)">
-                            <span class="pull-right"><?php echo $schoolHandler->school->name; ?></span>
+                            <span class="pull-right"><?php echo htmlspecialchars($schoolHandler->school->name); ?></span>
                         </a>
                     </div>
                 <?php
@@ -826,7 +825,7 @@ $courses_completed = 0;
                                         <div class="sl-item <?php echo $value->remaining_days <= 30 ? "sl-danger" : "sl-primary" ?> p-b-md">
                                             <div class="sl-content">
                                                 <div class="m-t-0 change_page a <?php echo $value->remaining_days <= 30 ? "text-danger animate-twice animated headShake" : "text-primary" ?>" page='school_profile' step='' args='&school_id=<?php echo $value->id; ?>'>
-                                                    <?php echo $value->name; ?>
+                                                    <?php echo htmlspecialchars($value->name); ?>
                                                 </div>
                                                 <p class="text-muted"><?php echo $value->remaining_days == 0 ? TranslationHandler::get_static_text("TODAY") : $value->remaining_days == 1 ? TranslationHandler::get_static_text("TOMORROW") : $value->remaining_days . " " . strtolower(TranslationHandler::get_static_text("DAYS_REMAINING")); ?></p>
                                             </div>
@@ -855,7 +854,7 @@ $courses_completed = 0;
                             <?php
                                 for($i=0; $i < count($classHandler->classes); $i++)
                                 {
-                                    echo '<div><a class="change_page" page="class_profile" step="" args="&class_id=' . $classHandler->classes[$i]->id . '" href="javascript:void(0)">' . $classHandler->classes[$i]->title . '</a></div>';
+                                    echo '<div><a class="change_page" page="class_profile" step="" args="&class_id=' . $classHandler->classes[$i]->id . '" href="javascript:void(0)">' . htmlspecialchars($classHandler->classes[$i]->title) . '</a></div>';
                                 }
                             ?>
                         </div>

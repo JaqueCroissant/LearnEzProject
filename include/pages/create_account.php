@@ -102,7 +102,7 @@ $classHandler = new ClassHandler();
                                                             if (isset($_GET['school_id']) && $school->id == $_GET['school_id']) {
                                                                 $insert = " selected";
                                                             }
-                                                            echo '<option value = "' . $school->id . '"' . $insert . '>' . $school->name . ', ' . $school->address . '</option>';
+                                                            echo '<option value = "' . $school->id . '"' . $insert . '>' . htmlspecialchars($school->name) . ', ' . htmlspecialchars($school->address) . '</option>';
                                                         }
                                                     }
                                                     ?>
@@ -129,7 +129,7 @@ $classHandler = new ClassHandler();
                                                             if (isset($_GET['school_id']) && $school->id == $_GET['school_id']) {
                                                                 $insert = " selected";
                                                             }
-                                                            echo '<option value = "' . $school->id . '"' . $insert . '>' . $school->name . ', ' . $school->address . '</option>';
+                                                            echo '<option value = "' . $school->id . '"' . $insert . '>' . htmlspecialchars($school->name) . ', ' . htmlspecialchars($school->address) . '</option>';
                                                         }
                                                     }
                                                     ?>
@@ -151,7 +151,7 @@ $classHandler = new ClassHandler();
                                                 <?php
                                                 $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
                                                 foreach ($classHandler->classes as $class) {
-                                                    echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
+                                                    echo '<option value = "' . $class->id . '">' . htmlspecialchars($class->title) . '</option>';
                                                 }
                                                 ?>
                                                     </select>
@@ -166,7 +166,7 @@ $classHandler = new ClassHandler();
                                                     <?php
                                                     $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
                                                     foreach ($classHandler->classes as $class) {
-                                                        echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
+                                                        echo '<option value = "' . $class->id . '">' . htmlspecialchars($class->title) . '</option>';
                                                     }
                                                     ?>
                                                     </select>
@@ -209,7 +209,7 @@ $classHandler = new ClassHandler();
                                                 <?php
                                                 $schoolHandler->get_all_schools(true);
                                                 foreach ($schoolHandler->all_schools as $school) {
-                                                    echo '<option value = "' . $school->id . '">' . $school->name . ', ' . $school->address . '</option>';
+                                                    echo '<option value = "' . $school->id . '">' . htmlspecialchars($school->name) . ', ' . htmlspecialchars($school->address) . '</option>';
                                                 }
                                                 ?>
 
@@ -225,7 +225,7 @@ $classHandler = new ClassHandler();
                                                 if ($userHandler->_user->user_type_id > 1) {
                                                     $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
                                                     foreach ($classHandler->classes as $class) {
-                                                        echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
+                                                        echo '<option value = "' . $class->id . '">' . htmlspecialchars($class->title) . '</option>';
                                                     }
                                                 }
                                                 ?>
@@ -244,7 +244,7 @@ $classHandler = new ClassHandler();
                                             <?php
                                             $classHandler->get_classes_by_school_id($userHandler->_user->school_id);
                                             foreach ($classHandler->classes as $class) {
-                                                echo '<option value = "' . $class->id . '">' . $class->title . '</option>';
+                                                echo '<option value = "' . $class->id . '">' . htmlspecialchars($class->title) . '</option>';
                                             }
                                             ?>
                                             </select>

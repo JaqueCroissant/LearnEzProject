@@ -39,6 +39,15 @@ class StatisticsHandler extends Handler {
     public $global_tests_complete;
     public $global_lectures_complete;
 
+    //GLOBAL STATS
+    public $school_count = 0;
+    public $schools_open = 0;
+    public $school_classes_global = 0;
+    public $school_type_amount;
+    public $account_count = 0;
+    public $accounts_open = 0;
+    public $account_type_amount;
+
     private $_school_id;
     private $_class_id;
     private $_account_type_bool;
@@ -67,21 +76,24 @@ class StatisticsHandler extends Handler {
             }
             $query .= ' group by course_id, type'; 
             $data_array = DbHandler::get_instance()->return_query($query, $this->_class_id);
-            
             $lecture_avg = [];
+            $lect_total = 0;
             $test_avg = [];
+            $test_total = 0;
             foreach ($data_array as $value) {
                 if ($value['type'] == "1") {
                     $test = explode(',', $value['progress']);
-                    $test_avg[] = array_sum($test) / $value['total'];
+                    $test_avg[] = $value['total'] != 0 ? array_sum($test) / $value['total'] : 0;
+                    $test_total += $value['total'];
                 } elseif ($value['type'] == "2") {
                     $lect = explode(',', $value['progress']);
-                    $lecture_avg[] = array_sum($lect) / $value['total'];
+                    $lecture_avg[] = $value['total'] != 0 ? array_sum($lect) / $value['total'] : 0;
+                    $lect_total += $value['total'];
                 }
             }
             $this->class_lecture_average = array_sum($lecture_avg) != 0 ? round(array_sum($lecture_avg) * 100 / count($lecture_avg), 0) : 0;
             $this->class_test_average = array_sum($test_avg) != 0 ? round(array_sum($test_avg) * 100 / count($test_avg), 0) : 0;
-            $this->class_average = $this->class_lecture_average != 0 && $this->class_test_average != 0 ? round(($this->class_lecture_average + $this->class_test_average) / 2, 0) : 0;
+            $this->class_average = $test_total != 0 || $lect_total != 0 ? round((($this->class_lecture_average * $lect_total) + ($this->class_test_average * $test_total)) / ($lect_total + $test_total),0) : 0;
             
             
             return true;
@@ -388,6 +400,88 @@ class StatisticsHandler extends Handler {
         catch(Exception $exc)
         {
             $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+    
+    public function get_global_school_stats()
+    {
+        try
+        {
+            $this->school_classes_global = DbHandler::get_instance()->count_query("SELECT id FROM class");
+            $data = DbHandler::get_instance()->return_query("SELECT school.open, school_type.title FROM school INNER JOIN school_type ON school_type.id = school.school_type_id");
+            $this->school_count = count($data);
+            
+            $types = [];
+            
+            foreach($data as $value)
+            {
+                if($value['open']=="1")
+                {
+                    $this->schools_open++;
+                }
+                
+                if(!key_exists($value['title'], $types))
+                {
+                    $types[$value['title']] = 1;
+                }
+                else
+                {
+                    $types[$value['title']]++;
+                }                
+            }
+            $this->school_type_amount = $types;
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    public function get_global_account_stats()
+    {
+        try
+        {
+            $data = [];
+            
+            if($this->_user->user_type_id == "1")
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT users.open, translation_user_type.title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id AND translation_user_type.language_id = :current_lang", TranslationHandler::get_current_language());
+            }
+            else
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT user_type_id, open FROM users WHERE user_type_id > 1 AND school_id = :school_id", $this->_user->school_id);
+            }
+            
+            $this->account_count = count($data);
+            
+            $types = [];       
+            foreach($data as $value)
+            {
+                if($value['open']=="1")
+                {
+                    $this->accounts_open++;
+                }
+                
+                if(!key_exists($value['title'], $types))
+                {
+                    $types[$value['title']] = 1;
+                }
+                else
+                {
+                    $types[$value['title']]++;
+                }                
+            }
+            $this->account_type_amount = $types;
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }

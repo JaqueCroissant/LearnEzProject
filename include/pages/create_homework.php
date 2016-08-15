@@ -35,7 +35,7 @@ if ($current_user->user_type_id == 1) {
                                     <?php
                                     if ($homeworkHandler->get_available_classes()) {
                                         foreach ($homeworkHandler->available_classes as $value) {
-                                            echo '<option value="' . $value->id . '" '. ($class_id == $value->id ? 'selected' : '') .'>' . $value->title . '</option>';
+                                            echo '<option value="' . $value->id . '" '. ($class_id == $value->id ? 'selected' : '') .'>' . htmlspecialchars($value->title) . '</option>';
                                         }
                                     }
                                     ?>
@@ -73,13 +73,13 @@ if ($current_user->user_type_id == 1) {
                         <?php foreach($courseHandler->get_os_options() as $value) { ?>
                         <div class="panel-group accordion" id="accordion" style="margin-bottom: 30px !important;">
                             <div class="panel panel-default">
-                                <div class="panel-heading" role="tab" id="heading-<?= $value["title"] ?>">
-                                    <a class="accordion-toggle collapsed" style="padding: 0px 0.75rem 0px 0.75rem !important;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-<?= $value["title"] ?>" aria-expanded="false" aria-controls="collapse-<?= $value["title"] ?>">
-                                        <h4 class="panel-title" style="color: #6a6c6f !important;text-transform:none !important;"><?= $value["title"] ?> <?= TranslationHandler::get_static_text("USERS") ?></h4>
+                                <div class="panel-heading" role="tab" id="heading-<?= htmlspecialchars($value["title"]) ?>">
+                                    <a class="accordion-toggle collapsed" style="padding: 0px 0.75rem 0px 0.75rem !important;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-<?= htmlspecialchars($value["title"]) ?>" aria-expanded="false" aria-controls="collapse-<?= htmlspecialchars($value["title"]) ?>">
+                                        <h4 class="panel-title" style="color: #6a6c6f !important;text-transform:none !important;"><?= htmlspecialchars($value["title"]) ?> <?= TranslationHandler::get_static_text("USERS") ?></h4>
                                         <i class="fa acc-switch" style="padding-right: 40px;"></i>
                                     </a>
                                 </div>
-                                <div id="collapse-<?= $value["title"] ?>" class="panel-collapse collapse" aria-labelledby="heading-<?= $value["title"] ?>" aria-expanded="false">
+                                <div id="collapse-<?= htmlspecialchars($value["title"]) ?>" class="panel-collapse collapse" aria-labelledby="heading-<?= htmlspecialchars($value["title"]) ?>" aria-expanded="false">
                                     <div class="panel-body" style="margin: 0px -4px 0px -4px !important;">
                                         <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 0px 0px 8px 0px !important;">
                                         <?php 
@@ -91,11 +91,11 @@ if ($current_user->user_type_id == 1) {
                                                 <div class="panel panel-default">
                                                     <div class="panel-heading" role="tab" id="heading-<?= $unique_token ?>">
                                                         <div class="checkbox" style="float:left;width:5%;">
-                                                            <input name="course[]" class="check_course_elements" checkbox_id="<?= $unique_token ?>" type="checkbox" id="checkbox-<?= $course->title .'-'. $course->id ?>"> <label for="checkbox-<?= $course->title .'-'. $course->id ?>"></label>
+                                                            <input name="course[]" class="check_course_elements" checkbox_id="<?= $unique_token ?>" type="checkbox" id="checkbox-<?= htmlspecialchars($course->title) .'-'. $course->id ?>"> <label for="checkbox-<?= htmlspecialchars($course->title) .'-'. $course->id ?>"></label>
                                                         </div>
                                                         <div style="float:left;width:95%;border-left: 5px solid <?= $course->color ?>;">
                                                         <a class="accordion-toggle collapsed" style="padding: 0px 0px 0px 10px !important;" role="button" data-toggle="collapse" data-parent="#accordion-<?= $unique_token ?>" href="#collapse-<?= $unique_token ?>" aria-expanded="false" aria-controls="collapse-<?= $unique_token ?>">
-                                                            <span class="text-color fw-500"><?= $course->title ?></span>
+                                                            <span class="text-color fw-500"><?= htmlspecialchars($course->title) ?></span>
                                                             <i class="fa acc-switch" style="padding-right: 20px;line-height:2 !important;"></i>
                                                         </a>
                                                         </div>
@@ -115,10 +115,10 @@ if ($current_user->user_type_id == 1) {
                                                                             <div class="panel panel-default">
                                                                                 <div class="panel-heading">
                                                                                     <div class="checkbox" style="float:left;width:5%;">
-                                                                                        <input name="lecture[]" type="checkbox" id="checkbox-<?= $lecture->title .'-'. $lecture->id ?>" value="<?= $lecture->id ?>"> <label for="checkbox-<?= $lecture->title .'-'. $lecture->id ?>"></label>
+                                                                                        <input name="lecture[]" type="checkbox" id="checkbox-<?= htmlspecialchars($lecture->title) .'-'. $lecture->id ?>" value="<?= $lecture->id ?>"> <label for="checkbox-<?= htmlspecialchars($lecture->title) .'-'. $lecture->id ?>"></label>
                                                                                     </div>
                                                                                     <div style="float:left;width:90%;">
-                                                                                    <span class="text-color fw-500" style="margin-left:5px;"><?= $lecture->title ?></span>
+                                                                                    <span class="text-color fw-500" style="margin-left:5px;"><?= htmlspecialchars($lecture->title) ?></span>
                                                                                     </div>
                                                                                     <div style="clear:both;"></div>
                                                                                 </div>
@@ -136,10 +136,10 @@ if ($current_user->user_type_id == 1) {
                                                                             <div class="panel panel-default">
                                                                                 <div class="panel-heading">
                                                                                     <div class="checkbox" style="float:left;width:5%;">
-                                                                                        <input name="test[]" type="checkbox" id="checkbox-<?= $test->title .'-'. $test->id ?>" value="<?= $test->id ?>"> <label for="checkbox-<?= $test->title .'-'. $test->id ?>"></label>
+                                                                                        <input name="test[]" type="checkbox" id="checkbox-<?= htmlspecialchars($test->title) .'-'. $test->id ?>" value="<?= $test->id ?>"> <label for="checkbox-<?= htmlspecialchars($test->title) .'-'. $test->id ?>"></label>
                                                                                     </div>
                                                                                     <div style="float:left;width:90%;">
-                                                                                    <span class="text-color fw-500" style="margin-left:5px;"><?= $test->title ?></span>
+                                                                                    <span class="text-color fw-500" style="margin-left:5px;"><?= htmlspecialchars($test->title) ?></span>
                                                                                     </div>
                                                                                     <div style="clear:both;"></div>
                                                                                 </div>

@@ -139,6 +139,7 @@ class LoginHandler
         }
         
         DbHandler::get_instance()->query("UPDATE users SET last_login = :date WHERE id = :id", date ("Y-m-d H:i:s"), $this->_user->id);
+        DbHandler::get_instance()->query("INSERT INTO login_record (time) VALUES (:time)", date ("Y-m-d H:i:s"));
         SessionKeyHandler::add_to_session("user", $this->_user, true);
     }
     

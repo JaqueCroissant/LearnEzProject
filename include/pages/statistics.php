@@ -150,7 +150,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
-                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNT_ACTIVITY"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
@@ -158,6 +158,105 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading p-h-lg p-v-md" >
+                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-trending-up zmdi-hc-lg" style="padding-right:30px;"></i><?= TranslationHandler::get_static_text("COURSE_PROGRESS") ?></h4>
+                        </div>
+                        <hr class="widget-separator m-0">
+                        <div class="panel-body user-progress">
+                            <div data-plugin="chart" data-options="{
+                                tooltip : {
+                                    trigger: 'axis'
+                                },
+                                legend: {
+                                data:['<?= TranslationHandler::get_static_text("LECTURES") ?>','<?= TranslationHandler::get_static_text("TESTS") ?>']
+                                },
+                                calculable : true,
+                                xAxis : [
+                                    {
+                                        type : 'category',
+                                        boundaryGap : false,
+                                        data : [
+                                            <?php
+                                            for($i = date('w')-6; $i < date('w')+1; $i++) {
+                                                echo "'" . TranslationHandler::get_static_text("WEEK_DAY_" . strtoupper(day_num_to_string($i))) . "'";
+                                                if($i != date('w')) {
+                                                    echo ",";
+                                                }
+                                            }
+                                            ?>
+                                        ]
+                                    }
+                                ],
+                                yAxis : [
+                                    {
+                                        type : 'value'
+                                    }
+                                ],
+                                series : [
+                                    {
+                                        name:'<?= TranslationHandler::get_static_text("LECTURES") ?>',
+                                        type:'line',
+                                        smooth:true,
+                                        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                        data:
+                                        [
+                                            <?php
+                                            for($i = date('j')-6; $i < date('j')+1; $i++) {
+
+                                                $num = $i > 0 ? $i : date("t", strtotime(date("Y-m-d -1 months"))) + $i;
+                                                if(array_key_exists($num, $statisticsHandler->global_lectures_complete))
+                                                {
+                                                    echo $statisticsHandler->global_lectures_complete[$num];
+                                                }
+                                                else
+                                                {
+                                                    echo "0";
+                                                }
+
+                                                if($i != date('j')) {
+                                                    echo ",";
+                                                }
+                                            }
+                                            ?>
+                                        ]
+                                    },
+                                    {
+                                        name:'<?= TranslationHandler::get_static_text("TESTS") ?>',
+                                        type:'line',
+                                        smooth:true,
+                                        itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                        data:[
+                                            <?php
+                                            for($i = date('j')-6; $i < date('j')+1; $i++) {
+
+                                                $num = $i > 0 ? $i : date("t", strtotime(date("Y-m-d -1 months"))) + $i;
+                                                if(array_key_exists($num, $statisticsHandler->global_tests_complete))
+                                                {
+                                                    echo $statisticsHandler->global_tests_complete[$num];
+                                                }
+                                                else
+                                                {
+                                                    echo "0";
+                                                }
+
+                                                if($i != date('j')) {
+                                                    echo ",";
+                                                }
+                                            }
+                                            ?>
+                                        ]
+                                    }
+                                ]
+                                }" style="height: 300px;"></div>
+
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
     
             <?php        

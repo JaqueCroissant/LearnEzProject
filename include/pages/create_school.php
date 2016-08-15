@@ -61,7 +61,7 @@ $schoolHandler->get_school_types();
                                 <select id="select_school_type" name="school_type_id" class="form-control" data-plugin="select2">
                                     <?php
                                     foreach ($schoolHandler->school_types as $value) {
-                                        echo '<option value="' . $value['id'] . '">' . $value['title'] . '</option>';
+                                        echo '<option value="' . $value['id'] . '">' . htmlspecialchars($value['title']) . '</option>';
                                     }
                                     ?>
                                 </select>
@@ -127,9 +127,9 @@ $schoolHandler->get_school_types();
                                         <?php foreach ($courseHandler->courses as $value) { ?>
                                             <tr style="margin-top: 30px !important;">
                                                 <td style="width: 5px !important; background-color: <?php echo $value->color; ?> !important;">
-                                                <td><?php echo (strlen($value->title) > 16 ? substr($value->title, 0, 16) . "..." : $value->title); ?></td>
-                                                <td><?php echo (strlen($value->description) > 16 ? substr($value->description, 0, 16) . "..." : $value->description); ?></td>
-                                                <td><?php echo (strlen($value->os_title) > 16 ? substr($value->os_title, 0, 16) . "..." : $value->os_title); ?></td>
+                                                <td><?php echo (strlen(htmlspecialchars($value->title)) > 16 ? substr(htmlspecialchars($value->title), 0, 16) . "..." : htmlspecialchars($value->title)); ?></td>
+                                                <td><?php echo (strlen(htmlspecialchars($value->description)) > 16 ? substr(htmlspecialchars($value->description), 0, 16) . "..." : htmlspecialchars($value->description)); ?></td>
+                                                <td><?php echo (strlen(htmlspecialchars($value->os_title)) > 16 ? substr(htmlspecialchars($value->os_title), 0, 16) . "..." : htmlspecialchars($value->os_title)); ?></td>
                                                 <td><input class="checkbox-circle a checkbox-dark" type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></td>
                                             </tr>
                                         <?php } ?>

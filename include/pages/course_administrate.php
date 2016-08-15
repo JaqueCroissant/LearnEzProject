@@ -361,6 +361,13 @@ $courseHandler = new CourseHandler();
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="test_progress" style="opacity:0">
+                                            <div class="progress progress-lg pull-left" style="width:100%;">
+                                                <div class="progress-bar test_progress_bar progress-bar-striped active" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="width:100%;">
+                                                    <span class="test_progress_value"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

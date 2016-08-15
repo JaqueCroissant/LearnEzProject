@@ -1,29 +1,40 @@
 var test_file_name;
 var module_ready = false;
 $(document).on("click", ".upload_test", function (event) {
-    var form = $(this).closest("form");
-    event.preventDefault();
-    var formData = new FormData(form[0]);
-    $.ajax({
-        url: 'include/ajax/course.php?step=upload_test',
-        type: 'POST',
-        data: formData,
-        dataType: "json",
-        async: false,
-        complete: function (data) {
-            ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
-            if (ajax_data.status_value) {
-                test_file_name = ajax_data.file_name;
-                load_test();
+    if($(this).attr("disabled") !== "disabled"){
+        $(this).attr("disabled", true);
+        $(".test_progress").fadeTo(1, 1);
+        var form = $(this).closest("form");
+        $(".test_progress_value").html("Uploader data");
+        event.preventDefault();
+        var formData = new FormData(form[0]);
+        $.ajax({
+//            xhr: function(){
+//                var xhr = $.ajaxSettings.xhr() ;
+//                xhr.upload.onprogress = function(evt){ $(".test_progress_bar").css("width: " + Math.round(evt.loaded/evt.total*100) + "%"); console.log($(".test_progress_bar").css("width")); $(".test_progress_value").html("Uploader data: " + Math.round(evt.loaded/evt.total*100) + "%"); } ;
+//                return xhr ;
+//            },
+            url: 'include/ajax/course.php?step=upload_test',
+            type: 'POST',
+            data: formData,
+            dataType: "json",
+            async: true,
+            complete: function (data) {
+                $(".test_progress_value").html("Loader testen");
+                ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+                if (ajax_data.status_value) {
+                    test_file_name = ajax_data.file_name;
+                    load_test();
 
-            } else {
-                show_status_bar("error", ajax_data.error);
-            }
-        },
-        cache: false,
-        contentType: false,
-        processData: false
-    });
+                } else {
+                    show_status_bar("error", ajax_data.error);
+                }
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
 });
 
 function load_test() {
@@ -34,16 +45,33 @@ function load_test() {
             if (!module_ready) {
                 $("#test_player").remove("html");
                 $("#test_player").attr("src", "");
+                $(".test_progress .progress-bar").removeClass("active");
+                $(".test_progress_value").html("Fejl");
+                setTimeout(function(){
+                    $(".test_progress").fadeTo(500, 0, function(){
+                        $(".upload_test").attr("disabled", false);
+                    });
+                },1000);
                 initiate_submit_get($(this), "media.php?step=delete_test&file_name=" + test_file_name, function () {}, function () {});
             }
         }, 10000);
         iframe_window.addEventListener("moduleReadyEvent", function () {
+            $(".test_progress_value").html("Indsamler data");
             module_ready = true;
             $("#test_total_steps").val(iframe_window.cpAPIInterface.getVariableValue("rdinfoSlideCount"));
             $("#test_file_name").val(ajax_data.file_name);
-            show_status_bar("success", ajax_data.success);
+            setTimeout(function(){
+                show_status_bar("success", ajax_data.success);
+                $(".test_progress_value").html("Færdig");
+                $(".test_progress .progress-bar").removeClass("active");
+                setTimeout(function(){
+                    $(".test_progress").fadeTo(500, 0, function(){
+                        $(".upload_test").attr("disabled", false);
+                    });
+                },1000);
+            },500);
         });
-    })
+    });
 }
 
 $(document).on("click", ".upload_thumbnail", function (event) {

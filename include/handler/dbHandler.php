@@ -56,7 +56,7 @@
                 $arguments = $args;
                 
                 for($i = 1; $i < count($args); $i++) {
-                    $this->add_argument($queryArguments[$i-1], $arguments[$i]);
+                    $this->add_argument($queryArguments[$i-1], htmlspecialchars($arguments[$i]));
                 }
             }
         }

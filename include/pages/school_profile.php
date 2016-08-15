@@ -53,9 +53,10 @@ if (isset($_GET['school_id'])) {
                 <a <?php echo RightsHandler::has_user_right("SCHOOL_STATISTICS") ? "href='#statistic'" : "" ?> style="color: #6a6c6f !important;"><span class="cover-icon" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("STATISTICS") ?>" style="cursor:pointer"><i class="fa fa-star" style="font-size:16px !important;margin-left:2px;"></i></span></a>
             </div>
             <div>
-                <div class="avatar avatar-xl avatar-circle">
-                    <img class="img-responsive" src="assets/images/LearnEZ-Maskot-sort-30-30.png" alt="avatar">
+                <div class="avatar avatar-xl">
+                    <img class="img-responsive" src="assets/images/school_profile/<?php echo isset($_GET['school_id']) && !empty($schoolHandler->school->filename) ? $schoolHandler->school->filename : "default.png"; ?>" alt="avatar">
                 </div>
+                
             </div>
             <div class="text-center">
                 <span class="cover-icon <?php echo RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL") ? " change_page a" : " disabled" ?>" id="mail" page="mail" step="create_mail" args="&receiver_id=SCHOOL_ADMIN_<?= isset($_GET['school_id']) ? $_GET['school_id'] : ""; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>"><i class="fa fa-envelope"></i></span>

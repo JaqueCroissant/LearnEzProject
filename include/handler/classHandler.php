@@ -102,20 +102,20 @@ class ClassHandler extends Handler {
             }
             if ($school_id != 0) {
                 $this->verify_school_exists($school_id);
-                $query .= "AND school_id = :school_id ORDER BY end_date LIMIT :limit";
+                $query .= "AND school_id = :school_id ORDER BY end_date LIMIT " . $number_of_classes;
                 if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
-                    $data = DbHandler::get_instance()->return_query($query, $this->_user->id, $school_id, $number_of_classes);
+                    $data = DbHandler::get_instance()->return_query($query, $this->_user->id, $school_id);
                 } else {
-                    $data = DbHandler::get_instance()->return_query($query, $school_id, $number_of_classes);
+                    $data = DbHandler::get_instance()->return_query($query, $school_id);
                 }
             } else {
-                $query .= "ORDER BY end_date LIMIT :limit";
+                $query .= "ORDER BY end_date LIMIT " . $number_of_classes;
                 if ($this->_user->user_type_id == 3 || $this->_user->user_type_id == 4) {
 
-                    $data = DbHandler::get_instance()->return_query($query, $this->_user->id, $number_of_classes);
+                    $data = DbHandler::get_instance()->return_query($query, $this->_user->id);
                 } else {
 
-                    $data = DbHandler::get_instance()->return_query($query, $number_of_classes);
+                    $data = DbHandler::get_instance()->return_query($query);
                 }
             }
             $this->soon_expiring_classes = [];

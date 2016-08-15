@@ -26,6 +26,7 @@ $(document).ready(function () {
                     // start step 3 - success
                     $("#step_two").addClass("hidden");
                     $("#step_three").removeClass("hidden");
+                    $("#school_id").val(ajax_data.school.id);
                     $("#step_two_progress").addClass("progress-bar-success");
                     $("#step_three_progress").switchClass("progress-bar-inactive", "progress-bar");
                     show_status_bar("success", ajax_data.success);
@@ -37,6 +38,7 @@ $(document).ready(function () {
                     show_status_bar("error", ajax_data.error);
                 }, function () {
                     show_status_bar("success", ajax_data.success);
+                    reload_page();
                 });
                 break;
         }
@@ -46,7 +48,7 @@ $(document).ready(function () {
         event.preventDefault();
         change_page("edit_school", "", "&school_id=" + $(this).attr("school_id"));
     });
-    
+
     $(document).on("click", ".update_school", function (event) {
         event.preventDefault();
 
@@ -62,7 +64,7 @@ $(document).ready(function () {
     // Close school
     $(document).on("click", ".btn_school_open", function (event) {
         event.preventDefault();
-        
+
         $("td input[type='checkbox']").attr("disabled", true);
         position = $(this).offset();
         height = $("#close_school_alert").height();
@@ -75,8 +77,8 @@ $(document).ready(function () {
         }
         clicked_checkbox_id = $(this).attr("id");
     });
-    
-        $(document).on("click", ".accept_close_school_btn", function (event) {
+
+    $(document).on("click", ".accept_close_school_btn", function (event) {
         event.preventDefault();
         alert_div_id = $(this).closest("div .alert_panel").attr("id");
         form_id = $("#" + clicked_checkbox_id).closest("form").attr("id");
@@ -108,7 +110,7 @@ $(document).ready(function () {
         event.preventDefault();
         alert_div_id = $(this).closest("div .alert_panel").attr("id");
         if ($("#" + clicked_checkbox_id).prop("checked") === true) {
-            $("#" + clicked_checkbox_id).prop("checked", true);            
+            $("#" + clicked_checkbox_id).prop("checked", true);
         } else {
             $("#" + clicked_checkbox_id).removeAttr("checked");
 
@@ -116,5 +118,38 @@ $(document).ready(function () {
         $("#" + alert_div_id).addClass("hidden");
         $("td input[type='checkbox']").removeAttr("disabled");
     });
+    //
+
+    // upload image 
+    $(document).on("click", ".upload_school_image", function (event) {
+        page_state = $(this).attr("id");
+        var form = $(this).closest("form");
+        event.preventDefault();
+        var formData = new FormData(form[0]);
+        formData.append("step", "upload_school_image");
+        formData.append("school_id", $("#school_id").val());
+        $.ajax({
+            url: 'include/ajax/create_school.php',
+            type: 'POST',
+            data: formData,
+            dataType: "json",
+            async: false,
+            complete: function (data) {
+                ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+                if (ajax_data.status_value) {
+                    show_status_bar("success", ajax_data.success);
+                    if (page_state === "edit_school_image") {
+                        $(".go_back").click();
+                    }
+                } else {
+                    show_status_bar("error", ajax_data.error);
+                }
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+
     //
 });

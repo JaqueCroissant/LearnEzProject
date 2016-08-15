@@ -14,7 +14,7 @@ $schoolHandler->get_school_types();
 <div class="row">
     <div class="col-md-12">
         <div class="widget">
-            
+
             <header class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("SCHOOL_CREATE_NEW"); ?></h4>
             </header>
@@ -99,6 +99,7 @@ $schoolHandler->get_school_types();
                                 <input class="form-control" id="school_subscription_end" type="text" name="school_subscription_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label class="col-md-2 col-md-offset-2 control-label"></label>
                             <div class="col-md-5">
@@ -107,45 +108,68 @@ $schoolHandler->get_school_types();
                                        value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_TWO"); ?>" class="pull-right btn btn-default btn-sm create_school">     
                             </div>
                         </div>
+
+
                     </form>
                 </div>
 
                 <div id="step_three" class="hidden">
                     <div class="col-md-12">
-                        <form method="POST" id="assign_course_to_school" url="create_school.php" name="create_school_step_3">
-                            <div class="col-md-6 col-md-offset-3">
-                                <table class="table table-hover">
-                                    <thead>
-                                    <th></th>
-                                    <th><?php echo TranslationHandler::get_static_text("TITLE"); ?></th>
-                                    <th><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></th>
-                                    <th><?php echo TranslationHandler::get_static_text("OS"); ?></th>
-                                    <th><?php echo TranslationHandler::get_static_text("SELECT"); ?></th>
-                                    </thead>
-                                    <tbody>
-
-                                        <?php foreach ($courseHandler->courses as $value) { ?>
-                                            <tr style="margin-top: 30px !important;">
-                                                <td style="width: 5px !important; background-color: <?php echo $value->color; ?> !important;">
-                                                <td><?php echo (strlen(htmlspecialchars($value->title)) > 16 ? substr(htmlspecialchars($value->title), 0, 16) . "..." : htmlspecialchars($value->title)); ?></td>
-                                                <td><?php echo (strlen(htmlspecialchars($value->description)) > 16 ? substr(htmlspecialchars($value->description), 0, 16) . "..." : htmlspecialchars($value->description)); ?></td>
-                                                <td><?php echo (strlen(htmlspecialchars($value->os_title)) > 16 ? substr(htmlspecialchars($value->os_title), 0, 16) . "..." : htmlspecialchars($value->os_title)); ?></td>
-                                                <td><input class="checkbox-circle a checkbox-dark" type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></td>
-                                            </tr>
-                                        <?php } ?>
-
-                                    </tbody>
-                                </table>
-                                <div class="form-group p-t-md">
-                                    <label class="col-md-2 col-md-offset-5 control-label"></label>
-                                    <div class="col-md-5">
-                                        <input type="hidden" name="step" id="create_school_hidden_field_step_3">
-                                        <input type="button" name="submit" id="create_school_step_three_button" step="3"
-                                               value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_THREE"); ?>" class="pull-right btn btn-default btn-sm create_school">     
+                        <div class="row">
+                            <div class="col-md-6">
+                                <form class="form-horizontal" method="POST" id="school_image_upload" action="" url='create_school.php' enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label" for='school_image'><?php echo TranslationHandler::get_static_text("UPLOAD_IMAGE") ?></label>
+                                        <div class="col-md-8">
+                                            <input type='hidden' id="school_id" value="">
+                                            <input type="file" id="school_image" name="school_image" class="p-h-xs btn btn-default text-left" style='width: 100%;'>
+                                        </div>
                                     </div>
-                                </div>
+                                    <div class="form-group p-t-md">
+                                        <label class="col-md-3 control-label"></label>
+                                        <div class="col-md-8">
+                                            <input type="button" name="submit" id="upload_school_image"
+                                                   value="<?php echo TranslationHandler::get_static_text("UPLOAD_IMAGE"); ?>" class="pull-right btn btn-default btn-sm upload_school_image">     
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+
+                            <div class="col-md-6">
+                                <form method="POST" id="assign_course_to_school" url="create_school.php" name="create_school_step_3">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <th></th>
+                                        <th><?php echo TranslationHandler::get_static_text("TITLE"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("OS"); ?></th>
+                                        <th><?php echo TranslationHandler::get_static_text("SELECT"); ?></th>
+                                        </thead>
+                                        <tbody>
+
+                                            <?php foreach ($courseHandler->courses as $value) { ?>
+                                                <tr style="margin-top: 30px !important;">
+                                                    <td style="width: 5px !important; background-color: <?php echo $value->color; ?> !important;">
+                                                    <td><?php echo (strlen(htmlspecialchars($value->title)) > 16 ? substr(htmlspecialchars($value->title), 0, 16) . "..." : htmlspecialchars($value->title)); ?></td>
+                                                    <td><?php echo (strlen(htmlspecialchars($value->description)) > 16 ? substr(htmlspecialchars($value->description), 0, 16) . "..." : htmlspecialchars($value->description)); ?></td>
+                                                    <td><?php echo (strlen(htmlspecialchars($value->os_title)) > 16 ? substr(htmlspecialchars($value->os_title), 0, 16) . "..." : htmlspecialchars($value->os_title)); ?></td>
+                                                    <td><input class="checkbox-circle a checkbox-dark" type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></td>
+                                                </tr>
+                                            <?php } ?>
+
+                                        </tbody>
+                                    </table>
+                                    <div class="form-group p-t-md">
+                                        <label class="col-md-2 col-md-offset-5 control-label"></label>
+                                        <div class="col-md-5">
+                                            <input type="hidden" name="step" id="create_school_hidden_field_step_3">
+                                            <input type="button" name="submit" id="create_school_step_three_button" step="3"
+                                                   value="<?php echo TranslationHandler::get_static_text("SCHOOL_FINISH_STEP_THREE"); ?>" class="pull-right btn btn-default btn-sm create_school">     
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

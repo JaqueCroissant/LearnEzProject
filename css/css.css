@@ -19,6 +19,18 @@ html{
     /*src: local(mixrfont), url('../font.ttf') ;*/
 }
 
+.progress span{
+    display: block;
+    position: absolute;
+    left:0;
+    right:0;
+    margin:0 auto;
+}
+
+.test_progress .progress {
+    position: relative;
+}
+
 .clickable_row {
     cursor: pointer;
 }

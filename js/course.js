@@ -9,11 +9,11 @@ $(document).on("click", ".upload_test", function (event) {
         event.preventDefault();
         var formData = new FormData(form[0]);
         $.ajax({
-//            xhr: function(){
-//                var xhr = $.ajaxSettings.xhr() ;
-//                xhr.upload.onprogress = function(evt){ $(".test_progress_bar").css("width: " + Math.round(evt.loaded/evt.total*100) + "%"); console.log($(".test_progress_bar").css("width")); $(".test_progress_value").html("Uploader data: " + Math.round(evt.loaded/evt.total*100) + "%"); } ;
-//                return xhr ;
-//            },
+            xhr: function(){
+                var xhr = $.ajaxSettings.xhr() ;
+                xhr.upload.onprogress = function(evt){ $(".test_progress_bar").css("width", (evt.loaded/evt.total * 100) + "%"); $(".test_progress_value").html("Uploader data: " + evt.loaded/evt.total*100 + "%"); } ;
+                return xhr ;
+            },
             url: 'include/ajax/course.php?step=upload_test',
             type: 'POST',
             data: formData,
@@ -65,9 +65,9 @@ function load_test() {
                 $(".test_progress_value").html("Færdig");
                 $(".test_progress .progress-bar").removeClass("active");
                 setTimeout(function(){
-                    $(".test_progress").fadeTo(500, 0, function(){
-                        $(".upload_test").attr("disabled", false);
-                    });
+//                    $(".test_progress").fadeTo(500, 0, function(){
+//                        $(".upload_test").attr("disabled", false);
+//                    });
                 },1000);
             },500);
         });

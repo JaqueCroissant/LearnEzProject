@@ -305,7 +305,7 @@ class SchoolHandler extends Handler {
 
             $this->verify_user_school_access($school_id);
             $this->verify_school_exists($school_id);
-            $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
+            $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1 AND user_type_id > 2", $school_id);
             $max_students = reset(DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $school_id));
             $this->open_slots = $max_students["max_students"] - $active_students;
 

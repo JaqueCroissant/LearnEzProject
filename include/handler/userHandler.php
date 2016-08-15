@@ -401,7 +401,7 @@ class UserHandler extends Handler
     }
 
     private function create_user($user_object, $add_to_user_array)
-    {
+    {  
         $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
         try
         {
@@ -1268,7 +1268,7 @@ class UserHandler extends Handler
         }
 
         $user->school_id = $school_id;
-
+        
         return $user;
     }
 
@@ -1364,9 +1364,6 @@ class UserHandler extends Handler
             }
     }
 
-    private function can_add_user($school_id)
-    {
-        $data = DbHandler::get_instance()->return_query("SELECT COUNT(*) OVER (), users.*FROM CUSTOMER c WHERE c.Name");
-    }
+    
 }
 ?>

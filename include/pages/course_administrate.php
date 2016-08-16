@@ -185,6 +185,8 @@ $courseHandler = new CourseHandler();
                     <div class="my_fade my_tab" id="create_lecture_tab">
                         <div class="widget-body" style="padding-top:32px !important;">
                             <form method="post" action="" url="course.php?step=create_lecture" id="create_lecture" name="create_lecture" enctype="multipart/form-data">
+                                <input type="hidden" id="lecture_file_name" name="file_name" value="" />
+                                <input type="hidden" id="lecture_total_length" name="total_length" value="" />
                                 <div class="title_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TITLE"); ?></div>
                                 <div class="description_text" style="display:none;"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></div>
                                 <div class="translation_text" style="display:none;"><?php echo TranslationHandler::get_static_text("TRANSLATION"); ?></div>
@@ -242,6 +244,19 @@ $courseHandler = new CourseHandler();
                                                 <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
                                                 <input type="button" name="submit" id="upload_lecture" value="<?php echo TranslationHandler::get_static_text("UPLOAD"); ?>" class="pull-right btn btn-default btn-md upload_lecture m-l-sm">
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="lecture_progress" style="opacity:0">
+                                            
+                                            <div style="display: table-cell;width: 100%;">
+                                                <div class="progress progress_progress progress-lg pull-left" style="height:38px !important;width:100%;border-radius: 3px; box-shadow: none;border:1px solid #ddd;">
+                                                    <div class="progress-bar lecture_progress_bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                                        <span class="lecture_progress_value"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="display: table-cell;vertical-align: top;white-space: nowrap;">
+                                                <input type="button" name="submit" id="cancel_lecture_upload" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>" class="pull-right btn btn-default btn-md cancel_lecture_upload m-l-sm">
                                             </div>
                                         </div>
                                     </div>
@@ -362,11 +377,16 @@ $courseHandler = new CourseHandler();
                                             </div>
                                         </div>
                                         <div class="test_progress" style="opacity:0">
-                                            <div class="progress progress-lg pull-left" style="width:100%;">
-                                                <div class="progress-bar test_progress_bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0;">
-                                                    
+                                            
+                                            <div style="display: table-cell;width: 100%;">
+                                                <div class="progress progress_progress progress-lg pull-left" style="height:38px !important;width:100%;border-radius: 3px; box-shadow: none;border:1px solid #ddd;">
+                                                    <div class="progress-bar test_progress_bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                                        <span class="test_progress_value"></span>
+                                                    </div>
                                                 </div>
-                                                <span class="test_progress_value"></span>
+                                            </div>
+                                            <div style="display: table-cell;vertical-align: top;white-space: nowrap;">
+                                                <input type="button" name="submit" id="cancel_test_upload" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>" class="pull-right btn btn-default btn-md cancel_test_upload m-l-sm">
                                             </div>
                                         </div>
                                     </div>
@@ -448,5 +468,14 @@ $courseHandler = new CourseHandler();
                 $(".pick_color").val(color.toHexString());
             }
         });
+        
+        var max_width = $(".cancel_test_upload").width() >= $(".upload_test").width() ? $(".cancel_test_upload").width() : $(".upload_test").width();
+        var max_width_lecture = $(".cancel_lecture_upload").width() >= $(".upload_lecture").width() ? $(".cancel_lecture_upload").width() : $(".upload_lecture").width();
+        
+        $(".cancel_test_upload").width(max_width);
+        $(".upload_test").width(max_width);
+        $(".cancel_lecture_upload").width(max_width_lecture);
+        $(".upload_lecture").width(max_width_lecture);
+        
     });
 </script>

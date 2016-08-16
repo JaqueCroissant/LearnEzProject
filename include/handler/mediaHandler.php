@@ -3,12 +3,14 @@
 class MediaHandler extends Handler {
 
     public $file_name;
+    public $compressed_file_type;
+    public $file_duration;
+    
     private $current_folder;
     private $temporary_folder;
     
     private $base_folder;
     private $copy_file;
-    private $compressed_file_type;
     private $compressed_file_path;
     
     public function __construct() {
@@ -27,7 +29,7 @@ class MediaHandler extends Handler {
             
             $base_path = realpath(__DIR__ . '/../..') . "/courses/";
             
-            if(empty($path) || !file_exists($base_path . $path)) {
+            if(empty($path) || $path == "lectures/" || $path == "tests/" || !file_exists($base_path . $path)) {
                 throw new exception("INVALID_INPUT");
             }
             
@@ -75,6 +77,58 @@ class MediaHandler extends Handler {
             $this->error = ErrorHandler::return_error($ex->getMessage());
         }
         return false;
+    }
+    
+     public function upload_lecture($file = null) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if (!array_key_exists("size", $file) || empty($file["size"])) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if ($file["size"] > 500000000) {
+                throw new exception("FILE_TOO_LARGE_500");
+            }
+
+            $this->compressed_file_type = pathinfo($file['name'], PATHINFO_EXTENSION);
+            if (!in_array(strtoupper($this->compressed_file_type), array("MP4", "AVI", "MPEG", "WMV"))) {
+                throw new exception("INVALID_FILE_TYPE_LECTURE");
+            }
+
+            $this->upload_file($file);
+
+            return true;
+        } catch (Exception $ex) {
+            //echo $ex->getMessage();
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    private function upload_file($file) {
+        $this->base_folder = realpath(__DIR__ . '/../..') . "/courses/lectures";
+
+        while (true) {
+            $file_name = md5(uniqid(mt_rand(), true));
+
+            if (!file_exists($this->base_folder . "/" . $file_name)) {
+                $this->file_name = $file_name;
+                break;
+            }
+        }
+        $this->compressed_file_path = $this->base_folder . "/" . $this->file_name . "." . $this->compressed_file_type;
+        if (!move_uploaded_file($file["tmp_name"], $this->compressed_file_path)) {
+            throw new exception("UNKNOWN_ERROR");
+        }
+        
+        $this->file_duration = floor(MP4Info::getInfo($this->compressed_file_path)->duration);
     }
 
     private function upload_compressed_file($file) {
@@ -173,6 +227,10 @@ class MediaHandler extends Handler {
 
     private function delete_directory($path) {
         if (!is_dir($path)) {
+            if(!file_exists($path)) {
+                throw new exception("INVALID_INPUT");
+            }
+            unlink($path);
             return;
         }
 

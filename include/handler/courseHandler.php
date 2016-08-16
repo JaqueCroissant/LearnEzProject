@@ -113,7 +113,7 @@ class CourseHandler extends Handler {
         return false;
     }
 
-    public function create_lecture($course_id = 0, $points = 0, $difficulty = 0, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
+    public function create_lecture($course_id = 0, $points = 0, $difficulty = 0, $sort_order = 0, $titles = array(), $descriptions = array(), $language_ids = array(), $file_name = null, $total_length = 0) {
         try {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
@@ -130,6 +130,10 @@ class CourseHandler extends Handler {
             if (!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
                 throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
             }
+            
+            if(empty($total_length) || empty($file_name) || !MediaHandler::file_exists($file_name, "lecture")) {
+                throw new exception("MUST_UPLOAD_LECTURE");
+            }
 
             $titles = $this->assign_language_id($titles, $language_ids, "title");
             $descriptions = $this->assign_language_id($descriptions, $language_ids, "description");
@@ -145,7 +149,7 @@ class CourseHandler extends Handler {
 
             DbHandler::get_instance()->query("UPDATE course_lecture SET sort_order = (sort_order + 1) WHERE sort_order > :sort_order", $sort_order);
 
-            DbHandler::get_instance()->query("INSERT INTO course_lecture (course_id, points, sort_order, advanced) VALUES (:course_id, :points, :sort_order, :difficulty)", $course_id, $points, ($sort_order + 1), $difficulty);
+            DbHandler::get_instance()->query("INSERT INTO course_lecture (course_id, points, sort_order, advanced, path, time_length) VALUES (:course_id, :points, :sort_order, :difficulty, :path, :total_length)", $course_id, $points, ($sort_order + 1), $difficulty, $file_name, $total_length);
             $last_inserted_id = DbHandler::get_instance()->last_inserted_id();
 
             foreach ($translation_texts as $key => $value) {
@@ -171,11 +175,8 @@ class CourseHandler extends Handler {
             if (empty($course_id) || !is_numeric($course_id) || (!is_numeric($points) && !is_int((int) $points)) || (!is_numeric($sort_order) && !is_int((int) $sort_order)) || (!is_numeric($difficulty) && !is_int((int) $difficulty))) {
                 throw new exception("INVALID_INPUT");
             }
-
-            if (empty($total_steps) || empty($file_name) || !MediaHandler::file_exists($file_name, "test")) {
-                if (empty($file_name)) {
-                    echo "LOL";
-                }
+            
+            if(empty($total_steps) || empty($file_name) || !MediaHandler::file_exists($file_name, "test")) {
                 throw new exception("MUST_UPLOAD_TEST");
             }
 
@@ -447,16 +448,18 @@ class CourseHandler extends Handler {
     }
 
     private function delete_element() {
+        $mediaHandler = new MediaHandler();
         switch (strtolower($this->_current_element_type)) {
             case "course":
                 DbHandler::get_instance()->query("DELETE FROM course WHERE id = :id", $this->_current_element_id);
                 DbHandler::get_instance()->query("DELETE FROM translation_course WHERE course_id = :id", $this->_current_element_id);
 
 
-                $related_lectures = DbHandler::get_instance()->return_query("SELECT id FROM course_lecture WHERE course_id = :id", $this->_current_element_id);
+                $related_lectures = DbHandler::get_instance()->return_query("SELECT id, path FROM course_lecture WHERE course_id = :id", $this->_current_element_id);
                 $array = array();
                 foreach ($related_lectures as $value) {
                     $array[] = $value["id"];
+                    $mediaHandler->delete("lectures/" . $value["path"]);
                 }
 
                 DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE course_id = :id", $this->_current_element_id);
@@ -465,10 +468,11 @@ class CourseHandler extends Handler {
                     DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id IN (" . generate_in_query($array) . ")");
                 }
 
-                $related_tests = DbHandler::get_instance()->return_query("SELECT id FROM course_test WHERE course_id = :id", $this->_current_element_id);
+                $related_tests = DbHandler::get_instance()->return_query("SELECT id, path FROM course_test WHERE course_id = :id", $this->_current_element_id);
                 $array = array();
                 foreach ($related_tests as $value) {
                     $array[] = $value["id"];
+                    $mediaHandler->delete("tests/" . $value["path"]);
                 }
 
                 DbHandler::get_instance()->query("DELETE FROM course_test WHERE course_id = :id", $this->_current_element_id);
@@ -479,15 +483,25 @@ class CourseHandler extends Handler {
                 break;
 
             case "lecture":
+                $data = DbHandler::get_instance()->return_query("SELECT path FROM course_lecture WHERE id = :id LIMIT 1" , $this->_current_element_id);
+                if(empty($data)) {
+                    break;
+                }
                 DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE id = :id", $this->_current_element_id);
                 DbHandler::get_instance()->query("DELETE FROM user_course_lecture WHERE lecture_id = :id", $this->_current_element_id);
                 DbHandler::get_instance()->query("DELETE FROM translation_course_lecture WHERE course_lecture_id = :id", $this->_current_element_id);
+                $mediaHandler->delete("lectures/" . reset($data)["path"]);
                 break;
 
             case "test":
+                $data = DbHandler::get_instance()->return_query("SELECT path FROM course_test WHERE id = :id LIMIT 1" , $this->_current_element_id);
+                if(empty($data)) {
+                    break;
+                }
                 DbHandler::get_instance()->query("DELETE FROM course_test WHERE id = :id", $this->_current_element_id);
                 DbHandler::get_instance()->query("DELETE FROM user_course_test WHERE test_id = :id", $this->_current_element_id);
                 DbHandler::get_instance()->query("DELETE FROM translation_course_test WHERE course_test_id = :id", $this->_current_element_id);
+                $mediaHandler->delete("tests/" . reset($data)["path"]);
                 break;
         }
     }

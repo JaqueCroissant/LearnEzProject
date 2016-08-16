@@ -19,5 +19,17 @@ if(isset($_POST)) {
             }
             echo json_encode($jsonArray);
             break;
+            
+        case "delete_lecture":
+            $file_name = isset($_GET["file_name"]) ? $_GET["file_name"] : null;
+            if($mediaHandler->delete("lectures/" . $file_name)) {
+                $jsonArray['status_value'] = true;
+                $jsonArray['success'] = TranslationHandler::get_static_text("LECTURE_DELETED");
+            } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $mediaHandler->error->title;
+            }
+            echo json_encode($jsonArray);
+            break;
     }
 }

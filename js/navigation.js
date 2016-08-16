@@ -10,8 +10,12 @@ function loading_page(is_loading) {
 
 function set_clickable(element) {
     if(element !== undefined) {
-        console.log(element);
-       element.removeAttr("clickable"); 
+        try {
+            element.removeAttr("clickable"); 
+        }
+        catch(e){
+
+        }
     }
 }
 

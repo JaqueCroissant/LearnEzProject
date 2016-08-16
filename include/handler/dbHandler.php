@@ -49,7 +49,7 @@
             }
             return $this->_conn;
         }
-        
+
         private function handle_arguments($query, $num_args, $args) {
             if($num_args > 0) {
                 $queryArguments = $this->find_arguments($this->get_char_array($query));

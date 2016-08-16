@@ -60,8 +60,10 @@ if(isset($_POST)) {
             $title = isset($_POST["title"]) ? $_POST["title"] : array();
             $description = isset($_POST["description"]) ? $_POST["description"] : array();
             $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
+            $file_name = isset($_POST["file_name"]) ? $_POST["file_name"] : 0;
+            $total_length = isset($_POST["total_length"]) ? $_POST["total_length"] : 0;
 
-            if($courseHandler->create_lecture($course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids)) {
+            if($courseHandler->create_lecture($course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids, $file_name, $total_length)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("LECTURE_CREATED");
             } else {
@@ -102,7 +104,6 @@ if(isset($_POST)) {
             $language_ids = isset($_POST["language_id"]) ? $_POST["language_id"] : array();
             $file_name = isset($_POST["file_name"]) ? $_POST["file_name"] : 0;
             $total_steps = isset($_POST["total_steps"]) ? $_POST["total_steps"] : 0;
-            echo $total_steps;
             if($courseHandler->create_test($course_id, $points, $difficulty, $sort_order, $title, $description, $language_ids, $file_name, $total_steps)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['success'] = TranslationHandler::get_static_text("TEST_CREATED");
@@ -165,6 +166,20 @@ if(isset($_POST)) {
                 $jsonArray['status_value'] = true;
                 $jsonArray['file_name'] = $mediaHandler->file_name;
                 $jsonArray['success'] = TranslationHandler::get_static_text("TEST_UPLOADED");
+            } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $mediaHandler->error->title;
+            }
+            echo json_encode($jsonArray);
+            break;
+            
+        case "upload_lecture":
+            $file = isset($_FILES["thumbnail_lecture"]) ? $_FILES["thumbnail_lecture"] : null;
+            if($mediaHandler->upload_lecture($file)) {
+                $jsonArray['status_value'] = true;
+                $jsonArray['file_name'] = $mediaHandler->file_name . "." . $mediaHandler->compressed_file_type;
+                $jsonArray['file_duration'] = $mediaHandler->file_duration;
+                $jsonArray['success'] = TranslationHandler::get_static_text("LECTURE_UPLOADED");
             } else {
                 $jsonArray['status_value'] = false;
                 $jsonArray['error'] = $mediaHandler->error->title;

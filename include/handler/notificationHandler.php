@@ -197,8 +197,8 @@
                         . "LIMIT 1),:languageId,notifications.default_language_id)) "
                         . "WHERE user_notifications.user_id = :userId "
                         . "ORDER BY user_notifications.datetime DESC "
-                        . "LIMIT :limit OFFSET :offset"
-                        , $langId, $langId, $langId, $this->_user->id, $limit, (int)$offset);
+                        . "LIMIT ". $limit . " OFFSET " . $offset
+                        , $langId, $langId, $langId, $this->_user->id);
                 if (count($dbData) == 0) {
                     $this->_notifications = array();
                     return true;
@@ -276,8 +276,8 @@
                         . "LIMIT 1),:languageId,notifications.default_language_id)) "
                         . "WHERE user_notifications.user_id = :userId "
                         . "ORDER BY user_notifications.datetime DESC "
-                        . "LIMIT :limit OFFSET :offset"
-                        , $langId, $langId, $langId, $this->_user->id, $limit, $offset);
+                        . "LIMIT ". $limit ." OFFSET " . $offset
+                        , $langId, $langId, $langId, $this->_user->id);
                 if (count($dbData) == 0) {
                     $this->_notifications = array();
                     return true;

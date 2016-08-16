@@ -33,6 +33,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
             $activity_limit = 3;
             $statisticsHandler->get_global_school_stats();
             $statisticsHandler->get_global_account_stats();
+            $statisticsHandler->get_course_stats();
             $statisticsHandler->get_login_activity($activity_limit);
             ?>
             <div class="col-md-12 col-sm-12 p-v-0">
@@ -42,7 +43,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                             <h4 class="panel-title<?= (RightsHandler::has_user_right("SCHOOL_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_SCHOOL") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("SCHOOLS"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
-                        <div class="widget-body">
+                        <div class="panel-body school">
                             <div>
                                 <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AMOUNT") . ":"; ?></label>
                                 <span class="pull-right"><?php echo $statisticsHandler->school_count; ?></span>
@@ -99,7 +100,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                             <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
-                        <div class="widget-body">
+                        <div class="panel-body account">
                             <div>
                                 <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AMOUNT") . ":"; ?></label>
                                 <span class="pull-right"><?php echo $statisticsHandler->account_count; ?></span>
@@ -154,8 +155,55 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                             <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("COURSES"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
-                        <div class="widget-body">
+                        <div class="panel-body course">
+                            <div>
+                                <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AMOUNT") . ":"; ?></label>
+                                <span class="pull-right"><?php echo $statisticsHandler->global_course_amount; ?></span>
+                            </div>
+                            <div>
+                                <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("LECTURES") . ":"; ?></label>
+                                <span class="pull-right"><?php echo $statisticsHandler->global_lectures_amount; ?></span>
+                            </div>
+                            <div>
+                                <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("TESTS") . ":"; ?></label>
+                                <span class="pull-right"><?php echo $statisticsHandler->global_test_amount; ?></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("DISTRIBUTION") . ":"; ?></label>
+                                </div>
+
+                            </div>
                             
+                            <div data-plugin="plot" data-options="
+                                    [
+                                        <?php
+                                            $i = 0;
+                                            foreach($statisticsHandler->course_os_distribution as $key => $value)
+                                            {
+                                                echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] ."' }";
+                                                if($i!=count($statisticsHandler->course_os_distribution)-1)
+                                                {
+                                                    echo ",";
+                                                }
+                                                $i++;
+                                            }
+
+                                        ?>
+                                    ],
+                                    {
+                                            series: {
+                                                    pie: { show: true }
+                                            },
+                                            legend: { show: false },
+                                            grid: { hoverable: true },
+                                            tooltip: {
+                                                    show: true,
+                                                    content: '%s %p.0%',
+                                                    defaultTheme: true
+                                            }
+                                    }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -38,6 +38,10 @@ class StatisticsHandler extends Handler {
     //LECTURE & TEST
     public $global_tests_complete;
     public $global_lectures_complete;
+    public $global_test_amount;
+    public $global_lectures_amount;
+    public $global_course_amount;
+    public $course_os_distribution;
 
     //GLOBAL STATS
     public $login_activity = array();
@@ -549,7 +553,7 @@ class StatisticsHandler extends Handler {
 
             return true;
         }
-        catch(Exception $ex)
+        catch(Exception $exc)
         {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
@@ -627,6 +631,35 @@ class StatisticsHandler extends Handler {
         return $output;
     }
 
+    public function get_course_stats()
+    {
+        try
+        {
+            $course_data = DbHandler::get_instance()->return_query("SELECT course.os_id, translation_course_os.title FROM course INNER JOIN translation_course_os ON course.os_id = translation_course_os.course_os_id AND translation_course_os.language_id = :current_lang", TranslationHandler::get_current_language());
 
+            $this->global_course_amount = count($course_data);
+            $this->global_lectures_amount = DbHandler::get_instance()->count_query("SELECT id FROM course_lecture");
+            $this->global_test_amount = DbHandler::get_instance()->count_query("SELECT id FROM course_test");
+
+            $distribution= [];
+            foreach($course_data as $value)
+            {
+                if(!array_key_exists($value['title'], $distribution))
+                {
+                    $distribution[$value['title']] = 0;
+                }
+                $distribution[$value['title']]++;
+            }
+
+            $this->course_os_distribution = $distribution;
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
 
 }

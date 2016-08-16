@@ -16,6 +16,7 @@ class School extends ORM{
     public $subscription_end;
     public $open;
     public $remaining_days;
+    public $filename;
     
     public $classes = array();
 }

@@ -144,9 +144,43 @@ if (RightsHandler::has_user_right("SCHOOL_EDIT") && ($classHandler->_user->user_
                             </div>
                         </div>
                     </form>
+
+                </div>
+                <div class="widget-body">
+                    <div class="form-group m-b-sm col-md-5">
+                        <div class="panel-group accordion" id="accordion-new-thumbnail-course" role="tablist" aria-multiselectable="false">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="heading-new-thumbnail-course">
+                                    <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-new-thumbnail-course" href="#collapse-new-thumbnail-course" aria-expanded="false" aria-controls="collapse-new-thumbnail-course">
+                                        <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("UPLOAD_IMAGE"); ?></label>
+                                        <i class="fa acc-switch"></i>
+                                    </a>
+                                </div>
+                                <div id="collapse-new-thumbnail-course" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-new-thumbnail-course" aria-expanded="false">
+                                    <hr class="m-0 " style="border-color: #ddd;margin: 2px 0px 14px 0px !important;">
+                                    <form class="form-horizontal" method="POST" id="school_image_upload" action="" url='create_school.php' enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <div class="col-md-10 center">
+                                                <input type='hidden' id="school_id" value="<?php echo isset($_GET['school_id']) && !empty($schoolHandler->school->id) ? $schoolHandler->school->id : ""; ?>">
+                                                <input type="file" id="school_image" name="school_image" class="p-h-xs btn btn-default text-left" style='width: 100%;'>
+                                            </div>
+                                        </div>
+                                        <div class="form-group p-t-md">
+                                            <label class="col-md-3 control-label"></label>
+                                            <div class="col-md-8">
+                                                <input type="button" name="submit" id="edit_school_image"
+                                                       value="<?php echo TranslationHandler::get_static_text("UPLOAD_IMAGE"); ?>" class="pull-right btn btn-default btn-sm upload_school_image">     
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <?php
 } else {

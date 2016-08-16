@@ -8,12 +8,9 @@ class CourseHandler extends Handler {
     public $tests = array();
     public $current_element;
     public $last_elements = array();
-    
     private $_current_element_type;
     private $_current_element_id;
     private $_school_id;
-    
-    
 
     CONST COURSE = "COURSE";
     CONST LECTURE = "LECTURE";
@@ -755,7 +752,7 @@ class CourseHandler extends Handler {
     //</editor-fold>
     //
     //<editor-fold defaultstate="collapsed" desc="PROGRESS">
-    public function get_courses() {
+    public function get_courses($user_id = 0) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
@@ -763,8 +760,12 @@ class CourseHandler extends Handler {
             if (!RightsHandler::has_user_right("COURSE_VIEW")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
-
-            if ($this->_user->user_type_id == 1) {
+            if (!is_numeric($user_id)) {
+                throw new Exception("INVALID_INPUT_IS_NOT_INT");
+            }
+            if ($user_id != 0) {
+                $courses = DbHandler::get_instance()->return_query("SELECT course.id, course.color, course_image.filename as image_filename, translation_course.title, translation_course.description FROM course INNER JOIN school_course ON school_course.course_id = course.id INNER JOIN users ON school_course.school_id = users.school_id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language LEFT JOIN course_image ON course_image.id = course.image_id WHERE course.os_id = :os_id AND users.id = :user_id ORDER BY course.sort_order ", TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id, $user_id);
+            } else if ($this->_user->user_type_id == 1) {
                 $courses = DbHandler::get_instance()->return_query("SELECT course.id, course.color, course_image.filename as image_filename, translation_course.title, translation_course.description FROM course INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language LEFT JOIN course_image ON course_image.id = course.image_id WHERE course.os_id = :os_id ORDER BY course.sort_order", TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id);
             } else {
                 $courses = DbHandler::get_instance()->return_query("SELECT course.id, course.color, course_image.filename as image_filename, translation_course.title, translation_course.description FROM course INNER JOIN school_course ON school_course.course_id = course.id AND school_id = :school INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language LEFT JOIN course_image ON course_image.id = course.image_id WHERE course.os_id = :os_id ORDER BY course.sort_order", $this->_user->school_id, TranslationHandler::get_current_language(), SettingsHandler::get_settings()->os_id);
@@ -778,12 +779,15 @@ class CourseHandler extends Handler {
             $in_array = generate_in_query(array_map(function($o) {
                         return $o["id"];
                     }, $courses));
-            $course_progress = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course_test.total_steps AS total, user_course_test.is_complete, user_course_test.progress, 1 AS type FROM course INNER JOIN course_test ON course_test.course_id = course.id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user WHERE course.id IN(" . $in_array . ") UNION ALL SELECT course.id AS course_id, course_lecture.time_length AS total, user_course_lecture.is_complete, user_course_lecture.progress, 2 AS type FROM course INNER JOIN course_lecture ON course_lecture.course_id = course.id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user WHERE course.id IN(" . $in_array . ")", $this->_user->settings->language_id, $this->_user->id, $this->_user->settings->language_id, $this->_user->id);
+            if ($user_id != 0) {
+                $course_progress = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course_test.total_steps AS total, user_course_test.is_complete, user_course_test.progress, 1 AS type FROM course INNER JOIN course_test ON course_test.course_id = course.id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user WHERE course.id IN(" . $in_array . ") UNION ALL SELECT course.id AS course_id, course_lecture.time_length AS total, user_course_lecture.is_complete, user_course_lecture.progress, 2 AS type FROM course INNER JOIN course_lecture ON course_lecture.course_id = course.id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user WHERE course.id IN(" . $in_array . ")", $this->_user->settings->language_id, $user_id, $this->_user->settings->language_id, $user_id);
+            } else {
+                $course_progress = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course_test.total_steps AS total, user_course_test.is_complete, user_course_test.progress, 1 AS type FROM course INNER JOIN course_test ON course_test.course_id = course.id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user WHERE course.id IN(" . $in_array . ") UNION ALL SELECT course.id AS course_id, course_lecture.time_length AS total, user_course_lecture.is_complete, user_course_lecture.progress, 2 AS type FROM course INNER JOIN course_lecture ON course_lecture.course_id = course.id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user WHERE course.id IN(" . $in_array . ")", $this->_user->settings->language_id, $this->_user->id, $this->_user->settings->language_id, $this->_user->id);
+            }
             $group = array();
 
             foreach ($course_progress as $course) {
                 $group[$course["course_id"]][] = $course;
-                
             }
 
             $final = array();

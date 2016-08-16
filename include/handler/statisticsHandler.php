@@ -48,6 +48,7 @@ class StatisticsHandler extends Handler {
     public $account_count = 0;
     public $accounts_open = 0;
     public $account_type_amount;
+    public $account_types = [];
 
     private $_school_id;
     private $_class_id;
@@ -496,10 +497,28 @@ class StatisticsHandler extends Handler {
                 throw new Exception("INVALID_INPUT");
             }
 
-            $data = DbHandler::get_instance()->return_query("SELECT time FROM login_record WHERE time >= NOW() - INTERVAL :limit DAY", $limit);
-            $dates = $this->convert_to_date_time_array($data, "time");
-            $sorted_dates = $this->sort_and_count($dates);
-            $this->login_activity = $sorted_dates;
+            $data = DbHandler::get_instance()->return_query("SELECT login_record.time, translation_user_type.user_type_id, translation_user_type.title FROM login_record INNER JOIN users ON users.id = login_record.users_id INNER JOIN translation_user_type ON users.user_type_id = translation_user_type.user_type_id AND translation_user_type.language_id = :current_lang WHERE time >= NOW() - INTERVAL :limit DAY", TranslationHandler::get_current_language(), $limit);
+
+
+            $types = [];
+            $types['all'] = array();
+
+            foreach($data as $value)
+            {
+                if(!array_key_exists($value['title'], $types))
+                {
+                    $types[$value['title']] = array();
+                }
+                $types[$value['title']][] = $value['time'];
+                $types['all'][] = $value['time'];
+            }
+
+            foreach($types as $key => $value)
+            {
+                $types[$key] = $this->convert_to_date_time_array($value);
+            }
+
+            $this->login_activity = $types;
 
             return true;
         }
@@ -562,30 +581,24 @@ class StatisticsHandler extends Handler {
         return $dates;
     }
 
-    private function convert_to_date_time_array($data, $field_name)
+    private function convert_to_date_time_array($data)
     {
         $dates = array();
         foreach($data as $value)
         {
-            $month = date("m", strtotime($value[$field_name]));
-            $day = date("j", strtotime($value[$field_name]));
-            $hour = date("G", strtotime($value[$field_name]));
+            $date = date("Y-m-d", strtotime($value));
+            $hour = date("G", strtotime($value));
 
-            if(!key_exists($month, $dates))
+            if(!key_exists($date, $dates))
             {
-                $dates[$month] = array();
+                $dates[$date] = array();
             }
 
-            if(!key_exists($day, $dates[$month]))
+            if(!key_exists($hour, $dates[$date]))
             {
-                $dates[$month][$day] = array();
+                $dates[$date][$hour] = 0;
             }
-
-            if(!key_exists($hour, $dates[$month][$day]))
-            {
-                $dates[$month][$day][$hour] = 0;
-            }
-            $dates[$month][$day][$hour]++;
+            $dates[$date][$hour]++;
         }
 
         return $dates;

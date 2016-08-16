@@ -30,9 +30,16 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
     switch($userHandler->_user->user_type_id)
     {
         case "1":
-            
+            $activity_limit = 3;
             $statisticsHandler->get_global_school_stats();
             $statisticsHandler->get_global_account_stats();
+            $statisticsHandler->get_login_activity($activity_limit);
+
+            echo date('j')-$activity_limit;
+
+            echo '<pre>';
+            var_dump($statisticsHandler->login_activity);
+            echo '</pre>';
             ?>
             <div class="col-md-12 col-sm-12 p-v-0">
                 <div class="col-sm-4">
@@ -171,7 +178,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                     trigger: 'axis'
                                 },
                                 legend: {
-                                data:['<?= TranslationHandler::get_static_text("LECTURES") ?>','<?= TranslationHandler::get_static_text("TESTS") ?>']
+                                data:['<?= TranslationHandler::get_static_text("LECTURES") ?>']
                                 },
                                 calculable : true,
                                 xAxis : [
@@ -180,9 +187,19 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                         boundaryGap : false,
                                         data : [
                                             <?php
-                                            for($i = date('w')-6; $i < date('w')+1; $i++) {
-                                                echo "'" . TranslationHandler::get_static_text("WEEK_DAY_" . strtoupper(day_num_to_string($i))) . "'";
-                                                if($i != date('w')) {
+                                            for($i = date('G')-(24*$activity_limit); $i < date('G')+1; $i++) {
+
+                                                $hour = $i;
+
+                                                while($hour < 0)
+                                                {
+                                                    $hour += 24;
+                                                }
+
+                                                echo $hour;
+
+                                                if($i != date('G'))
+                                                {
                                                     echo ",";
                                                 }
                                             }
@@ -204,46 +221,42 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                         data:
                                         [
                                             <?php
-                                            for($i = date('j')-6; $i < date('j')+1; $i++) {
-
-                                                $num = $i > 0 ? $i : date("t", strtotime(date("Y-m-d -1 months"))) + $i;
-                                                if(array_key_exists($num, $statisticsHandler->global_lectures_complete))
+                                            for($i = date('j')-$activity_limit; $i < date('j')+1; $i++)
+                                            {
+                                                $day = $i > 0 ? $i : date("t", strtotime(date("Y-m-d -1 months"))) + $i;
+                                                if(array_key_exists($day, $statisticsHandler->login_activity))
                                                 {
-                                                    echo $statisticsHandler->global_lectures_complete[$num];
+                                                    for($j = date('G')-24; $j < date('G')+1; $j++)
+                                                    {
+                                                        $hour = $j;
+                                                        while($hour < 0)
+                                                        {
+                                                            $hour += 24;
+                                                        }
+
+                                                        if(array_key_exists($hour, $statisticsHandler->login_activity[$day]))
+                                                        {
+                                                            echo $statisticsHandler->login_activity[$day][$hour];
+                                                        }
+                                                        else
+                                                        {
+                                                            echo 0;
+                                                        }
+
+                                                        if($j != date('G'))
+                                                        {
+                                                            echo ",";
+                                                        }
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    echo "0";
+                                                    echo "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
                                                 }
 
-                                                if($i != date('j')) {
-                                                    echo ",";
-                                                }
-                                            }
-                                            ?>
-                                        ]
-                                    },
-                                    {
-                                        name:'<?= TranslationHandler::get_static_text("TESTS") ?>',
-                                        type:'line',
-                                        smooth:true,
-                                        itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                                        data:[
-                                            <?php
-                                            for($i = date('j')-6; $i < date('j')+1; $i++) {
-
-                                                $num = $i > 0 ? $i : date("t", strtotime(date("Y-m-d -1 months"))) + $i;
-                                                if(array_key_exists($num, $statisticsHandler->global_tests_complete))
+                                                if($i != date('j'))
                                                 {
-                                                    echo $statisticsHandler->global_tests_complete[$num];
-                                                }
-                                                else
-                                                {
-                                                    echo "0";
-                                                }
-
-                                                if($i != date('j')) {
-                                                    echo ",";
+                                                        echo ",";
                                                 }
                                             }
                                             ?>

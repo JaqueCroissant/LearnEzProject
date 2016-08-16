@@ -40,6 +40,7 @@ class StatisticsHandler extends Handler {
     public $global_lectures_complete;
 
     //GLOBAL STATS
+    public $login_activity = array();
     public $school_count = 0;
     public $schools_open = 0;
     public $school_classes_global = 0;
@@ -495,14 +496,17 @@ class StatisticsHandler extends Handler {
                 throw new Exception("INVALID_INPUT");
             }
 
-            $data = DbHandler::get_instance()->return_query("SELECT time FROM login_record WHERE time >= CURDATE() - INTERVAL :limit DAY", $limit);
-            $dates = $this->convert_to_date_array($data, "time");
+            $data = DbHandler::get_instance()->return_query("SELECT time FROM login_record WHERE time >= NOW() - INTERVAL :limit DAY", $limit);
+            $dates = $this->convert_to_date_time_array($data, "time");
             $sorted_dates = $this->sort_and_count($dates);
-            var_dump($sorted_dates);
+            $this->login_activity = $sorted_dates;
+
+            return true;
         }
         catch(Exception $ex)
         {
-
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
         }
 
     }
@@ -541,6 +545,7 @@ class StatisticsHandler extends Handler {
         {
             $month = date("m", strtotime($value[$field_name]));
             $day = date("j", strtotime($value[$field_name]));
+            $hour = date("G", strtotime($value[$field_name]));
 
             if(!key_exists($month, $dates))
             {
@@ -552,6 +557,35 @@ class StatisticsHandler extends Handler {
                 $dates[$month][$day] = 0;
             }
             $dates[$month][$day]++;
+        }
+
+        return $dates;
+    }
+
+    private function convert_to_date_time_array($data, $field_name)
+    {
+        $dates = array();
+        foreach($data as $value)
+        {
+            $month = date("m", strtotime($value[$field_name]));
+            $day = date("j", strtotime($value[$field_name]));
+            $hour = date("G", strtotime($value[$field_name]));
+
+            if(!key_exists($month, $dates))
+            {
+                $dates[$month] = array();
+            }
+
+            if(!key_exists($day, $dates[$month]))
+            {
+                $dates[$month][$day] = array();
+            }
+
+            if(!key_exists($hour, $dates[$month][$day]))
+            {
+                $dates[$month][$day][$hour] = 0;
+            }
+            $dates[$month][$day][$hour]++;
         }
 
         return $dates;

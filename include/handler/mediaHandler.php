@@ -98,7 +98,7 @@ class MediaHandler extends Handler {
             }
 
             $this->compressed_file_type = pathinfo($file['name'], PATHINFO_EXTENSION);
-            if (!in_array(strtoupper($this->compressed_file_type), array("MP4", "AVI", "MPEG", "WMV"))) {
+            if (!in_array(strtoupper($this->compressed_file_type), array("MP4"))) {
                 throw new exception("INVALID_FILE_TYPE_LECTURE");
             }
 

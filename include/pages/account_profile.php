@@ -9,19 +9,37 @@ $schoolHandler = new SchoolHandler();
 
 $user_id = isset($_GET["user_id"]) ? $_GET["user_id"] : null;
 
-if(!$userHandler->get_user_by_id($user_id)) {
+if (!$userHandler->get_user_by_id($user_id)) {
     ErrorHandler::show_error_page();
     die();
 }
 
 $current_user = $userHandler->temp_user;
-if(!empty($current_user->school_id)) {
+if (!empty($current_user->school_id)) {
     $schoolHandler->get_school_by_id($current_user->school_id);
     $current_school = $schoolHandler->school;
 };
 ?>
 
 <div class="profile-header" style="margin: -1.5rem -1.5rem 1.5rem -1.5rem !important;">
+    <div class="col-md-2 pull-right m-t-lg m-r-lg">
+
+        <?php if (RightsHandler::has_user_right("ACCOUNT_AVAILABILITY")) { ?>
+            <div class="pull-right p-v-xs">
+                <form method="post" id="alert_form_<?php echo $current_user->id; ?>" action="" url="edit_account.php?step=set_availability">
+                    <i style="width:20px; height:20px;" class="zmdi zmdi-hc-2x zmdi-hc-lg <?php echo $current_user->open == 1 ? "zmdi-close-circle" : "zmdi-check-circle" ?> btn_close_account m-r-sm a pull-right" element_state='<?php echo $current_user->open; ?>' element_id='<?php echo $current_user->id; ?>' data-toggle="tooltip" title="<?= $current_user->open == 1 ? TranslationHandler::get_static_text("CLOSE") : TranslationHandler::get_static_text("OPEN") ?>"></i>
+                    <input type="hidden" name="user_id" value="<?php echo $current_user->id; ?>">
+                    <input type="hidden" id='account_availability' value="<?php echo $current_user->open; ?>">
+                    <input type="hidden" name="submit" value="submit">
+                </form>
+            </div>
+        <?php } ?>
+        <?php if (RightsHandler::has_user_right("ACCOUNT_EDIT")) { ?>
+            <div class="pull-right p-v-xs">
+                <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg zmdi-hc-2x zmdi-edit m-r-xs change_page a" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>" page="edit_account" step="" args="&user_id=<?php echo $current_user->id; ?>"></i>
+            </div>
+        <?php } ?>
+    </div>
     <div class="profile-cover">
         <div class="cover-user m-b-lg">
             <div>
@@ -33,7 +51,7 @@ if(!empty($current_user->school_id)) {
                 </div>
             </div>
             <div>
-                <?php if(MailHandler::can_send_to_receiver($user_id)) { ?>
+                <?php if (MailHandler::can_send_to_receiver($user_id)) { ?>
                     <span class="cover-icon change_page" id="mail" page="mail" step="create_mail" args="&receiver_id=USER_ANY_<?= $current_user->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>" style="cursor:pointer;line-height:38px !important;"><i class="fa fa-envelope" style="margin-left:1px;"></i></span>
                 <?php } else { ?>
                     <span class="cover-icon"  data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>" style="cursor:not-allowed;line-height:38px !important;"><i class="fa fa-envelope" style="margin-left:1px;"></i></span>
@@ -44,7 +62,7 @@ if(!empty($current_user->school_id)) {
             <h4 class="profile-info-name m-b-lg"><span class="title-color"><?= ucwords($current_user->firstname . " " . $current_user->surname); ?></span></h4>
             <div class="text-primary">
                 <span style="padding-right:10px;"><i class="zmdi-hc-fw zmdi p-r-lg zmdi-device-hub zmdi-hc-lg" style="line-height: 0.4em !important;"></i> <?= htmlentities($current_user->user_type_title); ?></span>
-                <span data-toggle="tooltip" title="<?= !empty($current_user->school_id) ? htmlspecialchars($current_school->name) : "LearnEZ"; ?>"><i class="zmdi-hc-fw zmdi p-r-lg zmdi-city zmdi-hc-lg" style="line-height: 0.4em !important;"></i><?= !empty($current_user->school_id) ? (strlen(htmlspecialchars($current_school->name)) > 40 ? substr(htmlspecialchars($current_school->name), 0, 40) : htmlspecialchars($current_school->name)) : "LearnEZ"; ?></span>
+                <span data-toggle="tooltip" title="<?= !empty($current_user->school_id) ? htmlspecialchars($current_school->name) : "LearnEZ"; ?>" class="<?= !empty($current_user->school_id)? "change_page a " : "" ?>" page='school_profile' step='' args='&school_id=<?= !empty($current_user->school_id)? $current_user->school_id : "" ?>'><i class="zmdi-hc-fw zmdi p-r-lg zmdi-city zmdi-hc-lg" style="line-height: 0.4em !important;"></i><?= !empty($current_user->school_id) ? (strlen(htmlspecialchars($current_school->name)) > 40 ? substr(htmlspecialchars($current_school->name), 0, 40) : htmlspecialchars($current_school->name)) : "LearnEZ"; ?></span>
             </div>
         </div>
     </div>
@@ -62,7 +80,7 @@ if(!empty($current_user->school_id)) {
                 <div class="text-center">
                     <small>Seneste login</small>
                     <?php $last_login = time_elapsed($current_user->last_login); ?>
-                    
+
                     <h4 class="m-0 m-t-xs"><?= $current_user->last_login == 0 ? TranslationHandler::get_static_text("NEVER") : $last_login["value"] . ' ' . TranslationHandler::get_static_text($last_login["prefix"]) . ' ' . TranslationHandler::get_static_text("DATE_AGO"); ?></h4>
                 </div>
             </div>
@@ -100,17 +118,17 @@ if(!empty($current_user->school_id)) {
                         <td><?= TranslationHandler::get_static_text("NAME") ?>:</td>
                         <td style="text-align:right;"><?= ucwords(htmlspecialchars($current_user->firstname) . " " . htmlspecialchars($current_user->surname)); ?></td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td><?= TranslationHandler::get_static_text("USERNAME") ?>:</td>
                         <td style="text-align:right;"><?= $current_user->username; ?></td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td><?= TranslationHandler::get_static_text("USER_TYPE") ?>:</td>
                         <td style="text-align:right;"><?= htmlspecialchars($current_user->user_type_title); ?></td>
                     </tr>
                     <tr>
                         <td><?= TranslationHandler::get_static_text("AFFILIATION") ?>:</td>
-                        <td style="text-align:right;"><?= !empty($current_user->school_id) ? (strlen(htmlspecialchars($current_school->name)) > 40 ? substr(htmlspecialchars($current_school->name), 0, 40) : htmlspecialchars($current_school->name)) : "LearnEZ " . strtolower(TranslationHandler::get_static_text("STAFF")); ?></td>
+                        <td class="<?= empty($current_user->school_id) || $current_user->school_id == "0" ? "text-primary fw-600" : "" ?>" style="text-align:right;"><?= !empty($current_user->school_id) ? (strlen(htmlspecialchars($current_school->name)) > 40 ? substr(htmlspecialchars($current_school->name), 0, 40) : htmlspecialchars($current_school->name)) : "LearnEZ " . strtolower(TranslationHandler::get_static_text("STAFF")); ?></td>
                     </tr>
                 </table>
             </div>
@@ -130,7 +148,7 @@ if(!empty($current_user->school_id)) {
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading p-h-lg p-v-md" >
@@ -139,81 +157,93 @@ if(!empty($current_user->school_id)) {
             <hr class="widget-separator m-0">
             <div class="panel-body user-progress">
                 <div data-plugin="chart" data-options="{
-                    tooltip : {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                    data:['<?= TranslationHandler::get_static_text("LECTURES") ?>','<?= TranslationHandler::get_static_text("TESTS") ?>']
-                    },
-                    calculable : true,
-                    xAxis : [
-                        {
-                            type : 'category',
-                            boundaryGap : false,
-                            data : [
-                            <?php
-                            for($i = date('m')-4; $i < date('m')+1; $i++) {
-                                echo "'" . TranslationHandler::get_static_text(strtoupper(month_num_to_string($i))) . "'";
-                                if($i != date('m')) {
-                                    echo ",";
-                                }
-                            }
-                            ?>
-                            ]
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type : 'value'
-                        }
-                    ],
-                    series : [
-                        {
-                            name:'<?= TranslationHandler::get_static_text("LECTURES") ?>',
-                            type:'line',
-                            smooth:true,
-                            itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                            data:[10, 12, 21, 54, 260]
-                        },
-                        {
-                            name:'<?= TranslationHandler::get_static_text("TESTS") ?>',
-                            type:'line',
-                            smooth:true,
-                            itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                            data:[30, 182, 434, 791, 390]
-                        }
-                    ]
-                    }" style="height: 300px;"></div>
-                <!--<div class="center progress-text" style="margin-top: 20px; margin-bottom: 20px;"><?= TranslationHandler::get_static_text("NO_COURSE_PROGRESS") ?></div>-->
+                     tooltip : {
+                     trigger: 'axis'
+                     },
+                     legend: {
+                     data:['<?= TranslationHandler::get_static_text("LECTURES") ?>','<?= TranslationHandler::get_static_text("TESTS") ?>']
+                     },
+                     calculable : true,
+                     xAxis : [
+                     {
+                     type : 'category',
+                     boundaryGap : false,
+                     data : [
+                     <?php
+                     for ($i = date('m') - 4; $i < date('m') + 1; $i++) {
+                         echo "'" . TranslationHandler::get_static_text(strtoupper(month_num_to_string($i))) . "'";
+                         if ($i != date('m')) {
+                             echo ",";
+                         }
+                     }
+                     ?>
+                     ]
+                     }
+                     ],
+                     yAxis : [
+                     {
+                     type : 'value'
+                     }
+                     ],
+                     series : [
+                     {
+                     name:'<?= TranslationHandler::get_static_text("LECTURES") ?>',
+                     type:'line',
+                     smooth:true,
+                     itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                     data:[10, 12, 21, 54, 260]
+                     },
+                     {
+                     name:'<?= TranslationHandler::get_static_text("TESTS") ?>',
+                     type:'line',
+                     smooth:true,
+                     itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                     data:[30, 182, 434, 791, 390]
+                     }
+                     ]
+                     }" style="height: 300px;"></div>
+                 <!--<div class="center progress-text" style="margin-top: 20px; margin-bottom: 20px;"><?= TranslationHandler::get_static_text("NO_COURSE_PROGRESS") ?></div>-->
             </div>
         </div>
     </div>
 </div>
-    
+<div id="alertbox" class="panel panel-danger alert_panel hidden" >
+    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+    <div class="panel-body">
+        <div class="hidden" id="open_text"><?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("ACCOUNT")) . "?"; ?></div>
+        <div class="hidden" id="close_text"><?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("ACCOUNT")) . "?"; ?></div>
+    </div>
+    <div class="panel-footer p-h-sm">
+        <p class="m-0">
+            <input class="btn btn-default btn-sm p-v-lg accept_alertbox_btn" id="" page='account_profile' type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            <input class="btn btn-default btn-sm p-v-lg cancel_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+        </p>
+    </div>
+</div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();
-    if($(".user-description").height() > $(".user-information").height()) {
-        $(".user-information").height($(".user-description").height());
-    } else {
-        var padding = Math.floor(($(".user-information").height() - $('.description').height()) / 2);
-        $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
-        $(".user-description").height($(".user-information").height());
-    }
-    
-    if($(".user-achievements").height() > $(".user-progress").height()) {
-        if($('.progress-text').length) {
-            var padding = Math.floor(($(".user-achievements").height() - $('.progress-text').height()) / 2);
-            $('.progress-text').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+    $(document).ready(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        if ($(".user-description").height() > $(".user-information").height()) {
+            $(".user-information").height($(".user-description").height());
+        } else {
+            var padding = Math.floor(($(".user-information").height() - $('.description').height()) / 2);
+            $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+            $(".user-description").height($(".user-information").height());
         }
-        $(".user-progress").height($(".user-achievements").height());
-    } else {
-        if($('.achievements-text').length) {
-            var padding = Math.floor(($(".user-progress").height() - $('.achievements-text').height()) / 2);
-            $('.achievements-text').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+
+        if ($(".user-achievements").height() > $(".user-progress").height()) {
+            if ($('.progress-text').length) {
+                var padding = Math.floor(($(".user-achievements").height() - $('.progress-text').height()) / 2);
+                $('.progress-text').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+            }
+            $(".user-progress").height($(".user-achievements").height());
+        } else {
+            if ($('.achievements-text').length) {
+                var padding = Math.floor(($(".user-progress").height() - $('.achievements-text').height()) / 2);
+                $('.achievements-text').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+            }
+            $(".user-achievements").height($(".user-progress").height());
         }
-        $(".user-achievements").height($(".user-progress").height());
-    }
-});
+    });
 </script>

@@ -35,15 +35,33 @@
         clicked_checkbox_id = $(this).attr("element_id");
     });
     
+    $(document).on("click", ".btn_close_account", function (event) {
+        event.preventDefault();
+        var text = $("#account_availability").val() === "1" ? $("#open_text").text() : $("#close_text").text();
+        console.log($("#account_availability").val());
+        $("#alertbox").find(".panel-body").text(text);
+        $("#alertbox").removeClass("hidden");
+        var offset = $(this).offset()["top"] - ($("#alertbox").height());
+        if (offset < 0) {
+            offset = 25;
+        }
+        $("#alertbox").css("top", offset);
+        clicked_checkbox_id = $(this).attr("element_id");
+    });
+    
     $(document).on("click", ".accept_alertbox_btn", function (event) {
         event.preventDefault();
         var form = $("#alert_form_" + clicked_checkbox_id);
+        page_state = $(this).attr("page");
         initiate_submit_form(form, function () {
             show_status_bar("error", ajax_data.error);
             close_alert_box(true);
         }, function () {
             show_status_bar("success", ajax_data.success);
             close_alert_box(false);
+            if (page_state === "account_profile") {
+                reload_page_content(page_state);
+            }
         });
     });
 

@@ -15,6 +15,52 @@ class SchoolHandler extends Handler {
         parent::__construct();
     }
 
+    public function upload_image($school_id, $file = null) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if (empty($file) || !is_array($file)) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if ($file["size"] > 1000000) {
+                throw new exception("IMAGE_TOO_LARGE_MAX_1_MB");
+            }
+
+            $this->verify_school_exists($school_id);
+
+            $file_type = pathinfo($file['name'], PATHINFO_EXTENSION);
+            if (!in_array(strtoupper($file_type), array("JPG", "JPEG", "PNG", "GIF"))) {
+                throw new exception("IMAGE_MUST_BE_OF_TYPE_JPG_JPEG_PNG_GIF");
+            }
+
+            $file_location = realpath(__DIR__ . '/../..') . "/assets/images/school_profile/";
+            $file_name = md5(uniqid(mt_rand(), true)) . "." . $file_type;
+            if (!move_uploaded_file($file["tmp_name"], $file_location . "uncropped/" . $file_name)) {
+                throw new exception("UNKNOWN_ERROR");
+            }
+
+            $resize = new Resize($file_location . "uncropped/" . $file_name);
+            $resize->resize_image(90, 90, 'auto');
+            $resize->save_image($file_location . "" . $file_name, 100);
+
+            if (DbHandler::get_instance()->query("UPDATE school SET filename = :filename WHERE id = :id", $file_name, $school_id)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
     public function get_all_schools($is_open = false) {
         try {
             if (!$this->user_exists()) {
@@ -114,7 +160,7 @@ class SchoolHandler extends Handler {
             $this->verify_school_exists($id);
 
             $query = "SELECT school.id as id, school.name as name, school.address, school.zip_code, school.city, school.school_type_id, school.phone, 
-                     school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title as school_type, school.open 
+                     school.email, school.max_students, school.subscription_start, school.subscription_end, school_type.title as school_type, school.open, school.filename 
                      FROM school INNER JOIN school_type ON school.school_type_id = school_type.id WHERE school.id = :id LIMIT 1";
             $this->school = new School(reset(DbHandler::get_instance()->return_query($query, $id)));
             $this->school->remaining_days = $this->set_remaining_days($this->school);
@@ -305,7 +351,7 @@ class SchoolHandler extends Handler {
 
             $this->verify_user_school_access($school_id);
             $this->verify_school_exists($school_id);
-            $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1", $school_id);
+            $active_students = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE school_id = :school AND open = 1 AND user_type_id > 2", $school_id);
             $max_students = reset(DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $school_id));
             $this->open_slots = $max_students["max_students"] - $active_students;
 

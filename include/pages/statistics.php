@@ -25,21 +25,15 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
     .dataTables_filter, .dataTables_length, .dataTables_info { display: none !important;}
 </style>
 <div class="row">
-    
-<?php
-    switch($userHandler->_user->user_type_id)
-    {
+
+    <?php
+    switch ($userHandler->_user->user_type_id) {
         case "1":
             $activity_limit = 3;
             $statisticsHandler->get_global_school_stats();
             $statisticsHandler->get_global_account_stats();
+            $statisticsHandler->get_course_stats();
             $statisticsHandler->get_login_activity($activity_limit);
-
-            echo date('j')-$activity_limit;
-
-            echo '<pre>';
-            var_dump($statisticsHandler->login_activity);
-            echo '</pre>';
             ?>
             <div class="col-md-12 col-sm-12 p-v-0">
                 <div class="col-sm-4">
@@ -48,7 +42,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                             <h4 class="panel-title<?= (RightsHandler::has_user_right("SCHOOL_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_SCHOOL") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("SCHOOLS"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
-                        <div class="widget-body">
+                        <div class="panel-body school">
                             <div>
                                 <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AMOUNT") . ":"; ?></label>
                                 <span class="pull-right"><?php echo $statisticsHandler->school_count; ?></span>
@@ -67,45 +61,42 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                 </div>
                             </div>
                             <div data-plugin="plot" data-options="
-                                    [
-                                        <?php
-                                            $i = 0;
-                                            foreach($statisticsHandler->school_type_amount as $key => $value)
-                                            {   
-                                                echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] ."' }";
-                                                if($i!=count($statisticsHandler->school_type_amount)-1)
-                                                {
-                                                    echo ",";
-                                                }
-                                                $i++;
-                                            }
-
-                                        ?>
-                                    ],
-                                    {
-                                            series: {
-                                                    pie: { show: true }
-                                            },
-                                            legend: { show: false },
-                                            grid: { hoverable: true },
-                                            tooltip: {
-                                                    show: true,
-                                                    content: '%s %p.0%',
-                                                    defaultTheme: true
-                                            }
-                                    }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
+                                 [
+                                 <?php
+                                 $i = 0;
+                                 foreach ($statisticsHandler->school_type_amount as $key => $value) {
+                                     echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] . "' }";
+                                     if ($i != count($statisticsHandler->school_type_amount) - 1) {
+                                         echo ",";
+                                     }
+                                     $i++;
+                                 }
+                                 ?>
+                                 ],
+                                 {
+                                 series: {
+                                 pie: { show: true }
+                                 },
+                                 legend: { show: false },
+                                 grid: { hoverable: true },
+                                 tooltip: {
+                                 show: true,
+                                 content: '%s %p.0%',
+                                 defaultTheme: true
+                                 }
+                                 }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
-                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
-                        <div class="widget-body">
+                        <div class="panel-body account">
                             <div>
                                 <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AMOUNT") . ":"; ?></label>
                                 <span class="pull-right"><?php echo $statisticsHandler->account_count; ?></span>
@@ -118,50 +109,91 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                 <div class="col-sm-5">
                                     <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("DISTRIBUTION") . ":"; ?></label>
                                 </div>
-                                
-                            </div>
-                            
-                            <div data-plugin="plot" data-options="
-                                    [
-                                        <?php
-                                            $i = 0;
-                                            foreach($statisticsHandler->account_type_amount as $key => $value)
-                                            {   
-                                                echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] ."' }";
-                                                if($i!=count($statisticsHandler->account_type_amount)-1)
-                                                {
-                                                    echo ",";
-                                                }
-                                                $i++;
-                                            }
 
-                                        ?>
-                                    ],
-                                    {
-                                            series: {
-                                                    pie: { show: true }
-                                            },
-                                            legend: { show: false },
-                                            grid: { hoverable: true },
-                                            tooltip: {
-                                                    show: true,
-                                                    content: '%s %p.0%',
-                                                    defaultTheme: true
-                                            }
-                                    }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
+                            </div>
+
+                            <div data-plugin="plot" data-options="
+                                 [
+        <?php
+        $i = 0;
+        foreach ($statisticsHandler->account_type_amount as $key => $value) {
+            echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] . "' }";
+            if ($i != count($statisticsHandler->account_type_amount) - 1) {
+                echo ",";
+            }
+            $i++;
+        }
+        ?>
+                                 ],
+                                 {
+                                 series: {
+                                 pie: { show: true }
+                                 },
+                                 legend: { show: false },
+                                 grid: { hoverable: true },
+                                 tooltip: {
+                                 show: true,
+                                 content: '%s %p.0%',
+                                 defaultTheme: true
+                                 }
+                                 }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
-                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNT_ACTIVITY"); ?></h4>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("COURSES"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
-                        <div class="widget-body">
-                            
+                        <div class="panel-body course">
+                            <div>
+                                <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("AMOUNT") . ":"; ?></label>
+                                <span class="pull-right"><?php echo $statisticsHandler->global_course_amount; ?></span>
+                            </div>
+                            <div>
+                                <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("LECTURES") . ":"; ?></label>
+                                <span class="pull-right"><?php echo $statisticsHandler->global_lectures_amount; ?></span>
+                            </div>
+                            <div>
+                                <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("TESTS") . ":"; ?></label>
+                                <span class="pull-right"><?php echo $statisticsHandler->global_test_amount; ?></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("DISTRIBUTION") . ":"; ?></label>
+                                </div>
+
+                            </div>
+
+                            <div data-plugin="plot" data-options="
+                                 [
+        <?php
+        $i = 0;
+        foreach ($statisticsHandler->course_os_distribution as $key => $value) {
+            echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] . "' }";
+            if ($i != count($statisticsHandler->course_os_distribution) - 1) {
+                echo ",";
+            }
+            $i++;
+        }
+        ?>
+                                 ],
+                                 {
+                                 series: {
+                                 pie: { show: true }
+                                 },
+                                 legend: { show: false },
+                                 grid: { hoverable: true },
+                                 tooltip: {
+                                 show: true,
+                                 content: '%s %p.0%',
+                                 defaultTheme: true
+                                 }
+                                 }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -169,124 +201,124 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-heading p-h-lg p-v-md" >
-                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-trending-up zmdi-hc-lg" style="padding-right:30px;"></i><?= TranslationHandler::get_static_text("COURSE_PROGRESS") ?></h4>
+                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?= TranslationHandler::get_static_text("LOGIN_ACTIVITY") ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="panel-body user-progress">
+
+
                             <div data-plugin="chart" data-options="{
-                                tooltip : {
-                                    trigger: 'axis'
-                                },
-                                legend: {
-                                data:['<?= TranslationHandler::get_static_text("LECTURES") ?>']
-                                },
-                                calculable : true,
-                                xAxis : [
-                                    {
-                                        type : 'category',
-                                        boundaryGap : false,
-                                        data : [
-                                            <?php
-                                            for($i = date('G')-(24*$activity_limit); $i < date('G')+1; $i++) {
+                                 tooltip : {
+                                 trigger: 'axis'
+                                 },
+                                 legend: {
+                                 selected:
+                                 {
+        <?php
+        echo "'" . TranslationHandler::get_static_text("ALL") . "' : false";
+        ?>
+                                 },
+                                 data:[<?php
+        foreach ($statisticsHandler->login_activity as $key => $value) {
+            $text = $key == "all" ? TranslationHandler::get_static_text("ALL") : $key;
+            echo "'" . $text . "',";
+        }
+        ?>]
+                                 },
+                                 calculable : true,
+                                 xAxis : [
+                                 {
+                                 type : 'category',
+                                 boundaryGap : false,
+                                 data : [
+                                 <?php
+                                 for ($i = 0; $i < 24 * $activity_limit; $i++) {
 
-                                                $hour = $i;
+                                     $hour = $i % 24;
 
-                                                while($hour < 0)
-                                                {
-                                                    $hour += 24;
-                                                }
+                                     echo $hour;
 
-                                                echo $hour;
+                                     if ($i != 24 * $activity_limit) {
+                                         echo ",";
+                                     }
+                                 }
+                                 ?>
+                                 ]
+                                 }
+                                 ],
+                                 yAxis : [
+                                 {
+                                 type : 'value'
+                                 }
+                                 ],
+                                 series : [<?php
+                                 foreach ($statisticsHandler->login_activity as $key => $value) {
+                                     ?>
+                                     {
+                                     name:'<?= $key == "all" ? TranslationHandler::get_static_text("ALL") : $key ?>',
+                                     type:'line',
+                                     smooth:true,
+                                     itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                     data:
+                                     [
+            <?php
+            $iterations = 0;
+            $limit = ($activity_limit - 1);
+            $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
+            while ($iterations < 24 * $activity_limit) {
+                if ($iterations == 24 || $iterations == 48) {
+                    $limit -= 1;
+                    $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
+                }
 
-                                                if($i != date('G'))
-                                                {
-                                                    echo ",";
-                                                }
-                                            }
-                                            ?>
-                                        ]
-                                    }
-                                ],
-                                yAxis : [
-                                    {
-                                        type : 'value'
-                                    }
-                                ],
-                                series : [
-                                    {
-                                        name:'<?= TranslationHandler::get_static_text("LECTURES") ?>',
-                                        type:'line',
-                                        smooth:true,
-                                        itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                                        data:
-                                        [
-                                            <?php
-                                            for($i = date('j')-$activity_limit; $i < date('j')+1; $i++)
-                                            {
-                                                $day = $i > 0 ? $i : date("t", strtotime(date("Y-m-d -1 months"))) + $i;
-                                                if(array_key_exists($day, $statisticsHandler->login_activity))
-                                                {
-                                                    for($j = date('G')-24; $j < date('G')+1; $j++)
-                                                    {
-                                                        $hour = $j;
-                                                        while($hour < 0)
-                                                        {
-                                                            $hour += 24;
-                                                        }
+                $hour = $iterations % 24;
 
-                                                        if(array_key_exists($hour, $statisticsHandler->login_activity[$day]))
-                                                        {
-                                                            echo $statisticsHandler->login_activity[$day][$hour];
-                                                        }
-                                                        else
-                                                        {
-                                                            echo 0;
-                                                        }
+                if (array_key_exists($date, $value) && array_key_exists($hour, $value[$date])) {
+                    echo $value[$date][$hour];
+                } else {
+                    echo 0;
+                }
 
-                                                        if($j != date('G'))
-                                                        {
-                                                            echo ",";
-                                                        }
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    echo "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
-                                                }
 
-                                                if($i != date('j'))
-                                                {
-                                                        echo ",";
-                                                }
-                                            }
-                                            ?>
-                                        ]
-                                    }
-                                ]
-                                }" style="height: 300px;"></div>
+                if ($iterations != 24 * $activity_limit) {
+                    echo ", ";
+                }
 
+                $iterations++;
+            }
+            ?>
+                                     ]
+                                     },
+                                     <?php
+                                 }
+                                 ?>
+
+                                 ]
+                                 }" style="height: 300px;"></div>
                         </div>
                     </div>
+
+
                 </div>
 
+                                 <?php
+                                 break;
 
-            </div>
-    
-            <?php        
-            break;
-        
-        //LOKAL ADMIN DASHBOARD
-        case "2":
-            ?>
+                             //LOKAL ADMIN DASHBOARD
+                             case "2":
+                                 ?>
 
-            <?php
-            break;
-    }
-    ?>
-    
-</div>
-<script src="assets/js/include_app.js" type="text/javascript"></script>
-<script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip(); 
-    $('[data-toggle="popover"]').popover({trigger: "hover"});});</script>
+                                 <?php
+                                 break;
+                         }
+                         ?>
+
+    </div>
+    <script src="assets/js/include_app.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover({trigger: "hover"});
+            var max_height = Math.max($(".school").height(), $(".account").height(), $(".course").height());
+            $(".school").height(max_height); $(".account").height(max_height); $(".course").height(max_height);
+        });</script>

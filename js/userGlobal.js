@@ -197,7 +197,7 @@ $(document).ready(function () {
                     switch_mute();
                     break;
                 case "continue" :
-                    $(".course_video")[0].currentTime = progress_reached < max_progress ? progress_reached : progress_reached - 1;
+                    $(".course_video")[0].currentTime = progress_reached >= max_progress ? $(".course_video")[0].duration : progress_reached - 1;
                     break;
                 case "play" :
                     if( $(".course_video")[0].ended) {
@@ -283,6 +283,7 @@ $(document).ready(function () {
         progress_reached = parseInt(data.current_progress);
         progress_reached_last = parseInt(data.current_progress);
         max_progress = task === "test" ? parseInt(data.max_progress) : parseInt(data.max_progress) - 1;
+        current_progress = current_progress >= max_progress ? max_progress : current_progress;
         update = !(progress_reached >= max_progress + 1);
         table_id = data.user_course_table_id === undefined ? null : parseInt(data.user_course_table_id);
         course_player_init(data, 1000);
@@ -467,7 +468,7 @@ $(document).ready(function () {
                         "margin-bottom" : ($(window).height() - 60 - ratio * height) / 2
                     }, 500, "easeInOutQuad");
                     $(window).on("resize", resize);
-                    $(".course_video")[0].currentTime = current_progress;
+                    $(".course_video")[0].currentTime = current_progress >= max_progress ? 0 : current_progress;
                     update_lecture_counter();
                     });
             }, wait);

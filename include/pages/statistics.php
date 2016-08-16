@@ -25,10 +25,9 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
     .dataTables_filter, .dataTables_length, .dataTables_info { display: none !important;}
 </style>
 <div class="row">
-    
-<?php
-    switch($userHandler->_user->user_type_id)
-    {
+
+    <?php
+    switch ($userHandler->_user->user_type_id) {
         case "1":
             $activity_limit = 3;
             $statisticsHandler->get_global_school_stats();
@@ -62,38 +61,35 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                 </div>
                             </div>
                             <div data-plugin="plot" data-options="
-                                    [
-                                        <?php
-                                            $i = 0;
-                                            foreach($statisticsHandler->school_type_amount as $key => $value)
-                                            {   
-                                                echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] ."' }";
-                                                if($i!=count($statisticsHandler->school_type_amount)-1)
-                                                {
-                                                    echo ",";
-                                                }
-                                                $i++;
-                                            }
-
-                                        ?>
-                                    ],
-                                    {
-                                            series: {
-                                                    pie: { show: true }
-                                            },
-                                            legend: { show: false },
-                                            grid: { hoverable: true },
-                                            tooltip: {
-                                                    show: true,
-                                                    content: '%s %p.0%',
-                                                    defaultTheme: true
-                                            }
-                                    }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
+                                 [
+                                 <?php
+                                 $i = 0;
+                                 foreach ($statisticsHandler->school_type_amount as $key => $value) {
+                                     echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] . "' }";
+                                     if ($i != count($statisticsHandler->school_type_amount) - 1) {
+                                         echo ",";
+                                     }
+                                     $i++;
+                                 }
+                                 ?>
+                                 ],
+                                 {
+                                 series: {
+                                 pie: { show: true }
+                                 },
+                                 legend: { show: false },
+                                 grid: { hoverable: true },
+                                 tooltip: {
+                                 show: true,
+                                 content: '%s %p.0%',
+                                 defaultTheme: true
+                                 }
+                                 }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
@@ -113,42 +109,39 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                 <div class="col-sm-5">
                                     <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("DISTRIBUTION") . ":"; ?></label>
                                 </div>
-                                
-                            </div>
-                            
-                            <div data-plugin="plot" data-options="
-                                    [
-                                        <?php
-                                            $i = 0;
-                                            foreach($statisticsHandler->account_type_amount as $key => $value)
-                                            {   
-                                                echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] ."' }";
-                                                if($i!=count($statisticsHandler->account_type_amount)-1)
-                                                {
-                                                    echo ",";
-                                                }
-                                                $i++;
-                                            }
 
-                                        ?>
-                                    ],
-                                    {
-                                            series: {
-                                                    pie: { show: true }
-                                            },
-                                            legend: { show: false },
-                                            grid: { hoverable: true },
-                                            tooltip: {
-                                                    show: true,
-                                                    content: '%s %p.0%',
-                                                    defaultTheme: true
-                                            }
-                                    }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
+                            </div>
+
+                            <div data-plugin="plot" data-options="
+                                 [
+        <?php
+        $i = 0;
+        foreach ($statisticsHandler->account_type_amount as $key => $value) {
+            echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] . "' }";
+            if ($i != count($statisticsHandler->account_type_amount) - 1) {
+                echo ",";
+            }
+            $i++;
+        }
+        ?>
+                                 ],
+                                 {
+                                 series: {
+                                 pie: { show: true }
+                                 },
+                                 legend: { show: false },
+                                 grid: { hoverable: true },
+                                 tooltip: {
+                                 show: true,
+                                 content: '%s %p.0%',
+                                 defaultTheme: true
+                                 }
+                                 }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
@@ -174,35 +167,32 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                 </div>
 
                             </div>
-                            
-                            <div data-plugin="plot" data-options="
-                                    [
-                                        <?php
-                                            $i = 0;
-                                            foreach($statisticsHandler->course_os_distribution as $key => $value)
-                                            {
-                                                echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] ."' }";
-                                                if($i!=count($statisticsHandler->course_os_distribution)-1)
-                                                {
-                                                    echo ",";
-                                                }
-                                                $i++;
-                                            }
 
-                                        ?>
-                                    ],
-                                    {
-                                            series: {
-                                                    pie: { show: true }
-                                            },
-                                            legend: { show: false },
-                                            grid: { hoverable: true },
-                                            tooltip: {
-                                                    show: true,
-                                                    content: '%s %p.0%',
-                                                    defaultTheme: true
-                                            }
-                                    }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
+                            <div data-plugin="plot" data-options="
+                                 [
+        <?php
+        $i = 0;
+        foreach ($statisticsHandler->course_os_distribution as $key => $value) {
+            echo "{ label: '" . $key . "', data: " . $value . ", color: '" . $colors[$i] . "' }";
+            if ($i != count($statisticsHandler->course_os_distribution) - 1) {
+                echo ",";
+            }
+            $i++;
+        }
+        ?>
+                                 ],
+                                 {
+                                 series: {
+                                 pie: { show: true }
+                                 },
+                                 legend: { show: false },
+                                 grid: { hoverable: true },
+                                 tooltip: {
+                                 show: true,
+                                 content: '%s %p.0%',
+                                 defaultTheme: true
+                                 }
+                                 }" style="height: 300px; width: 100%; padding: 0px; position: relative;">
                             </div>
                         </div>
                     </div>
@@ -218,123 +208,117 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
 
 
                             <div data-plugin="chart" data-options="{
-                                tooltip : {
-                                    trigger: 'axis'
-                                },
-                                legend: {
-                                selected:
-                                {
-                                    <?php
-                                        echo "'" . TranslationHandler::get_static_text("ALL"). "' : false";
-                                    ?>
-                                },
-                                data:[<?php
-                                        foreach($statisticsHandler->login_activity as $key => $value)
-                                        {
-                                            $text = $key == "all" ? TranslationHandler::get_static_text("ALL") : $key;
-                                            echo "'" . $text . "',";
-                                        }
-                                    ?>]
-                                },
-                                calculable : true,
-                                xAxis : [
-                                    {
-                                        type : 'category',
-                                        boundaryGap : false,
-                                        data : [
-                                            <?php
-                                            for($i = 0; $i < 24*$activity_limit; $i++) {
+                                 tooltip : {
+                                 trigger: 'axis'
+                                 },
+                                 legend: {
+                                 selected:
+                                 {
+        <?php
+        echo "'" . TranslationHandler::get_static_text("ALL") . "' : false";
+        ?>
+                                 },
+                                 data:[<?php
+        foreach ($statisticsHandler->login_activity as $key => $value) {
+            $text = $key == "all" ? TranslationHandler::get_static_text("ALL") : $key;
+            echo "'" . $text . "',";
+        }
+        ?>]
+                                 },
+                                 calculable : true,
+                                 xAxis : [
+                                 {
+                                 type : 'category',
+                                 boundaryGap : false,
+                                 data : [
+                                 <?php
+                                 for ($i = 0; $i < 24 * $activity_limit; $i++) {
 
-                                                $hour = $i % 24;
+                                     $hour = $i % 24;
 
-                                                echo $hour;
+                                     echo $hour;
 
-                                                if($i != 24*$activity_limit)
-                                                {
-                                                    echo ",";
-                                                }
-                                            }
-                                            ?>
-                                        ]
-                                    }
-                                ],
-                                yAxis : [
-                                    {
-                                        type : 'value'
-                                    }
-                                ],
-                                series : [<?php
-                                    foreach($statisticsHandler->login_activity as $key => $value)
-                                    {
-                                    ?>
-                                        {
-                                        name:'<?= $key == "all" ? TranslationHandler::get_static_text("ALL") : $key?>',
-                                            type:'line',
-                                            smooth:true,
-                                            itemStyle: {normal: {areaStyle: {type: 'default'}}},
-                                            data:
-                                            [
-                                                <?php
-                                                $iterations = 0;
-                                                $limit = ($activity_limit-1);
-                                                $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
-                                                while($iterations < 24*$activity_limit)
-                                                {
-                                                    if($iterations==24 || $iterations==48)
-                                                    {
-                                                        $limit -= 1;
-                                                        $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
-                                                    }
+                                     if ($i != 24 * $activity_limit) {
+                                         echo ",";
+                                     }
+                                 }
+                                 ?>
+                                 ]
+                                 }
+                                 ],
+                                 yAxis : [
+                                 {
+                                 type : 'value'
+                                 }
+                                 ],
+                                 series : [<?php
+                                 foreach ($statisticsHandler->login_activity as $key => $value) {
+                                     ?>
+                                     {
+                                     name:'<?= $key == "all" ? TranslationHandler::get_static_text("ALL") : $key ?>',
+                                     type:'line',
+                                     smooth:true,
+                                     itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                     data:
+                                     [
+            <?php
+            $iterations = 0;
+            $limit = ($activity_limit - 1);
+            $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
+            while ($iterations < 24 * $activity_limit) {
+                if ($iterations == 24 || $iterations == 48) {
+                    $limit -= 1;
+                    $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
+                }
 
-                                                    $hour = $iterations % 24;
+                $hour = $iterations % 24;
 
-                                                    if(array_key_exists($date, $value) && array_key_exists($hour, $value[$date]))
-                                                    {
-                                                        echo $value[$date][$hour];
-                                                    }
-                                                    else
-                                                    {
-                                                        echo 0;
-                                                    }
+                if (array_key_exists($date, $value) && array_key_exists($hour, $value[$date])) {
+                    echo $value[$date][$hour];
+                } else {
+                    echo 0;
+                }
 
 
-                                                    if($iterations != 24*$activity_limit)
-                                                    {
-                                                        echo ", ";
-                                                    }
+                if ($iterations != 24 * $activity_limit) {
+                    echo ", ";
+                }
 
-                                                    $iterations++;
-                                                }
-                                                ?>
-                                            ]
-                                        },
-                                    <?php
-                                    }
-                                    ?>
+                $iterations++;
+            }
+            ?>
+                                     ]
+                                     },
+                                     <?php
+                                 }
+                                 ?>
 
-                                ]
-                                }" style="height: 300px;"></div>
+                                 ]
+                                 }" style="height: 300px;"></div>
+                        </div>
                     </div>
+
+
                 </div>
 
+                                 <?php
+                                 break;
 
-            </div>
-    
-            <?php        
-            break;
-        
-        //LOKAL ADMIN DASHBOARD
-        case "2":
-            ?>
+                             //LOKAL ADMIN DASHBOARD
+                             case "2":
+                                 ?>
 
-            <?php
-            break;
-    }
-    ?>
-    
-</div>
-<script src="assets/js/include_app.js" type="text/javascript"></script>
-<script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip(); 
-    $('[data-toggle="popover"]').popover({trigger: "hover"});});</script>
+                                 <?php
+                                 break;
+                         }
+                         ?>
+
+    </div>
+    <script src="assets/js/include_app.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('[data-toggle="popover"]').popover({trigger: "hover"});
+            var max_height = Math.max($(".school").height(), $(".account").height(), $(".course").height());
+            $(".school").height(max_height); $(".account").height(max_height); $(".course").height(max_height);
+        });</script>

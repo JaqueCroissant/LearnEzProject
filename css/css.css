@@ -19,16 +19,16 @@ html{
     /*src: local(mixrfont), url('../font.ttf') ;*/
 }
 
-.progress span{
-    display: block;
-    left:0;
-    right:0;
-    margin:0 auto;
-    line-height: 36px;
-    color: #000;
-    font-size:17px;
-    text-shadow: rgb(242, 242, 242) 0px 0px 4px;
-    font-weight: 600;
+.progress_progress span{
+    display: block !important;
+    left:0 !important;
+    right:0 !important;
+    margin:0 auto !important;
+    line-height: 36px !important;
+    color: #000 !important;
+    font-size:17px !important;
+    text-shadow: rgb(242, 242, 242) 0px 0px 4px !important;
+    font-weight: 600 !important;
 }
 
 .test_progress .progress, .lecture_progress {

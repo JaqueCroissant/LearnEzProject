@@ -249,7 +249,7 @@ $courseHandler = new CourseHandler();
                                         <div class="lecture_progress" style="opacity:0">
                                             
                                             <div style="display: table-cell;width: 100%;">
-                                                <div class="progress progress-lg pull-left" style="height:38px !important;width:100%;border-radius: 3px; box-shadow: none;border:1px solid #ddd;">
+                                                <div class="progress progress_progress progress-lg pull-left" style="height:38px !important;width:100%;border-radius: 3px; box-shadow: none;border:1px solid #ddd;">
                                                     <div class="progress-bar lecture_progress_bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                                                         <span class="lecture_progress_value"></span>
                                                     </div>
@@ -379,7 +379,7 @@ $courseHandler = new CourseHandler();
                                         <div class="test_progress" style="opacity:0">
                                             
                                             <div style="display: table-cell;width: 100%;">
-                                                <div class="progress progress-lg pull-left" style="height:38px !important;width:100%;border-radius: 3px; box-shadow: none;border:1px solid #ddd;">
+                                                <div class="progress progress_progress progress-lg pull-left" style="height:38px !important;width:100%;border-radius: 3px; box-shadow: none;border:1px solid #ddd;">
                                                     <div class="progress-bar test_progress_bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                                                         <span class="test_progress_value"></span>
                                                     </div>

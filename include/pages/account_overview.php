@@ -57,6 +57,7 @@ $courses_completed = 0;
                                 </thead>
                                 <tbody>
                                     <?php
+                                    
                                         if(count($schoolHandler->all_schools) > 0)
                                         {
                                             foreach ($schoolHandler->all_schools as $value) {

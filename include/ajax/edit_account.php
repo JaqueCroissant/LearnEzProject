@@ -94,7 +94,7 @@ if(isset($_POST))
         case 'set_availability':
 
             $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : "";
-
+            
             if($userHandler->set_user_availability($user_id))
             {
                 $jsonArray['success'] = TranslationHandler::get_static_text("ACCOUNT_UPDATED");
@@ -152,7 +152,6 @@ if(isset($_POST))
             die();
         break;
     }
-    
     
     
 }

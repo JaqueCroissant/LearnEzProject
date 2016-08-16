@@ -1,18 +1,153 @@
+var current_ajax;
 var test_file_name;
+var is_uploading = false;
+var is_aborted = false;
+var has_uploaded = false;
+var current_upload_type;
 var module_ready = false;
-$(document).on("click", ".upload_test", function (event) {
-    if($(this).attr("disabled") !== "disabled"){
-        $(this).attr("disabled", true);
-        $(".test_progress").fadeTo(1, 1);
-        var form = $(this).closest("form");
+
+function reset_variables() {
+    current_ajax = undefined;
+    test_file_name = undefined;
+    is_uploading = false;
+    is_aborted = false;
+    has_uploaded = false;
+    current_upload_type = undefined;
+    module_ready = false;
+}
+
+function reset_progress() {
+    has_uploaded = false;
+    is_uploading = true;
+    is_aborted = false;
+
+    if (current_upload_type === "test") {
+        $(".cancel_test_upload").attr("disabled", false);
+        $(".cancel_test_upload").val("Annuller");
+        $(".test_progress").fadeTo(500, 1);
         $(".test_progress_value").html("Uploader data");
-        event.preventDefault();
+        $(".test_progress_bar").addClass("active");
+    } else {
+        $(".cancel_lecture_upload").attr("disabled", false);
+        $(".cancel_lecture_upload").val("Annuller");
+        $(".lecture_progress").fadeTo(500, 1);
+        $(".lecture_progress_value").html("Uploader data");
+        $(".lecture_progress_bar").addClass("active");
+    }
+}
+
+$(document).on("click", ".upload_lecture", function (event) {
+    if ($("#thumbnail_lecture").val() === undefined || $("#thumbnail_lecture").val() === "") {
+        show_status_bar("error", "Du skal vælge en fil.");
+        return;
+    }
+
+    event.preventDefault();
+    delete_lecture(function () {
+        upload_lecture($(".upload_lecture"))
+    });
+});
+
+$(document).on("click", ".upload_test", function (event) {
+    if ($("#thumbnail_test").val() === undefined || $("#thumbnail_test").val() === "") {
+        show_status_bar("error", "Du skal vælge en fil.");
+        return;
+    }
+
+    event.preventDefault();
+    delete_test(function () {
+        upload_test($(".upload_test"))
+    });
+});
+
+function upload_lecture(event) {
+    if (event.attr("disabled") !== "disabled") {
+
+        current_upload_type = "lecture";
+        var form = event.closest("form");
+        event.attr("disabled", true);
+        reset_progress();
+
         var formData = new FormData(form[0]);
-        $.ajax({
-            xhr: function(){
-                var xhr = $.ajaxSettings.xhr() ;
-                xhr.upload.onprogress = function(evt){ $(".test_progress_bar").css("width", (evt.loaded/evt.total * 100) + "%"); $(".test_progress_value").html("Uploader data: " + evt.loaded/evt.total*100 + "%"); } ;
-                return xhr ;
+        current_ajax = $.ajax({
+            xhr: function () {
+                var xhr = $.ajaxSettings.xhr();
+
+                xhr.upload.onprogress = function (evt) {
+                    if (evt.loaded >= evt.total) {
+                        is_uploading = false;
+                        $(".upload_lecture").attr("disabled", true);
+                        $(".lecture_progress_bar").css("width", "100%");
+                        return;
+                    }
+                    $(".lecture_progress_bar").css("width", (evt.loaded / evt.total * 100) + "%");
+                    $(".lecture_progress_value").html("Uploader data: " + Math.round(evt.loaded / evt.total * 100) + "%");
+                };
+                return xhr;
+            },
+            url: 'include/ajax/course.php?step=upload_lecture',
+            type: 'POST',
+            data: formData,
+            dataType: "json",
+            async: true,
+            complete: function (data) {
+                if (is_aborted) {
+                    return;
+                }
+
+                ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+                $("#thumbnail_lecture").val("");
+                $(".upload_lecture").attr("disabled", false);
+                if (ajax_data.status_value) {
+                    $(".lecture_progress_value").html("Færdig");
+                    test_file_name = ajax_data.file_name;
+                    $(".test_progress .progress-bar").removeClass("active");
+                    $(".cancel_lecture_upload").val("Slet fil");
+                    $(".cancel_lecture_upload").attr("disabled", false);
+                    $("#lecture_total_length").val(ajax_data.file_duration);
+                    $("#lecture_file_name").val(ajax_data.file_name);
+                    has_uploaded = true;
+                } else {
+                    show_status_bar("error", ajax_data.error);
+                    $(".lecture_progress").fadeTo(1000, 0, function () {
+                        $(".lecture_progress_bar").css("width", "0");
+                        $(".cancel_lecture_upload").attr("disabled", true);
+                    });
+                }
+                is_uploading = false;
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    }
+}
+
+function upload_test(event) {
+    if (event.attr("disabled") !== "disabled") {
+
+        current_upload_type = "test";
+        var form = event.closest("form");
+        event.attr("disabled", true);
+        reset_progress();
+
+        var formData = new FormData(form[0]);
+        current_ajax = $.ajax({
+            xhr: function () {
+                var xhr = $.ajaxSettings.xhr();
+
+                xhr.upload.onprogress = function (evt) {
+                    if (evt.loaded >= evt.total) {
+                        is_uploading = false;
+                        $(".test_progress_value").html("Udpakker filer");
+                        $(".upload_test").attr("disabled", true);
+                        $(".test_progress_bar").css("width", "100%");
+                        return;
+                    }
+                    $(".test_progress_bar").css("width", (evt.loaded / evt.total * 100) + "%");
+                    $(".test_progress_value").html("Uploader data: " + Math.round(evt.loaded / evt.total * 100) + "%");
+                };
+                return xhr;
             },
             url: 'include/ajax/course.php?step=upload_test',
             type: 'POST',
@@ -20,22 +155,125 @@ $(document).on("click", ".upload_test", function (event) {
             dataType: "json",
             async: true,
             complete: function (data) {
-                $(".test_progress_value").html("Loader testen");
+                if (is_aborted) {
+                    return;
+                }
+
                 ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
                 if (ajax_data.status_value) {
                     test_file_name = ajax_data.file_name;
+                    $(".test_progress_value").html("Loader testen");
                     load_test();
 
                 } else {
                     show_status_bar("error", ajax_data.error);
+                    $(".test_progress").fadeTo(1000, 0, function () {
+                        $(".upload_test").attr("disabled", false);
+                        $(".test_progress_bar").css("width", "0");
+                    });
                 }
+                is_uploading = false;
+                $(".cancel_test_upload").attr("disabled", true);
             },
             cache: false,
             contentType: false,
             processData: false
         });
     }
+}
+
+$(document).on("click", ".cancel_test_upload", function (event) {
+    cancel_upload();
+    delete_test();
 });
+
+$(document).on("click", ".cancel_lecture_upload", function (event) {
+    cancel_upload();
+    delete_lecture();
+});
+
+function cancel_upload() {
+    if (!is_uploading) {
+        return;
+    }
+
+    is_aborted = true;
+    current_ajax.abort();
+    if (current_upload_type === "test") {
+        $(".test_progress").fadeTo(1000, 0, function () {
+            $(".upload_test").attr("disabled", false);
+            $(".test_progress_bar").css("width", "0");
+            show_status_bar("success", "Upload afbrudt.");
+        });
+    } else {
+        $(".lecture_progress").fadeTo(1000, 0, function () {
+            $(".upload_lecture").attr("disabled", false);
+            $(".lecture_progress_bar").css("width", "0");
+            show_status_bar("success", "Upload afbrudt.");
+        });
+    }
+}
+
+function delete_lecture(func) {
+    if (has_uploaded === false || test_file_name === undefined) {
+        if (func !== undefined) {
+            func();
+        }
+        return;
+    }
+
+    has_uploaded = false;
+    $(".lecture_progress_value").html("Sletter upload");
+    $(".lecture_progress_bar").addClass("active");
+    console.log(test_file_name);
+    initiate_submit_get($(this), "media.php?step=delete_lecture&file_name=" + test_file_name,
+            function () {
+                show_status_bar("error", ajax_data.error);
+                if (func !== undefined) {
+                    func();
+                }
+            }, function () {
+        $(".lecture_progress_bar").removeClass("active");
+        $(".lecture_progress").fadeTo(1000, 0, function () {
+            $(".upload_lecture").attr("disabled", false);
+            $(".lecture_progress_bar").css("width", "0");
+            show_status_bar("success", ajax_data.success);
+            if (func !== undefined) {
+                func();
+            }
+        });
+    });
+}
+
+function delete_test(func) {
+    if (has_uploaded === false || test_file_name === undefined) {
+        if (func !== undefined) {
+            func();
+        }
+        return;
+    }
+
+    has_uploaded = false;
+    $(".test_progress_value").html("Sletter upload");
+    $(".test_progress_bar").addClass("active");
+    initiate_submit_get($(this), "media.php?step=delete_test&file_name=" + test_file_name,
+            function () {
+                show_status_bar("error", ajax_data.error);
+                if (func !== undefined) {
+                    func();
+                }
+            }, function () {
+        $(".test_progress_bar").removeClass("active");
+        $(".test_progress").fadeTo(1000, 0, function () {
+            $(".upload_test").attr("disabled", false);
+            $(".test_progress_bar").css("width", "0");
+            show_status_bar("success", ajax_data.success);
+            if (func !== undefined) {
+                func();
+            }
+        });
+    });
+}
 
 function load_test() {
     $("#test_player").attr("src", "courses/tests/" + test_file_name + "/index.php");
@@ -47,12 +285,14 @@ function load_test() {
                 $("#test_player").attr("src", "");
                 $(".test_progress .progress-bar").removeClass("active");
                 $(".test_progress_value").html("Fejl");
-                setTimeout(function(){
-                    $(".test_progress").fadeTo(500, 0, function(){
+                setTimeout(function () {
+                    $(".test_progress").fadeTo(500, 0, function () {
                         $(".upload_test").attr("disabled", false);
                     });
-                },1000);
-                initiate_submit_get($(this), "media.php?step=delete_test&file_name=" + test_file_name, function () {}, function () {});
+                }, 1000);
+                initiate_submit_get($(this), "media.php?step=delete_test&file_name=" + test_file_name, function () {
+                }, function () {
+                });
             }
         }, 10000);
         iframe_window.addEventListener("moduleReadyEvent", function () {
@@ -60,16 +300,17 @@ function load_test() {
             module_ready = true;
             $("#test_total_steps").val(iframe_window.cpAPIInterface.getVariableValue("rdinfoSlideCount"));
             $("#test_file_name").val(ajax_data.file_name);
-            setTimeout(function(){
+            setTimeout(function () {
                 show_status_bar("success", ajax_data.success);
                 $(".test_progress_value").html("Færdig");
                 $(".test_progress .progress-bar").removeClass("active");
-                setTimeout(function(){
-//                    $(".test_progress").fadeTo(500, 0, function(){
-//                        $(".upload_test").attr("disabled", false);
-//                    });
-                },1000);
-            },500);
+                $(".upload_test").attr("disabled", false);
+            }, 500);
+
+            has_uploaded = true;
+            $(".cancel_test_upload").val("Slet fil");
+            $(".cancel_test_upload").attr("disabled", false);
+            $("#thumbnail_test").val("");
         });
     });
 }
@@ -217,6 +458,7 @@ $(document).on("click", ".submit_create_course", function (event) {
         show_status_bar("error", ajax_data.error);
     }, function () {
         show_status_bar("success", ajax_data.success);
+        reset_variables();
         change_page("course_administrate", "create_course");
     });
 });

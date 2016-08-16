@@ -21,14 +21,27 @@ html{
 
 .progress span{
     display: block;
-    position: absolute;
     left:0;
     right:0;
     margin:0 auto;
+    line-height: 36px;
+    color: #000;
+    font-size:17px;
+    text-shadow: rgb(242, 242, 242) 0px 0px 4px;
+    font-weight: 600;
 }
 
-.test_progress .progress {
+.test_progress .progress, .lecture_progress {
     position: relative;
+}
+
+.test_progress_bar, .lecture_progress_bar {
+    width:0%;
+    -webkit-transform: none !important;
+    -moz-transition: none !important;
+    -ms-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
 }
 
 .clickable_row {

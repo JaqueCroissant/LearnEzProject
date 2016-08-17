@@ -42,7 +42,7 @@
             }
         }
         
-        public function update_page_rights($user_type = 1, $page_rights = array()) {
+        public function update_page_rights($user_type = 1, $page_rights = array(), $closed_users = false) {
             try {
                 
                 if (!$this->user_exists()) {
@@ -61,7 +61,8 @@
                    throw new Exception("INVALID_FORM_DATA");
                 }
                 
-                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id AND (b.hide_in_backend != '1' OR (b.hide_in_backend = '1' AND b.master_page_id > 0 AND b.set_rights != '1'))", $user_type);
+                $closed_users_query = $closed_users ? "AND a.closed_user = '1' " : "";
+                DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id ". $closed_users_query . " AND (b.hide_in_backend != '1' OR (b.hide_in_backend = '1' AND b.master_page_id > 0 AND b.set_rights != '1'))", $user_type);
                 
                 $array = array();
                 $this->get_page_children($array, $page_rights);
@@ -69,7 +70,12 @@
                     if(empty($value) || !is_numeric($value)) {
                         continue;
                     }
-                    DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id) VALUES (:page_id, :user_type_id)", $value, $user_type);
+                    if($closed_users) {
+                        DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id, closed_user) VALUES (:page_id, :user_type_id, :closed_user)", $value, $user_type, 1);
+                    } else {
+                        DbHandler::get_instance()->query("INSERT INTO user_type_page (page_id, user_type_id) VALUES (:page_id, :user_type_id)", $value, $user_type);
+                    }
+                    
                 }
                 
                 return true;
@@ -107,7 +113,7 @@
             $this->get_page_children($array, $elements, false);
         }
         
-        public function update_rights($user_type = 1, $user_rights = array()) {
+        public function update_rights($user_type = 1, $user_rights = array(), $closed_users = false) {
             try {
                 
                 if (!$this->user_exists()) {
@@ -122,7 +128,8 @@
                     throw new Exception("INVALID_USER_TYPE");
                 }
                 
-                DbHandler::get_instance()->query("DELETE a.* FROM user_type_rights as a INNER JOIN rights as b ON b.id = a.rights_id WHERE a.user_type_id = :user_type_id AND b.page_right_id = '0'", $user_type);
+                $closed_users_query = $closed_users ? " AND a.closed_user = '1' " : "";
+                DbHandler::get_instance()->query("DELETE a.* FROM user_type_rights as a INNER JOIN rights as b ON b.id = a.rights_id WHERE a.user_type_id = :user_type_id " . $closed_users_query . " AND b.page_right_id = '0'", $user_type);
                 
                 if(empty($user_rights) || !is_array($user_rights) ) {
                    return true;
@@ -132,7 +139,11 @@
                     if(empty($value) || !is_numeric($value)) {
                         continue;
                     }
-                    DbHandler::get_instance()->query("INSERT INTO user_type_rights (rights_id, user_type_id) VALUES (:rights_id, :user_type_id)", $value, $user_type);
+                    if($closed_users) {
+                        DbHandler::get_instance()->query("INSERT INTO user_type_rights (rights_id, user_type_id, closed_user) VALUES (:rights_id, :user_type_id, :closed_user)", $value, $user_type, 1);
+                    } else {
+                        DbHandler::get_instance()->query("INSERT INTO user_type_rights (rights_id, user_type_id) VALUES (:rights_id, :user_type_id)", $value, $user_type);
+                    }
                 }
                 
                 return true;
@@ -212,7 +223,7 @@
             return false;
         }
         
-        public function get_user_type_rights($user_type_id = 1) {
+        public function get_user_type_rights($user_type_id = 1, $closed_users = false) {
             try 
             {
                 if (!$this->user_exists()) {
@@ -227,7 +238,8 @@
                     throw new Exception("INVALID_USER_TYPE");
                 }
 
-                $data = DbHandler::get_instance()->return_query("SELECT user_type_rights.id, user_type_rights.user_type_id, user_type_rights.rights_id FROM user_type_rights WHERE user_type_id = :user_type_id", $user_type_id);
+                $closed_users_query = $closed_users ? " AND user_type_rights.closed_user = '1' " : "";
+                $data = DbHandler::get_instance()->return_query("SELECT user_type_rights.id, user_type_rights.user_type_id, user_type_rights.rights_id FROM user_type_rights WHERE user_type_id = :user_type_id " . $closed_users_query, $user_type_id);
 
                 if(count($data) < 1) {
                     return true;
@@ -300,10 +312,11 @@
                     $current_user = SessionKeyHandler::get_from_session("user", true);
                 }
                 
+                $closed_users = $current_user == null || $current_user->open ? 0 : 1;
+                
                 $page_rights = DbHandler::get_instance()->return_query("SELECT page.pagename, page.step FROM page
                                                         INNER JOIN user_type_page ON user_type_page.page_id = page.id
-                                                        WHERE user_type_page.user_type_id = :user_type_id", ($current_user != null ? $current_user->user_type_id : 5));
-                
+                                                        WHERE user_type_page.user_type_id = :user_type_id AND user_type_page.closed_user = :closed_users", ($current_user != null ? $current_user->user_type_id : 5), $closed_users);
                 if(count($page_rights) < 1) {
                     throw new Exception();
                 }   
@@ -324,8 +337,8 @@
                                                         LEFT JOIN user_type_rights ON rights.id = user_type_rights.rights_id
                                                         LEFT JOIN page ON page.id = rights.page_right_id
                                                         LEFT JOIN user_type_page ON user_type_page.page_id = rights.page_right_id
-                                                        WHERE user_type_rights.user_type_id = :user_type_id OR user_type_page.user_type_id = :user_type_id", 
-                                                        $current_user->user_type_id, $current_user->user_type_id);
+                                                        WHERE (user_type_rights.user_type_id = :user_type_id AND user_type_rights.closed_user = :closed_user) OR (user_type_page.user_type_id = :user_type_id AND user_type_page.closed_user = :closed_user)", 
+                                                        $current_user->user_type_id, $closed_users, $current_user->user_type_id, $closed_users);
 
                 if($current_user != null && $current_user->user_type_id != 1) {
                     $data = DbHandler::get_instance()->return_query("SELECT school_rights.rights_id, rights.id, rights.prefix FROM school_rights RIGHT JOIN rights ON rights.id = school_rights.rights_id WHERE school_rights.user_type_id = :user_type_id AND school_id = :school_id", $current_user->user_type_id, $current_user->school_id);

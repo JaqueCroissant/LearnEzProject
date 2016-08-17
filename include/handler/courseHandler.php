@@ -837,13 +837,13 @@ class CourseHandler extends Handler {
             if (!RightsHandler::has_user_right("COURSE_VIEW")) {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }
-            if (!is_int((int) $progress)) {
+            if (!is_numeric($progress)) {
                 throw new Exception("INVALID_INPUT_IS_NOT_INT");
             }
             if ($is_complete != 0 && $is_complete != 1) {
                 throw new Exception("INVALID_INPUT");
             }
-            if (!is_int((int) $table_id) || !is_int((int) $id)) {
+            if (!is_numeric($table_id) || !is_numeric($id)) {
                 throw new Exception("INVALID_INPUT_IS_NOT_INT");
             }
             if ($type == "test") {
@@ -853,9 +853,16 @@ class CourseHandler extends Handler {
             } else {
                 throw new Exception("INVALID_INPUT");
             }
+            if ($table_id != 0) {
+                if (DbHandler::get_instance()->count_query("SELECT id FROM " . $table . " WHERE user_id = :user AND id = :id AND " . $type . "_id = :type", $this->_user->id, $table_id, $id) != 1) {
+                    throw new Exception("INVALID_INPUT");
+                }
+            }
             if ($is_complete == 1) {
+                if (DbHandler::get_instance()->count_query("SELECT id FROM " . $table . " WHERE user_id = :user_id AND " . $type . "_id = :type_id AND is_complete = 1", $this->_user->id, $id) != 0) {
+                    throw new Exception("COURSE_TYPE_ALREADY_COMPLETED");
+                }
                 $values = "is_complete=1,complete_date=NOW()";
-                DbHandler::get_instance()->query("UPDATE users SET points =(CASE WHEN(SELECT COUNT(id) FROM user_course_" . $type . " WHERE user_id = :user_id AND " . $type . "_id = :type_id AND is_complete = 1) = 0 THEN points + (SELECT points FROM course_" . $type . " WHERE id = :type_id) ELSE points END) WHERE id = :user_id", $this->_user->id, $id, $id, $this->_user->id);
             } else {
                 $values = "progress=" . $progress;
             }
@@ -869,8 +876,8 @@ class CourseHandler extends Handler {
                 throw new Exception("INVALID_INPUT");
             }
             if ($is_complete == 1) {
-                
-                $this->check_completion(reset(DbHandler::get_instance()->return_query("SELECT course_id FROM course_lecture WHERE id = 42"))["course_id"]);
+                DbHandler::get_instance()->query("UPDATE users SET points = points + (SELECT points FROM course_" . $type . " WHERE id = :type_id) WHERE id = :user_id", $id, $this->_user->id);
+                $this->check_completion(reset(DbHandler::get_instance()->return_query("SELECT course_id FROM course_" . $type . " WHERE id = :id", $id))["course_id"]);
             }
             return true;
         } catch (Exception $ex) {
@@ -881,9 +888,9 @@ class CourseHandler extends Handler {
 
     public function check_completion($course_id) {
         if ($this->course_completed($course_id)) {
-            if (DbHandler::get_instance()->count_query("SELECT validation_code FROM certificates WHERE user_id = :user AND course_id = :course", $this->_user->id, $course_id) == 0) {
+            if (!certificatesHandler::is_completed($course_id)) {
                 DbHandler::get_instance()->query("UPDATE users SET points = points + (SELECT points FROM course WHERE id = :course) WHERE id = :user_id", $course_id, $this->_user->id);
-                DbHandler::get_instance()->query("INSERT INTO certificates VALUES (null, :user, :course, :code, NOW())", $this->_user->id, $course_id, "testing");
+                certificatesHandler::create($course_id);
             }
         }
     }

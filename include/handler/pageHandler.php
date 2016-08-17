@@ -69,10 +69,11 @@ class pageHandler extends Handler {
     private function generate_pages($all_user_types = false) {
         if(empty($this->_pages) || count($this->_pages) < 1) {
             $user_type_id = $this->user_exists() ? $this->_user->user_type_id : 5;
+            $closed_user = $this->user_exists() ? ($this->_user->open ? 0 : 1) : 0;
             if($all_user_types) {
                $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, page.backend_category, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id WHERE translation_page.language_id = :language_id ORDER BY page.backend_sort_order ASC, page.sort_order ASC", TranslationHandler::get_current_language());
             } else {
-               $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, page.backend_category, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
+               $pageData = DbHandler::get_instance()->return_query("SELECT page.id, page.master_page_id, page.location_id, page.pagename, page.display_menu, page.sort_order, page.step, page.is_dropdown, page.icon_class, page.display_text, page.hide_in_backend, page.backend_sort_order, page.backend_category, translation_page.title FROM page INNER JOIN translation_page ON translation_page.page_id = page.id INNER JOIN user_type_page ON user_type_page.page_id = page.id WHERE user_type_page.user_type_id = :user_type_id AND user_type_page.closed_user = ". $closed_user ." AND translation_page.language_id = :language_id ORDER BY page.sort_order ASC", $user_type_id, TranslationHandler::get_current_language());
              
             }
             
@@ -460,7 +461,7 @@ class pageHandler extends Handler {
         return array($this->_pages_raw["error"]);
     }
     
-    public function get_page_rights($user_type_id = 1) {
+    public function get_page_rights($user_type_id = 1, $closed_users = false) {
         try 
         {
             if(!is_numeric($user_type_id)) {
@@ -471,7 +472,8 @@ class pageHandler extends Handler {
                 throw new Exception("INVALID_USER_TYPE");
             }
             
-            $data = DbHandler::get_instance()->return_query("SELECT user_type_page.id, user_type_page.user_type_id, user_type_page.page_id FROM user_type_page INNER JOIN page ON page.id = user_type_page.page_id WHERE user_type_id = :user_type_id AND page.hide_in_backend != 1", $user_type_id);
+            $closed_users_query = $closed_users ? "AND user_type_page.closed_user = '1' " : "";
+            $data = DbHandler::get_instance()->return_query("SELECT user_type_page.id, user_type_page.user_type_id, user_type_page.page_id FROM user_type_page INNER JOIN page ON page.id = user_type_page.page_id WHERE user_type_id = :user_type_id AND page.hide_in_backend != 1 ". $closed_users_query, $user_type_id);
             
             if(count($data) < 1) {
                 return true;

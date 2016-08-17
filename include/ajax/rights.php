@@ -7,7 +7,7 @@ if(isset($_POST)) {
     
     if(isset($_POST["school_rights"])) {
         $rights = (isset($_POST["rights"]) ? $_POST["rights"] : array());
-
+        
         if($rightsHandler->update_school_rights($user_type_id, $rights)) {
             $jsonArray['status_value'] = true;
             $jsonArray['success'] = TranslationHandler::get_static_text("SCHOOL_RIGHTS_UPDATED");
@@ -21,8 +21,8 @@ if(isset($_POST)) {
     
     if(isset($_POST["rights_type"])) {
         $rights = (isset($_POST["rights"]) ? $_POST["rights"] : array());
-
-        if($rightsHandler->update_rights($user_type_id, $rights)) {
+        $closed_users = isset($_POST["closed_users"]) ? true : false;
+        if($rightsHandler->update_rights($user_type_id, $rights, $closed_users)) {
             $jsonArray['status_value'] = true;
             $jsonArray['success'] = TranslationHandler::get_static_text("GENERAL_RIGHTS_UPDATED");
         } else {
@@ -35,8 +35,8 @@ if(isset($_POST)) {
     
     
     $page_rights = (isset($_POST["page_rights"]) ? $_POST["page_rights"] : array());
-    
-    if($rightsHandler->update_page_rights($user_type_id, $page_rights)) {
+    $closed_users = isset($_POST["closed_users"]) ? true : false;
+    if($rightsHandler->update_page_rights($user_type_id, $page_rights, $closed_users)) {
         $jsonArray['status_value'] = true;
         $jsonArray['success'] = TranslationHandler::get_static_text("PAGE_RIGHTS_UPDATED");
     } else {

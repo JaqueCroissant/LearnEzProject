@@ -20,6 +20,7 @@ $schoolHandler->get_school_types();
                     if(!$userHandler->get_user_by_id($_GET['user_id']))
                     {
                         ErrorHandler::show_error_page($userHandler->error);
+                        die();
                     }
                 ?>
                         <div class="widget-header">

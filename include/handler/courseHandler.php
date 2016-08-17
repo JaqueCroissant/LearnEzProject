@@ -130,8 +130,8 @@ class CourseHandler extends Handler {
             if (!is_array($titles) || empty($titles) || !is_array($descriptions) || empty($descriptions) || !is_array($language_ids) || empty($language_ids) || count($descriptions) != count($titles)) {
                 throw new exception("INVALID_TRANSLATION_COURSE_INPUT");
             }
-            
-            if(empty($total_length) || empty($file_name) || !MediaHandler::file_exists($file_name, "lecture")) {
+
+            if (empty($total_length) || empty($file_name) || !MediaHandler::file_exists($file_name, "lecture")) {
                 throw new exception("MUST_UPLOAD_LECTURE");
             }
 
@@ -175,8 +175,8 @@ class CourseHandler extends Handler {
             if (empty($course_id) || !is_numeric($course_id) || (!is_numeric($points) && !is_int((int) $points)) || (!is_numeric($sort_order) && !is_int((int) $sort_order)) || (!is_numeric($difficulty) && !is_int((int) $difficulty))) {
                 throw new exception("INVALID_INPUT");
             }
-            
-            if(empty($total_steps) || empty($file_name) || !MediaHandler::file_exists($file_name, "test")) {
+
+            if (empty($total_steps) || empty($file_name) || !MediaHandler::file_exists($file_name, "test")) {
                 throw new exception("MUST_UPLOAD_TEST");
             }
 
@@ -483,8 +483,8 @@ class CourseHandler extends Handler {
                 break;
 
             case "lecture":
-                $data = DbHandler::get_instance()->return_query("SELECT path FROM course_lecture WHERE id = :id LIMIT 1" , $this->_current_element_id);
-                if(empty($data)) {
+                $data = DbHandler::get_instance()->return_query("SELECT path FROM course_lecture WHERE id = :id LIMIT 1", $this->_current_element_id);
+                if (empty($data)) {
                     break;
                 }
                 DbHandler::get_instance()->query("DELETE FROM course_lecture WHERE id = :id", $this->_current_element_id);
@@ -494,8 +494,8 @@ class CourseHandler extends Handler {
                 break;
 
             case "test":
-                $data = DbHandler::get_instance()->return_query("SELECT path FROM course_test WHERE id = :id LIMIT 1" , $this->_current_element_id);
-                if(empty($data)) {
+                $data = DbHandler::get_instance()->return_query("SELECT path FROM course_test WHERE id = :id LIMIT 1", $this->_current_element_id);
+                if (empty($data)) {
                     break;
                 }
                 DbHandler::get_instance()->query("DELETE FROM course_test WHERE id = :id", $this->_current_element_id);
@@ -862,18 +862,40 @@ class CourseHandler extends Handler {
 
             if ($table_id != 0) {
                 DbHandler::get_instance()->query("UPDATE " . $table . " SET " . $values . " WHERE id = :id AND user_id = :userId", $table_id, $this->_user->id);
-                return true;
             } else if ($id != 0) {
                 DbHandler::get_instance()->query("INSERT INTO " . $table . " VALUES (:table_id, :user_id, :id, :progress, :is_complete, NOW())", null, $this->_user->id, $id, $progress, $is_complete);
                 $this->last_inserted_id = DbHandler::get_instance()->last_inserted_id();
-                return true;
             } else {
                 throw new Exception("INVALID_INPUT");
             }
+            if ($is_complete == 1) {
+                
+                $this->check_completion(reset(DbHandler::get_instance()->return_query("SELECT course_id FROM course_lecture WHERE id = 42"))["course_id"]);
+            }
+            return true;
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
+    }
+
+    public function check_completion($course_id) {
+        if ($this->course_completed($course_id)) {
+            if (DbHandler::get_instance()->count_query("SELECT validation_code FROM certificates WHERE user_id = :user AND course_id = :course", $this->_user->id, $course_id) == 0) {
+                DbHandler::get_instance()->query("UPDATE users SET points = points + (SELECT points FROM course WHERE id = :course) WHERE id = :user_id", $course_id, $this->_user->id);
+                DbHandler::get_instance()->query("INSERT INTO certificates VALUES (null, :user, :course, :code, NOW())", $this->_user->id, $course_id, "testing");
+            }
+        }
+    }
+
+    private function course_completed($course_id) {
+        $completed = DbHandler::get_instance()->return_query("SELECT user_course_lecture.is_complete FROM course INNER JOIN course_lecture ON course_lecture.course_id = course.id INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id AND translation_course_lecture.language_id = :language LEFT JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id AND user_course_lecture.user_id = :user WHERE course.id = :course UNION ALL SELECT user_course_test.is_complete FROM course INNER JOIN course_test ON course_test.course_id = course.id INNER JOIN translation_course_test ON translation_course_test.course_test_id = course_test.id AND translation_course_test.language_id = :language LEFT JOIN user_course_test ON user_course_test.test_id = course_test.id AND user_course_test.user_id = :user WHERE course.id = :course", $this->_user->settings->language_id, $this->_user->id, $course_id, $this->_user->settings->language_id, $this->_user->id, $course_id);
+        foreach ($completed as $value) {
+            if ($value["is_complete"] == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //</editor-fold>

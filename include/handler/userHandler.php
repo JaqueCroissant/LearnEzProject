@@ -1045,7 +1045,7 @@ class UserHandler extends Handler
         }
     }
 
-    public function get_by_class_id($class_id)
+    public function get_by_class_id($class_id, $is_mine = false)
     {
         try
         {
@@ -1053,13 +1053,21 @@ class UserHandler extends Handler
                 throw new exception("USER_NOT_LOGGED_IN");
             }
 
-            if (!RightsHandler::has_user_right("ACCOUNT_FIND") || !RightsHandler::has_user_right("CLASS_FIND")) {
-                throw new Exception("INSUFFICIENT_RIGHTS");
-            }
-            
             if(empty($class_id) || !is_numeric($class_id))
             {
                 throw new Exception("INVALID_INPUT");
+            }
+            
+            if(!$is_mine)
+            {
+                if (!RightsHandler::has_user_right("ACCOUNT_FIND") || !RightsHandler::has_user_right("CLASS_FIND")) 
+                {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
+            }
+            else
+            {
+                DbHandler::get_instance()->count_query("SELECT id FROM user_class WHERE class_id = :class_id AND users_id = :user_id", $class_id, $this->_user->id);
             }
             
             $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class WHERE users.id = user_class.users_id AND user_class.class_id = :id", $class_id);
@@ -1081,6 +1089,7 @@ class UserHandler extends Handler
             return false;
         }
     }
+    
 
     public function get_user_by_id($id)
     {

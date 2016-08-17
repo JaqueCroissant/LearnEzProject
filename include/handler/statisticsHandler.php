@@ -33,6 +33,14 @@ class StatisticsHandler extends Handler {
     //LECTURE & TEST
     public $global_tests_complete;
     public $global_lectures_complete;
+
+    public $global_test_amount;
+    public $global_lectures_amount;
+    public $global_course_amount;
+    public $course_os_distribution;
+    public $course_titles;
+
+
     //GLOBAL STATS
     public $login_activity = array();
     public $lecture_graph_stats;
@@ -42,10 +50,13 @@ class StatisticsHandler extends Handler {
     public $school_classes_global = 0;
     public $school_type_amount;
     public $account_count = 0;
+    public $account_student_teacher_count = 0;
+    public $account_max = 0;
     public $accounts_open = 0;
     public $account_type_amount;
     public $account_types = [];
-
+    public $student_total = 0;
+    
     private $_school_id;
     private $_class_id;
     private $_account_type_bool;
@@ -448,13 +459,23 @@ class StatisticsHandler extends Handler {
             if ($this->_user->user_type_id == "1") {
                 $data = DbHandler::get_instance()->return_query("SELECT users.open, translation_user_type.title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id AND translation_user_type.language_id = :current_lang", TranslationHandler::get_current_language());
             } else {
-                $data = DbHandler::get_instance()->return_query("SELECT user_type_id, open FROM users WHERE user_type_id > 1 AND school_id = :school_id", $this->_user->school_id);
+                $data = DbHandler::get_instance()->return_query("SELECT users.open, users.user_type_id, translation_user_type.title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id AND translation_user_type.language_id = :current_lang WHERE users.school_id = :school_id AND users.user_type_id > 1", TranslationHandler::get_current_language(), $this->_user->school_id);
+                $max_accounts = DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $this->_user->school_id);
+                
+                $this->account_max = $max_accounts[0]["max_students"];
             }
+            
 
             $this->account_count = count($data);
 
             $types = [];
             foreach ($data as $value) {
+                
+                if ($this->_user->user_type_id != "1" && $value['user_type_id'] > 2 && $value['open'] == "1")
+                {
+                    $this->account_student_teacher_count++;
+                }
+                
                 if ($value['open'] == "1") {
                     $this->accounts_open++;
                 }
@@ -479,8 +500,15 @@ class StatisticsHandler extends Handler {
             if (!is_numeric($limit)) {
                 throw new Exception("INVALID_INPUT");
             }
-
-            $data = DbHandler::get_instance()->return_query("SELECT login_record.time, translation_user_type.user_type_id, translation_user_type.title FROM login_record INNER JOIN users ON users.id = login_record.users_id INNER JOIN translation_user_type ON users.user_type_id = translation_user_type.user_type_id AND translation_user_type.language_id = :current_lang WHERE time >= NOW() - INTERVAL :limit DAY", TranslationHandler::get_current_language(), $limit);
+            
+            if($this->_user->user_type_id=="1")
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT login_record.time, translation_user_type.user_type_id, translation_user_type.title FROM login_record INNER JOIN users ON users.id = login_record.users_id INNER JOIN translation_user_type ON users.user_type_id = translation_user_type.user_type_id AND translation_user_type.language_id = :current_lang WHERE time >= NOW() - INTERVAL :limit DAY", TranslationHandler::get_current_language(), $limit);
+            }
+            else
+            {
+                $data = DbHandler::get_instance()->return_query("SELECT login_record.time, translation_user_type.user_type_id, translation_user_type.title FROM login_record INNER JOIN users ON users.id = login_record.users_id INNER JOIN translation_user_type ON users.user_type_id = translation_user_type.user_type_id AND translation_user_type.language_id = :current_lang AND users.user_type_id > 1 WHERE time >= NOW() - INTERVAL :limit DAY", TranslationHandler::get_current_language(), $limit);
+            }
 
 
             $types = [];
@@ -526,7 +554,10 @@ class StatisticsHandler extends Handler {
             $this->global_tests_complete = $this->sort_and_count($test_dates);
 
             return true;
-        } catch (Exception $ex) {
+
+        }
+        catch(Exception $exc)
+        {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
@@ -595,4 +626,115 @@ class StatisticsHandler extends Handler {
         return $output;
     }
 
+    
+    public function get_course_stats()
+    {
+        try
+        {
+            if($this->_user->user_type_id=="1")
+            {
+                $this->super_admin_course_stats();
+            }
+            else
+            {
+                $this->local_admin_course_stats();
+            }
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    private function super_admin_course_stats()
+    {
+        $course_data = DbHandler::get_instance()->return_query("SELECT course.os_id, translation_course_os.title FROM course INNER JOIN translation_course_os ON course.os_id = translation_course_os.course_os_id AND translation_course_os.language_id = :current_lang", TranslationHandler::get_current_language());
+
+        $this->global_course_amount = count($course_data);
+        $this->global_lectures_amount = DbHandler::get_instance()->count_query("SELECT id FROM course_lecture");
+        $this->global_test_amount = DbHandler::get_instance()->count_query("SELECT id FROM course_test");
+
+        $distribution= [];
+        foreach($course_data as $value)
+        {
+            if(!array_key_exists($value['title'], $distribution))
+            {
+                $distribution[$value['title']] = 0;
+            }
+            $distribution[$value['title']]++;
+        }
+
+        $this->course_os_distribution = $distribution;
+    }
+    
+    private function local_admin_course_stats()
+    {
+        $lectures_data = DbHandler::get_instance()->return_query("SELECT course_lecture.id, translation_course.title FROM course_lecture INNER JOIN school_course ON course_lecture.course_id = school_course.course_id AND school_course.school_id = :school_id INNER JOIN translation_course ON translation_course.course_id = school_course.course_id AND translation_course.language_id = :current_lang", $this->_user->school_id, TranslationHandler::get_current_language());
+        $tests_data = DbHandler::get_instance()->return_query("SELECT course_test.id, translation_course.title FROM course_test INNER JOIN school_course ON course_test.course_id = school_course.course_id AND school_course.school_id = :school_id INNER JOIN translation_course ON translation_course.course_id = school_course.course_id AND translation_course.language_id = :current_lang", $this->_user->school_id, TranslationHandler::get_current_language());
+        $lectures_started_data = DbHandler::get_instance()->return_query("SELECT user_course_lecture.user_id, translation_course.title FROM user_course_lecture INNER JOIN users ON user_course_lecture.user_id = users.id AND users.school_id = :school_id AND users.user_type_id > 3 INNER JOIN course_lecture ON course_lecture.id = user_course_lecture.lecture_id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id AND translation_course.language_id = :current_lang", $this->_user->school_id, TranslationHandler::get_current_language());
+        $tests_started_data = DbHandler::get_instance()->return_query("SELECT user_course_test.user_id, translation_course.title FROM user_course_test INNER JOIN users ON user_course_test.user_id = users.id AND users.school_id = :school_id AND users.user_type_id > 3 INNER JOIN course_test ON course_test.id = user_course_test.test_id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id AND translation_course.language_id = :current_lang", $this->_user->school_id, TranslationHandler::get_current_language());
+        
+        $this->course_titles = [];
+        
+        $combined_data = array_merge($lectures_data, $tests_data);
+        
+        foreach($combined_data as $value)
+        {
+            if(!array_key_exists($value['title'], $this->course_titles))
+            {
+                $this->course_titles[$value['title']] = array();
+            }
+            
+            if(!array_key_exists("lectures", $this->course_titles[$value['title']]))
+            {
+                $this->course_titles[$value['title']]["lectures"] = array();
+            }
+            
+            if(!array_key_exists("tests", $this->course_titles[$value['title']]))
+            {
+                $this->course_titles[$value['title']]["tests"] = array();
+            }
+        }
+
+        foreach($lectures_started_data as $value)
+        {
+            if(!in_array($value['user_id'], $this->course_titles[$value['title']]["lectures"]))
+            {
+                $this->course_titles[$value['title']]["lectures"][] = $value['user_id'];
+            }
+        }
+        
+        foreach($tests_started_data as $value)
+        {
+            if(!in_array($value['user_id'], $this->course_titles[$value['title']]["tests"]))
+            {
+                $this->course_titles[$value['title']]["tests"][] = $value['user_id'];
+            }
+        }
+
+        $this->global_course_amount = count($this->course_titles);
+        $this->global_lectures_amount = count($lectures_data);
+        $this->global_test_amount = count($tests_data);
+    }
+    
+    public function get_total_students()
+    {
+        try
+        {
+            if($this->_user->user_type_id == "2")
+            {
+                $this->student_total = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE open = 1 AND user_type_id > 3 AND school_id = :school_id", $this->_user->school_id);
+            }
+            
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
 }

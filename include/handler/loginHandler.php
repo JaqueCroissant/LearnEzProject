@@ -113,18 +113,40 @@ class LoginHandler
             return false;
         }
         
-        $userData = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE username = :username AND password = :password AND translation_user_type.language_id = :language_id LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username), TranslationHandler::get_current_language());
+        $userData = DbHandler::get_instance()->return_query("SELECT users.*, school.open as school_open, school.subscription_end, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id LEFT JOIN school ON school.id = users.school_id WHERE username = :username AND password = :password AND translation_user_type.language_id = :language_id LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username), TranslationHandler::get_current_language());
 
         if(empty($userData)) {
              return false;
         }
 
-        $this->_user = new User(reset($userData), true);
+        $userData = $this->assign_account_open($userData);
+        $this->_user = new User($userData, true);
+        
         $user_language = reset(DbHandler::get_instance()->return_query("SELECT language_id FROM user_settings WHERE user_id = :user_id", $this->_user->id));
         if(!empty($user_language) && isset($user_language["language_id"])) {
             $this->_user->user_type_title = reset(DbHandler::get_instance()->return_query("SELECT translation_user_type.title as user_type_title FROM translation_user_type WHERE user_type_id = :user_type_id AND language_id = :language_id", $this->_user->user_type_id, $user_language["language_id"]))["user_type_title"];
         }
         return true;
+    }
+    
+    private function assign_account_open($data) {
+        $data_array = reset($data);
+        if(!array_key_exists("open", $data_array)) {
+            return $data_array;
+        }
+        
+        if(!$data_array["open"]) { 
+            return $data_array;
+        }
+        
+        if(!array_key_exists("subscription_end", $data_array) || !array_key_exists("school_open", $data_array) || !($data_array["school_id"] > 0)) {
+            return $data_array;
+        }
+        
+        if(!$data_array["school_open"] || strtotime($data_array["subscription_end"]) < strtotime(date("Y-m-d"))) {
+            $data_array["open"] = false;
+        }
+        return $data_array;
     }
     
     private function token_valid()

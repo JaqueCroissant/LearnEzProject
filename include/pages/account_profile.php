@@ -15,6 +15,11 @@ $homeworkHandler = new HomeworkHandler();
 
 $user_id = isset($_GET["user_id"]) ? $_GET["user_id"] : null;
 
+if(!RightsHandler::has_user_right("ACCOUNT_SHOW_PROFILE") && $user_id != $userHandler->_user->id) {
+    ErrorHandler::show_error_page();
+    die();
+}
+
 if (!$userHandler->get_user_by_id($user_id)) {
     ErrorHandler::show_error_page();
     die();
@@ -394,7 +399,7 @@ if (!empty($current_user->school_id)) {
                 </div>
             </div>
         <?php } ?>
-        <div class="col-sm-12 col-md-6">
+        <div id="achievements" class="col-sm-12 col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading p-h-lg p-v-md" >
                     <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-star zmdi-hc-lg" style="padding-right:30px;"></i><?= TranslationHandler::get_static_text("ACHIEVEMENTS") ?></h4>

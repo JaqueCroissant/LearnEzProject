@@ -39,9 +39,9 @@
     }
 ?>
 
-<div class="aside-scroll">
-    <div class="slimScrollDiv">
-        <div id="aside-scroll-inner" class="aside-scroll-inner">
+<div class="aside-scroll m-b-sm">
+    <div class="scroll-menu">
+        <div id="aside-inner-scroll">
             <ul class="aside-menu aside-left-menu"><?php
                 $last_page_submenu = false;
                 foreach ($pageHandler->get_menu(1) as $menu) {
@@ -111,9 +111,24 @@
                     $last_page_submenu = false;
                 }
                 ?></ul>
-            <hr>
+            <hr class="m-b-0">
         </div>
-        <div class="slimScrollBar"></div>
-        <div class="slimScrollRail"></div>
     </div>
 </div>
+
+<script>
+    $(function(){
+        $(document).ready(function(){
+            function scroll_resize(){
+                var test = $(window).height() - $(".aside-user").outerHeight() - $(".aside-header").outerHeight();
+                $('#aside-inner-scroll').slimScroll({
+                    height: test + "px"
+                });
+            }
+            
+            scroll_resize();
+            
+            $(window).on("resize", scroll_resize);
+        });
+    });
+</script>

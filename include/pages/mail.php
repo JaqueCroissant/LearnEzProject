@@ -1,7 +1,6 @@
 <?php
 require_once 'require.php';
 require_once '../../include/handler/pageHandler.php';
-require_once '../../include/handler/notificationHandler.php';
 require_once '../../include/handler/mailHandler.php';
 
 $current_page = isset($_GET['step']) && !empty($_GET['step']) ? $_GET['step'] : null;

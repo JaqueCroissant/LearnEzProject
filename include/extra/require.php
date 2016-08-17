@@ -19,6 +19,7 @@
     require_once 'include/handler/courseHandler.php';
     require_once 'include/handler/calendarHandler.php';
     require_once 'include/handler/mediaHandler.php';
+    require_once 'include/handler/certificatesHandler.php';
     require_once 'include/extra/resize.php';
     
     $loginHandler = new LoginHandler();

@@ -2,6 +2,7 @@
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/courseHandler.php';
 require_once '../../include/handler/mediaHandler.php';
+require_once '../../include/handler/certificatesHandler.php';
 
 $courseHandler = new CourseHandler();
 $mediaHandler = new MediaHandler();

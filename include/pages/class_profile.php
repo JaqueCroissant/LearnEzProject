@@ -20,10 +20,10 @@ if ($classHandler->_user->user_type_id != 1) {
 
 if (isset($_GET['class_id'])) {
     if (!$classHandler->get_class_by_id($_GET['class_id'])) {
-        echo '<script>$(".go_back").click();</script>';
+        ErrorHandler::show_error_page($classHandler->error);
         die();
     }
-    $userHandler->get_by_class_id($_GET['class_id']);
+    $userHandler->get_by_class_id($_GET['class_id'], true);
     $statisticsHandler->get_average_progress_for_class($_GET['class_id']);
 } else {
     ErrorHandler::show_error_page(ErrorHandler::return_error("USER_INVALID_CLASS_ID"));

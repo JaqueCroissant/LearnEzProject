@@ -1062,12 +1062,16 @@ class UserHandler extends Handler
             {
                 if (!RightsHandler::has_user_right("ACCOUNT_FIND") || !RightsHandler::has_user_right("CLASS_FIND")) 
                 {
-                    throw new Exception("INSUFFICIENT_RIGHTS");
+                    
                 }
             }
             else
             {
-                DbHandler::get_instance()->count_query("SELECT id FROM user_class WHERE class_id = :class_id AND users_id = :user_id", $class_id, $this->_user->id);
+                $count = DbHandler::get_instance()->count_query("SELECT id FROM user_class WHERE class_id = :class_id AND users_id = :user_id", $class_id, $this->_user->id);
+                if($count < 1)
+                {
+                    throw new Exception("INSUFFICIENT_RIGHTS");
+                }
             }
             
             $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class WHERE users.id = user_class.users_id AND user_class.class_id = :id", $class_id);

@@ -1062,7 +1062,7 @@ class UserHandler extends Handler
             {
                 if (!RightsHandler::has_user_right("ACCOUNT_FIND") || !RightsHandler::has_user_right("CLASS_FIND")) 
                 {
-                    
+                    throw new Exception("INSUFFICIENT_RIGHTS");
                 }
             }
             else

@@ -20,6 +20,7 @@ $(document).ready(function () {
     var time_between_saves = 15;
     var cookie_expiration_time = 1;
     var course_clickable = true;
+    var time_before_close = 5000;
     
     if ($.cookie("current_task") !== undefined) {
         
@@ -60,6 +61,10 @@ $(document).ready(function () {
             update_init();
             update = false;
             clearInterval(interval_function);
+            $(".course_action").attr("disabled", true);
+            setTimeout(function(){
+                close();
+            }, time_before_close);
         }
         set_test_buttons();
     }
@@ -94,6 +99,9 @@ $(document).ready(function () {
             update_init();
             update = false;
             clearInterval(interval_function);
+            setTimeout(function(){
+                close();
+            }, time_before_close);
             $(".course_pause").hide();
             $(".course_play").show();
         }
@@ -285,7 +293,7 @@ $(document).ready(function () {
         max_progress = task === "test" ? parseInt(data.max_progress) : parseInt(data.max_progress) - 1;
         current_progress = current_progress >= max_progress ? max_progress : current_progress;
         update = !(progress_reached >= max_progress + 1);
-        table_id = data.user_course_table_id === undefined ? null : parseInt(data.user_course_table_id);
+        table_id = data.user_course_table_id === null ? 0 : parseInt(data.user_course_table_id);
         course_player_init(data, 1000);
         if (open) {
             $(".course_return").trigger("click");

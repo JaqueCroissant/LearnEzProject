@@ -319,4 +319,15 @@ if(isset($_GET["play_lecture"]) && isset($_GET["lecture_id"])) {
     }
     echo json_encode($jsonArray);
 }
+
+if(isset($_GET["update_order"])) {
+    $settingsHandler = new SettingsHandler();
+    if($settingsHandler->update_course_show_order($_GET["update_order"])) {
+        $jsonArray['status_value'] = true;
+    } else {
+        $jsonArray['status_value'] = false;
+        $jsonArray['error'] = $settingsHandler->error->title;
+    }
+    echo json_encode($jsonArray);
+}
     

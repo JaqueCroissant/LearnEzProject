@@ -11,6 +11,7 @@
         public $hide_profile;
         public $blocked_students;
         public $blocked_students_array = array();
+        public $course_show_order;
         
         public function __construct() {
             if(func_num_args() != 1) {

@@ -165,7 +165,7 @@ if (isset($_GET['school_id'])) {
                                             <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= $value['firstname'] . ' ' . $value['surname'] ?></a>
                                             <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i> " . TranslationHandler::get_static_text("THIS_IS_YOU") : ""; ?></small>
                                         </h5>
-                                        <p><?php echo $value['points']; ?> points</p>
+                                        <p><span data-plugin="counterUp"><?php echo $value['points']; ?></span> points</p>
                                     </div>
                                 </div>
                             <?php } ?>
@@ -192,7 +192,7 @@ if (isset($_GET['school_id'])) {
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
-                                                <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_average; ?>%    </strong>
+                                                <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_average; ?></span>%    </strong>
                                             </div>
                                         </div>
                                     </div>
@@ -202,7 +202,7 @@ if (isset($_GET['school_id'])) {
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
-                                                <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_lecture_average; ?>%    </strong>
+                                                <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_lecture_average; ?></span>%    </strong>
                                             </div>
                                         </div>
                                     </div>
@@ -212,7 +212,7 @@ if (isset($_GET['school_id'])) {
                                         <div class="center">
                                             <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
                                             <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">
-                                                <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->school_test_average; ?>%    </strong>
+                                                <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_test_average; ?></span>%    </strong>
                                             </div>
                                         </div>
                                     </div>

@@ -121,7 +121,7 @@ $i_rand = rand(100, 1000);
                                     <div class="center">
                                         <h4 class="panel-title no-transform p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
                                         <div class="pieprogress" data-value="<?php echo $statisticsHandler->class_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->class_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->class_average; ?>%    </strong>
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->class_average; ?></span>%    </strong>
                                         </div>
                                     </div>
                                 </div>
@@ -131,7 +131,7 @@ $i_rand = rand(100, 1000);
                                     <div class="center">
                                         <h4 class="panel-title no-transform p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
                                         <div class="pieprogress" data-value="<?php echo $statisticsHandler->class_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->class_lecture_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->class_lecture_average; ?>%    </strong>
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->class_lecture_average; ?></span>%    </strong>
                                         </div>
                                     </div>
                                 </div>
@@ -141,7 +141,7 @@ $i_rand = rand(100, 1000);
                                     <div class="center">
                                         <h4 class="panel-title no-transform p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
                                         <div class="pieprogress" data-value="<?php echo $statisticsHandler->class_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->class_test_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><?php echo $statisticsHandler->class_test_average; ?>%    </strong>
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->class_test_average; ?></span>%    </strong>
                                         </div>
                                     </div>
                                 </div>
@@ -286,7 +286,7 @@ $i_rand = rand(100, 1000);
             <div class="panel-body">
                 <div class="pull-left" name="test_average">
                     <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $classHandler->school_class->remaining_days / $classHandler->school_class->total_days : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($classHandler->school_class->remaining_days * 100 / $classHandler->school_class->total_days) : "" ?>"}, thickness: 10}'>
-                        <strong><?php echo isset($_GET['class_id']) ? round($classHandler->school_class->remaining_days * 100 / $classHandler->school_class->total_days, 0) : ""; ?> %</strong>
+                        <strong><span data-plugin="counterUp"><?php echo isset($_GET['class_id']) ? round($classHandler->school_class->remaining_days * 100 / $classHandler->school_class->total_days, 0) : ""; ?></span> %</strong>
                     </div>
                 </div>
             </div>
@@ -316,7 +316,7 @@ $i_rand = rand(100, 1000);
                                     <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= ucwords(htmlspecialchars($value['firstname']) . ' ' . htmlspecialchars($value['surname'])) ?></a>
                                     <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i> " . TranslationHandler::get_static_text("THIS_IS_YOU") : ""; ?></small>
                                 </h5>
-                                <p><?php echo $value['points']; ?> points</p>
+                                <p><span data-plugin="counterUp"><?php echo $value['points']; ?></span> points</p>
                             </div>
                         </div>
                     <?php } ?>

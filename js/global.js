@@ -494,7 +494,7 @@ function reload_page_content(pagename) {
         }
         
         if(pagename === last_page.page) {
-            change_page(last_page.page, last_page.step, last_page.args, false);
+            change_page(last_page.page, last_page.step, last_page.args, undefined, false);
         }
     }
 }

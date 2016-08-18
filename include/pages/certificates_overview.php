@@ -95,10 +95,7 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
                                                         <div class="mail-item-excerpt" style="float:left;">' . (strlen($value->course_description) > 85 ? substr($value->course_description, 0, 85) . '...' : $value->course_description) . '</div>';
                                                     if($value->is_completed) {    
                                                         echo '
-                                                        <div class="mail-item-date" style="float:right;text-align: right;margin-bottom: 3px;"><div>Validerings kode</div></div>
-                                                        <div style="clear:both;"></div>
-                                                        <div class="mail-item-date" style="float:right;text-align: right;font-weight:600">'. $value->validation_code .'</div>
-                                                        <div style="clear:both;"></div>';
+                                                        <div class="mail-item-date" style="float:right;text-align: right;margin-bottom: 3px;"><div>Validerings kode</div><div style="font-weight:600">'. $value->validation_code .'</div></div>';
                                                     }
                                                     
                                                     echo '

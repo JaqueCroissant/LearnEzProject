@@ -1,9 +1,9 @@
 <?php
 require_once 'require.php';
-    require_once '../include/handler/loginHandler.php';
+require_once '../../include/handler/loginHandler.php';
     $loginHandler = new LoginHandler();
     
-    $step = isset($_GET['step']) ? $_GET['step'] : "resetpassword";
+    $step = isset($_GET['step']) ? $_GET['step'] : "";
     
     switch($step)
     {
@@ -49,7 +49,7 @@ require_once 'require.php';
             <?php
         break;
         
-        case "resetpassword":
+        default:
             ?>
                 <div class="row">
                     <div class="col-md-12 ">

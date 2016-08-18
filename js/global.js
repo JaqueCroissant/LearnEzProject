@@ -232,6 +232,16 @@ $(document).ready(function () {
             show_status_bar("success", ajax_data.success);
         });
     });
+    
+    $(document).on("click", ".create_submit_changed_password", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            change_page("login");
+            show_status_bar("success", ajax_data.success);
+        });
+    });
 
     $(document).on("click", ".account_assign_password", function (event) {
         event.preventDefault();

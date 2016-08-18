@@ -236,7 +236,7 @@ class LoginHandler
                 throw new Exception("LOGIN_INVALID_TIME");
             }
             
-            // mail function
+            $this->generate_reset_email($this->_email);
 
             DbHandler::get_instance()->query("UPDATE users SET last_password_request = :date, validation_code = :validation_code WHERE id = :id", date ("Y-m-d H:i:s"), md5(uniqid(mt_rand(), true)), $this->_user->id);
             return true;
@@ -267,7 +267,7 @@ class LoginHandler
             }
 
             if(strtotime($user->last_password_request) < strtotime("-15 minutes")){
-                throw new Exception("LOGIN_INVALID_VALIDATION_TIME");
+                //throw new Exception("LOGIN_INVALID_VALIDATION_TIME");
             }
             return true;
         }
@@ -276,6 +276,37 @@ class LoginHandler
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
+    }
+    
+    private function generate_reset_email($email)
+    {
+        $subject = TranslationHandler::get_static_text("RESET_PASS_MAIL_SUBJECT");
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "From: no-reply@learnez.dk";
+        $message = TranslationHandler::get_static_text("RESET_PASS_MAIL_MESSAGE");
+        $period_pos = strpos($message, ".");
+        $comma_pos = strpos($message, ",");
+        
+        $content = 
+        '<html>
+            <head>
+            </head>
+
+            <body>
+                <p>' . TranslationHandler::get_static_text("HELLO") . "!" . '</p>
+                <p>' . substr($message, 0, $period_pos) . '</p>
+                <div>' . substr($message, $period_pos + 2, $comma_pos - $period_pos)  . '</div>
+                <div>' . substr($message, $comma_pos + 2, strlen($message) - $comma_pos + 2)  . '</div></br>
+                <p><a href="http://reddit.com">' . TranslationHandler::get_static_text("RESET_PASS_MAIL_LINK_MESSAGE") . 
+                '</a></p>
+
+                <p>LearnEZ</p>
+            </body>
+        </html>';
+        
+
+        mail($email,$subject,$content,$headers);
     }
 }
 

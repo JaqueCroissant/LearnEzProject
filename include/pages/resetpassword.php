@@ -58,7 +58,7 @@ require_once 'require.php';
                                 </div>
                             </div>
                             <div class="form-group center">
-                                <input type="button" id="submit_button" name="submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="center btn btn-default reset_pass_submit_email2">
+                                <input type="button" id="submit_button" name="submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="center btn btn-default create_submit_info">
                             </div>
 
                         </form>

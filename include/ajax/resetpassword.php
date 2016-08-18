@@ -28,11 +28,13 @@
                 $jsonArray['status_value'] = false;
                 $jsonArray['error'] = $userHandler->error->title;
             }
-            elseif(isset($_POST['submit'])) 
+            elseif(isset($_POST['submit']))
             {
                 if($userHandler->change_password($_GET['id'],$_GET['code'],$_POST['password'],$_POST['password_confirm']))
                 {
-                    SessionKeyHandler::add_to_session("user_handler", $userHandler, true);
+                    //SessionKeyHandler::add_to_session("user_handler", $userHandler, true);
+                    $jsonArray['success'] = TranslationHandler::get_static_text("PASS_HAS_BEEN_RESET");
+                    $jsonArray['reload'] = true;
                     $jsonArray['status_value'] = true;
                 }
                 else
@@ -67,6 +69,7 @@
                 $jsonArray['status_value'] = true;
             }
             echo json_encode($jsonArray);
+            die();
         }
     }
 ?>

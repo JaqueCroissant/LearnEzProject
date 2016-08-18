@@ -35,6 +35,7 @@ $loginHandler = new LoginHandler();
                             <input type="hidden" id="token" name="token" class="login_token" value="<?php echo $loginHandler->get_login_token(); ?>">
                             <input type="button" id="submit_button" name="submit" 
                                    value="<?php echo TranslationHandler::get_static_text("LOGIN"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">
+                            <a class="change_page" page="resetpassword" style="cursor: pointer;"><?php echo TranslationHandler::get_static_text("RESET_PASS"); ?></a>
                         </div>
                     </div>
                 </form>

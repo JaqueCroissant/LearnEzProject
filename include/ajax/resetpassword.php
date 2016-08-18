@@ -64,6 +64,7 @@
             } 
             else 
             {
+                $jsonArray['success'] = TranslationHandler::get_static_text("PASS_RESET_MAIL_SENT");
                 $jsonArray['status_value'] = true;
             }
             echo json_encode($jsonArray);

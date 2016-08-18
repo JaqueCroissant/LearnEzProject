@@ -8,6 +8,7 @@ $(document).ready(function () {
     var current_progress = 0;
     var max_progress = 0;
     var update = false;
+    var done = false;
     var table_id = 0;
     var action_id = 0;
     var task = "";
@@ -54,19 +55,21 @@ $(document).ready(function () {
     
     function slide_enter(event){
         current_progress = event.Data.slideNumber;
+        set_test_buttons();
         if (current_progress > progress_reached) {
             progress_reached = current_progress;
         }
         if (current_progress >= max_progress) {
             update_init();
             update = false;
+            done = true;
             clearInterval(interval_function);
             $(".course_action").attr("disabled", true);
             setTimeout(function(){
                 close();
             }, time_before_close);
         }
-        set_test_buttons();
+        
     }
     
     function set_test_buttons(){
@@ -98,6 +101,7 @@ $(document).ready(function () {
         if(player.ended) {
             update_init();
             update = false;
+            done = true;
             clearInterval(interval_function);
             setTimeout(function(){
                 close();
@@ -287,6 +291,7 @@ $(document).ready(function () {
     }
     
     function open(data, open){
+        done = false;
         current_progress = parseInt(data.current_progress);
         progress_reached = parseInt(data.current_progress);
         progress_reached_last = parseInt(data.current_progress);
@@ -383,7 +388,7 @@ $(document).ready(function () {
     }
         
     $(document).on("click", ".backdrop", function(){      
-        if (!hidden) {
+        if (!hidden && !done) {
             hide_backdrop();
             $(".course_action").attr("disabled", true);
             can_be_clicked = false;

@@ -23,7 +23,7 @@ if (RightsHandler::has_user_right("RIGHTS")) {
                         <li role="presentation" id="STUDENT"><a href="#tab-4"  class="my_tab_header" data-toggle="tab"><?php echo TranslationHandler::get_static_text("STUDENT"); ?></a></li>
                     </ul>
                     <div class="change_type" style="width:5%;float:left;border-bottom: 1px solid #ddd;text-align:center;">
-                    <i class="zmdi-hc-fw zmdi zmdi-refresh-alt zmdi-hc-lg change_page" page="rights" args="&closed_users=1" style="cursor:pointer;" data-toggle="tooltip" title="Vis for lukkede brugere"></i>
+                    <i class="zmdi-hc-fw zmdi zmdi-refresh-alt zmdi-hc-lg change_page" page="rights" args="&closed_users=1" style="cursor:pointer;" data-toggle="tooltip" title="<?php echo TranslationHandler::get_static_text("SHOW_FOR_CLOSED_USERS"); ?>"></i>
                     </div>
                     <div style="clear:both;"></div>
                     <div class="my_tab_content p-md">
@@ -37,7 +37,7 @@ if (RightsHandler::has_user_right("RIGHTS")) {
                                     ?>
 
                                     <header class="widget-header">
-                                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PAGE_RIGHTS"); ?> (Åbne brugere)</h4>
+                                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PAGE_RIGHTS"); ?> (<?php echo TranslationHandler::get_static_text("OPEN_USERS"); ?>)</h4>
                                     </header>
                                     <hr class="widget-separator">
                                     <div class="widget-body">
@@ -104,7 +104,7 @@ if (RightsHandler::has_user_right("RIGHTS")) {
                                         </form>
                                     </div>
                                     <header class="widget-header">
-                                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_RIGHTS"); ?> (Åbne brugere)</h4>
+                                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_RIGHTS"); ?> (<?php echo TranslationHandler::get_static_text("OPEN_USERS"); ?>)</h4>
                                     </header>
                                     <hr class="widget-separator">
 
@@ -188,7 +188,7 @@ if (RightsHandler::has_user_right("RIGHTS")) {
                         <li role="presentation" id="STUDENT"><a href="#tab-4"  class="my_tab_header" data-toggle="tab"><?php echo TranslationHandler::get_static_text("STUDENT"); ?></a></li>
                     </ul>
                     <div class="change_type" style="width:5%;float:left;border-bottom: 1px solid #ddd;text-align:center;">
-                    <i class="zmdi-hc-fw zmdi zmdi-refresh-alt zmdi-hc-lg change_page" page="rights" style="cursor:pointer;" data-toggle="tooltip" title="Vis for åbne brugere"></i>
+                    <i class="zmdi-hc-fw zmdi zmdi-refresh-alt zmdi-hc-lg change_page" page="rights" style="cursor:pointer;" data-toggle="tooltip" title="<?php echo TranslationHandler::get_static_text("SHOW_FOR_OPEN_USERS"); ?>"></i>
                     </div>
                     <div style="clear:both;"></div>
                     <div class="my_tab_content p-md">
@@ -202,7 +202,7 @@ if (RightsHandler::has_user_right("RIGHTS")) {
                                     ?>
 
                                     <header class="widget-header">
-                                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PAGE_RIGHTS"); ?> (Lukkede brugere)</h4>
+                                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PAGE_RIGHTS"); ?> (<?php echo TranslationHandler::get_static_text("CLOSED_USERS"); ?>)</h4>
                                     </header>
                                     <hr class="widget-separator">
                                     <div class="widget-body">
@@ -270,7 +270,7 @@ if (RightsHandler::has_user_right("RIGHTS")) {
                                         </form>
                                     </div>
                                     <header class="widget-header">
-                                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_RIGHTS"); ?> (Lukkede brugere)</h4>
+                                        <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("GENERAL_RIGHTS"); ?> (<?php echo TranslationHandler::get_static_text("CLOSED_USERS"); ?>)</h4>
                                     </header>
                                     <hr class="widget-separator">
 

@@ -32,7 +32,7 @@ class certificatesHandler extends Handler {
             if (!$this->check_validation_code($code)) {
                 throw new Exception("INVALID_INPUT");
             }
-            $temp = DbHandler::get_instance()->return_query("SELECT certificates.course_id, certificates.completion_date, certificates.validation_code, users.firstname AS user_firstname, users.surname AS user_surname, translation_course.title AS course_title, translation_course.description AS course_description FROM certificates INNER JOIN users ON users.id = certificates.user_id INNER JOIN translation_course ON translation_course.course_id = certificates.course_id WHERE certificates.validation_code = :code", $code);
+            $temp = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course.color as course_color, course_image.filename as course_image, certificates.completion_date, certificates.validation_code, certificates.id, translation_course.title AS course_title, translation_course.description AS course_description, users.firstname AS user_firstname, users.surname AS user_surname FROM course INNER JOIN certificates ON certificates.course_id = course.id AND certificates.validation_code = :code INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN course_image ON course_image.id = course.image_id INNER JOIN users ON users.id = certificates.user_id", $code, TranslationHandler::get_current_language());
             if (empty($temp)) {
                 throw new Exception("CERTIFICATE_DOESNT_EXIST");
             }
@@ -46,9 +46,6 @@ class certificatesHandler extends Handler {
     
     public function construct_code($array){
         try  {
-            if (!$this->user_exists()) {
-                throw new Exception("USER_NOT_LOGGED_IN");
-            }
             if (empty($array)) {
                 throw new Exception("INVALID_INPUT");
             }

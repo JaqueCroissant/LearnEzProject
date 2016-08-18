@@ -55,10 +55,10 @@ $(document).ready(function () {
     
     function slide_enter(event){
         current_progress = event.Data.slideNumber;
-        set_test_buttons();
         if (current_progress > progress_reached) {
             progress_reached = current_progress;
         }
+        set_test_buttons();
         if (current_progress >= max_progress) {
             update_init();
             update = false;

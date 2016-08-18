@@ -21,15 +21,27 @@ $(document).on("keydown", ".certificate_input", function(event){
 });
 
 $(document).on("click", ".certificate_submit", function(){
+    $(".certificate_item").hide();
+    
     initiate_submit_form($(this), function(){
         show_status_bar("error", ajax_data.error);
     }, function(){
         if (ajax_data.status_value === true) {
-            
+            $(".certificate_color").css("border-right-color", ajax_data.course_color);
+            $(".certificate_image").attr("src", "assets/images/thumbnails/" + ajax_data.course_image);
+            $(".certificate_date").html(ajax_data.complete_date);
+            $(".certificate_doneby").html(ajax_data.done_by + "<br/>" + ajax_data.user_firstname + ' ' + ajax_data.user_surname);
+            $(".certificate_title").html(ajax_data.course_title);
+            $(".certificate_description").html(ajax_data.course_description);
+            $(".certificate_item").show();
         }
         else {
             show_status_bar("error", ajax_data.error);
         }
     });
+});
+
+$(document).on("click", ".certificate_reset", function(){
+    $(".certificate_input").val("");
 });
 

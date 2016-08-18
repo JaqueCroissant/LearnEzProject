@@ -32,6 +32,7 @@ require_once '../../include/class/test.class.php';
 require_once '../../include/class/calendar_date.class.php';
 require_once '../../include/class/homework.class.php';
 require_once '../../include/class/achievement.class.php';
+require_once '../../include/class/certificate.class.php';
 
 if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     die("Direct access not permitted");

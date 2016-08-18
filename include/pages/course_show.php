@@ -8,7 +8,7 @@ $homeworkHandler = new HomeworkHandler();
 
 $course_id = isset($_GET["course_id"]) ? $_GET["course_id"] : null;
 $current_user = SessionKeyHandler::get_from_session("user", true);
-$order_by = $current_user->settings->course_show_order;
+$order_by = SettingsHandler::get_settings()->course_show_order;
 
 if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($course_id, "lecture") || !$courseHandler->get_multiple($course_id, "test")) {
     ErrorHandler::show_error_page();

@@ -4,6 +4,7 @@ class certificatesHandler extends Handler {
 
     public $current_certificate;
     public $certificates;
+    public $current_code;
 
     public static function is_completed($course_id) {
         if (empty($course_id) || !is_numeric($course_id)) {
@@ -36,6 +37,31 @@ class certificatesHandler extends Handler {
                 throw new Exception("CERTIFICATE_DOESNT_EXIST");
             }
             $this->current_certificate = new Certificate(reset($temp));
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    public function construct_code($array){
+        try  {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            if (empty($array)) {
+                throw new Exception("INVALID_INPUT");
+            }
+            $final = "";
+            foreach ($array as $value) {
+                if (strlen($value) == 4) {
+                    $final .= $value . "-";
+                }
+                else {
+                    throw new Exception("INVALID_INPUT");
+                }
+            }
+            $this->current_code = rtrim($final, "-");
             return true;
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());

@@ -44,6 +44,16 @@ html{
     transition: none !important;
 }
 
+.certificate_input {
+    width:64px !important;
+    display:inline-block !important;
+    padding: 6px !important;
+}
+
+.certificate_input_span {
+    font-size: 25px;
+}
+
 .clickable_row {
     cursor: pointer;
 }

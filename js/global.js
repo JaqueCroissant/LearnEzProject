@@ -400,7 +400,7 @@ $(document).ready(function () {
 
     function initial_page_load() {
         var params = getSearchParameters();
-        if(params.step === "pass_val" && params.id !== undefined && params.code !== undefined) {
+        if(params.step === "confirmpassword" && params.id !== undefined && params.code !== undefined) {
             change_page("resetpassword", params.step, "&id=" + params.id + "&code=" + params.code);
             //window.history.pushState("object or string", "Title", "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1).split("?")[0]);
             return;

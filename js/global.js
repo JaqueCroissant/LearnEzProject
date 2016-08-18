@@ -401,6 +401,12 @@ $(document).ready(function () {
     }
 
     function initial_page_load() {
+        var params = getSearchParameters();
+        if(params.step === "pass_val" && params.id !== undefined && params.code !== undefined) {
+            change_page("resetpassword", params.step, "&id=" + params.id + "&code=" + params.code);
+            //window.history.pushState("object or string", "Title", "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1).split("?")[0]);
+            return;
+        }
         var page_reload = $.cookie("page_reload");
         $.removeCookie("page_reload");
 
@@ -546,5 +552,20 @@ function cursor_wait()
 function remove_cursor_wait() {
     $('html').off('mouseover.cursorwait');
     $('.cursor-wait').removeClass('cursor-wait');
+}
+
+function getSearchParameters() {
+      var prmstr = window.location.search.substr(1);
+      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+}
+
+function transformToAssocArray( prmstr ) {
+    var params = {};
+    var prmarr = prmstr.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
 }
 

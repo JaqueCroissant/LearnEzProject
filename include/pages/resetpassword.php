@@ -22,24 +22,24 @@ require_once '../../include/handler/loginHandler.php';
                             </div>
                             <hr class="widget-separator">
                             <div class="widget-body">
-                                <form method="POST" action="" id="reset_pass_submit_code" url="resetpassword.php?step=pass_val" class="form-horizontal" name="reset_pass_submit_email">
-
+                                <form method="POST" action="" id="reset_pass_submit_code" url="resetpassword.php?step=pass_val" class="form-horizontal" name="reset_pass_submit_code">
+                                    <input type="hidden" name="id" value="<?= $_GET['id'] ?>">
+                                    <input type="hidden" name="code" value="<?= $_GET['code'] ?>">
                                     <div class="form-group">
                                         <label class="col-sm-2 col-sm-offset-2 control-label" for="email"><?php echo TranslationHandler::get_static_text("PASSWORD"); ?></label>
                                         <div class="col-sm-4">
-                                            <input class="form-control input-sm reset_pass_email" type="password" name="email" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>">
+                                            <input class="form-control input-sm reset_pass_email" type="password" name="password" placeholder="<?php echo TranslationHandler::get_static_text("PASSWORD"); ?>">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-2 col-sm-offset-2 control-label" for="email"><?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?></label>
                                         <div class="col-sm-4">
-                                            <input class="form-control input-sm reset_pass_email" type="password" name="email" placeholder="<?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?>">
+                                            <input class="form-control input-sm reset_pass_email" type="password" name="password_confirm" placeholder="<?php echo TranslationHandler::get_static_text("CONFIRM_PASSWORD"); ?>">
                                         </div>
                                     </div>
                                     <div class="form-group center">
-                                        <input type="button" id="submit_button" name="submit" value="<?php echo TranslationHandler::get_static_text("RESET_PASS_SUBMIT"); ?>" class="center btn btn-default create_submit_info">
+                                        <input type="button" id="submit_button" name="submit" value="<?php echo TranslationHandler::get_static_text("RESET_PASS_SUBMIT"); ?>" class="center btn btn-default create_submit_changed_password">
                                     </div>
-
                                 </form>
                             </div>
                         </div>

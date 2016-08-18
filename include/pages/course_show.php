@@ -8,6 +8,7 @@ $homeworkHandler = new HomeworkHandler();
 
 $course_id = isset($_GET["course_id"]) ? $_GET["course_id"] : null;
 $current_user = SessionKeyHandler::get_from_session("user", true);
+$order_by = $current_user->settings->course_show_order;
 
 if(!$courseHandler->get($course_id, "course") || !$courseHandler->get_multiple($course_id, "lecture") || !$courseHandler->get_multiple($course_id, "test")) {
     ErrorHandler::show_error_page();
@@ -24,13 +25,13 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
             <div class="panel-heading" style="padding: 16px !important;">
                 <h4 class="panel-title" style="float:left;"><?= TranslationHandler::get_static_text("LECTURES") ?></h4>
                 <i class="zmdi zmdi-hc-lg zmdi-plus switch" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-lectures" aria-expanded="true" aria-controls="collapse-1" style="float:right;cursor:pointer;padding-left:5px;"></i>
-                <i class="zmdi zmdi-hc-lg change_page <?= isset($_GET["order_by"]) ? 'zmdi-format-list-bulleted' : 'zmdi-apps'; ?>" page="course_show" args="&course_id=<?= $course_id; ?><?= isset($_GET["order_by"]) ? '' : '&order_by=1'; ?>" style="float:right;cursor:pointer;"></i><div style="clear:both;"></div>
+                <i class="zmdi zmdi-hc-lg change_course_view <?= $order_by == 1 ? 'zmdi-format-list-bulleted' : 'zmdi-apps'; ?>" order="<?= $order_by ?>" page="course_show" args="&course_id=<?= $course_id; ?>" style="float:right;cursor:pointer;"></i><div style="clear:both;"></div>
             </div>
             <div style="border-top: 8px solid <?php echo htmlspecialchars($courseHandler->current_element->color); ?>;background: none !important; ">
                 <div class="panel-body panel-collapse collapse in" id="collapse-lectures"  role="tabpanel" style="background: none !important; padding: 16px 0px !important; ">
 
                     <?php foreach($courseHandler->lectures as $value) { ?>
-                    <?php if(isset($_GET["order_by"])) { ?>
+                    <?php if($order_by == 1) { ?>
                     <div class="col-md-4 play_lecture" element_id="<?= $value->id; ?>">
                         
                         <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars($value->description); ?>">
@@ -98,13 +99,13 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
             <div class="panel-heading accordion" id="accordion-2">
                 <h4 class="panel-title" style="float:left;"><?= TranslationHandler::get_static_text("TESTS") ?></h4>
                 <i class="zmdi zmdi-hc-lg zmdi-plus switch" role="button" data-toggle="collapse" data-parent="#accordion-2" href="#collapse-tests" aria-expanded="true" style="float:right;cursor:pointer;padding-left:5px;"></i>
-                <i class="zmdi zmdi-hc-lg change_page <?= isset($_GET["order_by"]) ? 'zmdi-format-list-bulleted' : 'zmdi-apps'; ?>" page="course_show" args="&course_id=<?= $course_id; ?><?= isset($_GET["order_by"]) ? '' : '&order_by=1'; ?>" style="float:right;cursor:pointer;"></i><div style="clear:both;"></div>
+                <i class="zmdi zmdi-hc-lg change_course_view <?= $order_by == 1 ? 'zmdi-format-list-bulleted' : 'zmdi-apps'; ?>" order="<?= $order_by ?>" page="course_show" args="&course_id=<?= $course_id; ?>" style="float:right;cursor:pointer;"></i><div style="clear:both;"></div>
             </div>
             <div style="border-top: 8px solid <?php echo $courseHandler->current_element->color; ?>;background: none !important; ">
                 <div class="panel-body panel-collapse collapse in" id="collapse-tests"  role="tabpanel" style="background: none !important; padding: 16px 0px !important; ">
 
                     <?php foreach($courseHandler->tests as $value) { ?>
-                    <?php if(isset($_GET["order_by"])) { ?>
+                    <?php if($order_by == 1) { ?>
                     <div class="col-md-4 play_test" element_id="<?= $value->id; ?>">
                         <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars($value->description); ?>">
                             <header class="widget-header" style="padding: 0.7rem 1rem !important;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>">

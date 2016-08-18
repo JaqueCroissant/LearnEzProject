@@ -60,6 +60,13 @@ $(document).on("click", ".upload_test", function (event) {
     });
 });
 
+$(document).on("click", ".change_course_view", function(){
+    initiate_submit_get($(this), "course.php?update_order=" + ($(this).attr("order") === "1" ? 0 : 1), function(){
+    }, function(){
+    });
+    change_page("course_show", "", $(this).attr("args"), $(this), false);
+});
+
 function upload_lecture(event) {
     if (event.attr("disabled") !== "disabled") {
 

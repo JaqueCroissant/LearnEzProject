@@ -149,6 +149,33 @@ class SettingsHandler extends Handler {
             return false;
         }
     }
+    
+    public function update_course_show_order($new_value){
+        try {
+            if(!RightsHandler::has_page_right("SETTINGS_PREFERENCES")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            if ($new_value != 0 && $new_value != 1) {
+                throw new Exception("INVALID_INPUT");
+            }
+            if(DbHandler::get_instance()->count_query("SELECT id FROM user_settings WHERE user_id = :user_id", $this->_user->id) > 0) {
+                DbHandler::get_instance()->query("UPDATE user_settings SET course_show_order = :value WHERE user_id = :user", $new_value, $this->_user->id);
+                $this->_user->settings->course_show_order = $new_value;
+                SessionKeyHandler::add_to_session("user", $this->_user, true);
+                return true;
+            }
+            else {
+                throw new Exception("UNKNOWN_ERROR");
+            }
+            
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
 
     public function update_settings($settings = null) {
         try 
@@ -186,7 +213,7 @@ class SettingsHandler extends Handler {
             if(DbHandler::get_instance()->count_query("SELECT id FROM user_settings WHERE user_id = :user_id", $this->_user->id) > 0) {
                 DbHandler::get_instance()->query("UPDATE user_settings SET language_id = :language_id, os_id = :os_id, elements_shown = :elements_shown, block_mail_notifications = :block_mail_notifications, block_student_mails = :block_student_mails, hide_profile = :hide_profile, blocked_students = :blocked_students WHERE user_id = :user_id", $settings->language_id, $settings->os_id, $settings->elements_shown, $settings->block_mail_notifications, $settings->block_student_mails, $settings->hide_profile, $settings->blocked_students, $this->_user->id);
             } else {
-                DbHandler::get_instance()->query("INSERT INTO user_settings (user_id, language_id, os_id, elements_shown, block_mail_notifications, block_student_mails, hide_profile, blocked_students) VALUES (:user_id, :language_id, :os_id, :elements_shown, :block_mail_notifications, :block_student_mails, :hide_profile, :blocked_students)", $this->_user->id, $settings->language_id, $settings->os_id, $settings->elements_shown, $settings->block_mail_notifications, $settings->block_student_mails, $settings->hide_profile, $settings->blocked_students);
+                DbHandler::get_instance()->query("INSERT INTO user_settings (user_id, language_id, os_id, elements_shown, block_mail_notifications, block_student_mails, hide_profile, blocked_students, course_show_order) VALUES (:user_id, :language_id, :os_id, :elements_shown, :block_mail_notifications, :block_student_mails, :hide_profile, :blocked_students, 0)", $this->_user->id, $settings->language_id, $settings->os_id, $settings->elements_shown, $settings->block_mail_notifications, $settings->block_student_mails, $settings->hide_profile, $settings->blocked_students);
             }
             
             $this->_user->settings = null;
@@ -195,7 +222,6 @@ class SettingsHandler extends Handler {
         }
         catch (Exception $ex) 
         {
-            echo $ex->getMessage();
             $this->error = ErrorHandler::return_error($ex->getMessage());
         }
         return false;

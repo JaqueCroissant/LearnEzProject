@@ -58,6 +58,7 @@ function change_page(pagename, step, args, element, scroll_to_top) {
                     set_clickable(element);
                 }
                 append_content(e, data.breadcrumbs);
+                clearUrl();
             });
             if (data.lang_id !== undefined) {
                 current_lang_id = data.lang_id;

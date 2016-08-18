@@ -40,7 +40,6 @@ RightsHandler::reset();
 
             <div class="wrap">
                 <section id="content_container" class="app-content">
-
                 </section>
             </div>
         </main>

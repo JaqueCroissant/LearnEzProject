@@ -97,7 +97,7 @@ class LoginHandler
              return false;
         }
         
-        
+
         $user = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE email = :email AND translation_user_type.language_id = :language_id", $this->_email, TranslationHandler::get_current_language());
            
         if(empty($user)) {
@@ -233,7 +233,7 @@ class LoginHandler
             }
 
             if(strtotime($this->_user->last_password_request) > strtotime("-15 minutes")){
-                //throw new Exception("LOGIN_INVALID_TIME");
+                throw new Exception("LOGIN_INVALID_TIME");
             }
             $validation = md5(uniqid(mt_rand(), true));
             $this->generate_reset_email($this->_email, $validation);
@@ -267,7 +267,7 @@ class LoginHandler
             }
 
             if(strtotime($user->last_password_request) < strtotime("-15 minutes")){
-                //throw new Exception("LOGIN_INVALID_VALIDATION_TIME");
+                throw new Exception("LOGIN_INVALID_VALIDATION_TIME");
             }
             return true;
         }

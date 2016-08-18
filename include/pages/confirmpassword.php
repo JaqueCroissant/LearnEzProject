@@ -1,6 +1,6 @@
 <?php
 require_once 'require.php';
-require_once '../../include/handler/loginHandler.php';
+require_once '../include/handler/loginHandler.php';
 $loginHandler = new LoginHandler();
 
 var_dump($_GET);

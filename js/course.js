@@ -62,9 +62,10 @@ $(document).on("click", ".upload_test", function (event) {
 
 $(document).on("click", ".change_course_view", function(){
     initiate_submit_get($(this), "course.php?update_order=" + ($(this).attr("order") === "1" ? 0 : 1), function(){
+        show_status_bar("error", ajax_data.error);
     }, function(){
+        change_page("course_show", "", $(".change_course_view").attr("args"), $(".change_course_view"), false);
     });
-    change_page("course_show", "", $(this).attr("args"), $(this), false);
 });
 
 function upload_lecture(event) {

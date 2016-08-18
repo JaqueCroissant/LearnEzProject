@@ -20,6 +20,7 @@ $(document).ready(function () {
     var time_between_saves = 15;
     var cookie_expiration_time = 1;
     var course_clickable = true;
+    var time_before_close = 5000;
     
     if ($.cookie("current_task") !== undefined) {
         
@@ -60,6 +61,10 @@ $(document).ready(function () {
             update_init();
             update = false;
             clearInterval(interval_function);
+            $(".course_action").attr("disabled", true);
+            setTimeout(function(){
+                close();
+            }, time_before_close);
         }
         set_test_buttons();
     }
@@ -94,6 +99,9 @@ $(document).ready(function () {
             update_init();
             update = false;
             clearInterval(interval_function);
+            setTimeout(function(){
+                close();
+            }, time_before_close);
             $(".course_pause").hide();
             $(".course_play").show();
         }

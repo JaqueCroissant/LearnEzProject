@@ -34,6 +34,17 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
             $statisticsHandler->get_global_account_stats();
             $statisticsHandler->get_course_stats();
             $statisticsHandler->get_login_activity($activity_limit);
+
+            $all_logins = 0;
+
+            foreach($statisticsHandler->login_activity["all"] as $value)
+            {
+                if(max($value)>$all_logins)
+                {
+                    $all_logins = max($value);
+                }
+            }
+
             ?>
             <div class="col-md-12 col-sm-12 p-v-0">
                 <div class="col-sm-4">
@@ -252,7 +263,9 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                  ],
                                  yAxis : [
                                  {
-                                 type : 'value'
+                                    type : 'value',
+                                    max : <?= $all_logins * 1.1 ?>
+
                                  }
                                  ],
                                  series : [<?php
@@ -305,7 +318,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
 
 
                 </div>
-
+            </div>
             <?php
             break;
 
@@ -317,6 +330,16 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
             $statisticsHandler->get_course_stats();
             $statisticsHandler->get_total_students();
             $statisticsHandler->get_login_activity($activity_limit);
+            $all_logins = 0;
+
+            foreach($statisticsHandler->login_activity["all"] as $value)
+            {
+                if(max($value)>$all_logins)
+                {
+                    $all_logins = max($value);
+                }
+            }
+
             ?>
             <div class="col-md-12 col-sm-12 p-v-0">
                 
@@ -571,7 +594,8 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                  ],
                                  yAxis : [
                                  {
-                                 type : 'value'
+                                 type : 'value',
+                                 max : <?= $all_logins * 1.1 ?>
                                  }
                                  ],
                                  series : [<?php

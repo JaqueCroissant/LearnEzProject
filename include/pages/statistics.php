@@ -104,7 +104,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
-                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_account" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="panel-body account">
@@ -118,7 +118,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                             </div>
                             <div class="row">
                                 <div class="col-sm-5">
-                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("DISTRIBUTION") . ":"; ?></label>
+                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USER_TYPE") . ":"; ?></label>
                                 </div>
 
                             </div>
@@ -156,7 +156,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
-                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("COURSES"); ?></h4>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("COURSE_FIND") ? ' a change_page" page="find_course" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_COURSE") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("COURSES"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="panel-body course">
@@ -265,7 +265,6 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                  {
                                     type : 'value',
                                     max : <?= $all_logins * 1.1 ?>
-
                                  }
                                  ],
                                  series : [<?php
@@ -347,7 +346,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
-                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
+                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_account" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="panel-body account">
@@ -369,7 +368,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                             </div>
                             <div class="row">
                                 <div class="col-sm-5">
-                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("DISTRIBUTION") . ":"; ?></label>
+                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USER_TYPE") . ":"; ?></label>
                                 </div>
 
                             </div>
@@ -407,7 +406,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                 <div class="col-sm-8">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
-                            <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("COURSES"); ?></h4>
+                            <h4 class="panel-title<?= (RightsHandler::has_page_right("COURSE_OVERVIEW") ? ' a change_page" page="course_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("COURSE_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("COURSES"); ?></h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="panel-body course">
@@ -425,7 +424,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                             </div>
                             <div class="row">
                                 <div class="col-sm-5">
-                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("DISTRIBUTION") . ":"; ?></label>
+                                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("ACTIVE_STUDENTS_PER_COURSE") . ":"; ?></label>
                                 </div>
 
                             </div>
@@ -600,6 +599,51 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                  ],
                                  series : [<?php
                                  foreach ($statisticsHandler->login_activity as $key => $value) {
+                                    if($key == "all")
+                                    {
+                                        ?>
+                                        
+                                        {
+                                            name:'<?= TranslationHandler::get_static_text("ALL")?>',
+                                            type:'line',
+                                            symbolSize:0,
+                                            smooth:true,
+                                            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+                                            data:
+                                            [
+                                               <?php
+                                                   $iterations = 0;
+                                                   $limit = ($activity_limit - 1);
+                                                   $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
+                                                   while ($iterations < 24 * $activity_limit) {
+                                                       if ($iterations == 24 || $iterations == 48) {
+                                                           $limit -= 1;
+                                                           $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
+                                                       }
+
+                                                       $hour = $iterations % 24;
+
+                                                       if (array_key_exists($date, $value) && array_key_exists($hour, $value[$date])) {
+                                                           echo $value[$date][$hour];
+                                                       } else {
+                                                           echo 0;
+                                                       }
+
+                                                       if ($iterations != 24 * $activity_limit-1) {
+                                                           echo ", ";
+                                                       }
+
+                                                       $iterations++;
+                                                   }
+                                               ?>
+                                            ],
+                                        },
+                                 
+                                        <?php
+                                    }
+                                    else
+                                    {
+                                    
                                      ?>
                                      {
                                      name:'<?= $key == "all" ? TranslationHandler::get_static_text("ALL") : $key ?>',
@@ -637,6 +681,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                      ]
                                      },
                                      <?php
+                                    }
                                  }
                                  ?>
 

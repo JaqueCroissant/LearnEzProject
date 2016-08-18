@@ -280,7 +280,7 @@ class LoginHandler
     
     private function generate_reset_email($email, $validation_code)
     {
-        $url = "http://project.learnez.dk?step=pass_val&id=" . $this->_user->id . "&code=" . $validation_code;
+        $url = "http://project.learnez.dk?step=confirmpassword&id=" . $this->_user->id . "&code=" . $validation_code;
         
         $subject = TranslationHandler::get_static_text("RESET_PASS_MAIL_SUBJECT");
         $headers = "MIME-Version: 1.0" . "\r\n";

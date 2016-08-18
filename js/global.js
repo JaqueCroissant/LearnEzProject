@@ -232,6 +232,16 @@ $(document).ready(function () {
             show_status_bar("success", ajax_data.success);
         });
     });
+    
+    $(document).on("click", ".create_submit_changed_password", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            change_page("login");
+            show_status_bar("success", ajax_data.success);
+        });
+    });
 
     $(document).on("click", ".account_assign_password", function (event) {
         event.preventDefault();
@@ -290,9 +300,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            setTimeout(function () {
-                location.reload();
-            }, 500);
+            
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -401,6 +409,19 @@ $(document).ready(function () {
     }
 
     function initial_page_load() {
+        var params = getSearchParameters();
+        
+        if(params.page !== undefined) {
+            var args = "";
+            $.each(params, function(key, value) {
+                if(key !== "page" && key !== "step") {
+                    args += "&" + key + "=" + value;
+                }
+            });
+            change_page(params.page, params.step, args);
+            return;
+        }
+        
         var page_reload = $.cookie("page_reload");
         $.removeCookie("page_reload");
 
@@ -483,7 +504,7 @@ function reload_page_content(pagename) {
         }
         
         if(pagename === last_page.page) {
-            change_page(last_page.page, last_page.step, last_page.args, false);
+            change_page(last_page.page, last_page.step, last_page.args, undefined, false);
         }
     }
 }
@@ -546,5 +567,31 @@ function cursor_wait()
 function remove_cursor_wait() {
     $('html').off('mouseover.cursorwait');
     $('.cursor-wait').removeClass('cursor-wait');
+}
+
+function getSearchParameters() {
+      var prmstr = window.location.search.substr(1);
+      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+}
+
+function transformToAssocArray( prmstr ) {
+    var params = {};
+    var prmarr = prmstr.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+}
+
+function clearUrl() {
+    var index = 0;
+    var count = 1;
+    for (var i = 0, len = window.location.href.length; i < len; i++) {
+        if(window.location.href[i] == '/' && count < 3) {
+            count++;
+            index = i;
+    }}
+    window.history.pushState("1", "Title", "/"+window.location.href.substring(index, window.location.href.lastIndexOf('/') + 1).split("?")[0]);
 }
 

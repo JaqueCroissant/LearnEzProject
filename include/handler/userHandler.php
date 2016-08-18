@@ -22,9 +22,7 @@ class UserHandler extends Handler
         
         try
         {
-            $this->validate_user_logged_in();
-
-            if(!RightsHandler::has_user_right("CHANGE_PASSWORD"))
+            if($this->user_exists() && !RightsHandler::has_user_right("CHANGE_PASSWORD"))
             {
                 throw new Exception("INSUFFICIENT_RIGHTS");
             }

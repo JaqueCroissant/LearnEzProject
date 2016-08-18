@@ -19,6 +19,7 @@ class ErrorHandler
     }
     
     public static function show_error_page($error = null) {
+        $_SESSION["temp_error"] = is_a($error, "Error") ? $error->title : $error;
         echo "<script>change_page('error');</script>";
     }
 }

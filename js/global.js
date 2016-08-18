@@ -410,11 +410,18 @@ $(document).ready(function () {
 
     function initial_page_load() {
         var params = getSearchParameters();
-        if(params.step === "confirmpassword" && params.id !== undefined && params.code !== undefined) {
-            change_page("resetpassword", params.step, "&id=" + params.id + "&code=" + params.code);
-            //window.history.pushState("object or string", "Title", "/"+window.location.href.substring(window.location.href.lastIndexOf('/') + 1).split("?")[0]);
+        
+        if(params.page !== undefined) {
+            var args = "";
+            $.each(params, function(key, value) {
+                if(key !== "page" && key !== "step") {
+                    args += "&" + key + "=" + value;
+                }
+            });
+            change_page(params.page, params.step, args);
             return;
         }
+        
         var page_reload = $.cookie("page_reload");
         $.removeCookie("page_reload");
 
@@ -575,5 +582,16 @@ function transformToAssocArray( prmstr ) {
         params[tmparr[0]] = tmparr[1];
     }
     return params;
+}
+
+function clearUrl() {
+    var index = 0;
+    var count = 1;
+    for (var i = 0, len = window.location.href.length; i < len; i++) {
+        if(window.location.href[i] == '/' && count < 3) {
+            count++;
+            index = i;
+    }}
+    window.history.pushState("1", "Title", "/"+window.location.href.substring(index, window.location.href.lastIndexOf('/') + 1).split("?")[0]);
 }
 

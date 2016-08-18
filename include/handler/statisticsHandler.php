@@ -203,7 +203,7 @@ class StatisticsHandler extends Handler {
             $this->get_student_totals($user_id);
             $this->get_completion_graph_stats($user_id, $days);
             $this->get_login_activity_for_user($user_id, $days);
-        } catch (Exception $ex) {
+        } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }

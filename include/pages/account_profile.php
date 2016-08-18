@@ -315,7 +315,7 @@ if (!empty($current_user->school_id)) {
                                 <div class="user-card">
                                     <div class="media-left">
                                         <div class="pieprogress" data-value="<?php echo $courses_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($courses_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><span><?php echo $courses_average; ?></span>%    </strong>
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $courses_average; ?></span>%    </strong>
                                         </div>
                                     </div>
                                     <div class="media-right ">
@@ -336,7 +336,7 @@ if (!empty($current_user->school_id)) {
                                 <div class="user-card">
                                     <div class="media-left">
                                         <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_lecture_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><span><?php echo $statisticsHandler->student_lecture_average; ?></span>%    </strong>
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->student_lecture_average; ?></span>%    </strong>
                                         </div>
                                     </div>
                                     <div class="media-right ">
@@ -357,7 +357,7 @@ if (!empty($current_user->school_id)) {
                                 <div class="user-card">
                                     <div class="media-left">
                                         <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_test_average) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><span><?php echo $statisticsHandler->student_test_average; ?></span>%</strong>
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->student_test_average; ?></span>%</strong>
                                         </div>
                                     </div>
                                     <div class="media-right">
@@ -378,7 +378,7 @@ if (!empty($current_user->school_id)) {
                                 <div class="user-card">
                                     <div class="media-left">
                                         <div class="pieprogress" data-value="<?php echo 0; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color(0) ?>"}, thickness: 10}' data-size="70">
-                                            <strong style="margin-top: -14px; font-size: 14px;"><span><?php echo 0; ?></span>%</strong>
+                                            <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo 0; ?></span>%</strong>
                                         </div>
                                     </div>
                                     <div class="media-right">

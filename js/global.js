@@ -67,7 +67,7 @@ $(document).ready(function () {
     $(document).on("click", ".check_all", function (event) {
         event.preventDefault();
         var form = $(this).attr("target_form");
-        var checkboxes = $("#" + form).find(':checkbox');
+        var checkboxes = $("#" + form).find(':checkbox').not(":disabled");
         if ($(this).attr("checked")) {
             checkboxes.prop('checked', false);
             $(this).removeAttr("checked");

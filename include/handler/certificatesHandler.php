@@ -82,18 +82,52 @@ class certificatesHandler extends Handler {
         return true;
     }
 
-    public function get_from_user($offset = 0, $limit = 5) {
+    public function get_all_certificates($offset = 0, $order_ascending = 0, $complete_incomplete_all = 0) {
         try {
             if (!$this->user_exists()) {
                 throw new Exception("USER_NOT_LOGGED_IN");
             }
-            if (!is_numeric($offset) || !is_numeric($limit)) {
+            
+            if (!is_numeric($offset)) {
                 throw new Exception("INVALID_INPUT");
             }
-            $temp = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, certificates.completion_date, certificates.validation_code, translation_course.title AS course_title, translation_course.description AS course_description FROM course LEFT JOIN certificates ON certificates.course_id = course.id AND certificates.user_Id = :user INNER JOIN school_course ON school_course.school_id = :school AND school_course.course_id = course.id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language LIMIT " . $limit . " OFFSET " . $offset, $this->_user->id, $this->_user->school_id, $this->_user->settings->language_id);
+            
+            if (!is_numeric($order_ascending) || !is_numeric($complete_incomplete_all)) {
+                throw new exception();
+            }
+            
+            $order_by = $order_ascending == 1 ? " ORDER BY certificates.completion_date ASC" : " ORDER BY certificates.completion_date DESC";
+            
+            if($this->_user->user_type_id == 1) {
+                $query = "SELECT course.id AS course_id, course.color as course_color, course_image.filename as course_image, certificates.completion_date, certificates.validation_code, certificates.id, translation_course.title AS course_title, translation_course.description AS course_description FROM course LEFT JOIN certificates ON certificates.course_id = course.id AND certificates.user_id = :user INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN course_image ON course_image.id = course.image_id " . $order_by;
+                $temp = DbHandler::get_instance()->return_query($query, $this->_user->id,  $this->_user->settings->language_id);
+            } else {
+                $query = "SELECT course.id AS course_id, course.color as course_color, course_image.filename as course_image, certificates.completion_date, certificates.validation_code, certificates.id, translation_course.title AS course_title, translation_course.description AS course_description FROM course LEFT JOIN certificates ON certificates.course_id = course.id AND certificates.user_id = :user INNER JOIN school_course ON school_course.school_id = :school AND school_course.course_id = course.id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN course_image ON course_image.id = course.image_id " . $order_by;
+                $temp = DbHandler::get_instance()->return_query($query, $this->_user->id, $this->_user->school_id, $this->_user->settings->language_id);
+            }
+            
             $array = array();
             foreach ($temp as $value) {
-                array_push($array, new Certificate($value));
+                $certificate = new Certificate($value);
+                if(!empty($certificate->id)) {
+                    $certificate->is_completed = true;
+                }
+                
+                switch($complete_incomplete_all) {
+                    case "1":
+                        if(empty($certificate->id)) {
+                            array_push($array, $certificate);
+                        }
+                        break;
+                    case "2":
+                        if(!empty($certificate->id)) {
+                            array_push($array, $certificate);
+                        }
+                        break;
+                    default:
+                        array_push($array, $certificate);
+                        break;
+                }
             }
             $this->certificates = $array;
             return true;

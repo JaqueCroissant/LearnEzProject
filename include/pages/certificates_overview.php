@@ -112,7 +112,7 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
             </tr>
         </tbody></table>
 </form>
-    <a id="download_pdf_file" target="_blank"><span>download_pdf_file</span></a>
+    <a id="download_pdf_file" href="index.php" target="_blank"><span>download_pdf_file</span></a>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>

@@ -54,22 +54,12 @@ $(document).on("click", ".certificate_reset", function(){
     $(".certificate_input").val("");
 });
 
+$(".certificate_iframe").on("load", function(){
+    console.log("test1");
+//    $(this).remove();
+});
+
 function download(file) {
-//    $.ajax({
-//    type: "GET", 
-//    url: "include/ajax/download_pdf.php?step=send_pdf&file=" + file,
-//    contentType: "application/octet-stream",
-//    success: function(data){
-//        alert("it worked");
-////        $("#my_iframe").attr('src',"/")
-////        $("#my_iframe").contents().find('html').html(data); 
-//    }
-//});
-//return;
-//    $("#my_iframe").attr("src", 'html2pdf/tmp/' + file);
-//    return;
-    $('#download_pdf_file').attr({href: 'html2pdf/tmp/' + file});
-    $('#download_pdf_file').find('span').trigger('click'); // Works
-    $('#download_pdf_file span').trigger('click'); // Also Works
+    $("#content_container").append('<iframe class="certificate_iframe" style="display:none;" src="include/pages/download_pdf.php?file=' + file + '"></iframe>');
 }
 

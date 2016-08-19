@@ -15,13 +15,25 @@
     <p style="font-family: amaranth;font-style:italic;">HELLO CUSTOM</p>
     <p style="font-family: amaranth;font-weight:bold;font-style:italic;">HELLO CUSTOM</p>';
 
+    $html2 = '<html>
+        <head>
+            <title>Certificate</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="../../html2pdf/tmp/certificate.css" type="text/css" />
+        </head>
+        <body>
+           <page size="A4"></page>
+            
+        </body>
+    </html>';
     
 
 
     switch($step) {
         case "download_single":
             $mpdf = new mPDF(); 
-            $mpdf->WriteHTML($html);
+            $mpdf->WriteHTML($html2);
             $file_name = md5(uniqid(mt_rand(), true)) . ".pdf";
             $mpdf->Output('../../html2pdf/tmp/' . $file_name, 'F');
             $jsonArray['status_value'] = true;

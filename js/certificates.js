@@ -48,7 +48,7 @@ $(document).on("click", ".download_single_certificate", function(){
         show_status_bar("error", $(".wait_translation").text());
         return;
     }
-    
+    $(".certificate_iframe").remove();
     initiate_submit_get($(this), "download_pdf.php?step=download_single&element_id=" + $(this).attr("element_id"), function(){
         show_status_bar("error", ajax_data.error);
     }, function(){
@@ -67,7 +67,7 @@ $(document).on("click", ".download_checked_certificates", function() {
         show_status_bar("error", $(".wait_translation").text());
         return;
     }
-    
+    $(".certificate_iframe").remove();
     initiate_submit_form($(this), function(){ 
         show_status_bar("error", ajax_data.error);
     }, function(){

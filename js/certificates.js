@@ -33,3 +33,12 @@ $(document).on("click", ".certificate_submit", function(){
     });
 });
 
+$(document).on("click", ".download_single_certificate", function(){
+    return;
+    initiate_submit_get($(this), "download_pdf.php?download_single=" + $(this).attr("element_id"), function(){
+        show_status_bar("error", ajax_data.error);
+    }, function(){
+        show_status_bar("success", ajax_data.success);
+    });
+});
+

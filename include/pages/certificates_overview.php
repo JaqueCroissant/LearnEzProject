@@ -65,7 +65,7 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
                                     $date_to_string = time_elapsed($value->completion_date);
                                 }
                                 echo '
-                                <div class="mail-item '. ($value->is_completed ? "item_hover" : "") .' mail_number_' . $value->id . '" style="height:130px;cursor:pointer;'. ($value->is_completed ? "" : "opacity:0.3;background: #eae8e8 !important;") .'">
+                                <div class="mail-item '. ($value->is_completed ? "item_hover download_single_certificate" : "") .'" '. ($value->is_completed ? 'element_id="'.$value->id.'"' : '') .' style="height:130px;cursor:pointer;'. ($value->is_completed ? "" : "opacity:0.3;background: #eae8e8 !important;") .'">
                                     <div style="position:absolute;height:112px !important;margin-left:120px;margin-top:-7px !important;border-right: 10px solid '. $value->course_color .';">
                                     </div>
                                     <div class="mail_element_checkbox checkbox-resize">
@@ -75,7 +75,7 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="change_page mail_element_content" page="mail" id="mail" step="show_mail" args="&mail_id=' . $value->id . '">
+                                    <div class="mail_element_content">
                                         <table class="mail-container"><tbody>
                                             <tr>
 

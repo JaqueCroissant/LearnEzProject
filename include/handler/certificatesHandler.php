@@ -44,6 +44,27 @@ class certificatesHandler extends Handler {
         }
     }
     
+    public function get_from_id($id) {
+        try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+            
+            if(!is_numeric($id) && !is_int((int)$id)) {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            if(!(DbHandler::get_instance()->count_query("SELECT certificates.id, certificates. from certificates WHERE id = :id AND user_id = :user_id", $id, $this->_user->id) > 0)) {
+                 throw new Exception("CERTIFICATE_DOESNT_EXIST");
+            }
+            
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
     public function construct_code($array){
         try  {
             if (!$this->user_exists()) {

@@ -77,6 +77,7 @@ class SchoolHandler extends Handler {
             if ($is_open) {
                 $query .= " AND subscription_end >= curdate() AND subscription_start <= curdate()";
             }
+            $this->all_schools = null;
             $this->all_schools = [];
             $schools = DbHandler::get_instance()->return_query($query);
             foreach ($schools as $value) {

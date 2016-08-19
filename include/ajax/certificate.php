@@ -2,7 +2,7 @@
 require_once '../../include/ajax/require.php';
 require_once '../../include/handler/certificatesHandler.php';
 
-$certificateHandler = new certificatesHandler();
+$certificateHandler = new CertificatesHandler();
 
 if(isset($_POST)) {
     $step = isset($_GET["step"]) ? $_GET["step"] : null;

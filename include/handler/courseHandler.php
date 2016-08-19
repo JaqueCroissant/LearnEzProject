@@ -890,9 +890,9 @@ class CourseHandler extends Handler {
 
     public function check_completion($course_id) {
         if ($this->course_completed($course_id)) {
-            if (!certificatesHandler::is_completed($course_id)) {
+            if (!CertificatesHandler::is_completed($course_id)) {
                 DbHandler::get_instance()->query("UPDATE users SET points = points + (SELECT points FROM course WHERE id = :course) WHERE id = :user_id", $course_id, $this->_user->id);
-                certificatesHandler::create($course_id);
+                CertificatesHandler::create($course_id);
             }
         }
     }

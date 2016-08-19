@@ -16,7 +16,8 @@ if (!$certificateHandler->get_all_certificates($current_page, $current_order, $c
 
 $certificates = $paginationHandler->run_pagination($certificateHandler->certificates, $current_page, SettingsHandler::get_settings()->elements_shown);
 ?>
-
+<form method="POST" action="" id="certificates_form" url="download_pdf.php?step=download_multiple" name="certificate">
+<div class="wait_translation hidden"><?= TranslationHandler::get_static_text("MUST_WAIT_5_SECONDS_BEFORE_DOWNLOAD"); ?></div>
 <div class="row">
     <div class="col-md-12">
         
@@ -55,7 +56,6 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
 </div>
 
 <div class="table-responsive">
-    <form method="POST" action="" id="certificates_form" url="certificate.php" name="certificate">
     <table class="table mail-list"><tbody>
             <tr>
                 <td>
@@ -65,19 +65,19 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
                                     $date_to_string = time_elapsed($value->completion_date);
                                 }
                                 echo '
-                                <div class="mail-item '. ($value->is_completed ? "item_hover download_single_certificate" : "") .'" '. ($value->is_completed ? 'element_id="'.$value->id.'"' : '') .' style="height:130px;cursor:pointer;'. ($value->is_completed ? "" : "opacity:0.3;background: #eae8e8 !important;") .'">
+                                <div class="mail-item '. ($value->is_completed ? "item_hover " : "") .'" '. ($value->is_completed ? 'element_id="'.$value->id.'"' : '') .' style="height:130px;'. ($value->is_completed ? "" : "opacity:0.3;background: #eae8e8 !important;") .'">
                                     <div style="position:absolute;height:112px !important;margin-left:120px;margin-top:-7px !important;border-right: 10px solid '. $value->course_color .';">
                                     </div>
                                     <div class="mail_element_checkbox checkbox-resize">
                                         <div>
                                             <div class="checkbox" style="margin-top: 14px !important;">
-                                                <input type="checkbox" id="checkbox-enable-reply" name="mail[]" value="' . $value->id . '" '. (!$value->is_completed ? "disabled" : "") .' ><label for="checkbox-enable-reply"></label>
+                                                <input type="checkbox" id="checkbox-enable-reply" name="certificate[]" value="' . $value->id . '" '. (!$value->is_completed ? "disabled" : "") .' ><label for="checkbox-enable-reply"></label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mail_element_content">
                                         <table class="mail-container"><tbody>
-                                            <tr>
+                                            <tr '. ($value->is_completed ? 'style="cursor:pointer;" class="download_single_certificate"' : '') .'>
 
                                                 <td class="mail-left">
                                                     <div class="avatar avatar-lg" style="margin-top: 12px !important;width: 70px !important; height: 70px !important;">
@@ -111,9 +111,9 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
                 </td>
             </tr>
         </tbody></table>
-</form>
-    <a id="download_pdf_file" href="index.php" target="_blank"><span>download_pdf_file</span></a>
 </div>
+    <input type="hidden" name="submit" value="" />
+    </form>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>
 $(document).ready(function(){

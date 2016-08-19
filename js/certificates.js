@@ -1,3 +1,5 @@
+var last_downloaded_time;
+
 $(document).on("input", ".certificate_input", function(event){
     if ($(this).val().length === 4) {
         $(".certificate_input[name='" + (parseInt($(this).attr("name")) + 1) + "']").focus();
@@ -42,9 +44,15 @@ $(document).on("click", ".certificate_submit", function(){
 });
 
 $(document).on("click", ".download_single_certificate", function(){
+    if($.now() - last_downloaded_time < 5000) {
+        show_status_bar("error", $(".wait_translation").text());
+        return;
+    }
+    
     initiate_submit_get($(this), "download_pdf.php?step=download_single&element_id=" + $(this).attr("element_id"), function(){
         show_status_bar("error", ajax_data.error);
     }, function(){
+        last_downloaded_time = $.now();
         show_status_bar("success", ajax_data.success);
         download(ajax_data.file_name);
     });
@@ -54,9 +62,23 @@ $(document).on("click", ".certificate_reset", function(){
     $(".certificate_input").val("");
 });
 
-$(".certificate_iframe").on("load", function(){
-    console.log("test1");
-//    $(this).remove();
+$(document).on("click", ".download_checked_certificates", function() {
+    if($.now() - last_downloaded_time < 5000) {
+        show_status_bar("error", $(".wait_translation").text());
+        return;
+    }
+    
+    initiate_submit_form($(this), function(){ 
+        show_status_bar("error", ajax_data.error);
+    }, function(){
+        if(ajax_data.file_names !== undefined) {
+            last_downloaded_time = $.now();
+            for (var i = 0; i < ajax_data.file_names.length; i++) {
+                download(ajax_data.file_names[i]);
+            }
+            show_status_bar("success", ajax_data.success);
+        }
+    });
 });
 
 function download(file) {

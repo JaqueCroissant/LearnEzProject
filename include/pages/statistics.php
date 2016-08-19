@@ -46,7 +46,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
             }
 
             ?>
-            <div class="col-md-12 col-sm-12 p-v-0">
+            <div class="col-md-12">
                 <div class="col-sm-4">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
@@ -208,7 +208,9 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                         </div>
                     </div>
                 </div>
-
+            </div>
+</div>
+    <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-heading p-h-lg p-v-md" >

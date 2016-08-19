@@ -57,7 +57,7 @@ if (isset($_POST['step'])) {
                 $data_array['status_value'] = true;
             } else {
                 $data_array['error'] = $schoolHandler->error->title;
-                $data_array['school'] = $school;
+                $data_array['school'] = $schoolHandler->school;
                 $data_array["status_value"] = false;
             }
             break;
@@ -66,11 +66,9 @@ if (isset($_POST['step'])) {
             $course_ids = (isset($_POST['selected']) ? $_POST['selected'] : []);
             if ($courseHandler->assign_school_course($course_ids, $school_id)) {
                 $data_array['success'] = TranslationHandler::get_static_text("COURSES_ASSIGNED");
-                $data_array['school'] = $school;
                 $data_array['status_value'] = true;
             } else {
                 $data_array['error'] = $courseHandler->error->title;
-                $data_array['school'] = $school;
                 $data_array["status_value"] = false;
             }
             break;

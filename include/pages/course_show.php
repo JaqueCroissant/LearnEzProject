@@ -32,7 +32,7 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
 
                     <?php foreach($courseHandler->lectures as $value) { ?>
                     <?php if($order_by == 1) { ?>
-                    <div class="col-md-4 play_lecture" element_id="<?= $value->id; ?>">
+                    <div class="col-sm-4 play_lecture" element_id="<?= $value->id; ?>">
                         
                         <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars($value->description); ?>">
                             
@@ -78,7 +78,7 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
                                 <div class="clearfix">
                                     <table style="width:100%;">
                                         <tr>
-                                            <td style="width:10%;padding-top:4px !important;"><div class="pieprogress text-primary circle_progress" data-plugin="circleProgress" data-value="<?= $value->percent_progress/100 ?>" data-thickness="6" data-size="20" data-start-angle="90" data-empty-fill="rgba(0, 0, 0, .2)" data-fill="{&quot;color&quot;: &quot;<?= get_progress_color($value->percent_progress); ?>&quot;}" style="float:left;"></div><div data-plugin="counterUp" style="float:left;padding-left:10px;"><?= $value->percent_progress ?></div><div style="float:left;">%</div></td>
+                                            <td style="width:80px;padding-top:4px !important;"><div class="pieprogress text-primary circle_progress" data-plugin="circleProgress" data-value="<?= $value->percent_progress/100 ?>" data-thickness="6" data-size="20" data-start-angle="90" data-empty-fill="rgba(0, 0, 0, .2)" data-fill="{&quot;color&quot;: &quot;<?= get_progress_color($value->percent_progress); ?>&quot;}" style="float:left;"></div><div data-plugin="counterUp" style="float:left;padding-left:10px;"><?= $value->percent_progress ?></div><div style="float:left;">%</div></td>
                                             <td></td>
                                             <td style="<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><?= htmlspecialchars($value->title); ?></td>
                                             <td style="text-align:right;padding-left:20px;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><small class="text-color"><?= TranslationHandler::get_static_text("POINT_AMOUNT"); ?>:</small><small class="text-color" style="padding-left:10px;"><?= $value->points; ?></small></td>
@@ -106,7 +106,7 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
 
                     <?php foreach($courseHandler->tests as $value) { ?>
                     <?php if($order_by == 1) { ?>
-                    <div class="col-md-4 play_test" element_id="<?= $value->id; ?>">
+                    <div class="col-sm-4 play_test" element_id="<?= $value->id; ?>">
                         <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars($value->description); ?>">
                             <header class="widget-header" style="padding: 0.7rem 1rem !important;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>">
                                 <?php echo $value->title; ?>
@@ -150,7 +150,7 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
                                   <div class="clearfix">
                                     <table style="width:100%;">
                                         <tr>
-                                            <td style="width:10%;padding-top:4px !important;"><div class="pieprogress text-primary circle_progress" data-plugin="circleProgress" data-value="<?= $value->percent_progress/100 ?>" data-thickness="6" data-size="20" data-start-angle="90" data-empty-fill="rgba(0, 0, 0, .2)" data-fill="{&quot;color&quot;: &quot;<?= get_progress_color($value->percent_progress); ?>&quot;}" style="float:left;"></div><div data-plugin="counterUp" style="float:left;padding-left:10px;"><?= $value->percent_progress ?></div><div style="float:left;">%</div></td>
+                                            <td style="width:80px;padding-top:4px !important;"><div class="pieprogress text-primary circle_progress" data-plugin="circleProgress" data-value="<?= $value->percent_progress/100 ?>" data-thickness="6" data-size="20" data-start-angle="90" data-empty-fill="rgba(0, 0, 0, .2)" data-fill="{&quot;color&quot;: &quot;<?= get_progress_color($value->percent_progress); ?>&quot;}" style="float:left;"></div><div data-plugin="counterUp" style="float:left;padding-left:10px;"><?= $value->percent_progress ?></div><div style="float:left;">%</div></td>
                                             <td></td>
                                             <td style="<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><?= $value->title; ?></td>
                                             <td style="text-align:right;padding-left:20px;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>"><small class="text-color"><?= TranslationHandler::get_static_text("POINT_AMOUNT"); ?>:</small><small class="text-color" style="padding-left:10px;"><?= $value->points; ?></small></td>

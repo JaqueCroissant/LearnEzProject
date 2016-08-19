@@ -59,6 +59,47 @@ class CertificatesHandler extends Handler {
                 throw new Exception("CERTIFICATE_DOESNT_EXIST");
             }
             
+            $this->current_certificate = new Certificate(reset($data));
+            
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    public function get_multiple_by_id($ids = array()) {
+        try {
+            if (!$this->user_exists()) {
+                throw new Exception("USER_NOT_LOGGED_IN");
+            }
+
+            if(empty($ids) || !is_array($ids)) {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            foreach($ids as $key => $value) {
+                if(!is_numeric($value) && !is_int((int)$value)) {
+                    unset($ids[$key]);
+                }
+            }
+            
+            if(empty($ids)) {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            
+            $data = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course.color as course_color, course_image.filename as course_image, certificates.completion_date, certificates.validation_code, certificates.id, translation_course.title AS course_title, translation_course.description AS course_description FROM course INNER JOIN certificates ON certificates.course_id = course.id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN course_image ON course_image.id = course.image_id WHERE certificates.id IN (". generate_in_query($ids) .") AND certificates.user_id = :user_id", TranslationHandler::get_current_language(), $this->_user->id);
+            
+            if(empty($data)) {
+                throw new Exception("CERTIFICATE_DOESNT_EXIST");
+            }
+            
+            $this->certificates = array();
+            foreach($data as $value) {
+                $this->certificates[] = new Certificate($value);
+            }
+            
             return true;
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());

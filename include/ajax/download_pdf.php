@@ -15,6 +15,7 @@
     <p style="font-family: amaranth;font-style:italic;">HELLO CUSTOM</p>
     <p style="font-family: amaranth;font-weight:bold;font-style:italic;">HELLO CUSTOM</p>';
 
+    
 
 
     switch($step) {
@@ -28,19 +29,32 @@
             $jsonArray["success"] = TranslationHandler::get_static_text("DOWNLOAD_PDF_SUCCESFUL");
             break;
         
-        case "send_pdf":
-            $path = realpath(__DIR__ . '/../..') . "/html2pdf/tmp/";
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'. $path . basename($_GET["file"]).'"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . filesize($path . $_GET["file"]));
-            readfile($path . $_GET["file"]);
-            exit();
+        case "download_multiple":
+            if(isset($_POST)) {
+                if($certificatesHandler->get_multiple_by_id(isset($_POST["certificate"]) ? $_POST["certificate"] : array())) {
+                    $mpdf = new mPDF(); 
+                    $file_names = [];
+                    
+                    foreach($certificatesHandler->certificates as $value) {
+                        $mpdf->WriteHTML($html);
+                        $file_name = md5(uniqid(mt_rand(), true)) . ".pdf";
+                        $file_names[] = $file_name;
+                        $mpdf->Output('../../html2pdf/tmp/' . $file_name, 'F');
+                    }
+                    
+                    $jsonArray['file_names'] = $file_names;
+                    $jsonArray['status_value'] = true;
+                    $jsonArray['success'] = TranslationHandler::get_static_text("DOWNLOAD_PDFS_SUCCESFUL");
+                } else {
+                    $jsonArray['status_value'] = false;
+                    $jsonArray['error'] = $certificatesHandler->error->title;
+                }
+            } else {
+                $jsonArray['status_value'] = false;
+                $jsonArray['error'] = $certificatesHandler->error->title;
+            }
             break;
-
+        
         default:
             $jsonArray['status_value'] = false;
             $jsonArray['error'] = $certificatesHandler->error->title;

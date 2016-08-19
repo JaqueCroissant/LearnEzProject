@@ -17,8 +17,8 @@ page[size="A4"] {
     -webkit-background-size: cover; /* For WebKit*/
     -moz-background-size: cover;    /* Mozilla*/
     -o-background-size: cover;      /* Opera*/
-    background-size: cover;  
-    background: url("bg-test.png");
+    background-size: cover;      
+    background: url("bg.jpg") no-repeat fixed center;
   }
 }
 /*.background {

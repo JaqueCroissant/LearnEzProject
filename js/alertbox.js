@@ -133,15 +133,25 @@
         event.preventDefault();
         var form = $("#click_alert_form_" + clicked_element_id);
         page_state = $(this).attr("id");
+        page_id = $(this).attr("page");
         initiate_submit_form(form, function () {
             show_status_bar("error", ajax_data.error);
             close_alert_box(true);
         }, function () {
             var current_element_tr = $(current_datatable).find(".account_tr_id_" + clicked_element_id);
             $(current_element_tr).remove();
-            if (page_state === "profile_accept_delete") {
-                $(".go_back").click();
+
+            switch(page_state)
+            {
+                case "profile_accept_delete":
+                    $(".go_back").click();
+                    break;
+
+                default:
+                    reload_page_content(page_id);
+                    break;
             }
+
             show_status_bar("success", ajax_data.success);
             close_click_alert_box();
             

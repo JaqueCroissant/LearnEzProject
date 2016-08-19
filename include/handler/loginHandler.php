@@ -309,6 +309,55 @@ class LoginHandler
 
         mail($email,$subject,$content,$headers);
     }
+    
+    //MIME-version, doesn't work
+    private function generate_reset_email2($email, $validation_code)
+    {
+        include '.:/php/includes:/usr/share/php_binaries/include/pear/Mail/mail.php';
+        include '.:/php/includes:/usr/share/php_binaries/include/pear/Mail/mime.php';
+        
+        $url = "http://project.learnez.dk?page=resetpassword&step=confirmpassword&id=" . $this->_user->id . "&code=" . $validation_code;
+        
+        $subject = TranslationHandler::get_static_text("RESET_PASS_MAIL_SUBJECT");
+        $message = TranslationHandler::get_static_text("RESET_PASS_MAIL_MESSAGE");
+        $period_pos = strpos($message, ".");
+        $comma_pos = strpos($message, ",");
+        
+        $text_content = TranslationHandler::get_static_text("HELLO") . "!\n" .
+                        substr($message, 0, $period_pos) . "\n" .
+                        substr($message, $period_pos + 2, $comma_pos - $period_pos) . "\n" .
+                        substr($message, $comma_pos + 2, strlen($message) - $comma_pos + 2)  . "\n\n" .
+                        TranslationHandler::get_static_text("RESET_PASS_MAIL_LINK_MESSAGE") . "\n" .
+                        $url . "\n\n" .
+                        "LearnEZ";
+        
+        $html_content = 
+        '<html>
+            <head>
+            </head>
+
+            <body>
+                <p>' . TranslationHandler::get_static_text("HELLO") . "!" . '</p>
+                <p>' . substr($message, 0, $period_pos) . '</p>
+                <div>' . substr($message, $period_pos + 2, $comma_pos - $period_pos) . '</div>
+                <div>' . substr($message, $comma_pos + 2, strlen($message) - $comma_pos + 2)  . '</div></br>
+                <p><a href="'. $url .'">' . TranslationHandler::get_static_text("RESET_PASS_MAIL_LINK_MESSAGE") .
+                '</a></p>
+
+                <p>LearnEZ</p>
+            </body>
+        </html>';
+
+        $mime = new Mail_mime(array('eol' => '\n'));
+        $mime->setTXTBody($text_content);
+        $mime->setHTMLBody($html_content);
+        
+        $body = $mime->get();
+        $headers = $mime->headers(array('From' => 'no-reply@learnez.dk', 'Subject' => $subject));
+        
+        $mail =& Mail::factory('mail');
+        $mail->send('$email', $headers, $body);
+    }
 }
 
 ?>

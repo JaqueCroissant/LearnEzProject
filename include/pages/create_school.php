@@ -90,13 +90,13 @@ $schoolHandler->get_school_types();
                         <div class="form-group" >
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_start"><?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control" id="school_subscription_start" type="text" name="school_subscription_start" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>">
+                                <input class="form-control datepickers" id="school_subscription_start" type="text" name="school_subscription_start" placeholder="<?php echo TranslationHandler::get_static_text("SUBSCRIPTION_START"); ?>">
                             </div>
                         </div>
                         <div class="form-group" >
                             <label class="col-md-2 col-md-offset-2 control-label" for="school_subscription_end"><?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control" id="school_subscription_end" type="text" name="school_subscription_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
+                                <input class="form-control datepickers" id="school_subscription_end" type="text" name="school_subscription_end" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END"); ?>">
                             </div>
                         </div>
 
@@ -187,3 +187,8 @@ $schoolHandler->get_school_types();
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(".datepickers").datepicker( {
+        dateFormat: "yy-mm-dd"
+    });
+</script>

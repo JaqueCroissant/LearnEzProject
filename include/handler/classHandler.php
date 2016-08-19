@@ -327,15 +327,39 @@ class ClassHandler extends Handler {
             }
             $this->verify_class_exists($class_id);
 
-            $query = "DELETE FROM class where id = :id";
+            $delete_queries = array();
+            $delete_queries[] = "DELETE FROM class where id = :id";
+            $delete_queries[] = "DELETE FROM user_class WHERE class_id = :id";
 
-            if (!DbHandler::get_instance()->query($query, $class_id)) {
-                throw new Exception("DEFAULT");
+            foreach($delete_queries as $value)
+            {
+                if(!DbHandler::get_instance()->query($value, $class_id)) {
+                    throw new Exception("DEFAULT");
+                }
             }
+            
+            $this->delete_class_homework($class_id);
+            
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
+        }
+    }
+    
+    private function delete_class_homework($class_id)
+    {
+        $class_homework = DbHandler::get_instance()->return_query("SELECT * FROM class_homework WHERE class_id = :id", $class_id);
+        
+        foreach($class_homework as $value)
+        {
+            if(DbHandler::get_instance()->count_query("SELECT id FROM class_homework WHERE homework_id = :homework AND class_id != :class_id", $value['homework_id'], $class_id) < 1)
+            {
+                DbHandler::get_instance()->query("DELETE FROM homework WHERE id = :homework_id", $value['homework_id']);
+                DbHandler::get_instance()->query("DELETE FROM homework_lecture WHERE homework_id = :homework_id", $value['homework_id']);
+                DbHandler::get_instance()->query("DELETE FROM homework_test WHERE homework_id = :homework_id", $value['homework_id']);
+            }
+            DbHandler::get_instance()->query("DELETE FROM class_homework WHERE homework_id = :homework_id AND class_id = :class_id", $value['homework_id'], $class_id);
         }
     }
 

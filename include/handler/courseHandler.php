@@ -878,6 +878,8 @@ class CourseHandler extends Handler {
             if ($is_complete == 1) {
                 DbHandler::get_instance()->query("UPDATE users SET points = points + (SELECT points FROM course_" . $type . " WHERE id = :type_id) WHERE id = :user_id", $id, $this->_user->id);
                 $this->check_completion(reset(DbHandler::get_instance()->return_query("SELECT course_id FROM course_" . $type . " WHERE id = :id", $id))["course_id"]);
+                $this->_user->points = (int)reset(DbHandler::get_instance()->return_query("SELECT points FROM users WHERE id = :id", $this->_user->id));
+                SessionKeyHandler::add_to_session("user", $this->_user, true);
             }
             return true;
         } catch (Exception $ex) {

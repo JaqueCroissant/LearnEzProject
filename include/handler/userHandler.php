@@ -360,6 +360,8 @@ class UserHandler extends Handler
             $queries[] = "DELETE FROM user_course_test WHERE user_id = :id";
             $queries[] = "DELETE FROM user_notifications WHERE user_id = :id";
             $queries[] = "DELETE FROM user_settings WHERE user_id = :id";
+            $queries[] = "DELETE FROM certificates WHERE user_id = :id";
+            $queries[] = "DELETE FROM user_achievement WHERE users_id = :id";
 
             foreach($queries as $query)
             {

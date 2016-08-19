@@ -42,15 +42,34 @@ $(document).on("click", ".certificate_submit", function(){
 });
 
 $(document).on("click", ".download_single_certificate", function(){
-    return;
-    initiate_submit_get($(this), "download_pdf.php?download_single=" + $(this).attr("element_id"), function(){
+    initiate_submit_get($(this), "download_pdf.php?step=download_single&element_id=" + $(this).attr("element_id"), function(){
         show_status_bar("error", ajax_data.error);
     }, function(){
         show_status_bar("success", ajax_data.success);
+        download(ajax_data.file_name);
     });
 });
     
 $(document).on("click", ".certificate_reset", function(){
     $(".certificate_input").val("");
 });
+
+function download(file) {
+//    $.ajax({
+//    type: "GET", 
+//    url: "include/ajax/download_pdf.php?step=send_pdf&file=" + file,
+//    contentType: "application/octet-stream",
+//    success: function(data){
+//        alert("it worked");
+////        $("#my_iframe").attr('src',"/")
+////        $("#my_iframe").contents().find('html').html(data); 
+//    }
+//});
+//return;
+//    $("#my_iframe").attr("src", 'html2pdf/tmp/' + file);
+//    return;
+    $('#download_pdf_file').attr({href: 'html2pdf/tmp/' + file});
+    $('#download_pdf_file').find('span').trigger('click'); // Works
+    $('#download_pdf_file span').trigger('click'); // Also Works
+}
 

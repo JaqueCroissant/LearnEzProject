@@ -97,7 +97,7 @@ class LoginHandler
              return false;
         }
         
-        
+
         $user = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE email = :email AND translation_user_type.language_id = :language_id", $this->_email, TranslationHandler::get_current_language());
            
         if(empty($user)) {
@@ -235,10 +235,10 @@ class LoginHandler
             if(strtotime($this->_user->last_password_request) > strtotime("-15 minutes")){
                 throw new Exception("LOGIN_INVALID_TIME");
             }
-            
-            $this->generate_reset_email($this->_email);
+            $validation = md5(uniqid(mt_rand(), true));
+            $this->generate_reset_email($this->_email, $validation);
 
-            DbHandler::get_instance()->query("UPDATE users SET last_password_request = :date, validation_code = :validation_code WHERE id = :id", date ("Y-m-d H:i:s"), md5(uniqid(mt_rand(), true)), $this->_user->id);
+            DbHandler::get_instance()->query("UPDATE users SET last_password_request = :date, validation_code = :validation_code WHERE id = :id", date ("Y-m-d H:i:s"), $validation, $this->_user->id);
             return true;
         }
         catch (Exception $ex)
@@ -267,7 +267,7 @@ class LoginHandler
             }
 
             if(strtotime($user->last_password_request) < strtotime("-15 minutes")){
-                //throw new Exception("LOGIN_INVALID_VALIDATION_TIME");
+                throw new Exception("LOGIN_INVALID_VALIDATION_TIME");
             }
             return true;
         }
@@ -278,8 +278,10 @@ class LoginHandler
         }
     }
     
-    private function generate_reset_email($email)
+    private function generate_reset_email($email, $validation_code)
     {
+        $url = "http://project.learnez.dk?page=resetpassword&step=confirmpassword&id=" . $this->_user->id . "&code=" . $validation_code;
+        
         $subject = TranslationHandler::get_static_text("RESET_PASS_MAIL_SUBJECT");
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
@@ -298,13 +300,12 @@ class LoginHandler
                 <p>' . substr($message, 0, $period_pos) . '</p>
                 <div>' . substr($message, $period_pos + 2, $comma_pos - $period_pos)  . '</div>
                 <div>' . substr($message, $comma_pos + 2, strlen($message) - $comma_pos + 2)  . '</div></br>
-                <p><a href="http://reddit.com">' . TranslationHandler::get_static_text("RESET_PASS_MAIL_LINK_MESSAGE") . 
+                <p><a href="'. $url .'">' . TranslationHandler::get_static_text("RESET_PASS_MAIL_LINK_MESSAGE") . 
                 '</a></p>
 
                 <p>LearnEZ</p>
             </body>
         </html>';
-        
 
         mail($email,$subject,$content,$headers);
     }

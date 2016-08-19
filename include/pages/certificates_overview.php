@@ -2,7 +2,7 @@
 require_once 'require.php';
 require_once '../../include/handler/pageHandler.php';
 
-$certificateHandler = new certificatesHandler();
+$certificateHandler = new CertificatesHandler();
 $paginationHandler = new PaginationHandler();
 
 $current_page = isset($_GET['p']) && !empty($_GET['p']) ? $_GET['p'] : 1;
@@ -65,7 +65,7 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
                                     $date_to_string = time_elapsed($value->completion_date);
                                 }
                                 echo '
-                                <div class="mail-item '. ($value->is_completed ? "item_hover" : "") .' mail_number_' . $value->id . '" style="height:130px;cursor:pointer;'. ($value->is_completed ? "" : "opacity:0.3;background: #eae8e8 !important;") .'">
+                                <div class="mail-item '. ($value->is_completed ? "item_hover download_single_certificate" : "") .'" '. ($value->is_completed ? 'element_id="'.$value->id.'"' : '') .' style="height:130px;cursor:pointer;'. ($value->is_completed ? "" : "opacity:0.3;background: #eae8e8 !important;") .'">
                                     <div style="position:absolute;height:112px !important;margin-left:120px;margin-top:-7px !important;border-right: 10px solid '. $value->course_color .';">
                                     </div>
                                     <div class="mail_element_checkbox checkbox-resize">
@@ -75,7 +75,7 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="change_page mail_element_content" page="mail" id="mail" step="show_mail" args="&mail_id=' . $value->id . '">
+                                    <div class="mail_element_content">
                                         <table class="mail-container"><tbody>
                                             <tr>
 
@@ -86,11 +86,19 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
                                                 </td>
                                                 <td style="padding-left:36px;">
                                                     <div>
-                                                        <p class="mail-item-date" style="float:right;margin-top:-6px;">' . ($value->is_completed ? ($date_to_string["value"] . ' ' . TranslationHandler::get_static_text($date_to_string["prefix"]) . ' ' . TranslationHandler::get_static_text("DATE_AGO")) : TranslationHandler::get_static_text("INCOMPLETE")) . '</p>
-                                                        <div class="mail-item-header" style="margin-top: 24px !important;margin-bottom: 0px !important;">
+                                                        <p class="mail-item-date" style="float:right;">' . ($value->is_completed ? ($date_to_string["value"] . ' ' . TranslationHandler::get_static_text($date_to_string["prefix"]) . ' ' . TranslationHandler::get_static_text("DATE_AGO")) : TranslationHandler::get_static_text("INCOMPLETE")) . '</p>
+                                                        <div class="mail-item-header" style="float:left;margin-top: 24px !important;margin-bottom: 0px !important;">
                                                             <h4 class="mail-item-title"><p class="title-color">' . $value->course_title . '</p></h4>
                                                         </div>
-                                                        <div class="mail-item-excerpt">' . (strlen($value->course_description) > 85 ? substr($value->course_description, 0, 85) . '...' : $value->course_description) . '</p>
+                                                        <div style="clear:both;"></div>
+                                                        
+                                                        <div class="mail-item-excerpt" style="float:left;">' . (strlen($value->course_description) > 85 ? substr($value->course_description, 0, 85) . '...' : $value->course_description) . '</div>';
+                                                    if($value->is_completed) {    
+                                                        echo '
+                                                        <div class="mail-item-date" style="float:right;text-align: right;margin-bottom: 3px;"><div>Validerings kode</div><div style="font-weight:600">'. $value->validation_code .'</div></div>';
+                                                    }
+                                                    
+                                                    echo '
                                                     </div>                                                            
                                                 </td>
                                             </tr>
@@ -104,6 +112,7 @@ $certificates = $paginationHandler->run_pagination($certificateHandler->certific
             </tr>
         </tbody></table>
 </form>
+    <a id="download_pdf_file" href="index.php" target="_blank"><span>download_pdf_file</span></a>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>

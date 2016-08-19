@@ -23,10 +23,9 @@ function change_page(pagename, step, args, element, scroll_to_top) {
     cursor_wait();
     currently_changing_page = true;
     scroll_to_top = scroll_to_top === undefined;
-    
     $("#content_container").add($("#content_breadcrumbs")).fadeTo(300, 0, function() {
         content_hidden = true;
-        $(".popover").remove();
+        $(".popover").popover("hide");
     });
    
     var startTime = new Date().getTime();
@@ -58,6 +57,7 @@ function change_page(pagename, step, args, element, scroll_to_top) {
                     set_clickable(element);
                 }
                 append_content(e, data.breadcrumbs);
+                clearUrl();
             });
             if (data.lang_id !== undefined) {
                 current_lang_id = data.lang_id;
@@ -66,6 +66,7 @@ function change_page(pagename, step, args, element, scroll_to_top) {
         complete: function() {
             currently_changing_page = false;
             set_clickable(element);
+            $(".popover").popover("hide");
             if(scroll_to_top) {
                 window.scrollTo(0, 0);
             }

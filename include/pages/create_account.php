@@ -184,7 +184,7 @@ $classHandler = new ClassHandler();
 
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("CREATE_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm create_submit_info">
+                                        <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("CREATE_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm create_submit_info_exp">
                                     </div>
                                 </div>
                             </form>
@@ -267,16 +267,25 @@ $classHandler = new ClassHandler();
                                 </form>
                             </div>
                         </div>
-
-                    </div >
-                </div><!-- .tab-pane  -->
-            </div><!-- .tab-content  -->
-        </div><!-- .nav-tabs-horizontal -->
-    </div><!-- .widget -->
-</div>
+                    </div><!-- .tab-pane  -->
+                </div><!-- .tab-content  -->
+            </div><!-- .nav-tabs-horizontal -->
+        </div><!-- .widget -->
+    </div>
 </div>
 
-
-
+<div style="position: relative">
+    <div id="accept_box" class="panel accept_panel hidden">
+        <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("CREATE_USER_SUCCESS"); ?></h4></div>
+        <div class="panel-body">
+            <div id="username_text"><?php echo TranslationHandler::get_static_text("USERNAME") . ":";?></div>
+        </div>
+        <div class="panel-footer p-h-sm">
+            <p class="m-0">
+                <input class="btn btn-default btn-sm p-v-lg accept_click_acceptbox_btn" page="find_account" id="" type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+            </p>
+        </div>
+    </div>
+</div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>

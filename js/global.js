@@ -233,6 +233,22 @@ $(document).ready(function () {
         });
     });
     
+    $(document).on("click", ".create_submit_info_exp", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            $("#accept_box").removeClass("hidden");
+            $("#username_text").append(" <b>" + ajax_data.username + "</b>");
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
     $(document).on("click", ".create_submit_changed_password", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {

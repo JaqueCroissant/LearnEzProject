@@ -76,6 +76,17 @@ html{
     box-shadow: 0 1px 2px #ccc;
 }
 
+.accept_panel {
+    z-index: 9000;
+    position: absolute;
+    width: 400px;
+    display: block;
+    left: 30%;
+    bottom: 200px;
+    border: 1px solid #CCC !important;
+    box-shadow: 0 1px 2px #ccc;
+}
+
 /*.progress-bar-success {
     display: table;
     width: 33.3%;

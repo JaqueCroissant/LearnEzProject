@@ -40,6 +40,7 @@
                     {
                         $jsonArray['status_value'] = true;
                         $jsonArray['success'] = TranslationHandler::get_static_text("CREATE_USER_SUCCESS");
+                        $jsonArray['username'] = $userHandler->new_username;
                     }
                     else
                     {

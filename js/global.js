@@ -143,6 +143,19 @@ $(document).ready(function () {
     });
     //
 
+    //add_class_students functionality
+    $(document).on("click", "#add_class_student_btn_left", function (event) {
+        event.preventDefault();
+        var selectedItem = $("#rightValues option:selected");
+        $("#leftValues").append(selectedItem);
+    });
+
+    $(document).on("click", "#add_class_student_btn_right", function (event) {
+        event.preventDefault();
+        var selectedItem = $("#leftValues option:selected");
+        $("#rightValues").append(selectedItem);
+    });
+
     //notifications
     $(document).on("click", ".notifs_button", function (event) {
         event.preventDefault();

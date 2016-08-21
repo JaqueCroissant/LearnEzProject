@@ -66,7 +66,7 @@ if ($classHandler->_user->user_type_id != 1) {
                                             <?php if (RightsHandler::has_user_right("CLASS_ASSIGN_USER")) { ?>
                                                 <td>
                                                     <div class="center">
-                                                        <i class="zmdi zmdi-hc-lg zmdi-plus a" class_id="<?php echo $value->id; ?>" data-toggle="tooltip" title="<?php echo TranslationHandler::get_static_text("ADD") . " " . strtolower(TranslationHandler::get_static_text("STUDENT")); ?>"></i>
+                                                        <i class="zmdi zmdi-hc-lg zmdi-plus a change_page" page="add_class_students" args="&school_id=<?php echo $value->school_id;?>&class_id=<?php echo $value->id;?>" data-toggle="tooltip" title="<?php echo TranslationHandler::get_static_text("ADD") . " " . strtolower(TranslationHandler::get_static_text("STUDENT")); ?>"></i>
                                                     </div>
                                                 </td>
                                             <?php } ?>

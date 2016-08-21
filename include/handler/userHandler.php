@@ -1031,7 +1031,6 @@ class UserHandler extends Handler
             }
 
             $user_data = DbHandler::get_instance()->return_query($query, $school_id, TranslationHandler::get_current_language());
-            
             $this->users = array();
             if(count($user_data > 0))
             {
@@ -1050,7 +1049,7 @@ class UserHandler extends Handler
         }
     }
 
-    public function get_by_class_id($class_id, $is_mine = false)
+    public function get_by_class_id($class_id, $is_mine = false, $teachers_and_students = false)
     {
         try
         {
@@ -1079,7 +1078,14 @@ class UserHandler extends Handler
                 }
             }
             
-            $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class WHERE users.id = user_class.users_id AND user_class.class_id = :id", $class_id);
+            if($teachers_and_students)
+            {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class ON users.id = user_class.users_id AND user_class.class_id = :id WHERE users.user_type_id > 2", $class_id);
+            }
+            else
+            {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class ON users.id = user_class.users_id AND user_class.class_id = :id WHERE users.user_type_id > 3", $class_id);
+            }
             
             $this->users = array();
             if(count($user_data > 0))

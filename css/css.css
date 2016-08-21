@@ -854,3 +854,11 @@ a .menu_header {
 .no-transform {
     text-transform: none !important;
 }
+
+.bnf_btn{
+
+    position: absolute;
+    margin-bottom: 100px;
+    margin-top: 100px;
+
+}

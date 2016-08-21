@@ -232,6 +232,32 @@ $(document).ready(function () {
         });
     });
 
+
+    $(document).on("click", ".add_students_submit", function (event) {
+        event.preventDefault();
+
+        var selectBox1 = document.getElementById("leftValues");
+        var selectBox2 = document.getElementById("rightValues");
+
+        for (var i = 0; i < selectBox1.options.length; i++)
+        {
+             selectBox1.options[i].selected = true;
+        }
+
+        for (var i = 0; i < selectBox2.options.length; i++)
+        {
+             selectBox2.options[i].selected = true;
+        }
+
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+
+            show_status_bar("success", ajax_data.success);
+            $(".go_back").click();
+        });
+    });
+
     $(document).on("click", ".create_submit_info", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {

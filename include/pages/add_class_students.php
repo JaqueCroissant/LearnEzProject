@@ -31,18 +31,29 @@ else
                         </div>
                         <hr class="widget-separator">
             <div class="widget-body">
-                <form method="POST" action="" id="add_students" url="" name="">
-                    
+                <form method="POST" action="" id="add_students" url="add_class_students.php" name="add_students_form">
+                    <input type="hidden" name="class" value="<?= $_GET['class_id']?>">
+                    <input type="hidden" name="school" value="<?= $_GET['school_id']?>">
                     <div class="col-md-5">
                         <div class="form-group m-b-sm">
                             <label for="firstname_input"><?php echo TranslationHandler::get_static_text("STUDENTS_IN_SCHOOL"); ?></label>
-                            <select id="leftValues" size="5" multiple style="width: 100%; height:200px;">
+                            <select name="students_to_remove[]" id="leftValues" size="5" multiple style="width: 100%; height:200px;">
                                 <?php
                                     foreach($students_in_school as $student)
                                     {
-                                        if(!in_array($student, $students_in_class))
+                                        $is_present = false;
+
+                                        foreach($students_in_class as $value)
                                         {
-                                            echo '<option id="' . $student->id . '">' . $student->firstname . " " . $student->surname . '</option>';
+                                            if($student->id == $value->id)
+                                            {
+                                                $is_present = true;
+                                            }
+                                        }
+
+                                        if(!$is_present)
+                                        {
+                                            echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
                                         }
                                     }
                                 ?>
@@ -50,21 +61,26 @@ else
                         </div>
                     </div>
                     
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <div class="form-group m-b-sm">
-                            <input type="button" id="add_class_student_btn_left" class="btn btn-default btn-sm" value="&lt;&lt;" />
-                            <input type="button" id="add_class_student_btn_right" class="btn btn-default btn-sm" value="&gt;&gt;" />
+                            <input type="button" id="add_class_student_btn_left" class="btn btn-default btn-lg bnf_btn" value="&lt;&lt;" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-1">
+                        <div class="form-group m-b-sm">
+                            <input type="button" id="add_class_student_btn_right" class="btn btn-default btn-lg bnf_btn" value="&gt;&gt;" />
                         </div>
                     </div>
                     
                     <div class="col-md-5">
                         <div class="form-group m-b-sm">
                             <label for="email_input"><?php echo TranslationHandler::get_static_text("STUDENTS_IN_CLASS"); ?></label>
-                            <select id="rightValues" size="5" multiple style="width:100%; height:200px;">
+                            <select name="students_to_add[]" id="rightValues" size="5" multiple style="width:100%; height:200px;">
                                 <?php
                                     foreach($students_in_class as $student)
                                     {
-                                        echo '<option id="' . $student->id . '">' . $student->firstname . " " . $student->surname . '</option>';
+                                        echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
                                     }
                                 ?>
                             </select>
@@ -72,7 +88,7 @@ else
                     </div>
                     <div class="col-md-12">
                         <div class="form-group m-b-sm pull-right">
-                            <input type="button" name="submit" id="create_single_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default btn-sm create_submit_info" >
+                            <input type="button" name="submit" id="class_students_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default btn-sm add_students_submit" >
                         </div>
                     </div>
                 </form>

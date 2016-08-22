@@ -120,7 +120,7 @@ $(document).ready(function () {
     //
 
     // login / logout
-    $(document).on("click", ".submit_login", function (event) {
+    $(document).on("click", "", function (event) {
         event.preventDefault();
 
         initiate_submit_form($(this), function () {
@@ -136,6 +136,23 @@ $(document).ready(function () {
                 $(".activation_password").val($(".login_password").val());
                 $(".activation_email").val(ajax_data.email);
                 $(".activation_greeting").text($(".activation_greeting").text() + ajax_data.firstname + "!");
+            } else
+            {
+                show_status_bar("error", ajax_data.error);
+            }
+        }, function () {
+            $.removeCookie("current_task", {path: '/'});
+            reload_page();
+        });
+    });
+
+    $(document).on("click", ".submit_login", function (event) {
+        event.preventDefault();
+
+        initiate_submit_form($(this), function () {
+
+            if (ajax_data.user_setup !== undefined) {
+                change_page("login");
             } else
             {
                 show_status_bar("error", ajax_data.error);

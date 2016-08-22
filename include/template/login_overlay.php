@@ -1,4 +1,4 @@
-<div class="login_overlay">
+<div class="login_container">
 	<div id="back-to-home">
 		<a href="index.html" class="btn btn-outline btn-default"><i class="fa fa-home animated zoomIn"></i></a>
 	</div>
@@ -12,32 +12,20 @@
                     </div>
 		</div><!-- logo -->
 		<div class="simple-page-form animated flipInY" id="login-form">
-	<h4 class="form-title m-b-xl text-center">Sign In With Your Infinity Account</h4>
-	<form action="#">
+	
+	<form method="POST" action="" id="login_form" url="login.php" class="form-horizontal" name="login">
 		<div class="form-group">
-			<input id="sign-in-email" type="email" class="form-control" placeholder="Email">
+			<input id="sign-in-email" type="email" class="form-control" placeholder="<?= TranslationHandler::get_static_text("USERNAME");?>">
 		</div>
-
 		<div class="form-group">
-			<input id="sign-in-password" type="password" class="form-control" placeholder="Password">
+			<input id="sign-in-password" type="password" class="form-control" placeholder="<?= TranslationHandler::get_static_text("PASSWORD");?>">
 		</div>
-
-		<div class="form-group m-b-xl">
-			<div class="checkbox checkbox-primary">
-				<input type="checkbox" id="keep_me_logged_in">
-				<label for="keep_me_logged_in">Keep me signed in</label>
-			</div>
-		</div>
-		<input type="submit" class="btn btn-primary" value="SING IN">
+		<input type="submit" class="btn btn-primary" value="<?= TranslationHandler::get_static_text("LOGIN");?>">
 	</form>
 </div><!-- #login-form -->
 
 <div class="simple-page-footer">
-	<p><a href="password-forget.html">FORGOT YOUR PASSWORD ?</a></p>
-	<p>
-		<small>Don't have an account ?</small>
-		<a href="signup.html">CREATE AN ACCOUNT</a>
-	</p>
+	<p><a class="change_page a" page="resetpassword"><?= TranslationHandler::get_static_text("RESET_PASS");?></a> || <a class="change_page a" page="find_certificates"><?= TranslationHandler::get_static_text("FIND_CERTIFICATE");?></a></p>
 </div><!-- .simple-page-footer -->
 
 

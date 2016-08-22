@@ -49,7 +49,8 @@ $(document).on("click", ".download_single_certificate", function(){
         return;
     }
     $(".certificate_iframe").remove();
-    initiate_submit_get($(this), "download_pdf.php?step=download_single&element_id=" + $(this).attr("element_id"), function(){
+    var element_id = $(this).closest(".mail-item").attr("element_id");
+    initiate_submit_get($(this), "download_pdf.php?step=download_single&element_id=" + element_id, function(){
         show_status_bar("error", ajax_data.error);
     }, function(){
         last_downloaded_time = $.now();

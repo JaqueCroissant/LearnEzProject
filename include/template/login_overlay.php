@@ -4,7 +4,7 @@
     $loginHandler = new LoginHandler();
 ?>
 
-<div class="login_overlay">
+<div class="login_overlay" style="<?= $loginHandler->check_login() ? 'display:none;' : '' ?>>
 <div class="login_container">
 
 	<div class="simple-page-wrap">

@@ -869,8 +869,15 @@ a .menu_header {
 }
 
 .login_container {
+    top: 5%;
     position: fixed;
     z-index: 99999;
     left: 50%;
     margin-left: -190px;
 }
+
+.login_input_text::-webkit-input-placeholder {  color: #FFF !important;}
+.login_input_text::-webkit-input-placeholder { color: #FFF !important; }
+.login_input_text::-moz-placeholder {color: #FFF !important; }
+.login_input_text:-ms-input-placeholder { color: #FFF !important; } 
+.login_input_text:-o-input-placeholder { color: #FFF !important; }

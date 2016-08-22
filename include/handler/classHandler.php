@@ -66,6 +66,7 @@ class ClassHandler extends Handler {
                 default:
                     break;
             }
+            unset($this->classes);
             $this->classes = array();
             foreach ($array as $value) {
                 $class = new School_Class($value);
@@ -152,7 +153,8 @@ class ClassHandler extends Handler {
 
 
             $array = DbHandler::get_instance()->return_query($query, $school_id);
-            $this->classes = null;
+            unset($this->classes);
+            $this->classes = array();
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
@@ -183,7 +185,8 @@ class ClassHandler extends Handler {
                             WHERE user_class.users_id = :user_id";
 
             $array = DbHandler::get_instance()->return_query($query, $user_id);
-            $this->classes = null;
+            unset($this->classes);
+            $this->classes = array();
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);

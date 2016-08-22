@@ -195,7 +195,6 @@ class ClassHandler extends Handler {
                 $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $this->classes[] = $class;
             }
-            var_dump($this->classes);
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());

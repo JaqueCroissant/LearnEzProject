@@ -26,7 +26,7 @@
 </div><!-- #login-form -->
 
 <div class="simple-page-footer">
-	<p><a class="change_page a" page="resetpassword"><?= TranslationHandler::get_static_text("RESET_PASS");?></a> || <a class="change_page a" page="find_certificates"><?= TranslationHandler::get_static_text("FIND_CERTIFICATE");?></a></p>
+	<p><a class="change_page_from_overlay a" page="resetpassword"><?= TranslationHandler::get_static_text("RESET_PASS");?></a> || <a class="change_page_from_overlay a" page="find_certificates"><?= TranslationHandler::get_static_text("FIND_CERTIFICATE");?></a></p>
 </div><!-- .simple-page-footer -->
 
 

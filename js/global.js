@@ -27,7 +27,7 @@ $(document).ready(function () {
     $(".datepickers").datepicker({
         dateFormat: "yy-mm-dd"
     });
-    // global functions
+
     $(document).on("click", ".change_page", function (event) {
         if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
             $(this).attr("clickable", false);
@@ -37,6 +37,21 @@ $(document).ready(function () {
             var args = $(this).attr("args");
             change_page(page, step, args, $(this));
         }
+    });
+    
+    $(document).on("click", ".change_page_from_overlay", function (event) {
+        if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
+            $(this).attr("clickable", false);
+            event.preventDefault();
+            var page = $(this).attr("page");
+            var step = $(this).attr("step");
+            var args = $(this).attr("args");
+            change_page_from_overlay(page, step, args, $(this));
+        }
+    });
+    
+    $(document).on("click", ".display_login_overlay", function (event) {
+        $(".login_overlay").fadeIn(500);
     });
 
     $(document).on("click", ".my_tab_header", function (event) {

@@ -20,7 +20,7 @@ $password = $session['password'];
 <div class="row">
     
     <div class="col-sm-12">
-        <div class="widget first_time_login" style="opacity:0;height:0 !important;">
+        <div class="widget first_time_login">
             <div class="widget-header">
                 <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("ACCOUNT_ACTIVATION"); ?></h4>
             </div>
@@ -88,7 +88,7 @@ $password = $session['password'];
                                 <input type="hidden" id="username_id" name="username" value="<?= $username ?>" class="activation_username">
                                 <input type="hidden" id="password_id" name="password" value="<?= $password ?>" class="activation_password">
                                 <input type="button" id="submit_button" name="submit" 
-                                       value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default btn-sm submit_login login_submit">
+                                       value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="pull-right btn btn-default submit_login login_submit" style="margin-right:-15px !important;">
                             </div>
                         </div>
                     </form>

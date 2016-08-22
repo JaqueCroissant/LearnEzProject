@@ -119,40 +119,13 @@ $(document).ready(function () {
     });
     //
 
-    // login / logout
-    $(document).on("click", "", function (event) {
-        event.preventDefault();
-
-        initiate_submit_form($(this), function () {
-
-            if (ajax_data.user_setup !== undefined) {
-
-                $(".main_login").fadeOut(300, function () {
-                    $(".first_time_login").attr("style", "opacity:0;height: auto;");
-                    $(".first_time_login").fadeTo(300, 1);
-                });
-                $(".activation_token").val($(".login_token").val());
-                $(".activation_username").val($(".login_username").val());
-                $(".activation_password").val($(".login_password").val());
-                $(".activation_email").val(ajax_data.email);
-                $(".activation_greeting").text($(".activation_greeting").text() + ajax_data.firstname + "!");
-            } else
-            {
-                show_status_bar("error", ajax_data.error);
-            }
-        }, function () {
-            $.removeCookie("current_task", {path: '/'});
-            reload_page();
-        });
-    });
-
     $(document).on("click", ".submit_login", function (event) {
         event.preventDefault();
 
         initiate_submit_form($(this), function () {
 
             if (ajax_data.user_setup !== undefined) {
-                change_page("login");
+                change_page_from_overlay("login");
             } else
             {
                 show_status_bar("error", ajax_data.error);

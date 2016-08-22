@@ -20,15 +20,15 @@ $loginHandler = new LoginHandler();
             <form method="POST" action="" id="login_form" url="login.php" class="form-horizontal" name="login">
                 <div class="form-group" style="margin-left:0px !important;margin-right:0px !important;">
                     <input id="sign-in-email" name="username" class="form-control login_username login_input_text" placeholder="<?= TranslationHandler::get_static_text("USERNAME"); ?>" onkeydown = "if (event.keyCode == 13)
-                                    $('.submit_login').click()" style="border-bottom: 1px solid #fff;background-color: #0074af !important;margin-left:0px !important;margin-right:0px !important;color: #FFF !important;">
+                                    $('.catch_login').click()" style="border-bottom: 1px solid #fff;background-color: #0074af !important;margin-left:0px !important;margin-right:0px !important;color: #FFF !important;">
                 </div>
                 <div class="form-group" style="margin-left:0px !important;margin-right:0px !important;">
                     <input id="sign-in-password" type="password" name="password" class="form-control login_password login_input_text" placeholder="<?= TranslationHandler::get_static_text("PASSWORD"); ?>" onkeydown = "if (event.keyCode == 13)
-                                $('.submit_login').click()" style="border-bottom: 1px solid #fff;background-color: #0074af !important;color: #FFF !important;">
+                                $('.catch_login').click()" style="border-bottom: 1px solid #fff;background-color: #0074af !important;color: #FFF !important;">
                 </div>
 
                 <input type="hidden" id="token" name="token" class="login_token" value="<?php echo $loginHandler->get_login_token(); ?>">
-                <input type="button" name="submit" id="submit_button" class="btn btn-primary submit_login login_submit" value="<?= TranslationHandler::get_static_text("LOGIN"); ?>" style="border-bottom: 1px solid #fff;background-color: #FFF !important;color: #0074af !important;">
+                <input type="button" name="submit" id="submit_button" class="btn btn-primary submit_login login_submit catch_login" value="<?= TranslationHandler::get_static_text("LOGIN"); ?>" style="border-bottom: 1px solid #fff;background-color: #FFF !important;color: #0074af !important;">
             </form>
         </div>
 

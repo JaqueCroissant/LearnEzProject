@@ -29,7 +29,7 @@
 		</div>
             
                 <input type="hidden" id="token" name="token" class="login_token" value="<?php echo $loginHandler->get_login_token(); ?>">
-		<input type="submit" id="submit_button" class="btn btn-primary submit_login login_submit" value="<?= TranslationHandler::get_static_text("LOGIN");?>">
+		<input type="button" name="submit" id="submit_button" class="btn btn-primary submit_login login_submit" value="<?= TranslationHandler::get_static_text("LOGIN");?>">
 	</form>
 </div><!-- #login-form -->
 

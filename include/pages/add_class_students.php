@@ -61,15 +61,11 @@ else
                         </div>
                     </div>
                     
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <div class="form-group m-b-sm">
-                            <input type="button" id="add_class_student_btn_left" class="btn btn-default btn-lg bnf_btn" value="&lt;&lt;" />
-                        </div>
-                    </div>
-
-                    <div class="col-md-1">
-                        <div class="form-group m-b-sm">
-                            <input type="button" id="add_class_student_btn_right" class="btn btn-default btn-lg bnf_btn" value="&gt;&gt;" />
+                            <input type="button" id="add_class_student_btn_left" class="btn btn-default btn-lg bnf_btn" value="&lt;&lt;" style="float:left;"/>
+                            <input type="button" id="add_class_student_btn_right" class="btn btn-default btn-lg bnf_btn" value="&gt;&gt;" style="float:right;" />
+                            <div style="clear:both;"></div>
                         </div>
                     </div>
                     
@@ -88,7 +84,7 @@ else
                     </div>
                     <div class="col-md-12">
                         <div class="form-group m-b-sm pull-right">
-                            <input type="button" name="submit" id="class_students_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default btn-sm add_students_submit" >
+                            <input type="button" name="submit" id="class_students_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default add_students_submit" >
                         </div>
                     </div>
                 </form>

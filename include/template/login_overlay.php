@@ -1,4 +1,5 @@
 <div class="login_overlay">
+<div class="login_container">
 	<div id="back-to-home">
 		<a href="index.html" class="btn btn-outline btn-default"><i class="fa fa-home animated zoomIn"></i></a>
 	</div>
@@ -43,4 +44,5 @@
 
 	</div><!-- .simple-page-wrap -->
 
+</div>
 </div>

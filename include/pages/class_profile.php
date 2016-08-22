@@ -234,36 +234,49 @@ $i_rand = rand(100, 1000);
         <div class="panel panel-default">
             <div class="panel-heading">
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-12">
                         <h4 class="panel-title no-transform">
                             <i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg m-r-md"></i>
-                            <?php echo isset($_GET['class_id']) ? htmlspecialchars($classHandler->school_class->title) . " - " . htmlspecialchars($classHandler->school_class->class_year) : ""; ?>
+                            <span>
+                                
+                                <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
+                                    <div class="pull-right">
+                                        <form class="" style="display: inline-block;" method="post" id="click_alert_form_<?php echo $classHandler->school_class->id; ?>" url="edit_class.php?state=delete_class">
+                                            <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox a" element_id='<?php echo $classHandler->school_class->id; ?>' data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE") ?>"></i>
+                                            <input type="hidden" name="class_id" value="<?php echo $classHandler->school_class->id; ?>">
+                                            <input type="hidden" name="submit" value="submit"></input>
+                                        </form>
+                                    </div>
+                                <?php } ?>
+                                <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
+                                    <div class="pull-right">
+                                        <form method="post" id="alert_form_<?php echo $classHandler->school_class->id; ?>" action="" url="edit_class.php?state=set_availability">
+                                            <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg <?php echo $classHandler->school_class->open == 1 ? "zmdi-minus-circle" : "zmdi-check-circle" ?> btn_click_close_alertbox m-r-sm a pull-right" element_state='<?php echo $classHandler->school_class->open; ?>' element_id='<?php echo $classHandler->school_class->id; ?>' data-toggle="tooltip" title="<?= $classHandler->school_class->open == 1 ? TranslationHandler::get_static_text("CLOSE") : TranslationHandler::get_static_text("OPEN") ?>"></i>
+                                            <input type="hidden" name="class_id" value="<?php echo $classHandler->school_class->id; ?>">
+                                            <input type="hidden" name="submit" value="submit">
+                                        </form>
+                                    </div>
+                                <?php } 
+                                    if(RightsHandler::has_user_right("CLASS_ASSIGN_USER"))
+                                    {
+                                ?>
+                                    <div class="pull-right" style="margin-left: 3px; margin-right: 3px;">
+                                        <i class="zmdi zmdi-hc-lg zmdi-plus a change_page" page="add_class_students" args="&school_id=<?php echo $classHandler->school_class->school_id;?>&class_id=<?php echo $classHandler->school_class->id;?>" data-toggle="tooltip" title="<?php echo TranslationHandler::get_static_text("ADD") . " " . strtolower(TranslationHandler::get_static_text("STUDENT")); ?>"></i>
+                                    </div>
+                                <?php 
+                                    }
+                                    if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
+                                    <div class="pull-right">
+                                        <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>" page="edit_class" step="" args="&class_id=<?php echo $classHandler->school_class->id; ?>"></i>
+                                    </div>
+                                <?php } ?>
+                            </span>
                         </h4>
                     </div>
-                    <div class="col-md-3">
-                        <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
-                            <div class="pull-right">
-                                <form class="" style="display: inline-block;" method="post" id="click_alert_form_<?php echo $classHandler->school_class->id; ?>" url="edit_class.php?state=delete_class">
-                                    <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg zmdi-delete btn_click_alertbox a" element_id='<?php echo $classHandler->school_class->id; ?>' data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE") ?>"></i>
-                                    <input type="hidden" name="class_id" value="<?php echo $classHandler->school_class->id; ?>">
-                                    <input type="hidden" name="submit" value="submit"></input>
-                                </form>
-                            </div>
-                        <?php } ?>
-                        <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                            <div class="pull-right">
-                                <form method="post" id="alert_form_<?php echo $classHandler->school_class->id; ?>" action="" url="edit_class.php?state=set_availability">
-                                    <i style="width:20px; height:20px; margin-top: 3px;" class="zmdi zmdi-hc-lg <?php echo $classHandler->school_class->open == 1 ? "zmdi-close-circle" : "zmdi-check-circle" ?> btn_click_close_alertbox m-r-sm a pull-right" element_state='<?php echo $classHandler->school_class->open; ?>' element_id='<?php echo $classHandler->school_class->id; ?>' data-toggle="tooltip" title="<?= $classHandler->school_class->open == 1 ? TranslationHandler::get_static_text("CLOSE") : TranslationHandler::get_static_text("OPEN") ?>"></i>
-                                    <input type="hidden" name="class_id" value="<?php echo $classHandler->school_class->id; ?>">
-                                    <input type="hidden" name="submit" value="submit">
-                                </form>
-                            </div>
-                        <?php } ?>
-                        <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
-                            <div class="pull-right">
-                                <i style="width:20px; height:20px;" class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>" page="edit_class" step="" args="&class_id=<?php echo $classHandler->school_class->id; ?>"></i>
-                            </div>
-                        <?php } ?>
+                    <div style="margin-left: 10px; margin-top: 30px;">
+                        <h4 class="panel-title no-transform" >
+                            <?php echo isset($_GET['class_id']) ? htmlspecialchars($classHandler->school_class->title): ""; ?>
+                        </h4>
                     </div>
                 </div>
             </div>
@@ -271,26 +284,11 @@ $i_rand = rand(100, 1000);
             <div class="panel-body">
                 <?php echo isset($_GET['class_id']) ? htmlspecialchars($classHandler->school_class->description) : ""; ?>
             </div>
-            <div class="panel-body <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "21" ? "danger animated headShake" : "hidden"; ?>">
+            <div class="panel-body <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "21" ? "danger animated headShake" : "safe animated"; ?>">
                 <h4 class="panel-title no-transform <?php echo isset($_GET['class_id']) && $classHandler->school_class->remaining_days < "21" ? "animated flash animate-twice" : ""; ?>"><?php echo isset($_GET['class_id']) ? TranslationHandler::get_static_text("SCHOOL_SUBSCRIPTION_END") . ": " . $classHandler->school_class->remaining_days . " " . TranslationHandler::get_static_text("DATE_DAYS") : ""; ?></h4>
             </div>
         </div>
-        <div class="panel panel-default">
-            <div class='panel-heading'>
-                <h4 class="panel-title no-transform">
-                    <i class="zmdi-hc-fw zmdi zmdi-calendar-note zmdi-hc-lg m-r-md"></i>
-                    <?php echo TranslationHandler::get_static_text("DAYS_REMAINING") . ": " . $classHandler->school_class->remaining_days; ?>
-                </h4>
-            </div>
-            <hr class="widget-separator m-0">
-            <div class="panel-body">
-                <div class="pull-left" name="test_average">
-                    <div class="pieprogress" data-value="<?php echo isset($_GET['class_id']) ? $classHandler->school_class->remaining_days / $classHandler->school_class->total_days : ""; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo isset($_GET['class_id']) ? get_progress_color($classHandler->school_class->remaining_days * 100 / $classHandler->school_class->total_days) : "" ?>"}, thickness: 10}'>
-                        <strong><span data-plugin="counterUp"><?php echo isset($_GET['class_id']) ? round($classHandler->school_class->remaining_days * 100 / $classHandler->school_class->total_days, 0) : ""; ?></span> %</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
         <div class="panel panel-default">
             <div class='panel-heading'>
                 <h4 class="panel-title no-transform">
@@ -314,7 +312,7 @@ $i_rand = rand(100, 1000);
                             <div class="sl-content">
                                 <h5 class="m-t-0">
                                     <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= ucwords(htmlspecialchars($value['firstname']) . ' ' . htmlspecialchars($value['surname'])) ?></a>
-                                    <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i> " . TranslationHandler::get_static_text("THIS_IS_YOU") : ""; ?></small>
+                                    <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i>": ""; ?></small>
                                 </h5>
                                 <p><span data-plugin="counterUp"><?php echo $value['points']; ?></span> points</p>
                             </div>

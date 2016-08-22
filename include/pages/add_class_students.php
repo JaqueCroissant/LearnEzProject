@@ -37,7 +37,7 @@ else
                     <div class="col-md-5">
                         <div class="form-group m-b-sm">
                             <label for="firstname_input"><?php echo TranslationHandler::get_static_text("STUDENTS_IN_SCHOOL"); ?></label>
-                            <select name="students_to_remove[]" id="leftValues" size="5" multiple style="width: 100%; height:200px;">
+                            <select name="students_to_remove[]" id="leftValues" size="5" multiple style="width: 100%; height:200px;" class="form-control">
                                 <?php
                                     foreach($students_in_school as $student)
                                     {
@@ -72,7 +72,7 @@ else
                     <div class="col-md-5">
                         <div class="form-group m-b-sm">
                             <label for="email_input"><?php echo TranslationHandler::get_static_text("STUDENTS_IN_CLASS"); ?></label>
-                            <select name="students_to_add[]" id="rightValues" size="5" multiple style="width:100%; height:200px;">
+                            <select name="students_to_add[]" id="rightValues" size="5" multiple style="width:100%; height:200px;" class="form-control">
                                 <?php
                                     foreach($students_in_class as $student)
                                     {

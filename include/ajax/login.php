@@ -87,11 +87,6 @@ if(isset($_POST)) {
         if($loginHandler->error->code == "ACTIVATE")
         {
             $jsonArray['user_setup'] = SessionKeyHandler::session_exists("user_setup");
-            if($jsonArray['user_setup'])
-            {
-                 $jsonArray['email'] = SessionKeyHandler::get_from_session("user_setup")['email'];
-                 $jsonArray['firstname'] = SessionKeyHandler::get_from_session("user_setup")['firstname'];
-            }
         }
         else
         {

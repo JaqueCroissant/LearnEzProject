@@ -19,7 +19,7 @@ function set_clickable(element) {
     }
 }
 
-function change_page(pagename, step, args, element, scroll_to_top) {
+function change_page(pagename, step, args, element, scroll_to_top, complete_function) {
     cursor_wait();
     currently_changing_page = true;
     scroll_to_top = scroll_to_top === undefined;
@@ -70,8 +70,13 @@ function change_page(pagename, step, args, element, scroll_to_top) {
             if(scroll_to_top) {
                 window.scrollTo(0, 0);
             }
+            complete_function();
         }
     });
+}
+
+function change_page_from_overlay(pagename, step, args, element, scroll_to_top) {
+    change_page(pagename, step, args, element, scroll_to_top, function() {setTimeout(function() { $(".login_overlay").fadeOut(500);}, 300)}); 
 }
 
 var currentIteration = 0, totalIterations = 10;

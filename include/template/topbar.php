@@ -51,7 +51,9 @@
                 } else {
                     echo $menu->pagename == "notifications" ? '<div id="notification_counter" class="hidden"></div>' : '';
                     echo '<a class="';
-                    if($menu->pagename == "logout") {
+                    if($menu->pagename == "login") {
+                        echo "display_login_overlay";
+                    }elseif($menu->pagename == "logout") {
                         echo "log_out";
                     } elseif($menu->pagename != "notifications") {
                         echo "change_page";

@@ -76,6 +76,17 @@ html{
     box-shadow: 0 1px 2px #ccc;
 }
 
+.accept_panel {
+    z-index: 9000;
+    position: absolute;
+    width: 400px;
+    display: block;
+    left: 30%;
+    bottom: 200px;
+    border: 1px solid #CCC !important;
+    box-shadow: 0 1px 2px #ccc;
+}
+
 /*.progress-bar-success {
     display: table;
     width: 33.3%;
@@ -843,3 +854,30 @@ a .menu_header {
 .no-transform {
     text-transform: none !important;
 }
+
+.bnf_btn{
+    margin: 25px 0px
+}
+
+.login_overlay {
+    top: 0;
+    position:fixed;
+    z-index: 99998 !important;
+    width:100%;
+    height:100%;
+    background-color: #fff;
+}
+
+.login_container {
+    top: 5%;
+    position: fixed;
+    z-index: 99999;
+    left: 50%;
+    margin-left: -190px;
+}
+
+.login_input_text::-webkit-input-placeholder {  color: #FFF !important;}
+.login_input_text::-webkit-input-placeholder { color: #FFF !important; }
+.login_input_text::-moz-placeholder {color: #FFF !important; }
+.login_input_text:-ms-input-placeholder { color: #FFF !important; } 
+.login_input_text:-o-input-placeholder { color: #FFF !important; }

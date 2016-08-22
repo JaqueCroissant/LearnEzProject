@@ -89,7 +89,18 @@ $classHandler->get_all_classes();
                                 <?php } ?>
                                 <?php if (RightsHandler::has_user_right("CLASS_EDIT")) { ?>
                                     <td align="center">
-                                        <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_CLASS_GENERIC") ?>"></i>
+                                        
+                                        
+                                            <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="edit_class" step="" args="&class_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_CLASS_GENERIC") ?>"></i>
+                                            
+                                        <?php if(RightsHandler::has_user_right("CLASS_ASSIGN_USER"))
+                                            {
+                                            ?>
+                                                <i class="zmdi zmdi-hc-lg zmdi-plus a change_page" page="add_class_students" args="&school_id=<?php echo $value->school_id;?>&class_id=<?php echo $value->id;?>" data-toggle="tooltip" title="<?php echo TranslationHandler::get_static_text("ADD") . " " . strtolower(TranslationHandler::get_static_text("STUDENT")); ?>" style="margin-right: 5px;"></i>
+                                            <?php
+                                            }    
+                                        ?>
+                                            
                                         <?php if (RightsHandler::has_user_right("CLASS_DELETE")) { ?>
                                             <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="edit_class.php?state=delete_class">
                                                 <input type="hidden" name="class_id" value="<?php echo $value->id; ?>">

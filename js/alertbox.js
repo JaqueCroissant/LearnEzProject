@@ -129,6 +129,18 @@
 
     });
 
+
+
+    $(document).on("click", ".accept_click_acceptbox_btn", function (event) {
+        event.preventDefault();
+
+        $("#accept_box").addClass("hidden");
+        $("#username_text").text("");
+        setTimeout(function () {
+                    change_page("create_account");
+                }, 500);
+    });
+
     $(document).on("click", ".accept_click_alertbox_btn", function (event) {
         event.preventDefault();
         var form = $("#click_alert_form_" + clicked_element_id);

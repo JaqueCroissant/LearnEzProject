@@ -27,7 +27,7 @@ $(document).ready(function () {
     $(".datepickers").datepicker({
         dateFormat: "yy-mm-dd"
     });
-    // global functions
+
     $(document).on("click", ".change_page", function (event) {
         if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
             $(this).attr("clickable", false);
@@ -38,9 +38,23 @@ $(document).ready(function () {
             change_page(page, step, args, $(this));
         }
     });
-    
     $(window).on("resize", function(){
         $("select[data-plugin='select2']").select2({width:"100%"});
+    });
+    
+    $(document).on("click", ".change_page_from_overlay", function (event) {
+        if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
+            $(this).attr("clickable", false);
+            event.preventDefault();
+            var page = $(this).attr("page");
+            var step = $(this).attr("step");
+            var args = $(this).attr("args");
+            change_page_from_overlay(page, step, args, $(this));
+        }
+    });
+    
+    $(document).on("click", ".display_login_overlay", function (event) {
+        $(".login_overlay").fadeIn(500);
     });
 
     $(document).on("click", ".my_tab_header", function (event) {
@@ -108,23 +122,13 @@ $(document).ready(function () {
     });
     //
 
-    // login / logout
     $(document).on("click", ".submit_login", function (event) {
         event.preventDefault();
 
         initiate_submit_form($(this), function () {
 
             if (ajax_data.user_setup !== undefined) {
-
-                $(".main_login").fadeOut(300, function () {
-                    $(".first_time_login").attr("style", "opacity:0;height: auto;");
-                    $(".first_time_login").fadeTo(300, 1);
-                });
-                $(".activation_token").val($(".login_token").val());
-                $(".activation_username").val($(".login_username").val());
-                $(".activation_password").val($(".login_password").val());
-                $(".activation_email").val(ajax_data.email);
-                $(".activation_greeting").text($(".activation_greeting").text() + ajax_data.firstname + "!");
+                change_page_from_overlay("login");
             } else
             {
                 show_status_bar("error", ajax_data.error);
@@ -146,6 +150,19 @@ $(document).ready(function () {
         });
     });
     //
+
+    //add_class_students functionality
+    $(document).on("click", "#add_class_student_btn_left", function (event) {
+        event.preventDefault();
+        var selectedItem = $("#rightValues option:selected");
+        $("#leftValues").append(selectedItem);
+    });
+
+    $(document).on("click", "#add_class_student_btn_right", function (event) {
+        event.preventDefault();
+        var selectedItem = $("#leftValues option:selected");
+        $("#rightValues").append(selectedItem);
+    });
 
     //notifications
     $(document).on("click", ".notifs_button", function (event) {
@@ -223,6 +240,32 @@ $(document).ready(function () {
         });
     });
 
+
+    $(document).on("click", ".add_students_submit", function (event) {
+        event.preventDefault();
+
+        var selectBox1 = document.getElementById("leftValues");
+        var selectBox2 = document.getElementById("rightValues");
+
+        for (var i = 0; i < selectBox1.options.length; i++)
+        {
+             selectBox1.options[i].selected = true;
+        }
+
+        for (var i = 0; i < selectBox2.options.length; i++)
+        {
+             selectBox2.options[i].selected = true;
+        }
+
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+
+            show_status_bar("success", ajax_data.success);
+            $(".go_back").click();
+        });
+    });
+
     $(document).on("click", ".create_submit_info", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
@@ -237,6 +280,22 @@ $(document).ready(function () {
         });
     });
     
+    $(document).on("click", ".create_submit_info_exp", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            $("#accept_box").removeClass("hidden");
+            $("#username_text").append(" <b>" + ajax_data.username + "</b>");
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    location.reload();
+                }, 500);
+            }
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
     $(document).on("click", ".create_submit_changed_password", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {

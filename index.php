@@ -50,6 +50,8 @@ RightsHandler::reset();
             ?>
         </div>
         
+        <?php require_once 'include/template/login_overlay.php'; ?>
+        
         <?php include 'include/template/course_player.php'; ?>
 
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
@@ -65,6 +67,5 @@ RightsHandler::reset();
         <script src="libs/bower/moment/moment.js"></script>
         <script src="libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
         <script src="assets/js/fullcalendar.js"></script>
-<!--        <script src="js/back.js"></script>-->
     </body>
 </html>

@@ -4,6 +4,7 @@ class UserHandler extends Handler
     public $users = array();
     public $temp_user_array;
     public $temp_user;
+    public $new_username;
     public $profile_images;
 
 
@@ -402,7 +403,9 @@ class UserHandler extends Handler
 
     private function create_user($user_object, $add_to_user_array)
     {  
-        $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
+        $username = $this->generate_username($user_object->firstname, $user_object->surname);
+        $user_object->username = $username;
+        $this->new_username = $username;
         try
         {
             if(!DbHandler::get_instance()->query("INSERT INTO users (username, user_type_id,
@@ -435,8 +438,10 @@ class UserHandler extends Handler
 
     private function create_user_with_password($user_object, $add_to_user_array)
     {
+        $username = $this->generate_username($user_object->firstname, $user_object->surname);
+        $user_object->username = $username;
+        $this->new_username = $username;
 
-        $user_object->username = $this->generate_username($user_object->firstname, $user_object->surname);
         $password = hash("sha256", $user_object->unhashed_password . " " . $user_object->username);
         try
         {
@@ -1026,7 +1031,6 @@ class UserHandler extends Handler
             }
 
             $user_data = DbHandler::get_instance()->return_query($query, $school_id, TranslationHandler::get_current_language());
-            
             $this->users = array();
             if(count($user_data > 0))
             {
@@ -1045,7 +1049,7 @@ class UserHandler extends Handler
         }
     }
 
-    public function get_by_class_id($class_id, $is_mine = false)
+    public function get_by_class_id($class_id, $is_mine = false, $teachers_and_students = false)
     {
         try
         {
@@ -1074,7 +1078,14 @@ class UserHandler extends Handler
                 }
             }
             
-            $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class WHERE users.id = user_class.users_id AND user_class.class_id = :id", $class_id);
+            if($teachers_and_students)
+            {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class ON users.id = user_class.users_id AND user_class.class_id = :id WHERE users.user_type_id > 2", $class_id);
+            }
+            else
+            {
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class ON users.id = user_class.users_id AND user_class.class_id = :id WHERE users.user_type_id > 3", $class_id);
+            }
             
             $this->users = array();
             if(count($user_data > 0))

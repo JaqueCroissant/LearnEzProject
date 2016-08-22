@@ -66,6 +66,7 @@ class ClassHandler extends Handler {
                 default:
                     break;
             }
+            unset($this->classes);
             $this->classes = array();
             foreach ($array as $value) {
                 $class = new School_Class($value);
@@ -152,7 +153,8 @@ class ClassHandler extends Handler {
 
 
             $array = DbHandler::get_instance()->return_query($query, $school_id);
-            $this->classes = null;
+            unset($this->classes);
+            $this->classes = array();
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
@@ -183,7 +185,8 @@ class ClassHandler extends Handler {
                             WHERE user_class.users_id = :user_id";
 
             $array = DbHandler::get_instance()->return_query($query, $user_id);
-            $this->classes = null;
+            unset($this->classes);
+            $this->classes = array();
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->remaining_days = $this->set_remaining_days($class);
@@ -192,7 +195,6 @@ class ClassHandler extends Handler {
                 $class->number_of_teachers = $this->get_number_of_teachers_in_class($class->id);
                 $this->classes[] = $class;
             }
-            var_dump($this->classes);
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -232,6 +234,7 @@ class ClassHandler extends Handler {
 
     public function add_user_to_class($array_of_user_ids_or_single_id, $class_id) {
         try {
+
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
@@ -248,6 +251,35 @@ class ClassHandler extends Handler {
                 }
             } elseif (is_numeric($array_of_user_ids_or_single_id)) {
                 DbHandler::get_instance()->query($query, $array_of_user_ids_or_single_id, $class_id);
+            }
+
+            return true;
+        } catch (Exception $exc) {
+            $this->error = ErrorHandler::return_error($exc->getMessage());
+            return false;
+        }
+    }
+
+    public function remove_user_from_class($array_of_user_ids_or_single_id, $class_id) {
+        try {
+
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("CLASS_ASSIGN_USER")) {
+                throw new Exception("INSUFFICIENT_RIGHTS");
+            }
+            $this->verify_class_exists($class_id);
+
+
+            if (is_array($array_of_user_ids_or_single_id) && !empty($array_of_user_ids_or_single_id)) {
+                $query = "DELETE FROM user_class WHERE class_id = :class_id AND users_id IN (" . generate_in_query($array_of_user_ids_or_single_id) . ")";
+
+                DbHandler::get_instance()->query($query, $class_id);
+
+            } elseif (is_numeric($array_of_user_ids_or_single_id)) {
+                DbHandler::get_instance()->query("DELETE FROM user_class WHERE users_id = :user_id AND class_id = :class_id", $array_of_user_ids_or_single_id, $class_id);
             } else {
                 throw new Exception("OBJECT_IS_EMPTY");
             }

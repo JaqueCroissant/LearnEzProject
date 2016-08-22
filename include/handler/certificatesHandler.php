@@ -54,13 +54,12 @@ class CertificatesHandler extends Handler {
                 throw new Exception("INVALID_INPUT");
             }
             
-            $data = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course.color as course_color, course_image.filename as course_image, certificates.completion_date, certificates.validation_code, certificates.id, translation_course.title AS course_title, translation_course.description AS course_description FROM course INNER JOIN certificates ON certificates.course_id = course.id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN course_image ON course_image.id = course.image_id WHERE certificates.id = :id AND users.id = :user_id", TranslationHandler::get_current_language(), $id, $this->_user->id);
+            $data = DbHandler::get_instance()->return_query("SELECT course.id AS course_id, course.color as course_color, course_image.filename as course_image, certificates.completion_date, certificates.validation_code, certificates.id, translation_course.title AS course_title, translation_course.description AS course_description FROM course INNER JOIN certificates ON certificates.course_id = course.id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN course_image ON course_image.id = course.image_id WHERE certificates.id = :id AND certificates.user_id = :user_id", TranslationHandler::get_current_language(), $id, $this->_user->id);
             if(empty($data)) {
                 throw new Exception("CERTIFICATE_DOESNT_EXIST");
             }
             
             $this->current_certificate = new Certificate(reset($data));
-            
             return true;
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());

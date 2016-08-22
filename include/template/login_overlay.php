@@ -1,8 +1,12 @@
+<?php
+    require_once 'include/handler/loginHandler.php';
+
+    $loginHandler = new LoginHandler();
+?>
+
 <div class="login_overlay">
 <div class="login_container">
-	<div id="back-to-home">
-		<a href="index.html" class="btn btn-outline btn-default"><i class="fa fa-home animated zoomIn"></i></a>
-	</div>
+
 	<div class="simple-page-wrap">
 		<div class="simple-page-logo animated swing">
                     <div id="app-brand">
@@ -16,12 +20,16 @@
 	
 	<form method="POST" action="" id="login_form" url="login.php" class="form-horizontal" name="login">
 		<div class="form-group">
-			<input id="sign-in-email" type="email" class="form-control" placeholder="<?= TranslationHandler::get_static_text("USERNAME");?>">
+			<input id="sign-in-email" name="username" class="form-control login_username" placeholder="<?= TranslationHandler::get_static_text("USERNAME");?>" onkeydown = "if (event.keyCode == 13)
+                                        document.getElementById('submit_button').click()">
 		</div>
 		<div class="form-group">
-			<input id="sign-in-password" type="password" class="form-control" placeholder="<?= TranslationHandler::get_static_text("PASSWORD");?>">
+                    <input id="sign-in-password" type="password" name="password" class="form-control login_password" placeholder="<?= TranslationHandler::get_static_text("PASSWORD");?>" onkeydown = "if (event.keyCode == 13)
+                                        document.getElementById('submit_button').click()">
 		</div>
-		<input type="submit" class="btn btn-primary" value="<?= TranslationHandler::get_static_text("LOGIN");?>">
+            
+                <input type="hidden" id="token" name="token" class="login_token" value="<?php echo $loginHandler->get_login_token(); ?>">
+		<input type="submit" id="submit_button" class="btn btn-primary submit_login login_submit" value="<?= TranslationHandler::get_static_text("LOGIN");?>">
 	</form>
 </div><!-- #login-form -->
 

@@ -662,6 +662,11 @@ a .menu_header {
     color:white;
 }
 
+.safe{
+    background-color: #38b955;
+    color:white;
+}
+
 .backdrop {
     display:none;
     position: fixed;

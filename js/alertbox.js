@@ -137,7 +137,7 @@
         $("#accept_box").addClass("hidden");
         $("#username_text").text("");
         setTimeout(function () {
-                    location.reload();
+                    change_page("create_account");
                 }, 500);
     });
 

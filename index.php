@@ -16,6 +16,9 @@ RightsHandler::reset();
         ?>
     </head>
     <body class="sb-left theme-primary pace-done">
+        <?php
+        require_once 'include/template/login_overlay.php';
+        ?>
         <div class="pace pace-inactive">
             <div class="pace-progress" style="transform: translate3d(100%, 0px, 0px);" data-progress-text="100%" data-progress="99">
                 <div class="pace-progress-inner"></div>

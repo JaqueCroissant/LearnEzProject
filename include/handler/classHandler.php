@@ -66,7 +66,7 @@ class ClassHandler extends Handler {
                 default:
                     break;
             }
-            $classHandler->classes = null;
+            $this->classes = array();
             foreach ($array as $value) {
                 $class = new School_Class($value);
                 $class->number_of_students = $this->get_number_of_students_in_class($class->id);

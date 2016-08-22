@@ -581,7 +581,7 @@ a .menu_header {
     cursor: pointer;
 }
 
-.delete_thumbnail {
+.delete_thumbnail_style {
     width: auto !important;
     text-align:center;
     z-index: 1000000;
@@ -631,7 +631,7 @@ a .menu_header {
     min-height: 18px;
 }
 
-.delete_thumbnail:hover{
+.delete_thumbnail_style:hover{
     cursor: pointer;
     background: #f35151 !important;
 }

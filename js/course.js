@@ -350,12 +350,12 @@ $(document).on("click", ".upload_thumbnail", function (event) {
 
 $(document).on({
     mouseenter: function () {
-        $(this).find(".delete_thumbnail").removeClass("hidden");
+        $(this).find(".delete_thumbnail_style").removeClass("hidden");
         $(this).find(".set_default_thumbnail").removeClass("hidden");
         $(this).css({opacity: 1});
     },
     mouseleave: function () {
-        $(this).find(".delete_thumbnail").addClass("hidden");
+        $(this).find(".delete_thumbnail_style").addClass("hidden");
         var set_default_thumbnail = $(this).find(".set_default_thumbnail");
 
         if (set_default_thumbnail.attr("default_thumbnail") !== "1") {

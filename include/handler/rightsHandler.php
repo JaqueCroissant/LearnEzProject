@@ -61,7 +61,7 @@
                    throw new Exception("INVALID_FORM_DATA");
                 }
                 
-                $closed_users_query = $closed_users ? "AND a.closed_user = '1' " : "";
+                $closed_users_query = $closed_users ? " AND a.closed_user = '1' " : " AND a.closed_user != '1'";
                 DbHandler::get_instance()->query("DELETE a.* FROM user_type_page as a INNER JOIN page as b ON b.id = a.page_id WHERE a.user_type_id = :user_type_id ". $closed_users_query . " AND (b.hide_in_backend != '1' OR (b.hide_in_backend = '1' AND b.master_page_id > 0 AND b.set_rights != '1'))", $user_type);
                 
                 $array = array();
@@ -128,7 +128,7 @@
                     throw new Exception("INVALID_USER_TYPE");
                 }
                 
-                $closed_users_query = $closed_users ? " AND a.closed_user = '1' " : "";
+                $closed_users_query = $closed_users ? " AND a.closed_user = '1' " : " AND a.closed_user != '1'";
                 DbHandler::get_instance()->query("DELETE a.* FROM user_type_rights as a INNER JOIN rights as b ON b.id = a.rights_id WHERE a.user_type_id = :user_type_id " . $closed_users_query . " AND b.page_right_id = '0'", $user_type);
                 
                 if(empty($user_rights) || !is_array($user_rights) ) {
@@ -238,7 +238,7 @@
                     throw new Exception("INVALID_USER_TYPE");
                 }
 
-                $closed_users_query = $closed_users ? " AND user_type_rights.closed_user = '1' " : "";
+                $closed_users_query = $closed_users ? " AND user_type_rights.closed_user = '1' " : " AND user_type_rights.closed_user != '1' ";
                 $data = DbHandler::get_instance()->return_query("SELECT user_type_rights.id, user_type_rights.user_type_id, user_type_rights.rights_id FROM user_type_rights WHERE user_type_id = :user_type_id " . $closed_users_query, $user_type_id);
 
                 if(count($data) < 1) {

@@ -51,7 +51,7 @@ if (isset($_POST['state'])) {
             }
             break;
     }
-} elseif (isset($_GET['school_id'])) {
+} else if (isset($_GET['school_id'])) {
     $school_id = (isset($_GET['school_id']) ? $_GET['school_id'] : "");
 
     if ($schoolHandler->get_school_by_id($school_id)) {
@@ -75,6 +75,15 @@ if (isset($_POST['state'])) {
                 $array['status_value'] = false;
             }
             break;
+    }
+} else if(isset($_GET['delete_image'])){
+    $school_id = isset($_GET['school']) ? $_GET['school'] : "";
+    if ($schoolHandler->delete_image($school_id)) {
+        $array['status_value'] = true;
+        $array['success'] = TranslationHandler::get_static_text("IMAGE_DELETED");
+    } else {
+        $array['error'] = $schoolHandler->error->title;
+        $array["status_value"] = false;
     }
 }
 echo json_encode($array);

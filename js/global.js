@@ -38,6 +38,9 @@ $(document).ready(function () {
             change_page(page, step, args, $(this));
         }
     });
+    $(window).on("resize", function(){
+        $("select[data-plugin='select2']").select2({width:"100%"});
+    });
     
     $(document).on("click", ".change_page_from_overlay", function (event) {
         if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {

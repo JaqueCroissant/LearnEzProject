@@ -10,6 +10,7 @@ class SchoolHandler extends Handler {
     public $open_slots;
     public $soon_expiring_schools;
     public $format = "Y-m-d";
+    public $current_file_name;
 
     public function __construct() {
         parent::__construct();
@@ -21,7 +22,7 @@ class SchoolHandler extends Handler {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
 
-            if (!RightsHandler::has_user_right("COURSE_ADMINISTRATE")) {
+            if (!RightsHandler::has_user_right("SCHOOL_EDIT")) {
                 throw new exception("INSUFFICIENT_RIGHTS");
             }
 
@@ -32,8 +33,13 @@ class SchoolHandler extends Handler {
             if ($file["size"] > 1000000) {
                 throw new exception("IMAGE_TOO_LARGE_MAX_1_MB");
             }
-
-            $this->verify_school_exists($school_id);
+            
+            if (empty($school_id) || !is_numeric($school_id)) {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            $this->delete_image_files($school_id);
+            
 
             $file_type = pathinfo($file['name'], PATHINFO_EXTENSION);
             if (!in_array(strtoupper($file_type), array("JPG", "JPEG", "PNG", "GIF"))) {
@@ -47,14 +53,56 @@ class SchoolHandler extends Handler {
             }
 
             $resize = new Resize($file_location . "uncropped/" . $file_name);
-            $resize->resize_image(90, 90, 'auto');
+            $resize->resize_image(90, 90, 'exact');
             $resize->save_image($file_location . "" . $file_name, 100);
 
             if (DbHandler::get_instance()->query("UPDATE school SET filename = :filename WHERE id = :id", $file_name, $school_id)) {
+                $this->current_file_name = $file_name;
                 return true;
             } else {
                 return false;
             }
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    private function delete_image_files($school_id){
+        $school_data = reset(DbHandler::get_instance()->return_query("SELECT filename FROM school WHERE id = :id", $school_id));
+        if (empty($school_data["filename"])) {
+            return;
+        }
+        
+        $path = realpath(__DIR__ . "/../..") . "/assets/images/school_profile/";
+
+        if (file_exists($path . $school_data["filename"])) {
+            unlink($path . $school_data["filename"]);
+        }
+
+        if (file_exists($path . "uncropped/" . $school_data["filename"])) {
+            unlink($path . "uncropped/" . $school_data["filename"]);
+        }
+    }
+
+    public function delete_image($school_id) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (!RightsHandler::has_user_right("SCHOOL_EDIT")) {
+                throw new exception("INSUFFICIENT_RIGHTS");
+            }
+
+            if (empty($school_id) || !is_numeric($school_id)) {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            $this->delete_image_files($school_id);
+            DbHandler::get_instance()->query("UPDATE school SET filename = '' WHERE id = :id", $school_id);
+            return true;
+            
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;

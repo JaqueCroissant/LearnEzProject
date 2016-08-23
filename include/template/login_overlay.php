@@ -1,10 +1,10 @@
 <?php
 require_once 'include/handler/loginHandler.php';
-
+$display = $loginHandler->check_login() || (isset($_GET["page"]) && $_GET["page"] == "resetpassword" && isset($_GET["step"]) && $_GET["step"] == "confirmpassword");
 $loginHandler = new LoginHandler();
 ?>
 
-<div class="login_overlay" style="<?= $loginHandler->check_login() ? 'display:none;' : '' ?>">
+<div class="login_overlay" style="<?= $display ? 'display:none;' : '' ?>">
      <div class="login_container">
 
      <div class="simple-page-wrap">

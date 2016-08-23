@@ -118,4 +118,35 @@ $(document).ready(function () {
         var id = $(this).closest("tr").children().last().attr("id");
         change_page("edit_class", "" ,"&class_id=" + id);
     });
+    
+    //add_class_students functionality
+    $(document).on("click", ".students_change", function (event) {
+        event.preventDefault();
+        var selected_items = $("." + $(this).attr("from") + " option:selected");
+        $("." + $(this).attr("to")).append(selected_items);
+    });
+    
+    $(document).on("click", ".add_students_submit", function (event) {
+        event.preventDefault();
+
+        var students = $(".students_right")[0]
+        var teachers = $(".teachers_right")[0];
+        for (var i = 0; i < students.options.length; i++)
+        {
+             students.options[i].selected = true;
+        }
+        
+        for (var i = 0; i < teachers.options.length; i++)
+        {
+             teachers.options[i].selected = true;
+        }
+
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            show_status_bar("success", ajax_data.success);
+            $(".go_back").click();
+        });
+    });
+
 });

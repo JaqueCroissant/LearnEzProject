@@ -15,12 +15,16 @@ else
     $classHandler = new ClassHandler();
     $userHandler = new UserHandler();
     
-    $userHandler->get_by_class_id($_GET['class_id']);
-    $students_in_class = $userHandler->users;
+    $userHandler->get_by_class_id($_GET['class_id'], false, true);
+    $people_in_class = array();
+    foreach ($userHandler->users as $user) {
+        $user->present = true;
+        $people_in_class[] = $user;
+    }
+    $userHandler->get_by_school_id($_GET['school_id'], true);
+    $all_people = object_group_by_key(merge_array_recursively($people_in_class, $userHandler->users, true), "user_type_id");
     
-    $userHandler->get_by_school_id($_GET['school_id']);
-    $students_in_school = $userHandler->users;
-    
+    $missing = array();
     $classHandler->get_class_by_id($_GET['class_id'])
 ?>
 <div class="row">   
@@ -32,58 +36,96 @@ else
                         <hr class="widget-separator">
             <div class="widget-body">
                 <form method="POST" action="" id="add_students" url="add_class_students.php" name="add_students_form">
-                    <input type="hidden" name="class" value="<?= $_GET['class_id']?>">
-                    <input type="hidden" name="school" value="<?= $_GET['school_id']?>">
-                    <div class="col-md-5">
-                        <div class="form-group m-b-sm">
-                            <label for="firstname_input"><?php echo TranslationHandler::get_static_text("STUDENTS_IN_SCHOOL"); ?></label>
-                            <select name="students_to_remove[]" id="leftValues" size="5" multiple style="width: 100%; height:200px;" class="form-control">
-                                <?php
-                                    foreach($students_in_school as $student)
-                                    {
-                                        $is_present = false;
-
-                                        foreach($students_in_class as $value)
+                    <div class="col-md-12">
+                        <input type="hidden" name="class" value="<?= $_GET['class_id']?>">
+                        <input type="hidden" name="school" value="<?= $_GET['school_id']?>">
+                        <div class="col-md-5">
+                            <div class="form-group m-b-sm">
+                                <label><?php echo TranslationHandler::get_static_text("STUDENTS_IN_SCHOOL"); ?></label>
+                                <select size="5" multiple style="width: 100%; height:200px;" class="form-control students_left">
+                                    <?php
+                                        foreach($all_people["4"] as $student)
                                         {
-                                            if($student->id == $value->id)
+                                            if(!isset($student->present))
                                             {
-                                                $is_present = true;
+                                                echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
+                                            }
+                                            else {
+                                                $missing[] = $student;
                                             }
                                         }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                    
+                        <div class="col-md-2" style="margin-top:100px;text-align: center;">
+                            <div class="btn-group">
+                                <a href="javascript:void(0)" from="students_right" to="students_left" class="students_change btn btn-default"><i class="fa fa-chevron-left"></i></a>
+                                <a href="javascript:void(0)" from="students_left" to="students_right" class="students_change btn btn-default"><i class="fa fa-chevron-right"></i></a>
+                            </div>
+                        </div>
 
-                                        if(!$is_present)
+                        <div class="col-md-5">
+                            <div class="form-group m-b-sm">
+                                <label><?php echo TranslationHandler::get_static_text("STUDENTS_IN_CLASS"); ?></label>
+                                <select name="students_to_add[]" size="5" multiple style="width:100%; height:200px;" class="form-control students_right">
+                                    <?php
+                                        foreach($missing as $student)
                                         {
                                             echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
                                         }
-                                    }
-                                ?>
-                            </select>
+                                        $missing = array();
+                                    ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="col-md-2">
-                        <div class="form-group m-b-sm">
-                            <input type="button" id="add_class_student_btn_left" class="btn btn-default btn-lg bnf_btn" value="&lt;&lt;" style="float:left;"/>
-                            <input type="button" id="add_class_student_btn_right" class="btn btn-default btn-lg bnf_btn" value="&gt;&gt;" style="float:right;" />
-                            <div style="clear:both;"></div>
+                    <div class="col-md-12 m-t-xl">
+                        <div class="col-md-5">
+                            <div class="form-group m-b-sm">
+                                <label><?php echo TranslationHandler::get_static_text("TEACHERS_IN_SCHOOL"); ?></label>
+                                <select size="5" multiple style="width: 100%; height:200px;" class="form-control teachers_left">
+                                    <?php
+                                        foreach($all_people["3"] as $student)
+                                        {
+                                            if(!isset($student->present))
+                                            {
+                                                echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
+                                            }
+                                            else {
+                                                $missing[] = $student;
+                                            }
+                                        }
+                                    ?>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div class="col-md-5">
-                        <div class="form-group m-b-sm">
-                            <label for="email_input"><?php echo TranslationHandler::get_static_text("STUDENTS_IN_CLASS"); ?></label>
-                            <select name="students_to_add[]" id="rightValues" size="5" multiple style="width:100%; height:200px;" class="form-control">
-                                <?php
-                                    foreach($students_in_class as $student)
-                                    {
-                                        echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
-                                    }
-                                ?>
-                            </select>
+
+                        <div class="col-md-2" style="margin-top:100px;text-align: center;">
+                            <div class="btn-group">
+                                <a href="javascript:void(0)" from="teachers_right" to="teachers_left" class="students_change btn btn-default"><i class="fa fa-chevron-left"></i></a>
+                                <a href="javascript:void(0)" from="teachers_left" to="teachers_right" class="students_change btn btn-default"><i class="fa fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="form-group m-b-sm">
+                                <label><?php echo TranslationHandler::get_static_text("TEACHERS_IN_CLASS"); ?></label>
+                                <select name="students_to_add[]" size="5" multiple style="width:100%; height:200px;" class="form-control teachers_right">
+                                    <?php
+                                        foreach($missing as $student)
+                                        {
+                                            echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
+                                        }
+                                        $missing = array();
+                                    ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <div class="form-group m-b-sm pull-right">
+                        <div class="form-group m-t-lg m-b-sm pull-right">
                             <input type="button" name="submit" id="class_students_submit" value="<?php echo TranslationHandler::get_static_text("INFO_SUBMIT"); ?>" class="btn btn-default add_students_submit" >
                         </div>
                     </div>
@@ -92,9 +134,11 @@ else
         </div>
     </div>
 </div>
+
     
 <?php
 }
 ?>
+
 
 <script src="assets/js/include_app.js" type="text/javascript"></script>

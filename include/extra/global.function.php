@@ -64,6 +64,20 @@ function array_group_by_key(array $arr) {
     return $result;
 }
 
+function test_dump($arr){
+    echo "<pre>";
+    var_dump($arr);
+    echo "</pre>";
+}
+
+function object_group_by_key($ob, $k) {
+    $result = array();
+    foreach ($ob as $i) {
+      $result[$i->$k][] = $i;
+    }  
+    return $result;
+}
+
 function generate_in_query($array) {
     $in_array = "";
     for($i = 0; $i < count($array); $i++) {

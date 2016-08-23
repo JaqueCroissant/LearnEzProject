@@ -38,7 +38,7 @@ $(document).ready(function () {
                     show_status_bar("error", ajax_data.error);
                 }, function () {
                     show_status_bar("success", ajax_data.success);
-                    reload_page();
+                    change_page("create_school","","");
                 });
                 break;
         }
@@ -51,13 +51,10 @@ $(document).ready(function () {
 
     $(document).on("click", ".update_school", function (event) {
         event.preventDefault();
-
-        ajax_data = undefined;
-        initiate_submit_form($(this), function () {
+        initiate_submit_form($("#update_school"), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
             show_status_bar("success", ajax_data.success);
-            $(".go_back").click();
         });
     });
 
@@ -121,35 +118,50 @@ $(document).ready(function () {
     //
 
     // upload image 
+    var currently_uploading = false;
     $(document).on("click", ".upload_school_image", function (event) {
-        page_state = $(this).attr("id");
-        var form = $(this).closest("form");
-        event.preventDefault();
-        var formData = new FormData(form[0]);
-        formData.append("step", "upload_school_image");
-        formData.append("school_id", $("#school_id").val());
-        $.ajax({
-            url: 'include/ajax/create_school.php',
-            type: 'POST',
-            data: formData,
-            dataType: "json",
-            async: false,
-            complete: function (data) {
-                ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
-                if (ajax_data.status_value) {
-                    show_status_bar("success", ajax_data.success);
-                    if (page_state === "edit_school_image") {
-                        $(".go_back").click();
+        if(!currently_uploading) {
+            currently_uploading = true;
+            $(".upload_school_image").attr("disabled", true);
+            $(".upload_school_image").val($(".school_thumbnail_upload_trans").html());
+            page_state = $(this).attr("id");
+            event.preventDefault();
+            var formData = new FormData();
+            formData.append("school_image", $("#school_image")[0].files[0]);
+            formData.append("step", "upload_school_image");
+            formData.append("school_id", $("#school_id").val());
+            $.ajax({
+                url: 'include/ajax/create_school.php',
+                type: 'POST',
+                data: formData,
+                dataType: "json",
+                async: true,
+                complete: function (data) {
+                    currently_uploading = false;
+                    ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
+                    $(".upload_school_image").attr("disabled", false);
+                    $(".upload_school_image").val($(".school_thumbnail_new_trans").html());
+                    if (ajax_data.status_value) {
+                        show_status_bar("success", ajax_data.success);
+                        $(".school_thumbnail").attr("src", "assets/images/school_profile/" + ajax_data.file_name);
+                    } else {
+                        show_status_bar("error", ajax_data.error);
                     }
-                } else {
-                    show_status_bar("error", ajax_data.error);
-                }
-            },
-            cache: false,
-            contentType: false,
-            processData: false
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        }
+    });
+    
+    //delete image
+    $(document).on("click", ".delete_school_thumbnail", function(){
+        initiate_submit_get($(this), "edit_school.php?delete_image=1&school=" + $("#school_id").val(), function(){
+            show_status_bar("error", ajax_data.error);
+        }, function(){
+            show_status_bar("success", ajax_data.success);
+            $(".school_thumbnail").attr("src", "");
         });
     });
-
-    //
 });

@@ -5,7 +5,7 @@ $pageHandler = new PageHandler();
 
 $jsonArray['status_value'] = true;
 $jsonArray['lang_id'] = TranslationHandler::get_current_language();
-if(PageHandler::page_exists(isset($_GET['page']) ? $_GET['page'] : "front")) {
+if(PageHandler::page_exists(isset($_GET['page']) ? $_GET['page'] : "account_overview")) {
     $jsonArray['step'] = isset($_GET['step']) ? $_GET['step'] : null;
     $args_string = generate_args_string($_GET);
     if($pageHandler->get_page_from_name($_GET['page'], $jsonArray['step'], $args_string)) {

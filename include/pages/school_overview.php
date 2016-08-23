@@ -16,7 +16,7 @@ if ($classHandler->_user->user_type_id != 1) {
 } elseif ($classHandler->_user->user_type_id = 1) {
     $schoolHandler->get_all_schools(true);
 }
-$targets = RightsHandler::has_user_right("SCHOOL_EDIT") ? ", targets: [6]" : "";
+$targets = RightsHandler::has_user_right("SCHOOL_EDIT") ? ", targets: [5]" : "";
 ?>
 
 <?php
@@ -39,7 +39,6 @@ switch ($classHandler->_user->user_type_id) {
                             <thead>
                                 <tr>
                                     <th><?php echo TranslationHandler::get_static_text("NAME"); ?></th>
-                                    <th><?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("START"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
@@ -55,9 +54,8 @@ switch ($classHandler->_user->user_type_id) {
                                     if ($value->open == "1") {
                                         ?>
                                         <tr>
-                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->name; ?></td>
-                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->address; ?></td>
-                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->city; ?></td>
+                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo strlen($value->name) < 23 ? $value->name : substr($value->name, 0, 22); ?></td>
+                                            <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo strlen($value->city) < 16 ? $value->city : substr($value->city, 0, 15); ?></td>
                                             <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->subscription_start; ?></td>
                                             <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->subscription_end; ?></td>
                                             <td class="change_page a" page="school_profile" step="" args="&school_id=<?php echo $value->id ?>"><?php echo $value->current_students . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . $value->max_students; ?></td>

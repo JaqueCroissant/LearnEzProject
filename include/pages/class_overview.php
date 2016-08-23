@@ -42,9 +42,9 @@ if ($classHandler->_user->user_type_id != 1) {
                                     <?php if ($classHandler->_user->user_type_id == "1") { ?>
                                         <th><?php echo TranslationHandler::get_static_text("SCHOOL_NAME"); ?></th>
                                     <?php } ?>
-                                    <th><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
-                                    <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
-                                    <th><?php echo TranslationHandler::get_static_text("TEACHERS"); ?></th>
+                                    <th class="center"><?php echo TranslationHandler::get_static_text("CLASS_YEAR"); ?></th>
+                                    <th class="center"><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
+                                    <th class="center"><?php echo TranslationHandler::get_static_text("TEACHERS"); ?></th>
                                     <?php if (RightsHandler::has_user_right("CLASS_ASSIGN_USER")) { ?>
                                         <th class="center"><?php echo TranslationHandler::get_static_text("ADD") . " " . strtolower(TranslationHandler::get_static_text("STUDENT")); ?></th>
                                     <?php } ?>
@@ -60,13 +60,13 @@ if ($classHandler->_user->user_type_id != 1) {
                                             <?php if ($classHandler->_user->user_type_id == "1") { ?>
                                             <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->school_name); ?></td>
                                             <?php } ?>
-                                            <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->class_year); ?></td>
-                                            <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_students; ?></td>
-                                            <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_teachers; ?></td>
+                                            <td class="center"  class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->class_year); ?></td>
+                                            <td class="center" class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_students; ?></td>
+                                            <td class="center" class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_teachers; ?></td>
                                             <?php if (RightsHandler::has_user_right("CLASS_ASSIGN_USER")) { ?>
                                                 <td>
                                                     <div class="center">
-                                                        <i class="zmdi zmdi-hc-lg zmdi-plus a" class_id="<?php echo $value->id; ?>" data-toggle="tooltip" title="<?php echo TranslationHandler::get_static_text("ADD") . " " . strtolower(TranslationHandler::get_static_text("STUDENT")); ?>"></i>
+                                                        <i class="zmdi zmdi-hc-lg zmdi-plus a change_page" page="add_class_students" args="&school_id=<?php echo $value->school_id;?>&class_id=<?php echo $value->id;?>" data-toggle="tooltip" title="<?php echo TranslationHandler::get_static_text("ADD") . " " . strtolower(TranslationHandler::get_static_text("STUDENT")); ?>"></i>
                                                     </div>
                                                 </td>
                                             <?php } ?>
@@ -232,3 +232,8 @@ if ($classHandler->_user->user_type_id != 1) {
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>

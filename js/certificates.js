@@ -1,3 +1,5 @@
+var last_downloaded_time;
+
 $(document).on("input", ".certificate_input", function(event){
     if ($(this).val().length === 4) {
         $(".certificate_input[name='" + (parseInt($(this).attr("name")) + 1) + "']").focus();
@@ -42,9 +44,16 @@ $(document).on("click", ".certificate_submit", function(){
 });
 
 $(document).on("click", ".download_single_certificate", function(){
-    initiate_submit_get($(this), "download_pdf.php?step=download_single&element_id=" + $(this).attr("element_id"), function(){
+    if($.now() - last_downloaded_time < 5000) {
+        show_status_bar("error", $(".wait_translation").text());
+        return;
+    }
+    $(".certificate_iframe").remove();
+    var element_id = $(this).closest(".mail-item").attr("element_id");
+    initiate_submit_get($(this), "download_pdf.php?step=download_single&element_id=" + element_id, function(){
         show_status_bar("error", ajax_data.error);
     }, function(){
+        last_downloaded_time = $.now();
         show_status_bar("success", ajax_data.success);
         download(ajax_data.file_name);
     });
@@ -54,22 +63,26 @@ $(document).on("click", ".certificate_reset", function(){
     $(".certificate_input").val("");
 });
 
+$(document).on("click", ".download_checked_certificates", function() {
+    if($.now() - last_downloaded_time < 5000) {
+        show_status_bar("error", $(".wait_translation").text());
+        return;
+    }
+    $(".certificate_iframe").remove();
+    initiate_submit_form($(this), function(){ 
+        show_status_bar("error", ajax_data.error);
+    }, function(){
+        if(ajax_data.file_names !== undefined) {
+            last_downloaded_time = $.now();
+            for (var i = 0; i < ajax_data.file_names.length; i++) {
+                download(ajax_data.file_names[i]);
+            }
+            show_status_bar("success", ajax_data.success);
+        }
+    });
+});
+
 function download(file) {
-//    $.ajax({
-//    type: "GET", 
-//    url: "include/ajax/download_pdf.php?step=send_pdf&file=" + file,
-//    contentType: "application/octet-stream",
-//    success: function(data){
-//        alert("it worked");
-////        $("#my_iframe").attr('src',"/")
-////        $("#my_iframe").contents().find('html').html(data); 
-//    }
-//});
-//return;
-//    $("#my_iframe").attr("src", 'html2pdf/tmp/' + file);
-//    return;
-    $('#download_pdf_file').attr({href: 'html2pdf/tmp/' + file});
-    $('#download_pdf_file').find('span').trigger('click'); // Works
-    $('#download_pdf_file span').trigger('click'); // Also Works
+    $("#content_container").append('<iframe class="certificate_iframe" style="display:none;" src="include/pages/download_pdf.php?file=' + file + '"></iframe>');
 }
 

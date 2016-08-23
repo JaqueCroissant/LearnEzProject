@@ -10,6 +10,7 @@ $schoolHandler = new SchoolHandler();
 $data_array = array();
 
 if (isset($_POST['step'])) {
+    
     switch ($_POST['step']) {
         case "1":
             $name = isset($_POST['school_name']) ? $_POST["school_name"] : "";
@@ -57,7 +58,7 @@ if (isset($_POST['step'])) {
                 $data_array['status_value'] = true;
             } else {
                 $data_array['error'] = $schoolHandler->error->title;
-                $data_array['school'] = $school;
+                $data_array['school'] = $schoolHandler->school;
                 $data_array["status_value"] = false;
             }
             break;
@@ -66,28 +67,24 @@ if (isset($_POST['step'])) {
             $course_ids = (isset($_POST['selected']) ? $_POST['selected'] : []);
             if ($courseHandler->assign_school_course($course_ids, $school_id)) {
                 $data_array['success'] = TranslationHandler::get_static_text("COURSES_ASSIGNED");
-                $data_array['school'] = $school;
                 $data_array['status_value'] = true;
             } else {
                 $data_array['error'] = $courseHandler->error->title;
-                $data_array['school'] = $school;
                 $data_array["status_value"] = false;
             }
             break;
         case "upload_school_image":
             $image_file = isset($_FILES['school_image']) ? $_FILES['school_image'] : "";
             $school_id = isset($_POST['school_id']) ? $_POST['school_id'] : "";
-            $school = new School();
-            $school->id = $school_id;
             if ($schoolHandler->upload_image($school_id, $image_file)) {
                 $data_array['success'] = TranslationHandler::get_static_text("THUMBNAIL_UPLOADED");
-                $data_array['school'] = $school;
+                $data_array['file_name'] = $schoolHandler->current_file_name;
                 $data_array['status_value'] = true;
             } else {
                 $data_array['error'] = $schoolHandler->error->title;
-                $data_array['school'] = $school;
                 $data_array["status_value"] = false;
             }
+            break;
     }
 }
 echo json_encode($data_array);

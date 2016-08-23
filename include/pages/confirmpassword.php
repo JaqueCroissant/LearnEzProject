@@ -1,9 +1,9 @@
 <?php
 require_once 'require.php';
-require_once '../include/handler/loginHandler.php';
+require_once '../../include/handler/loginHandler.php';
+require_once '../../include/handler/contactHandler.php';
 $loginHandler = new LoginHandler();
 
-var_dump($_GET);
 
 if(isset($_GET['id']) && isset($_GET['code']) && $loginHandler->validate_reset_password($_GET['id'],$_GET['code']))
     {

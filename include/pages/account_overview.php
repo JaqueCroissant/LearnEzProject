@@ -35,8 +35,8 @@ $courses_completed = 0;
             $statisticsHandler->get_completion_stats(7);
             ?>
 
-            <div class="col-md-9 col-sm-12 p-v-0">
-                <div class="col-sm-12">
+            <div class="col-md-9 p-v-0">
+                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title<?= (RightsHandler::has_user_right("SCHOOL_FIND") ? ' a change_page" page="find_school" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_SCHOOL") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-city zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("SCHOOLS"); ?></h4>
@@ -81,8 +81,9 @@ $courses_completed = 0;
                     </div>
                 </div>
                 
-                
-                <div class="col-md-6 col-sm-12 ">
+                <div class="col-md-12">
+                    <div class="row">
+                <div class="col-md-6">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("TOP") . " " . strtolower(TranslationHandler::get_static_text("STUDENTS")); ?> </h4>
@@ -211,6 +212,8 @@ $courses_completed = 0;
                         </div>
                     </div>
                 </div>
+                </div>
+            </div>
 
                 
             </div>
@@ -226,8 +229,8 @@ $courses_completed = 0;
             $userHandler->get_by_school_id($userHandler->_user->school_id);
             ?>
  
-            <div class="col-md-9 col-sm-12 p-v-0">
-                <div class="col-sm-12">
+            <div class="col-md-9 p-v-0">
+                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title<?= (RightsHandler::has_user_right("CLASS_FIND") ? ' a change_page" page="find_class" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_CLASS") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("CLASSES"); ?></h4>
@@ -268,7 +271,7 @@ $courses_completed = 0;
                 </div>
                 
                 
-                <div class="col-sm-12">
+                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title<?= (RightsHandler::has_user_right("ACCOUNT_FIND") ? ' a change_page" page="find_account" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_ACCOUNT") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></h4>
@@ -310,7 +313,7 @@ $courses_completed = 0;
                 </div>
                 
 
-                <div class="col-sm-12">
+                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title<?= (RightsHandler::has_page_right("HOMEWORK_OVERVIEW") ? ' a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("HOMEWORK_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-assignment-o zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
@@ -393,8 +396,8 @@ $courses_completed = 0;
             $course_count = count($courseHandler->courses);
             $courses_started = $course_count;
             ?>
-            <div class="col-md-9 col-sm-12 p-v-0">
-                <div class="col-sm-12">
+            <div class="col-md-9 p-v-0">
+                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title<?= (RightsHandler::has_user_right("CLASS_FIND") ? ' a change_page" page="find_class" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("FIND_CLASS") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("CLASSES")); ?></h4>
@@ -435,7 +438,7 @@ $courses_completed = 0;
                 </div>
 
 
-                <div class="col-sm-12">
+                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title<?= (RightsHandler::has_page_right("HOMEWORK_OVERVIEW") ? ' a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("HOMEWORK_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-assignment-o zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
@@ -519,8 +522,8 @@ $courses_completed = 0;
             $courses_started = $course_count;
             $statisticsHandler->get_student_stats();
             ?>
-            <div class="col-md-9 col-sm-12 p-v-0">
-                <div class="col-sm-12">
+            <div class="col-md-9 p-v-0">
+                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title<?= (RightsHandler::has_page_right("COURSE_OVERVIEW") ? ' a change_page" page="course_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("COURSE_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("COURSES")); ?></h4>
@@ -567,7 +570,7 @@ $courses_completed = 0;
                 </div>
 
 
-                <div class="col-sm-12">
+                <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title<?= (RightsHandler::has_page_right("HOMEWORK_OVERVIEW") ? ' a change_page" page="homework_overview" data-toggle="tooltip" data-placement="left" title="' . TranslationHandler::get_static_text("HOMEWORK_OVERVIEW") : '') ?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-assignment-o zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("MY_P") . " " . strtolower(TranslationHandler::get_static_text("HOMEWORK")); ?></h4>
@@ -635,16 +638,17 @@ $courses_completed = 0;
                     </div>
                 </div>
 
-
-                <div class="col-md-12 col-sm-12 ">
+            <div class="col-md-12">
+                
                     <div class="panel panel-default">
                         <div class='panel-heading p-h-lg p-v-md'>
                             <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-trending-up zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("STATISTICS"); ?> </h4>
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="widget-body">
+
                             <div class="row">
-                                        <div class="col-md-6 col-sm-6">
+                                        <div class="col-md-6">
                                             <div class="user-card">
                                                     <div class="media-left">
                                                         <div class="pieprogress" data-value="<?php echo $courses_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($courses_average)?>"}, thickness: 10}' data-size="70">
@@ -665,7 +669,7 @@ $courses_completed = 0;
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 col-sm-6">
+                                        <div class="col-md-6">
                                             <div class="user-card">
                                                     <div class="media-left">
                                                         <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_lecture_average)?>"}, thickness: 10}' data-size="70">
@@ -686,7 +690,7 @@ $courses_completed = 0;
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6 col-sm-6">
+                                        <div class="col-md-6">
                                             <div class="user-card">
                                                     <div class="media-left">
                                                         <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_test_average)?>"}, thickness: 10}' data-size="70">
@@ -706,28 +710,8 @@ $courses_completed = 0;
                                                     </div>
                                             </div>
                                         </div>
+                                </div>
 
-                                        <div class="col-md-6 col-sm-6">
-                                            <div class="user-card">
-                                                    <div class="media-left">
-                                                        <div class="pieprogress" data-value="<?php echo $statisticsHandler->student_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->student_test_average)?>"}, thickness: 10}' data-size="70">
-                                                            <strong style="margin-top: -14px; font-size: 14px;"><span><?php echo $statisticsHandler->student_test_average; ?></span>%</strong>
-                                                        </div>
-                                                    </div>
-                                                    <div class="media-right">
-                                                        <div style="margin-left: 25px;">
-                                                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("ACHIEVEMENTS"); ?></label>
-                                                        </div>
-                                                        <div style="margin-left: 25px;">
-                                                            <?php echo TranslationHandler::get_static_text("BADGES_OBTAINED") . ": " . "NULL" . " " . strtolower(TranslationHandler::get_static_text("OF")) . " " . "NULL"; ?>
-                                                        </div>
-                                                        <div style="margin-left: 25px;">
-                                                            <?php echo TranslationHandler::get_static_text("TOTAL_POINTS") . ": " . $userHandler->_user->points;?>
-                                                        </div>
-                                                    </div>
-                                            </div>
-                                        </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -739,16 +723,20 @@ $courses_completed = 0;
     
     
     <!--DISPLAY USER INFO!-->
-    <div class="col-md-3 col-sm-12">
-        <div class="widget">
-
-            <hr class="widget-separator m-0">
-            <div class="widget-body">
+    <div class="col-md-3">
+        <div class="panel">
+            <div class="panel panel-default">
+                <div class='panel-heading p-h-lg p-v-md pull-left'>
+                    <h4 class="panel-title a change_page" page="account_profile" args="&user_id=<?= $userHandler->_user->id ?>" data-toggle="tooltip" data-placement="left" title="<?=TranslationHandler::get_static_text("PROFILE")?>" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-graduation-cap zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("PROFILE"); ?></h4>
+                </div>
                 <?php if (RightsHandler::has_page_right("SETTINGS_EDIT_USER_INFO")) { ?>
-                    <div class="pull-right">
+                    <div class="pull-right p-h-lg p-v-md">
                         <i class="zmdi zmdi-hc-lg zmdi-edit m-r-xs change_page a" page="settings" step="edit_user_info" args="&user_id=<?php echo $userHandler->_user->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_ACCOUNT")?>"></i>
                     </div>
                 <?php } ?>
+                <div style="clear:both;"></div>
+            <hr class="widget-separator m-0">
+            <div class="panel-body">
                 <div style="width:100%;">
                 <div class="avatar avatar-circle" style="display:block !important;margin: 10px auto 10px auto !important; width: 100px; height: 100px;">
                     <img src="assets/images/profile_images/<?= $userHandler->_user->image_id; ?>.png" alt="avatar">
@@ -766,6 +754,17 @@ $courses_completed = 0;
                     <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USER_TYPE") . ":"; ?></label>
                     <span class="pull-right"><?php echo $userHandler->_user->user_type_title; ?></span>
                 </div>
+                <?php
+                    if($userHandler->_user->user_type_id==4)
+                    {
+                    ?>
+                        <div>
+                            <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("POINTS") . ":"; ?></label>
+                            <span class="pull-right"><?php echo $userHandler->_user->points; ?></span>
+                        </div>
+                    <?php
+                    }
+                    ?>
                 <div>
                     <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("OS") . ":"; ?></label>
                     <span class="pull-right">
@@ -802,16 +801,43 @@ $courses_completed = 0;
                 ?>
             </div>
         </div>
+    </div>
+            
         
         
         
         <?php
+            if($userHandler->_user->user_type_id > 3)
+            {
+                if(count($classHandler->classes) > 0)
+                {
+                ?>
+                    <div class="panel">
+                    <div class="panel panel-default">
+                        <div class='panel-heading p-h-lg p-v-md'>
+                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("CLASSES"); ?></h4>
+                        </div>
+                        <hr class="widget-separator m-0">
+                        <div class="widget-body">
+                            <?php
+                                for($i=0; $i < count($classHandler->classes); $i++)
+                                {
+                                    echo '<div><a class="change_page" page="class_profile" step="" args="&class_id=' . $classHandler->classes[$i]->id . '" href="javascript:void(0)">' . htmlspecialchars($classHandler->classes[$i]->title) . '</a></div>';
+                                }
+                            ?>
+                        </div>
+                    </div>
+                    </div>
         
+                <?php
+                }
+            }
+            
             if($userHandler->_user->user_type_id == 1)
             {
             ?>
                 <div class="row">
-                    <div class="col-md-12 col-sm-12">
+                    <div class="col-md-12 col-md-12">
                         <div class="panel panel-default">
                             <div class='panel-heading'>
                                 <h4 class="panel-title no-transform">
@@ -838,31 +864,6 @@ $courses_completed = 0;
                     </div>
                 </div>
             <?php
-            }
-            
-        
-            if($userHandler->_user->user_type_id > 3)
-            {
-                if(count($classHandler->classes) > 0)
-                {
-                ?>
-                    <div class="panel panel-default">
-                        <div class='panel-heading p-h-lg p-v-md'>
-                            <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-library zmdi-hc-lg" style="padding-right:30px;"></i><?php echo TranslationHandler::get_static_text("CLASSES"); ?></h4>
-                        </div>
-                        <hr class="widget-separator m-0">
-                        <div class="widget-body">
-                            <?php
-                                for($i=0; $i < count($classHandler->classes); $i++)
-                                {
-                                    echo '<div><a class="change_page" page="class_profile" step="" args="&class_id=' . $classHandler->classes[$i]->id . '" href="javascript:void(0)">' . htmlspecialchars($classHandler->classes[$i]->title) . '</a></div>';
-                                }
-                            ?>
-                        </div>
-                    </div>
-        
-                <?php
-                }
             }
         ?>
     </div>

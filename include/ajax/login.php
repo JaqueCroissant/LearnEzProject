@@ -11,8 +11,6 @@ $settingsHandler = new SettingsHandler();
 $userHandler = new UserHandler();
 
 if(isset($_GET['logout'])) {
-
-
     if($loginHandler->check_login()) {
         $loginHandler->log_out();
         TranslationHandler::reset();
@@ -77,7 +75,6 @@ if(isset($_POST)) {
     $password = isset($_POST["password"]) ? $_POST["password"] : null;
     $token = isset($_POST["token"]) ? $_POST["token"] : null;
     if($loginHandler->check_login($username, $password, $token)) {
-
         $jsonArray['status_value'] = true;
         TranslationHandler::reset();
     } else {
@@ -87,11 +84,6 @@ if(isset($_POST)) {
         if($loginHandler->error->code == "ACTIVATE")
         {
             $jsonArray['user_setup'] = SessionKeyHandler::session_exists("user_setup");
-            if($jsonArray['user_setup'])
-            {
-                 $jsonArray['email'] = SessionKeyHandler::get_from_session("user_setup")['email'];
-                 $jsonArray['firstname'] = SessionKeyHandler::get_from_session("user_setup")['firstname'];
-            }
         }
         else
         {

@@ -299,6 +299,7 @@ $(document).ready(function () {
         current_progress = current_progress >= max_progress ? max_progress : current_progress;
         update = !(progress_reached >= max_progress + 1);
         table_id = data.user_course_table_id === null ? 0 : parseInt(data.user_course_table_id);
+        switch_icon();
         course_player_init(data, 1000);
         if (open) {
             $(".course_return").trigger("click");
@@ -309,6 +310,19 @@ $(document).ready(function () {
         $(window).one("unload.update_progress", function(){
             clearInterval(interval_function);
         });
+    }
+    
+    function switch_icon(){
+        if(task === "test"){
+            if($(".course_return_icon").hasClass("zmdi-movie")) {
+                $(".course_return_icon").toggleClass("zmdi-movie zmdi-graduation-cap");
+            }
+        }
+        else {
+            if($(".course_return_icon").hasClass("zmdi-graduation-cap")) {
+                $(".course_return_icon").toggleClass("zmdi-graduation-cap zmdi-movie");
+            }
+        }
     }
 
     function update_progress(type, progress, is_complete){

@@ -110,12 +110,16 @@ if (RightsHandler::has_user_right("SCHOOL_EDIT") && ($classHandler->_user->user_
                                                             <td><?php echo (strlen($value->title) > 16 ? substr($value->title, 0, 16) . "..." : $value->title); ?></td>
                                                             <td><?php echo (strlen($value->description) > 16 ? substr($value->description, 0, 16) . "..." : $value->description); ?></td>
                                                             <td><?php echo (strlen($value->os_title) > 16 ? substr($value->os_title, 0, 16) . "..." : $value->os_title); ?></td>
-                                                            <td><div class="checkbox">
-                                                                <input class="checkbox-circle a checkbox-dark course_table_select" <?php
-                                                                foreach ($school_courses as $n_val) {
-                                                                    echo $value->id == $n_val->id ? " checked " : "";
-                                                                }
-                                                                ?> type="checkbox" name="selected[]" value="<?php echo $value->id; ?>"></div></td>
+                                                            <td>
+                                                                <div class="checkbox">
+                                                                    <input id="course_select_<?= $value->title ?>" class="checkbox-default a checkbox-dark course_table_select" <?php
+                                                                    foreach ($school_courses as $n_val) {
+                                                                        echo $value->id == $n_val->id ? " checked " : "";
+                                                                    }
+                                                                    ?> type="checkbox" name="selected[]" value="<?php echo $value->id; ?>">
+                                                                    <label for="course_select_<?= $value->title ?>"></label>
+                                                                </div>
+                                                            </td>
                                                         </tr>
                                                     <?php } ?>
 
@@ -178,8 +182,10 @@ if (RightsHandler::has_user_right("SCHOOL_EDIT") && ($classHandler->_user->user_
 ?>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script>
-    $(document).on("click", ".course_table_choose", function () {
-        var checkbox = $(this).find(".course_table_select");
-        checkbox.prop("checked") ? checkbox.prop("checked", false) : checkbox.prop("checked", true);
+    $(document).on("click", ".course_table_choose", function (event) {
+        if (!$(event.target).closest(".course_table_select").length) {
+            var checkbox = $(this).find(".course_table_select");
+            checkbox.prop("checked") ? checkbox.prop("checked", false) : checkbox.prop("checked", true);
+        }
     });
 </script>

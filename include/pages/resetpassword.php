@@ -66,7 +66,7 @@ require_once '../../include/handler/contactHandler.php';
                                     <div class="form-group">
                                         <label class="col-sm-2 col-sm-offset-2 control-label" for="email"><?php echo TranslationHandler::get_static_text("RESET_PASS_ENTER_MAIL"); ?></label>
                                         <div class="col-sm-4">
-                                            <input class="form-control input-sm reset_pass_email" type="text" name="email" placeholder="<?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?>" onkeydown="if (event.keyCode == 13) {$('.catch_reset_password').click();}">
+                                            <input class="form-control input-sm" type="text" name="email" placeholder="<?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?>" >
                                         </div>
                                     </div>
                                     <div class="form-group center">

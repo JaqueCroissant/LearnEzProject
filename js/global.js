@@ -39,7 +39,9 @@ $(document).ready(function () {
         }
     });
     $(window).on("resize", function(){
-        $("select[data-plugin='select2']").select2({width:"100%"});
+        try {
+            $("select[data-plugin='select2']").select2();
+        } catch (ex) { }
     });
     
     $(document).on("click", ".change_page_from_overlay", function (event) {

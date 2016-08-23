@@ -148,7 +148,6 @@ class AchievementHandler extends Handler {
                     $total = DbHandler::get_instance()->count_query("SELECT * FROM certificates WHERE user_id = :user_id", SessionKeyHandler::get_from_session("user", TRUE)->id);
                     foreach ($breakpoints as $value_n) {
                         if ($value_n['breakpoint'] < $achieved_data['sum']) {
-                            echo 'continue <br/>';
                             continue;
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
@@ -181,7 +180,7 @@ class AchievementHandler extends Handler {
         }
     }
 
-    private static function handle_points($table, $achievement_type_id) {
+    public static function handle_points($table, $achievement_type_id) {
         $award_types = DbHandler::get_instance()->return_query("SELECT id, award_type_id, max_days, group_concat(id) as ids, group_concat(breakpoint) as breakpoint FROM achievement WHERE achievement_type_id = :type group by award_type_id, max_days", $achievement_type_id);
         foreach ($award_types as $value) {
             switch ($value['award_type_id']) {
@@ -190,12 +189,11 @@ class AchievementHandler extends Handler {
                     $achieved_data = self::get_achieved_data($achievement_type_id, $value);
                     $total = reset(reset(DbHandler::get_instance()->return_query("SELECT points FROM users WHERE id = :user_id", SessionKeyHandler::get_from_session("user", TRUE)->id)));
                     foreach ($breakpoints as $value_n) {
-                        if ($value_n['breakpoint'] < $achieved_data['sum']) {
-                            echo 'continue <br/>';
+                        if ($value_n['breakpoint'] <= $achieved_data['sum']) {
                             continue;
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
-                        } else if ($value_n['breakpoint'] == $total) {
+                        } else if ($value_n['breakpoint'] <= $total) {
                             self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
                         }
                     }
@@ -231,7 +229,6 @@ class AchievementHandler extends Handler {
                     $achieved_data = self::get_achieved_data($achievement_type_id, $value);
                     foreach ($breakpoints as $value_n) {
                         if ($value_n['breakpoint'] < $achieved_data['sum']) {
-                            echo 'continue <br/>';
                             continue;
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
@@ -267,8 +264,10 @@ class AchievementHandler extends Handler {
     }
 
     private static function add_achievement_for_user($achievement_id, $data_object, $award_type_id) {
-        $cur_breakpoint = $data_object['current_breakpoint'];
-
+        $cur_breakpoint = isset($data_object['current_breakpoint']) ? $data_object['current_breakpoint'] : 0;
+        $breakpoint = isset($data_object['breakpoint']) ? $data_object['breakpoint'] : 0;
+        $sum = isset($data_object['sum']) ? $data_object['sum'] : 0;
+        
         if (self::$course_id) {
             $query = "INSERT INTO user_achievement (users_id, achievement_id, breakpoint, value_id) VALUES (:user, :ach_id, :breakpoint, :value_id)";
             if (DbHandler::get_instance()->query($query, SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_id, $cur_breakpoint, self::$course_id)) {
@@ -293,9 +292,9 @@ class AchievementHandler extends Handler {
                 $ach->title = $data_object['title'];
                 $ach->text = $data_object['text'];
                 if ($award_type_id == "2") {
-                    $ach->breakpoint = $data_object['sum'] + $data_object['current_breakpoint'];
+                    $ach->breakpoint = $sum + $cur_breakpoint;
                 } else {
-                    $ach->breakpoint = $data_object['breakpoint'];
+                    $ach->breakpoint = $breakpoint;
                 }
             }
         }
@@ -412,7 +411,7 @@ class AchievementHandler extends Handler {
         return $data;
     }
 
-    private function get_breakpoints($array) {
+    private static function get_breakpoints($array) {
         $breakpoints = [];
         $ids = explode(',', $array['ids']);
         $bps = explode(',', $array['breakpoint']);
@@ -423,12 +422,15 @@ class AchievementHandler extends Handler {
         return $breakpoints;
     }
 
-    private function get_achieved_data($achievement_type_id, $award_type_obj) {
-        $data_query = "select *, count(*) as amount, group_concat(breakpoint) as breakpoints, sum(breakpoint) as sum FROM achievement_view where language_id = :language_id and users_id = :user_id AND achievement_type_id = :type AND award_type_id = :award_type_id";
+    private static function get_achieved_data($achievement_type_id, $award_type_obj) {
+        $data_query = "select *, count(*) as amount, group_concat(breakpoint) as breakpoints, sum(breakpoint) as sum FROM achievement_view where (language_id = :language_id OR language_id is null) and users_id = :user_id AND achievement_type_id = :type AND award_type_id = :award_type_id";
         $achieved_data = reset(DbHandler::get_instance()->return_query($data_query, TranslationHandler::get_current_language(), SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_type_id, $award_type_obj['award_type_id']));
+        print_r($achieved_data);
         if ($achieved_data['amount'] == "0") {
             $ach_id = is_array($award_type_obj['ids']) ? explode(",", $award_type_obj['ids'])[0] : $award_type_obj['ids'];
             $achieved_data = self::get_dirty_object($achievement_type_id, $ach_id);
+            $achieved_data['text'] = "";
+            $achieved_data['title'] = "";
             $achieved_data['amount'] = "0";
             $achieved_data['breakpoints'] = "";
             $achieved_data['sum'] = "0";

@@ -278,17 +278,17 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                      data:
                                      [
                                         <?php
-                                            $iterations = (date("H") + 1);
+                                            $iterations = 0;
                                             $limit = ($activity_limit - 1);
                                             $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
                                             $final = "";
-                                            while ($iterations < (24 * $activity_limit) + (date("H") + 1)) {
+                                            while ($iterations < 24 * $activity_limit) {
                                                 if ($iterations == 24 || $iterations == 48) {
                                                     $limit -= 1;
                                                     $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
                                                 }
 
-                                                $hour = $iterations % 24;
+                                                $hour = ($iterations + (date("H") + 1)) % 24;
 
                                                 if (array_key_exists($date, $value) && array_key_exists($hour, $value[$date])) {
                                                     $final .= $value[$date][$hour] . ", ";

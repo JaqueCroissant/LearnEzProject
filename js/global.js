@@ -110,7 +110,10 @@ $(document).ready(function () {
             checkboxes.prop('checked', false);
         }
     });
-    //
+    
+    
+    
+    
 
     // DataTable custom
     $(document).on("length.dt", function (e, settings, len) {
@@ -594,6 +597,12 @@ function show_status_bar(status_type, message, custom_fade_out) {
             $('#status_container').addClass("hidden");
         }, fade_out);
     }
+}
+
+//Show achievements
+function show_achievements() {
+    var achievements = $.cookie("achievements");
+    console.log(achievements);
 }
 
 function cursor_wait()

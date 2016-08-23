@@ -2,9 +2,11 @@
     require_once '../../include/ajax/require.php';
     require_once '../../include/handler/loginHandler.php';
     require_once '../../include/handler/userHandler.php';
+    require_once '../../include/handler/contactHandler.php';
 
     $loginHandler = new LoginHandler();
     $userHandler = new UserHandler();
+    $contactHandler = new ContactHandler();
 
     switch($_GET['step'])
     {
@@ -12,21 +14,21 @@
             email_validation($loginHandler);
             break;
         case "pass_val":
-            password_validation($loginHandler, $userHandler);
+            password_validation($contactHandler, $userHandler);
             break;
         default:
             die();
             break;
     }
 
-    function password_validation($loginHandler, $userHandler)
+    function password_validation($contactHandler, $userHandler)
     {
         if(isset($_POST['id']) && isset($_POST['code']))
         {
-            if(!$loginHandler->validate_reset_password($_POST['id'],$_POST['code']))
+            if(!$contactHandler->validate_reset_password($_POST['id'],$_POST['code']))
             {
                 $jsonArray['status_value'] = false;
-                $jsonArray['error'] = $loginHandler->error->title;
+                $jsonArray['error'] = $contactHandler->error->title;
             }
             else
             {

@@ -1,11 +1,11 @@
 <?php
 require_once 'require.php';
 require_once '../include/handler/loginHandler.php';
+require_once '../../include/handler/contactHandler.php';
 $loginHandler = new LoginHandler();
+$contactHandler = new ContactHandler();
 
-var_dump($_GET);
-
-if(isset($_GET['id']) && isset($_GET['code']) && $loginHandler->validate_reset_password($_GET['id'],$_GET['code']))
+if(isset($_GET['id']) && isset($_GET['code']) && $contactHandler->validate_reset_password($_GET['id'],$_GET['code']))
     {
         ?>
             <div class="row">
@@ -44,7 +44,7 @@ if(isset($_GET['id']) && isset($_GET['code']) && $loginHandler->validate_reset_p
     }
     else
     {
-        ErrorHandler::show_error_page($loginHandler->error);
+        ErrorHandler::show_error_page($contactHandler->error);
         die();
     }
 ?>

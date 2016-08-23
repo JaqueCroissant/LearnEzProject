@@ -22,8 +22,9 @@
                 }
                 else
                 {
+                    $jsonArray['reload'] = true;
                     $jsonArray['status_value'] = true;
-                    $jsonArray['succes'] = "JAAAAAA";
+                    $jsonArray['success'] = TranslationHandler::get_static_text("MAIL_SENT");
                 }
                 
                 echo json_encode($jsonArray);
@@ -47,8 +48,9 @@
                 }
                 else
                 {
+                    $jsonArray['reload'] = true;
                     $jsonArray['status_value'] = true;
-                    $jsonArray['succes'] = "JAAAAAA 2";
+                    $jsonArray['success'] = TranslationHandler::get_static_text("MAIL_SENT");
                 }
                 
                 echo json_encode($jsonArray);

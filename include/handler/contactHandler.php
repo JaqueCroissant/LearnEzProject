@@ -2,6 +2,8 @@
 
 class ContactHandler extends Handler
 {
+    private $_support_email = "support@learnez.dk";
+
     public function __construct()
     {
         parent::__construct();
@@ -76,7 +78,7 @@ class ContactHandler extends Handler
                 </body>
             </html>';
 
-            mail("support@learnez.dk",$subject,$content,$headers);
+            mail($this->_support_email,$subject,$content,$headers);
             $this->generate_receipt_mail($email, $content);
             
             return true;

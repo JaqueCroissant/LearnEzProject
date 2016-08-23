@@ -268,6 +268,20 @@ $(document).ready(function () {
         });
     });
 
+    $(document).on("click", ".contact_submit_info", function (event) {
+        event.preventDefault();
+        initiate_submit_form($(this), function () {
+            show_status_bar("error", ajax_data.error);
+        }, function () {
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    change_page("contact");
+                }, 500);
+            }
+            show_status_bar("success", ajax_data.success);
+        });
+    });
+
     $(document).on("click", ".create_submit_info", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
@@ -277,7 +291,6 @@ $(document).ready(function () {
                 setTimeout(function () {
                     location.reload();
                 }, 500);
-                alert(ajax_data.reload);
             }
             show_status_bar("success", ajax_data.success);
         });

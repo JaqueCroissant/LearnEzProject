@@ -61,7 +61,7 @@ if($contactHandler->is_logged_in())
                         </div>
                         
                         <div class="col-sm-2  m-b-sm">
-                            <input type="button" name="submit" value="<?= TranslationHandler::get_static_text("INFO_SUBMIT") ?>" class="btn btn-default create_submit_info" style="width:100%;">
+                            <input type="button" name="submit" value="<?= TranslationHandler::get_static_text("INFO_SUBMIT") ?>" class="btn btn-default contact_submit_info" style="width:100%;">
                         </div>
                         </div>
                     </form>
@@ -127,7 +127,7 @@ else
                         </div>
                         
                         <div class="col-sm-2  m-b-sm">
-                            <input type="button" name="submit" value="<?= TranslationHandler::get_static_text("INFO_SUBMIT") ?>" class="btn btn-default create_submit_info" style="width:100%;">
+                            <input type="button" name="submit" value="<?= TranslationHandler::get_static_text("INFO_SUBMIT") ?>" class="btn btn-default contact_submit_info" style="width:100%;">
                         </div>
                         </div>
                     </form>

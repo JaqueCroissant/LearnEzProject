@@ -6,6 +6,9 @@ class LoginHandler
     private $_password;
     private $_email;
     
+    public $reset_email;
+    public $reset_validation;
+    
     private $_access;
     private $_token;
     public $error;
@@ -236,8 +239,11 @@ class LoginHandler
                 throw new Exception("LOGIN_INVALID_TIME");
             }
             $validation = md5(uniqid(mt_rand(), true));
-            $this->generate_reset_email($this->_email, $validation);
 
+            $this->reset_email = $this->_email;
+            $this->reset_validation = $validation;
+            $this->reset_id = $this->_user->id;
+            
             DbHandler::get_instance()->query("UPDATE users SET last_password_request = :date, validation_code = :validation_code WHERE id = :id", date ("Y-m-d H:i:s"), $validation, $this->_user->id);
             return true;
         }

@@ -2,10 +2,10 @@
 
 class Achievement extends ORM {
     public $id;
-    public $title;
     public $text;
     public $breakpoint;
-    
+    public $achievement_type_title;
+    public $achievement_type_id;
 }
 
 ?>

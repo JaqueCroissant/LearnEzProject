@@ -30,7 +30,7 @@ function change_page(pagename, step, args, element, scroll_to_top, complete_func
    
     var startTime = new Date().getTime();
     
-    pagename = pagename === undefined ? "front" : pagename;
+    pagename = pagename === undefined ? "account_overview" : pagename;
     step = step === undefined ? "" : step;
     args = args === undefined ? "" : args;
     var url = "include/ajax/change_page.php?page=" + pagename + "&step=" + step + args;
@@ -70,7 +70,9 @@ function change_page(pagename, step, args, element, scroll_to_top, complete_func
             if(scroll_to_top) {
                 window.scrollTo(0, 0);
             }
-//            complete_function();
+            if(complete_function !== undefined) {
+               complete_function(); 
+            }
         }
     });
 }

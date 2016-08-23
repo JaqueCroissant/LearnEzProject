@@ -11,8 +11,6 @@ $settingsHandler = new SettingsHandler();
 $userHandler = new UserHandler();
 
 if(isset($_GET['logout'])) {
-
-
     if($loginHandler->check_login()) {
         $loginHandler->log_out();
         TranslationHandler::reset();
@@ -77,7 +75,6 @@ if(isset($_POST)) {
     $password = isset($_POST["password"]) ? $_POST["password"] : null;
     $token = isset($_POST["token"]) ? $_POST["token"] : null;
     if($loginHandler->check_login($username, $password, $token)) {
-
         $jsonArray['status_value'] = true;
         TranslationHandler::reset();
     } else {

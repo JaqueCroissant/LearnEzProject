@@ -277,6 +277,7 @@ $(document).ready(function () {
                 setTimeout(function () {
                     location.reload();
                 }, 500);
+                alert(ajax_data.reload);
             }
             show_status_bar("success", ajax_data.success);
         });
@@ -303,7 +304,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            change_page("login");
+            $(".login_overlay").fadeIn(500);
             show_status_bar("success", ajax_data.success);
         });
     });

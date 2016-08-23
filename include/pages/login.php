@@ -7,7 +7,8 @@ $loginHandler = new LoginHandler();
 
 if(!SessionKeyHandler::session_exists("user_setup"))
 {
-    ErrorHandler::show_error_page("DEFAULT");
+    ErrorHandler::show_error_page(TranslationHandler::get_static_text("INVALID_USER_SESSION"));
+    die();
 }
 $session = SessionKeyHandler::get_from_session("user_setup");
 

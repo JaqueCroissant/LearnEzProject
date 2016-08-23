@@ -11,24 +11,24 @@
     switch($_GET['step'])
     {
         case "mail_val":
-            email_validation($loginHandler);
+            email_validation($loginHandler, $contactHandler);
             break;
         case "pass_val":
-            password_validation($contactHandler, $userHandler);
+            password_validation($loginHandler, $userHandler);
             break;
         default:
             die();
             break;
     }
 
-    function password_validation($contactHandler, $userHandler)
+    function password_validation($loginHandler, $userHandler)
     {
         if(isset($_POST['id']) && isset($_POST['code']))
         {
-            if(!$contactHandler->validate_reset_password($_POST['id'],$_POST['code']))
+            if(!$loginHandler->validate_reset_password($_POST['id'],$_POST['code']))
             {
                 $jsonArray['status_value'] = false;
-                $jsonArray['error'] = $contactHandler->error->title;
+                $jsonArray['error'] = $loginHandler->error->title;
             }
             else
             {
@@ -55,7 +55,7 @@
     }
 
     
-    function email_validation($loginHandler)
+    function email_validation($loginHandler, $contactHandler)
     {
         if(isset($_POST))
         {
@@ -66,8 +66,17 @@
             } 
             else 
             {
-                $jsonArray['success'] = TranslationHandler::get_static_text("PASS_RESET_MAIL_SENT");
-                $jsonArray['status_value'] = true;
+                if($contactHandler->generate_reset_mail($loginHandler->reset_id,$loginHandler->reset_email, $loginHandler->reset_validation))
+                {
+                    $jsonArray['success'] = TranslationHandler::get_static_text("PASS_RESET_MAIL_SENT");
+                    $jsonArray['status_value'] = true;
+                }
+                else
+                {
+                    $jsonArray['status_value'] = false;
+                    $jsonArray['error'] = $contactHandler->error->title;
+                }
+                
             }
             echo json_encode($jsonArray);
             die();

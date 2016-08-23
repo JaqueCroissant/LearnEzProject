@@ -39,7 +39,9 @@ $(document).ready(function () {
         }
     });
     $(window).on("resize", function(){
-        $("select[data-plugin='select2']").select2({width:"100%"});
+        try {
+            $("select[data-plugin='select2']").select2();
+        } catch (ex) { }
     });
     
     $(document).on("click", ".change_page_from_overlay", function (event) {
@@ -498,10 +500,10 @@ $(document).ready(function () {
                 change_page(last_element.page, last_element.step, last_element.args);
                 return;
             }
-            change_page("front", "", "");
+            change_page("account_overview", "", "");
             return;
         }
-        change_page("front", "", "");
+        change_page("account_overview", "", "");
     }
 
     $(document).on("click", ".go_back", function () {
@@ -528,7 +530,7 @@ $(document).ready(function () {
         var date = new Date();
         date.setTime(date.getTime() + (60 * 1000));
         $.cookie("page_reload", "true", {expires: 10});
-        $.removeCookie("navigation", {path: '/'});
+        //$.removeCookie("navigation", {path: '/'});
         location.reload();
     }
 

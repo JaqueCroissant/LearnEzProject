@@ -249,16 +249,13 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                  },
                                  data : [
                                  <?php
-                                 for ($i = 0; $i < 24 * $activity_limit; $i++) {
+                                 $final = "";
+                                 for ($i = (date("H") + 1); $i < ((24 * $activity_limit) + (date("H") + 1)); $i++) {
 
                                      $hour = $i % 24;
-                                     echo "'" . ($hour < 10 ? "0" : "") . $hour . ":00'";
-                                     
-
-                                     if ($i != 24 * $activity_limit-1) {
-                                         echo ",";
-                                     }
+                                     $final .= "'" . ($hour < 10 ? "0" : "") . $hour . ":00',";
                                  }
+                                 echo rtrim($final, ",");
                                  ?>
                                  ]
                                  }
@@ -281,10 +278,11 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                      data:
                                      [
                                         <?php
-                                            $iterations = 0;
+                                            $iterations = (date("H") + 1);
                                             $limit = ($activity_limit - 1);
                                             $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
-                                            while ($iterations < 24 * $activity_limit) {
+                                            $final = "";
+                                            while ($iterations < (24 * $activity_limit) + (date("H") + 1)) {
                                                 if ($iterations == 24 || $iterations == 48) {
                                                     $limit -= 1;
                                                     $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
@@ -293,18 +291,14 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                                 $hour = $iterations % 24;
 
                                                 if (array_key_exists($date, $value) && array_key_exists($hour, $value[$date])) {
-                                                    echo $value[$date][$hour];
+                                                    $final .= $value[$date][$hour] . ", ";
                                                 } else {
-                                                    echo 0;
-                                                }
-
-
-                                                if ($iterations != 24 * $activity_limit) {
-                                                    echo ", ";
+                                                    $final .= 0 . ", ";
                                                 }
 
                                                 $iterations++;
                                             }
+                                            echo rtrim($final, ", ");
                                         ?>
                                      ]
                                      },
@@ -579,16 +573,14 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                  },
                                  data : [
                                  <?php
-                                 for ($i = 0; $i < 24 * $activity_limit; $i++) {
+                                 $final = "";
+                                 for ($i = (date("H") + 1); $i < ((24 * $activity_limit) + (date("H") + 1)); $i++) {
 
                                      $hour = $i % 24;
-                                     echo "'" . ($hour < 10 ? "0" : "") . $hour . ":00'";
-                                     
-
-                                     if ($i != 24 * $activity_limit-1) {
-                                         echo ",";
-                                     }
+                                     $final .= "'" . ($hour < 10 ? "0" : "") . $hour . ":00',";
                                  }
+                                 $final = rtrim($final, ",");
+                                 echo $final;
                                  ?>
                                  ]
                                  }

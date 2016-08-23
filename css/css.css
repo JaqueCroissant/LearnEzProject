@@ -691,6 +691,10 @@ a .menu_header {
     padding-top:10px;
 }
 
+.course_return:hover{
+    background-color: rgba(0,128,192,0.8);
+}
+
 .ribbon {
   position: absolute;
   right: 6px; top: -5px;

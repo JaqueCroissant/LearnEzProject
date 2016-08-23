@@ -70,7 +70,7 @@ function change_page(pagename, step, args, element, scroll_to_top, complete_func
             if(scroll_to_top) {
                 window.scrollTo(0, 0);
             }
-            complete_function();
+//            complete_function();
         }
     });
 }

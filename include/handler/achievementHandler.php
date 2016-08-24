@@ -54,7 +54,7 @@ class AchievementHandler extends Handler {
 
     public static function assign_achievement($type, $course_id = 0) {
         try {
-            if (!$this->user_exists()) {
+            if (!SessionKeyHandler::session_exists("user")) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
             if (!is_string($type)) {
@@ -431,7 +431,7 @@ class AchievementHandler extends Handler {
     private static function get_achieved_data($achievement_type_id, $award_type_obj) {
         $data_query = "select *, count(*) as amount, group_concat(breakpoint) as breakpoints, sum(breakpoint) as sum FROM achievement_view where (language_id = :language_id OR language_id is null) and users_id = :user_id AND achievement_type_id = :type AND award_type_id = :award_type_id";
         $achieved_data = reset(DbHandler::get_instance()->return_query($data_query, TranslationHandler::get_current_language(), SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_type_id, $award_type_obj['award_type_id']));
-        print_r($achieved_data);
+
         if ($achieved_data['amount'] == "0") {
             $ach_id = is_array($award_type_obj['ids']) ? explode(",", $award_type_obj['ids'])[0] : $award_type_obj['ids'];
             $achieved_data = self::get_dirty_object($achievement_type_id, $ach_id);

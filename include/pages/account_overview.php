@@ -88,29 +88,30 @@ $courses_completed = 0;
                                 <div class="widget-body">
                                     <div class="streamline m-l-lg">
                                         <?php
-                                        if (count($statisticsHandler->top_students) > 0) {
-                                            foreach ($statisticsHandler->top_students as $value) {
-                                                ?>
+                                        if(count($statisticsHandler->top_students) > 0)
+                                        {
+                                            foreach($statisticsHandler->top_students as $value)
+                                            { ?>
                                                 <div class="sl-item p-b-md">
                                                     <div class="sl-avatar avatar avatar-sm avatar-circle">
-                                                        <img class="img-responsive" src="<?php echo "assets/images/profile_images/" . $value['image_id'] . ".png" ?>">
+                                                        <img class="img-responsive" src="<?php echo "assets/images/profile_images/" . profile_image_exists($value['profile_image']) ?>">
                                                     </div>
                                                     <div class="sl-content">
                                                         <h5 class="m-t-0">
-                                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo htmlspecialchars($value['firstname']) . " " . htmlspecialchars($value['surname']) ?></a>
+                                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo htmlspecialchars($value['firstname']) . " " . htmlspecialchars($value['surname'])?></a>
                                                             <small class="text-muted fz-sm"><?php echo htmlspecialchars($value['name']) ?></small>
                                                         </h5>
                                                         <p><?php echo $value['points'] . " " . strtolower(TranslationHandler::get_static_text("POINTS")); ?></p>
                                                     </div>
                                                 </div>
-                                                <?php
+                                        <?php
                                             }
-                                        }
-                                        ?>
+                                        } ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    
 
                         <div class="col-md-6">
                             <div class="panel panel-default">
@@ -717,28 +718,29 @@ $courses_completed = 0;
                     </h4>
                 </div>
                 <div style="clear:both;"></div>
-                <hr class="widget-separator m-0">
-                <div class="panel-body">
-                    <div style="width:100%;">
-                        <div class="avatar avatar-circle" style="display:block !important;margin: 10px auto 10px auto !important; width: 100px; height: 100px;">
-                            <img src="assets/images/profile_images/<?= $userHandler->_user->image_id; ?>.png" alt="avatar">
-                        </div>
-                    </div>
-                    <div class="center">
-                        <b><?php echo htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname); ?></b>
-                    </div>
-                    <br/>
-                    <div>
-                        <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USERNAME") . ":"; ?></label>
-                        <span class="pull-right"><?php echo $userHandler->_user->username; ?></span>
-                    </div>
-                    <div>
-                        <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USER_TYPE") . ":"; ?></label>
-                        <span class="pull-right"><?php echo $userHandler->_user->user_type_title; ?></span>
-                    </div>
-                    <?php
-                    if ($userHandler->_user->user_type_id == 4) {
-                        ?>
+            <hr class="widget-separator m-0">
+            <div class="panel-body">
+                <div style="width:100%;">
+                <div class="avatar avatar-circle" style="display:block !important;margin: 10px auto 10px auto !important; width: 100px; height: 100px;">
+                    <img src="assets/images/profile_images/uncropped/<?= profile_image_exists($userHandler->_user->profile_image); ?>" alt="avatar">
+                </div>
+                </div>
+                <div class="center">
+                    <b><?php echo htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname); ?></b>
+                </div>
+                <br/>
+                <div>
+                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USERNAME") . ":"; ?></label>
+                    <span class="pull-right"><?php echo $userHandler->_user->username; ?></span>
+                </div>
+                <div>
+                    <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("USER_TYPE") . ":"; ?></label>
+                    <span class="pull-right"><?php echo $userHandler->_user->user_type_title; ?></span>
+                </div>
+                <?php
+                    if($userHandler->_user->user_type_id==4)
+                    {
+                    ?>
                         <div>
                             <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("POINTS") . ":"; ?></label>
                             <span class="pull-right"><?php echo $userHandler->_user->points; ?></span>

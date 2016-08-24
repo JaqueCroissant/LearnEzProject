@@ -101,7 +101,7 @@ class LoginHandler
         }
         
 
-        $user = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE email = :email AND translation_user_type.language_id = :language_id", $this->_email, TranslationHandler::get_current_language());
+        $user = DbHandler::get_instance()->return_query("SELECT users.*, image.filename as profile_image, translation_user_type.title as user_type_title FROM users LEFT JOIN image ON image.id = users.image_id INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id WHERE email = :email AND translation_user_type.language_id = :language_id", $this->_email, TranslationHandler::get_current_language());
            
         if(empty($user)) {
             return false;
@@ -116,7 +116,7 @@ class LoginHandler
             return false;
         }
         
-        $userData = DbHandler::get_instance()->return_query("SELECT users.*, school.open as school_open, school.subscription_end, translation_user_type.title as user_type_title FROM users INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id LEFT JOIN school ON school.id = users.school_id WHERE username = :username AND password = :password AND translation_user_type.language_id = :language_id LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username), TranslationHandler::get_current_language());
+        $userData = DbHandler::get_instance()->return_query("SELECT users.*, image.filename as profile_image, school.open as school_open, school.subscription_end, translation_user_type.title as user_type_title FROM users LEFT JOIN image ON image.id = users.image_id INNER JOIN user_type ON user_type.id = users.user_type_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = user_type.id LEFT JOIN school ON school.id = users.school_id WHERE username = :username AND password = :password AND translation_user_type.language_id = :language_id LIMIT 1", strtolower($this->_username), hash("sha256", $this->_password . " " . $this->_username), TranslationHandler::get_current_language());
 
         if(empty($userData)) {
              return false;

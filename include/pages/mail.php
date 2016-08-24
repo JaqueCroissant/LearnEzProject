@@ -213,7 +213,7 @@ $paginationHandler = new PaginationHandler();
 
                                                         <td class="mail-left">
                                                             <div class="avatar avatar-lg avatar-circle change_page" page="account_profile" args="&user_id='.$value->sender_id.'" data-toggle="tooltip" title="' . $value->firstname . ' ' . $value->surname .'">
-                                                                <img src="assets/images/profile_images/'.$value->user_image_id.'.png">
+                                                                <img src="assets/images/profile_images/'.profile_image_exists($value->profile_image).'">
                                                             </div>
                                                         </td>
                                                         <td>
@@ -357,7 +357,7 @@ $paginationHandler = new PaginationHandler();
                             <div class="media">
                                 <div class="media-left">
                                     <div class="avatar avatar-lg avatar-circle">
-                                        <img class="img-responsive change_page" page="account_profile" args="&user_id=<?= ($current_mail->folder_name == "sent" || $current_mail->folder_name == "draft" ? $current_mail->receiver_id : $current_mail->sender_id); ?>" src="assets/images/profile_images/<?php echo $current_mail->user_image_id; ?>.png" alt="avatar">
+                                        <img class="img-responsive change_page" page="account_profile" args="&user_id=<?= ($current_mail->folder_name == "sent" || $current_mail->folder_name == "draft" ? $current_mail->receiver_id : $current_mail->sender_id); ?>" src="assets/images/profile_images/<?php echo profile_image_exists($current_mail->profile_image); ?>" alt="avatar">
                                     </div>
                                 </div>
 
@@ -547,7 +547,7 @@ $paginationHandler = new PaginationHandler();
 
                                                                         <td class="mail-left">
                                                                             <div class="avatar avatar-lg avatar-circle change_page" page="account_profile" args="&user_id='. ($value->folder_name == "sent" || $value->folder_name == "draft" ? $value->receiver_id : $value->sender_id) .'" data-toggle="tooltip" title="' . $value->firstname . ' ' . $value->surname .'">
-                                                                                <img src="assets/images/profile_images/'.$value->user_image_id.'.png" >
+                                                                                <img src="assets/images/profile_images/'.profile_image_exists($value->profile_image).'" >
                                                                             </div>
                                                                         </td>
                                                                         <td>

@@ -2,9 +2,11 @@
 require_once 'require.php';
 require_once '../../include/handler/userHandler.php';
 require_once '../../include/handler/mailHandler.php';
+require_once '../../include/handler/mediaHandler.php';
 
 $userHandler = new UserHandler();
 $mailHandler = new MailHandler();
+$mediaHandler = new MediaHandler();
 ?>
 
 
@@ -41,46 +43,53 @@ $mailHandler = new MailHandler();
                     if (RightsHandler::has_page_right("SETTINGS_EDIT_USER_INFO")) {
                     ?>
                     <div class="my_fade my_tab" id="edit_user_info_tab">
-                        <div class="widget-body">
+                        <div class="widget-body" style="padding-top:32px !important;">
                             <form method="post" action="" url="settings.php?step=edit_info" id="edit_info_form" name="edit_info">
-                                <input name="avatar_hidden_id" id="avatar_hidden_id" class="input_avatar_id" type="hidden" value="<?php echo $userHandler->_user->image_id; ?>" />
+                                <input type="hidden" name="avatar_hidden_id" id="avatar_hidden_id" class="input_avatar_id" value="<?php echo $userHandler->_user->image_id; ?>" />
                                 <div class="col-md-6">
-                                    <?php
-                                    if (RightsHandler::has_user_right("CHANGE_FULL_NAME")) {
-                                    ?>
+                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PERSONAL_INFORMATION"); ?></h4>
+                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
+                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
+                                        <?php
+                                        if (RightsHandler::has_user_right("CHANGE_FULL_NAME")) {
+                                        ?>
+                                            <div class="form-group m-b-sm">
+                                                <label for="firstname_input"><?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?></label>
+                                                <input type="text" id="firstname_input" name="firstname" value="<?php echo $userHandler->_user->firstname; ?>" class="form-control input_change input_firstname">
+                                            </div>
+
+                                            <div class="form-group m-b-sm">
+                                                <label for="surname_input"><?php echo TranslationHandler::get_static_text("INFO_SURNAME"); ?></label>
+                                                <input type="text" id="surname_input" name="surname" value="<?php echo $userHandler->_user->surname; ?>" class="form-control input_change input_surname">
+                                            </div>
+                                        <?php
+                                        }
+                                        ?>
                                         <div class="form-group m-b-sm">
-                                            <label for="firstname_input"><?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?></label>
-                                            <input type="text" id="firstname_input" name="firstname" value="<?php echo $userHandler->_user->firstname; ?>" class="form-control input_change input_firstname">
+                                            <label for="email_input"><?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?></label>
+                                            <input type="text" id="email_input" name="email" value="<?php echo $userHandler->_user->email; ?>" class="form-control">
                                         </div>
 
                                         <div class="form-group m-b-sm">
-                                            <label for="surname_input"><?php echo TranslationHandler::get_static_text("INFO_SURNAME"); ?></label>
-                                            <input type="text" id="surname_input" name="surname" value="<?php echo $userHandler->_user->surname; ?>" class="form-control input_change input_surname">
+                                            <label for="textarea1"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></label>
+
+                                            <textarea class="form-control" id="textarea1" name="description"><?php echo $userHandler->_user->description; ?></textarea>
+
                                         </div>
-                                    <?php
-                                    }
-                                    ?>
-                                    <div class="form-group m-b-sm">
-                                        <label for="email_input"><?php echo TranslationHandler::get_static_text("INFO_EMAIL"); ?></label>
-                                        <input type="text" id="email_input" name="email" value="<?php echo $userHandler->_user->email; ?>" class="form-control">
-                                    </div>
-
-                                    <div class="form-group m-b-sm">
-                                        <label for="textarea1"><?php echo TranslationHandler::get_static_text("INFO_DESCRIPTION"); ?></label>
-
-                                        <textarea class="form-control" id="textarea1" name="description"><?php echo $userHandler->_user->description; ?></textarea>
-
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
+                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PROFILE"); ?></h4>
+                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
+                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
                                     <div class="form-group m-b-sm">
 
                                         <div class="user-card p-md" style="margin-top: 25px;">
                                             <div class="media">
                                                 <div class="media-left">
                                                     <div class="avatar avatar-lg avatar-circle">
-                                                        <img class="current-avatar" src="assets/images/profile_images/<?php echo $userHandler->_user->image_id; ?>.png" alt="">
+                                                        <img class="current-avatar" src="assets/images/profile_images/<?php echo profile_image_exists($userHandler->_user->profile_image); ?>" alt="">
                                                     </div>
                                                 </div>
                                                 <div class="media-body">
@@ -89,28 +98,62 @@ $mailHandler = new MailHandler();
                                                 </div>
                                             </div>
                                         </div>
-
-
-                                        <div class="panel-group accordion" id="accordion" role="tablist" aria-multiselectable="false">
-                                            <div class="panel panel-default">
-                                                <div class="panel-heading" role="tab" id="heading-1">
-                                                    <a class="accordion-toggle" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-1" aria-expanded="false" aria-controls="collapse-1">
-                                                        <label for="textarea1"><?php echo TranslationHandler::get_static_text("INFO_CHANGE_IMAGE"); ?></label>
-                                                        <i class="fa acc-switch"></i>
-                                                    </a>
-                                                </div>
-                                                <div id="collapse-1" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-1" aria-expanded="false">
-                                                    <div class="panel-body">
-                                                    <?php
-                                                    $userHandler->get_profile_images();
-                                                    foreach ($userHandler->profile_images as $image) {
-                                                        echo '<div class="avatar avatar-xl avatar-circle avatar-hover" avatar_id="' . $image['id'] . '"><img src="assets/images/profile_images/' . $image['id'] . '.png"/></div>';
-                                                    }
-                                                    ?>
+                                    </div>
+                                    
+                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("PROFILE_IMAGE"); ?></h4>
+                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
+                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
+                                        
+                                        <div class="form-group m-b-sm">
+                                            <div class="panel-group accordion" id="accordion-profile-image" role="tablist" aria-multiselectable="false">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="heading-profile-image">
+                                                        <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-profile-image" href="#collapse-profile-image" aria-expanded="false" aria-controls="collapse-profile-image">
+                                                            <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("PICK_FROM_EXISTING_PROFILE_IMAGE"); ?></label>
+                                                            <i class="fa acc-switch"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse-profile-image" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-profile-image" aria-expanded="false">
+                                                        <div class="panel-body profile-images-placeholder" style="padding-left:0px !important;padding-right:0px !important;">
+                                                            <?php
+                                                            if($mediaHandler->get_profile_images()) {
+                                                                foreach ($mediaHandler->profile_images as $value) {
+                                                                    echo '<div class="avatar avatar-xl profile_image_element" profile_image_id="' . $value['id'] . '" style="cursor:pointer;z-index:10;'. ($userHandler->_user->image_id > 0 && $userHandler->_user->image_id == $value['id'] ? '' : ($userHandler->_user->image_id > 0 ? 'opacity: 0.5' : '')) .'"><div class="delete_profile_image delete_profile_image_style hidden" title="'.TranslationHandler::get_static_text("DELETE_PROFILE_IMAGE").'" profile_image_id="' . $value['id'] . '"><i class="zmdi zmdi-close" style="display:initial !important;"></i></div><img style="border-radius: 100% !important;" src="assets/images/profile_images/' . $value['filename'] . '"/><div class="active_profile_image '. ($userHandler->_user->image_id > 0 && $userHandler->_user->image_id == $value['id'] ? '' : 'hidden') .'" title="'.TranslationHandler::get_static_text("PICK_PROFILE_IMAGE").'" profile_image_id="' . $value['id'] . '"><i class="zmdi zmdi-check" style="display:initial !important;"></i></div></div>';
+                                                                }
+                                                            } else {
+                                                                echo "<div style='width:100%;text-align:center;'>".$mediaHandler->error->title."</div>";
+                                                            }
+                                                            ?>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        
+                                         <div class="form-group m-b-sm">
+                                            <div class="panel-group accordion" id="accordion-new-profile-image" role="tablist" aria-multiselectable="false">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading" role="tab" id="heading-new-profile-image">
+                                                        <a class="accordion-toggle" style="padding: 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion-new-profile-image" href="#collapse-new-profile-image" aria-expanded="false" aria-controls="collapse-new-profile-image">
+                                                            <label for="textarea1" style="cursor:pointer;"><?php echo TranslationHandler::get_static_text("UPLOAD_NEW_PROFILE_IMAGE"); ?></label>
+                                                            <i class="fa acc-switch"></i>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse-new-profile-image" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-new-profile-image" aria-expanded="false">
+                                                    <hr class="m-0 " style="border-color: #ddd;margin: 2px 0px 14px 0px !important;">
+                                                    <div class="form-group m-b-sm">
+                                                        <div style="display: table-cell;width: 100%;">
+                                                        <input type="file" id="profile_image_upload" name="profile_image_upload" class="form-control btn btn-default">
+                                                        </div>
+                                                        <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
+                                                        <input type="button" name="submit" id="upload_profile_image" value="<?php echo TranslationHandler::get_static_text("UPLOAD_IMAGE"); ?>" class="pull-right btn btn-default btn-md upload_profile_image m-l-sm">
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                                     </div>
                                 </div>
 
@@ -123,6 +166,7 @@ $mailHandler = new MailHandler();
                                 </div>
                             </form>
                         </div>
+                    </div>
                     </div>
                     <?php
                     }

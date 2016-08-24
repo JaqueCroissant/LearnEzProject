@@ -1,6 +1,6 @@
 <?php
 require_once 'include/handler/loginHandler.php';
-$display = $loginHandler->check_login() || (isset($_GET["page"]) && $_GET["page"] == "resetpassword" && isset($_GET["step"]) && $_GET["step"] == "confirmpassword");
+$display = $loginHandler->check_login() || (isset($_GET["page"]) && (($_GET["page"] == "resetpassword" && isset($_GET["step"]) && $_GET["step"] == "confirmpassword")) || $_GET["page"] == "find_certificates");
 $loginHandler = new LoginHandler();
 ?>
 

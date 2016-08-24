@@ -7,6 +7,7 @@
         public $school_id;
         public $class_ids;
         public $image_id;
+        public $profile_image;
         public $image_name;
         public $time_created;
         public $open;

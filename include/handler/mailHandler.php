@@ -105,9 +105,10 @@ class MailHandler extends Handler
                 throw new exception("MAIL_INVALID_MAIL_ID");
             }
             
-            $query = "SELECT mail_folder.id as folder_id, mail_folder.folder_name, users.firstname, users.surname, users.image_id as user_image_id FROM user_mail
+            $query = "SELECT mail_folder.id as folder_id, mail_folder.folder_name, users.firstname, users.surname, image.filename as profile_image FROM user_mail
                 INNER JOIN mail_folder ON mail_folder.id = user_mail.". ($this->is_sender_folder() ? "sender_folder_id" : "receiver_folder_id") ."
                 INNER JOIN users ON users.id = user_mail.". ($this->is_sender_folder() ? "receiver_id" : "sender_id") ."
+                LEFT JOIN image ON image.id = users.image_id
                 WHERE user_mail.". ($receiver_mail ? "mail_id" : "id") ." = :mail_id AND user_mail.". ($this->is_sender_folder() ? "sender_id" : "receiver_id") ." = :user_id LIMIT 1";
             
             $new_data = reset(DbHandler::get_instance()->return_query($query, $mail_id, $this->_user->id));
@@ -143,10 +144,11 @@ class MailHandler extends Handler
 
             $this->_current_folder_id = $this->get_folder_id($this->current_folder->folder_name);
             
-            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.id as user_mail_id, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id, users.user_type_id"
+            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.id as user_mail_id, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, image.filename as profile_image, users.user_type_id"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
                     . " INNER JOIN users ON users.id = ". ($this->is_sender_folder() ? "receiver_id" : "sender_id")
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.". ($this->is_sender_folder() ? "sender_folder_id" : "receiver_folder_id")
+                    . " LEFT JOIN image ON image.id = users.image_id"
                     . " WHERE user_mail.". ($this->is_sender_folder() ? "sender_id" : "receiver_id") ." = :user_id ".(!$this->is_sender_folder() ? "AND user_mail.receiver_folder_id = :folder_id" : "");
             
             $query .= !$this->is_sender_folder() ? ($read_unread_all == 1 ? " AND user_mail.is_read is false" : ($read_unread_all == 2 ? " AND user_mail.is_read is true" : "")) : "";
@@ -609,14 +611,15 @@ class MailHandler extends Handler
             }
             
             $query_search_content = ($search_content == 1 ? "mail.text LIKE :search_query" : ($search_content == 2 ? "mail.title LIKE :search_query" : "(mail.text LIKE :search_query OR mail.title LIKE :search_query)"));
-            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, users.image_id as user_image_id"
+            $query = "SELECT mail.id, mail.date, mail.title, mail.text, mail_folder.id as folder_id, mail_folder.folder_name, user_mail.id as user_mail_id, user_mail.receiver_id, user_mail.sender_id, user_mail.is_read, users.firstname, users.surname, image.filename as profile_image"
                     . " FROM mail INNER JOIN user_mail ON user_mail.mail_id = mail.id"
                     . " INNER JOIN users ON users.id = sender_id"
                     . " INNER JOIN mail_folder ON mail_folder.id = user_mail.receiver_folder_id"
+                    . " LEFT JOIN image ON image.id = users.image_id"
                     . " WHERE user_mail.receiver_id = :user_id AND ". $query_search_content ." AND user_mail.receiver_folder_id IN (". $this->generate_in_query($final_mail_folders).")";
             
             $query .= $read_unread_all == 1 ? " AND user_mail.is_read is false" : ($read_unread_all == 2 ? " AND user_mail.is_read is true" : "");
-            $query .= $order_ascending != 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
+            $query .= $order_ascending == 1 ? " ORDER BY mail.date ASC" : " ORDER BY mail.date DESC";
 
             if($search_content == 3) {
                 $data = DbHandler::get_instance()->return_query($query, $this->_user->id, '%'.$search_query.'%', '%'.$search_query.'%');

@@ -1,5 +1,13 @@
 <?php
 
+function profile_image_exists($filename = null) {
+    if(empty($filename)) {
+        return "default.png";
+    }
+    
+    return $filename;
+}
+
 function cmp($a, $b)
 {
     return strcmp($a->date_assigned, $b->date_assigned);

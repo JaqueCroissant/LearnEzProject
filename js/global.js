@@ -374,6 +374,14 @@ $(document).ready(function () {
             show_status_bar("success", ajax_data.success);
         });
     });
+    
+    
+    $(document).on("click", ".close_terms", function (event) {
+        event.preventDefault();
+        $.cookie("cookie_terms", true, {expires: 365});
+        $(".cookie_overlay").fadeOut(250, function(){ $("cookie_overlay").css("display: none !important"); });
+        
+    });
 
 
     $(document).on("change", ".create_select_school", function (event) {

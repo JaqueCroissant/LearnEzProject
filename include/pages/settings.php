@@ -167,6 +167,7 @@ $mediaHandler = new MediaHandler();
                             </form>
                         </div>
                     </div>
+                    </div>
                     <?php
                     }
                     if (RightsHandler::has_user_right("CHANGE_PASSWORD")) {

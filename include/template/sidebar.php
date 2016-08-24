@@ -18,7 +18,7 @@
             <div class="media-left">
                 <div class="avatar avatar-md avatar-circle">
                     <a href="javascript:void(0)">
-                        <img class="img-responsive current-avatar-image" alt="avatar" src="assets/images/profile_images/<?php echo $userHandler->_user->image_id; ?>.png">
+                        <img class="img-responsive current-avatar-image" alt="avatar" src="assets/images/profile_images/<?php echo profile_image_exists($userHandler->_user->profile_image); ?>">
                     </a>
                 </div>
             </div>

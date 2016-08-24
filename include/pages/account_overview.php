@@ -98,7 +98,7 @@ $courses_completed = 0;
                                     { ?>
                                         <div class="sl-item p-b-md">
                                             <div class="sl-avatar avatar avatar-sm avatar-circle">
-                                                <img class="img-responsive" src="<?php echo "assets/images/profile_images/" . $value['image_id'] . ".png"?>">
+                                                <img class="img-responsive" src="<?php echo "assets/images/profile_images/" . profile_image_exists($value['profile_image']) ?>">
                                             </div>
                                             <div class="sl-content">
                                                 <h5 class="m-t-0">
@@ -739,7 +739,7 @@ $courses_completed = 0;
             <div class="panel-body">
                 <div style="width:100%;">
                 <div class="avatar avatar-circle" style="display:block !important;margin: 10px auto 10px auto !important; width: 100px; height: 100px;">
-                    <img src="assets/images/profile_images/<?= $userHandler->_user->image_id; ?>.png" alt="avatar">
+                    <img src="assets/images/profile_images/uncropped/<?= profile_image_exists($userHandler->_user->profile_image); ?>" alt="avatar">
                 </div>
                 </div>
                 <div class="center">

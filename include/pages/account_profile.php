@@ -58,7 +58,7 @@ if (!empty($current_user->school_id)) {
             </div>
             <div>
                 <div class="avatar avatar-xl avatar-circle">
-                    <img class="img-responsive" src="assets/images/profile_images/<?= $current_user->image_id; ?>.png" alt="avatar">
+                    <img class="img-responsive" src="assets/images/profile_images/uncropped/<?= profile_image_exists($current_user->profile_image); ?>" alt="avatar">
                 </div>
             </div>
             <div>

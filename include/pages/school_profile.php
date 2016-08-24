@@ -158,7 +158,7 @@ if (isset($_GET['school_id'])) {
                                 ?>
                                 <div class="sl-item p-b-md sl-primary">
                                     <div class="sl-avatar avatar avatar-sm avatar-circle">
-                                        <img class="img-responsive a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>" src="assets/images/profile_images/<?php echo $value['image_id']; ?>.png">
+                                        <img class="img-responsive a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>" src="assets/images/profile_images/<?php echo profile_image_exists($value['profile_image']); ?>">
                                     </div>
                                     <div class="sl-content">
                                         <h5 class="m-t-0">

@@ -701,6 +701,10 @@ class UserHandler extends Handler
                 throw new Exception("DATABASE_UNKNOWN_ERROR");
             }
             
+            $profile_image = DbHandler::get_instance()->return_query("SELECT filename as profile_image FROM image WHERE id = :image_id" , !empty($this->_user->image_id) ? $this->_user->image_id : 0);
+            
+            $element = !empty($profile_image) ? reset($profile_image)["profile_image"] : null;
+            $this->_user->profile_image = $element;
             SessionKeyHandler::add_to_session('user', $this->_user, true);
 
             return true;
@@ -1117,11 +1121,11 @@ class UserHandler extends Handler
 
             if(!RightsHandler::has_user_right("SCHOOL_FIND"))
             {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id WHERE users.school_id = :school_id AND users.id = :id AND translation_user_type.language_id = :language_id", $this->_user->school_id, $id, TranslationHandler::get_current_language());
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, image.filename as profile_image, translation_user_type.title as user_type_title FROM users LEFT JOIN image ON image.id = users.image_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id WHERE users.school_id = :school_id AND users.id = :id AND translation_user_type.language_id = :language_id", $this->_user->school_id, $id, TranslationHandler::get_current_language());
             }
             else
             {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, translation_user_type.title as user_type_title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id WHERE users.id = :id AND translation_user_type.language_id = :language_id", $id, TranslationHandler::get_current_language());
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, image.filename as profile_image, translation_user_type.title as user_type_title FROM users LEFT JOIN image ON image.id = users.image_id INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id WHERE users.id = :id AND translation_user_type.language_id = :language_id", $id, TranslationHandler::get_current_language());
             }
 
             if(isset($user_data) && !empty($user_data))

@@ -5,6 +5,7 @@ class MediaHandler extends Handler {
     public $file_name;
     public $compressed_file_type;
     public $file_duration;
+    public $profile_images = array();
     
     private $current_folder;
     private $temporary_folder;
@@ -256,6 +257,102 @@ class MediaHandler extends Handler {
             
             default:
                 return file_exists(realpath(__DIR__ . '/../..') . "/courses/lectures/". $file_name);
+        }
+    }
+    
+    public function upload_profile_image($file = null) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (empty($file) || !is_array($file)) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            if ($file["size"] > 1000000) {
+                throw new exception("IMAGE_TOO_LARGE_MAX_1_MB");
+            }
+
+            $file_type = pathinfo($file['name'], PATHINFO_EXTENSION);
+            if (!in_array(strtoupper($file_type), array("JPG", "JPEG", "PNG", "GIF"))) {
+                throw new exception("IMAGE_MUST_BE_OF_TYPE_JPG_JPEG_PNG_GIF");
+            }
+            
+            if(count(DbHandler::get_instance()->return_query("SELECT id FROM image WHERE user_id = :user_id", $this->_user->id)) >= 5) {
+                throw new exception("MAX_5_PROFILE_IMAGES_PER_USER");
+            }
+
+            $file_location = realpath(__DIR__ . '/../..') . "/assets/images/profile_images/";
+            $file_name = md5(uniqid(mt_rand(), true)) . "." . $file_type;
+            if (!move_uploaded_file($file["tmp_name"], $file_location . "uncropped/" . $file_name)) {
+                throw new exception("UNKNOWN_ERROR");
+            }
+
+            $resize = new Resize($file_location . "uncropped/" . $file_name);
+            $resize->resize_image(50, 50, 'auto');
+            $resize->save_image($file_location . "" . $file_name, 100);
+
+            DbHandler::get_instance()->query("INSERT INTO image (user_id, filename) VALUES (:user_id, :filename)", $this->_user->id, $file_name);
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
+    }
+    
+    public function delete_profile_image($id = 0) {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+
+            if (empty($id) || !is_numeric($id)) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            $image_data = DbHandler::get_instance()->return_query("SELECT * FROM image WHERE id = :id AND user_id = :user_id LIMIT 1", $id, $this->_user->id);
+
+            if (empty($image_data)) {
+                throw new exception("INVALID_INPUT");
+            }
+
+            $image_id = reset($image_data)["id"];
+            $image_filename = reset($image_data)["filename"];
+            
+            if($image_id == $this->_user->image_id) {
+                DbHandler::get_instance()->query("UPDATE users SET image_id = '0' WHERE id = :user_id", $this->_user->id);
+            }
+            DbHandler::get_instance()->query("DELETE FROM image WHERE id = :id", $image_id);
+
+            $file_location = realpath(__DIR__ . '/../..') . "/assets/images/profile_images/";
+            if (file_exists($file_location . "" . $image_filename) && file_exists($file_location . "uncropped/" . $image_filename)) {
+                unlink($file_location . "" . $image_filename);
+                unlink($file_location . "uncropped/" . $image_filename);
+            }
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+
+    public function get_profile_images() {
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            
+            $data = DbHandler::get_instance()->return_query("SELECT * FROM image WHERE user_id = :user_id", $this->_user->id);
+            if (empty($data)) {
+                throw new exception("NO_PROFILE_IMAGES");
+            }
+            
+            $this->profile_images = $data;
+            return true;
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
         }
     }
 

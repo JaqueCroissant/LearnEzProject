@@ -676,9 +676,9 @@ class UserHandler extends Handler
                 $this->_user->email = $email;
             }
 
-            if(!empty($image))
+            if($image == 0 || !empty($image))
             {
-                if(!is_numeric($image))
+                if($image != 0 && !is_numeric($image))
                 {
                     throw new Exception("USER_INVALID_IMAGE_ID");
                 }

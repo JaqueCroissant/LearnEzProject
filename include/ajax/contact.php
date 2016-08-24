@@ -11,11 +11,13 @@
             {
                 $name = $contactHandler->_user->firstname . " " . $contactHandler->_user->surname;
                 $email = $contactHandler->_user->email;
+                $school_id = $contactHandler->_user->school_id;
+                
                 $context = isset($_POST["context"]) ? $_POST["context"] : "";
                 $subject = isset($_POST["subject"]) ? $_POST["subject"] : "";
                 $message = isset($_POST["message"]) ? $_POST["message"] : "";
                 
-                if(!$contactHandler->generate_support_mail($name, $email, $context, $subject, $message))
+                if(!$contactHandler->generate_support_mail($name, $email, $context, $subject, $message, true))
                 {
                     $jsonArray['status_value'] = false;
                     $jsonArray['error'] = $contactHandler->error->title;

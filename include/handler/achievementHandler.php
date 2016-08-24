@@ -271,40 +271,13 @@ class AchievementHandler extends Handler {
 
     private static function add_achievement_for_user($achievement_id, $data_object, $award_type_id) {
         $cur_breakpoint = isset($data_object['current_breakpoint']) ? $data_object['current_breakpoint'] : 0;
-        $breakpoint = isset($data_object['breakpoint']) ? $data_object['breakpoint'] : 0;
-        $sum = isset($data_object['sum']) ? $data_object['sum'] : 0;
-
         if (self::$course_id) {
             $query = "INSERT INTO user_achievement (users_id, achievement_id, breakpoint, value_id) VALUES (:user, :ach_id, :breakpoint, :value_id)";
-            if (DbHandler::get_instance()->query($query, SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_id, $cur_breakpoint, self::$course_id)) {
-                $ach = new Achievement();
-                $ach->id = DbHandler::get_instance()->last_inserted_id();
-                $ach->title = $data_object['title'];
-                $ach->text = $data_object['text'];
-                if ($award_type_id == "2") {
-                    $ach->breakpoint = $data_object['sum'] + $data_object['current_breakpoint'];
-                } else if ($award_type_id == "3" && !isset($ach->text)) {
-                    $query = "SELECT title FROM translation_course where course_id = :course_id AND language_id = :lang";
-                    $ach->text = reset(reset(DbHandler::get_instance()->return_query($query, self::$course_id, TranslationHandler::get_current_language()))) . ' ' . strtolower(TranslationHandler::get_static_text("COMPLETED"));
-                } else {
-                    $ach->breakpoint = $data_object['breakpoint'];
-                }
-            }
+            DbHandler::get_instance()->query($query, SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_id, $cur_breakpoint, self::$course_id);
         } else {
             $query = "INSERT INTO user_achievement (users_id, achievement_id, breakpoint) VALUES (:user, :ach_id, :breakpoint)";
-            if (DbHandler::get_instance()->query($query, SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_id, $cur_breakpoint)) {
-                $ach = new Achievement();
-                $ach->id = DbHandler::get_instance()->last_inserted_id();
-                $ach->title = $data_object['title'];
-                $ach->text = $data_object['text'];
-                if ($award_type_id == "2") {
-                    $ach->breakpoint = $sum + $cur_breakpoint;
-                } else {
-                    $ach->breakpoint = $breakpoint;
-                }
-            }
+            DbHandler::get_instance()->query($query, SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_id, $cur_breakpoint);
         }
-        self::$temp_achievement = $ach;
         self::set_cookie($data_object);
     }
 
@@ -460,7 +433,7 @@ class AchievementHandler extends Handler {
         $this->user_id = $user_id;
     }
 
-    private static function set_cookie($data) {
+    public static function set_cookie($data) {
         $cookie_name = 'achievements';
         $t = array();
         if (isset($_COOKIE[$cookie_name]) && is_array(json_decode($_COOKIE[$cookie_name]))) {
@@ -469,7 +442,10 @@ class AchievementHandler extends Handler {
             $temp = [];
             $temp[] = json_decode($_COOKIE[$cookie_name]);
         }
-        $t['img_path'] = isset($data['img_path']) ? $data['img_path'] : "";
+        $t['img_path'] = isset($data['img_path']) ? $data['img_path'] : "default.png";
+        $t['count'] = isset($data['breakpoint']) ? $data['breakpoint'] : 0;
+        $t['title'] = TranslationHandler::get_static_text("NEW_ACHIEVEMENT");
+        $t['text'] = isset($data['text']) ? $data['text'] : "";
         $t['o_top'] = isset($data['o_top']) ? $data['o_top'] : "";
         $t['o_left'] = isset($data['o_left']) ? $data['o_left'] : "";
         $temp[] = $t;

@@ -38,12 +38,13 @@ $(document).ready(function () {
             change_page(page, step, args, $(this));
         }
     });
-    $(window).on("resize", function(){
+    $(window).on("resize", function () {
         try {
             $("select[data-plugin='select2']").select2();
-        } catch (ex) { }
+        } catch (ex) {
+        }
     });
-    
+
     $(document).on("click", ".change_page_from_overlay", function (event) {
         if (currently_changing_page === false && $(this).attr("clickable") !== "false" && !$(this).attr('disabled')) {
             $(this).attr("clickable", false);
@@ -54,7 +55,7 @@ $(document).ready(function () {
             change_page_from_overlay(page, step, args, $(this));
         }
     });
-    
+
     $(document).on("click", ".display_login_overlay", function (event) {
         $(".login_overlay").fadeIn(500);
     });
@@ -110,10 +111,10 @@ $(document).ready(function () {
             checkboxes.prop('checked', false);
         }
     });
-    
-    
-    
-    
+
+
+
+
 
     // DataTable custom
     $(document).on("length.dt", function (e, settings, len) {
@@ -222,7 +223,7 @@ $(document).ready(function () {
     });
 
 
-    
+
 
     $(document).on("click", ".contact_submit_info", function (event) {
         event.preventDefault();
@@ -251,7 +252,7 @@ $(document).ready(function () {
             show_status_bar("success", ajax_data.success);
         });
     });
-    
+
     $(document).on("click", ".create_submit_info_exp", function (event) {
         event.preventDefault();
         initiate_submit_form($(this), function () {
@@ -335,7 +336,7 @@ $(document).ready(function () {
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-            
+
             show_status_bar("success", ajax_data.success);
         });
     });
@@ -363,13 +364,15 @@ $(document).ready(function () {
             show_status_bar("success", ajax_data.success);
         });
     });
-    
-    
+
+
     $(document).on("click", ".close_terms", function (event) {
         event.preventDefault();
         $.cookie("cookie_terms", true, {expires: 365});
-        $(".cookie_overlay").fadeOut(250, function(){ $("cookie_overlay").css("display: none !important"); });
-        
+        $(".cookie_overlay").fadeOut(250, function () {
+            $("cookie_overlay").css("display: none !important");
+        });
+
     });
 
 
@@ -453,18 +456,18 @@ $(document).ready(function () {
 
     function initial_page_load() {
         var params = getSearchParameters();
-        
-        if(params.page !== undefined) {
+
+        if (params.page !== undefined) {
             var args = "";
-            $.each(params, function(key, value) {
-                if(key !== "page" && key !== "step") {
+            $.each(params, function (key, value) {
+                if (key !== "page" && key !== "step") {
                     args += "&" + key + "=" + value;
                 }
             });
             change_page(params.page, params.step, args);
             return;
         }
-        
+
         var page_reload = $.cookie("page_reload");
         $.removeCookie("page_reload");
 
@@ -542,11 +545,11 @@ function reload_page_content(pagename) {
         }
 
         var last_page = navigation.pop();
-        if(pagename === undefined) {
+        if (pagename === undefined) {
             return;
         }
-        
-        if(pagename === last_page.page) {
+
+        if (pagename === last_page.page) {
             change_page(last_page.page, last_page.step, last_page.args, undefined, false);
         }
     }
@@ -598,8 +601,44 @@ function show_status_bar(status_type, message, custom_fade_out) {
 
 //Show achievements
 function show_achievements() {
-    var achievements = $.cookie("achievements");
-    console.log(achievements);
+    if ($.cookie("achievements") !== undefined) {
+        var achievements = $.parseJSON($.cookie("achievements"));
+        console.log(achievements);
+        var left = parseInt($("#aside-inner-scroll").width()) + parseInt($(".wrap").css("padding-left"));
+        var element = $("#achievement_container");
+        element.css("position", "absolute");
+        element.css("left", left + "px");
+        element.css("bottom", 0);
+        
+        if (display_achievement(element, achievements)) {
+//            $.removeCookie("achievements");
+            console.log("remove cookie");
+        }
+    }
+}
+
+function display_achievement(element, list) {
+    if (list.length === 0) {
+        return true;
+    }
+    var value = list.shift();
+    var title = value.title === undefined ? "" : value.title;
+    var count = value.count === undefined ? "" : value.count + " ";
+    var text = value.text === undefined ? "" : value.text;
+    element.css("opacity", 0);
+    $("#achievement_txt").html(count + text);
+    $("#achievement_title").html(title);
+    $("#achievement_img").attr("src", "assets/images/achievement/" + value.img_path);
+    element.css("display", "inline-block");
+    element.fadeTo(2000, 1, function () {
+        element_timeout = setTimeout(function () {
+            element.fadeTo(1000, 0);
+            $('#status_container').css("display", "none");
+            display_achievement(element, list);
+        }, 5000);
+    });
+
+
 }
 
 function cursor_wait()
@@ -619,14 +658,14 @@ function remove_cursor_wait() {
 }
 
 function getSearchParameters() {
-      var prmstr = window.location.search.substr(1);
-      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+    var prmstr = window.location.search.substr(1);
+    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
 }
 
-function transformToAssocArray( prmstr ) {
+function transformToAssocArray(prmstr) {
     var params = {};
     var prmarr = prmstr.split("&");
-    for ( var i = 0; i < prmarr.length; i++) {
+    for (var i = 0; i < prmarr.length; i++) {
         var tmparr = prmarr[i].split("=");
         params[tmparr[0]] = tmparr[1];
     }
@@ -637,10 +676,11 @@ function clearUrl() {
     var index = 0;
     var count = 1;
     for (var i = 0, len = window.location.href.length; i < len; i++) {
-        if(window.location.href[i] == '/' && count < 3) {
+        if (window.location.href[i] == '/' && count < 3) {
             count++;
             index = i;
-    }}
-    window.history.pushState("1", "Title", "/"+window.location.href.substring(index, window.location.href.lastIndexOf('/') + 1).split("?")[0]);
+        }
+    }
+    window.history.pushState("1", "Title", "/" + window.location.href.substring(index, window.location.href.lastIndexOf('/') + 1).split("?")[0]);
 }
 

@@ -110,16 +110,21 @@ page[size="A4"] {
       margin-top:-20px;
   }
   
-  .footer_container {
-      width: auto;
-      position: absolute;
+  .footer_right {
+      font-family: calibri;
+      font-size:16px;
+      width:auto;
+      position:absolute;
       bottom: 10px;
       right: 30px;
-      float:right;
   }
   
-  .footer_text {
-      font-family: amaranth;
+  .footer_left {
+      font-family: calibri;
       font-size:16px;
+      width:auto;
+      position:absolute;
+      bottom: 10px;
+      left: 50px;
   }
 }

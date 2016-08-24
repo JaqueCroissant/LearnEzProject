@@ -35,9 +35,8 @@ $html = '<html>
                 <div style="clear:both;"></div>
             </div>
             
-            <div class="footer_container">
-                <div class="footer_text">'. TranslationHandler::get_static_text("IDENTIFY_CERTIFICATE") .'</div>
-            </div>
+                    <div class="footer_left">www.learnez.dk</div>
+                    <div class="footer_right">'. TranslationHandler::get_static_text("IDENTIFY_CERTIFICATE") .'</div>
             
         </body>
     </html>';

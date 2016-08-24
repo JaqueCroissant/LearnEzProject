@@ -130,6 +130,7 @@ $this->fontdata = array(
 //		),
         "pacifico" => array('R' => 'Pacifico.ttf'),
         "alexbrush" => array('R' => 'AlexBrush-Regular.ttf'),
+        "calibri" => array('R' => 'Calibri.ttf'),
         "amaranth" => array(
             'R' => 'Amaranth-Regular.ttf',
             'B' => 'Amaranth-Bold.ttf',

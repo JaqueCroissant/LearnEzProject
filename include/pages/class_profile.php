@@ -23,7 +23,16 @@ if (isset($_GET['class_id'])) {
         ErrorHandler::show_error_page($classHandler->error);
         die();
     }
-    $userHandler->get_by_class_id($_GET['class_id'], false, true);
+
+    if($userHandler->_user->user_type_id < 3)
+    {
+        $userHandler->get_by_class_id($_GET['class_id'], false, true);
+    }
+    else
+    {
+        $userHandler->get_by_class_id($_GET['class_id'], true, true);
+    }
+    
     $statisticsHandler->get_average_progress_for_class($_GET['class_id']);
 } else {
     ErrorHandler::show_error_page(ErrorHandler::return_error("USER_INVALID_CLASS_ID"));

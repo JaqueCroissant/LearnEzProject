@@ -51,6 +51,7 @@ RightsHandler::reset();
         </div>
         
         <?php require_once 'include/template/login_overlay.php'; ?>
+        <?php require_once 'include/template/cookies.php'; ?>
         
         <?php include 'include/template/course_player.php'; ?>
 

@@ -2,8 +2,7 @@
 
 class ContactHandler extends Handler
 {
-    //private $_support_email = "support@learnez.dk";
-    private $_support_email = "sunfolk88@gmail.com";
+    private $_support_email = "support@learnez.dk";
 
     public function __construct()
     {
@@ -163,7 +162,6 @@ class ContactHandler extends Handler
         {
             $this->validate_timeframe($email);
         }
-        
     }
     
     private function log_activity($email)
@@ -202,17 +200,17 @@ class ContactHandler extends Handler
                 }
             }
             
-            $school = (isset($temp_data['school_name']) && isset($temp_data['school_city'])) ? "<p><b>School: " . $temp_data['school_name'] . ", " . $temp_data['school_city'] . '</b></p>' : "";
+            $school = (isset($return_data['school_name']) && isset($return_data['school_city'])) ? "<p><b>School: " . $return_data['school_name'] . ", " . $return_data['school_city'] . '</b></p>' : "";
             $classes = "";
             
-            if(isset($temp_data['classes']))
+            if(!empty($school) && isset($temp_data['classes']))
             {
                 $classes = "<p><b>Classes: ";
                 for($i = 0; $i < count($temp_data['classes']); $i++)
                 {
                     $classes .= $temp_data['classes'][$i];
                     
-                    if($i != count($temp_data['classes']))
+                    if($i != count($temp_data['classes'])-1)
                     {
                         $classes .= ", ";
                     }
@@ -246,6 +244,7 @@ class ContactHandler extends Handler
             {
                 $return_data['school_name'] = $data[0]['name'];
                 $return_data['school_city'] = $data[0]['city'];
+                $return_data['user_type'] = ", " . $data[0]['user_type'];
                 $return_data['classes'] = array();
                 foreach($data as $value)
                 {
@@ -253,17 +252,17 @@ class ContactHandler extends Handler
                 }
             }
             
-            $school = (isset($temp_data['school_name']) && isset($temp_data['school_city'])) ? "<p><b>School: " . $temp_data['school_name'] . ", " . $temp_data['school_city'] . '</b></p>' : "";
+            $school = (isset($return_data['school_name']) && isset($return_data['school_city'])) ? "<p><b>School: " . $return_data['school_name'] . ", " . $return_data['school_city'] . '</b></p>' : "";
             $classes = "";
             
-            if(isset($temp_data['classes']))
+            if(!empty($school) && isset($temp_data['classes']))
             {
                 $classes = "<p><b>Classes: ";
                 for($i = 0; $i < count($temp_data['classes']); $i++)
                 {
                     $classes .= $temp_data['classes'][$i];
                     
-                    if($i != count($temp_data['classes']))
+                    if($i != count($temp_data['classes'])-1)
                     {
                         $classes .= ", ";
                     }
@@ -271,11 +270,9 @@ class ContactHandler extends Handler
                 $classes .= "</b></p>";
             }
             
-            $return_data['user_type'] = isset($temp_data['user_type']) ? ", " . $temp_data['user_type'] : "";
             $return_data['school'] = $school;
             $return_data['classes'] = $classes;
         }
-        
         return $return_data;
     }
 }

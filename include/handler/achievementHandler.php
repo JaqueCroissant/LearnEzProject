@@ -186,7 +186,7 @@ class AchievementHandler extends Handler {
         }
     }
 
-    public static function handle_points($table, $achievement_type_id) {
+    private static function handle_points($table, $achievement_type_id) {
         $award_types = DbHandler::get_instance()->return_query("SELECT id, award_type_id, max_days, group_concat(id) as ids, group_concat(breakpoint) as breakpoint FROM achievement WHERE achievement_type_id = :type group by award_type_id, max_days", $achievement_type_id);
         foreach ($award_types as $value) {
             switch ($value['award_type_id']) {
@@ -273,7 +273,7 @@ class AchievementHandler extends Handler {
         $cur_breakpoint = isset($data_object['current_breakpoint']) ? $data_object['current_breakpoint'] : 0;
         $breakpoint = isset($data_object['breakpoint']) ? $data_object['breakpoint'] : 0;
         $sum = isset($data_object['sum']) ? $data_object['sum'] : 0;
-        
+
         if (self::$course_id) {
             $query = "INSERT INTO user_achievement (users_id, achievement_id, breakpoint, value_id) VALUES (:user, :ach_id, :breakpoint, :value_id)";
             if (DbHandler::get_instance()->query($query, SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_id, $cur_breakpoint, self::$course_id)) {
@@ -305,7 +305,7 @@ class AchievementHandler extends Handler {
             }
         }
         self::$temp_achievement = $ach;
-        self::set_cookie($ach->id);
+        self::set_cookie($data_object);
     }
 
     private static function check_consecutive_days($days_array, $max_days) {
@@ -326,8 +326,10 @@ class AchievementHandler extends Handler {
     }
 
     private static function get_dirty_object($achievement_type_id, $achievement_id) {
-        $query = "SELECT breakpoint as current_breakpoint, breakpoint as breakpoint, text from achievement inner join translation_achievement on achievement.id = translation_achievement.achievement_id WHERE achievement.achievement_type_id = :achievement_type_id and language_id = :lang_id and achievement.id = :achievement_id";
+        $query = "SELECT breakpoint as current_breakpoint, breakpoint as breakpoint, text, path as img_path, o_top, o_left from achievement inner join translation_achievement on achievement.id = translation_achievement.achievement_id INNER JOIN achievement_img on achievement.achievement_img_id = achievement_img.id WHERE achievement.achievement_type_id = :achievement_type_id and language_id = :lang_id and achievement.id = :achievement_id";
         $data_object = reset(DbHandler::get_instance()->return_query($query, $achievement_type_id, TranslationHandler::get_current_language(), $achievement_id));
+        $data_object['id'] = $achievement_id;
+        $data_object['achievement_type_id'] = $achievement_type_id;
         return $data_object;
     }
 
@@ -458,20 +460,20 @@ class AchievementHandler extends Handler {
         $this->user_id = $user_id;
     }
 
-    private static function set_cookie($ach_id) {
+    private static function set_cookie($data) {
         $cookie_name = 'achievements';
+        $t = array();
         if (isset($_COOKIE[$cookie_name]) && is_array(json_decode($_COOKIE[$cookie_name]))) {
             $temp = json_decode($_COOKIE[$cookie_name]);
-            $temp[] = $ach_id;
-            setcookie($cookie_name, json_encode($temp), time() + (86400 * 30), "/", false);
-        } else if (isset($_COOKIE[$cookie_name]) && is_numeric(json_decode($_COOKIE[$cookie_name]))) {
+        } else if (isset($_COOKIE[$cookie_name])) {
             $temp = [];
             $temp[] = json_decode($_COOKIE[$cookie_name]);
-            $temp[] = $ach_id;
-            setcookie($cookie_name, json_encode($temp), time() + (86400 * 30), "/", false);
-        } else {
-            setcookie($cookie_name, json_encode($ach_id), time() + (86400 * 30), "/", false);
         }
+        $t['img_path'] = isset($data['img_path']) ? $data['img_path'] : "";
+        $t['o_top'] = isset($data['o_top']) ? $data['o_top'] : "";
+        $t['o_left'] = isset($data['o_left']) ? $data['o_left'] : "";
+        $temp[] = $t;
+        setcookie($cookie_name, json_encode($temp), time() + (86400 * 30), "/", false);
     }
 
     private static function set_course_id($course_id) {

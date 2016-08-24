@@ -7,6 +7,8 @@ class Achievement extends ORM {
     public $achievement_type_title;
     public $achievement_type_id;
     public $img_path;
+    public $o_top;
+    public $o_left;
 }
 
 ?>

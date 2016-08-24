@@ -110,7 +110,10 @@ $(document).ready(function () {
             checkboxes.prop('checked', false);
         }
     });
-    //
+    
+    
+    
+    
 
     // DataTable custom
     $(document).on("length.dt", function (e, settings, len) {
@@ -152,19 +155,6 @@ $(document).ready(function () {
         });
     });
     //
-
-    //add_class_students functionality
-    $(document).on("click", "#add_class_student_btn_left", function (event) {
-        event.preventDefault();
-        var selectedItem = $("#rightValues option:selected");
-        $("#leftValues").append(selectedItem);
-    });
-
-    $(document).on("click", "#add_class_student_btn_right", function (event) {
-        event.preventDefault();
-        var selectedItem = $("#leftValues option:selected");
-        $("#rightValues").append(selectedItem);
-    });
 
     //notifications
     $(document).on("click", ".notifs_button", function (event) {
@@ -232,28 +222,19 @@ $(document).ready(function () {
     });
 
 
-    $(document).on("click", ".add_students_submit", function (event) {
+    
+
+    $(document).on("click", ".contact_submit_info", function (event) {
         event.preventDefault();
-
-        var selectBox1 = document.getElementById("leftValues");
-        var selectBox2 = document.getElementById("rightValues");
-
-        for (var i = 0; i < selectBox1.options.length; i++)
-        {
-             selectBox1.options[i].selected = true;
-        }
-
-        for (var i = 0; i < selectBox2.options.length; i++)
-        {
-             selectBox2.options[i].selected = true;
-        }
-
         initiate_submit_form($(this), function () {
             show_status_bar("error", ajax_data.error);
         }, function () {
-
+            if (ajax_data.reload) {
+                setTimeout(function () {
+                    change_page("contact");
+                }, 500);
+            }
             show_status_bar("success", ajax_data.success);
-            $(".go_back").click();
         });
     });
 
@@ -266,7 +247,6 @@ $(document).ready(function () {
                 setTimeout(function () {
                     location.reload();
                 }, 500);
-                alert(ajax_data.reload);
             }
             show_status_bar("success", ajax_data.success);
         });
@@ -382,6 +362,14 @@ $(document).ready(function () {
             }
             show_status_bar("success", ajax_data.success);
         });
+    });
+    
+    
+    $(document).on("click", ".close_terms", function (event) {
+        event.preventDefault();
+        $.cookie("cookie_terms", true, {expires: 365});
+        $(".cookie_overlay").fadeOut(250, function(){ $("cookie_overlay").css("display: none !important"); });
+        
     });
 
 
@@ -606,6 +594,12 @@ function show_status_bar(status_type, message, custom_fade_out) {
             $('#status_container').addClass("hidden");
         }, fade_out);
     }
+}
+
+//Show achievements
+function show_achievements() {
+    var achievements = $.cookie("achievements");
+    console.log(achievements);
 }
 
 function cursor_wait()

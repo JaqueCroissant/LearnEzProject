@@ -880,6 +880,8 @@ class CourseHandler extends Handler {
                 $this->check_completion(reset(DbHandler::get_instance()->return_query("SELECT course_id FROM course_" . $type . " WHERE id = :id", $id))["course_id"]);
                 $this->_user->points = (int)reset(DbHandler::get_instance()->return_query("SELECT points FROM users WHERE id = :id", $this->_user->id));
                 SessionKeyHandler::add_to_session("user", $this->_user, true);
+                AchievementHandler::assign_achievement($type);
+                AchievementHandler::assign_achievement("points");
             }
             return true;
         } catch (Exception $ex) {
@@ -893,6 +895,7 @@ class CourseHandler extends Handler {
             if (!CertificatesHandler::is_completed($course_id)) {
                 DbHandler::get_instance()->query("UPDATE users SET points = points + (SELECT points FROM course WHERE id = :course) WHERE id = :user_id", $course_id, $this->_user->id);
                 CertificatesHandler::create($course_id);
+                AchievementHandler::assign_achievement("course", $course_id);
             }
         }
     }

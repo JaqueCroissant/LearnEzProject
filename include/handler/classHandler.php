@@ -261,7 +261,7 @@ class ClassHandler extends Handler {
         }
     }
 
-    public function remove_user_from_class($array_of_user_ids_or_single_id, $class_id) {
+    public function remove_user_from_class($class_id) {
         try {
 
             if (!$this->user_exists()) {
@@ -273,17 +273,8 @@ class ClassHandler extends Handler {
             }
             $this->verify_class_exists($class_id);
 
-
-            if (is_array($array_of_user_ids_or_single_id) && !empty($array_of_user_ids_or_single_id)) {
-                $query = "DELETE FROM user_class WHERE class_id = :class_id AND users_id IN (" . generate_in_query($array_of_user_ids_or_single_id) . ")";
-
-                DbHandler::get_instance()->query($query, $class_id);
-
-            } elseif (is_numeric($array_of_user_ids_or_single_id)) {
-                DbHandler::get_instance()->query("DELETE FROM user_class WHERE users_id = :user_id AND class_id = :class_id", $array_of_user_ids_or_single_id, $class_id);
-            } else {
-                throw new Exception("OBJECT_IS_EMPTY");
-            }
+            $query = "DELETE FROM user_class WHERE class_id = :class_id";
+            DbHandler::get_instance()->query($query, $class_id);
 
             return true;
         } catch (Exception $exc) {

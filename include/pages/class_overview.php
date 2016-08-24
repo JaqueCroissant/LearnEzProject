@@ -60,9 +60,9 @@ if ($classHandler->_user->user_type_id != 1) {
                                             <?php if ($classHandler->_user->user_type_id == "1") { ?>
                                             <td class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->school_name); ?></td>
                                             <?php } ?>
-                                            <td class="center"  class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->class_year); ?></td>
-                                            <td class="center" class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_students; ?></td>
-                                            <td class="center" class="a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_teachers; ?></td>
+                                            <td class="center a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo htmlspecialchars($value->class_year); ?></td>
+                                            <td class="center a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_students; ?></td>
+                                            <td class="center a change_page" page="class_profile" step="" args="&class_id=<?php echo $value->id ?>"><?php echo $value->number_of_teachers; ?></td>
                                             <?php if (RightsHandler::has_user_right("CLASS_ASSIGN_USER")) { ?>
                                                 <td>
                                                     <div class="center">

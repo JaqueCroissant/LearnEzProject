@@ -72,9 +72,13 @@ function get_more_notifications(){
         if (count($data) != 5) {
             $json_array["status_text"] = "<div style='text-align:center;font-style:italic;padding:6px 0 6px 0;width:100%;'>" . TranslationHandler::get_static_text("NO_MORE_NOTIFICATIONS") . "</div>";
         }
-        $json_array['error'] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
-        echo json_encode($json_array);
+        $json_array["status_value"] = true;
     }
+    else {
+        $json_array["status_value"] = false;
+        $json_array['error'] = (isset($notificationHandler->error) ? $notificationHandler->error->title : ErrorHandler::return_error("UNKNOWN")->title);
+    }
+    echo json_encode($json_array);
 }
 
 function notification_setup($value, $text, $args){

@@ -51,9 +51,6 @@
                         . "WHERE user_id=:userId "
                         . "AND is_read=:isRead", $this->_user->id, 0); 
                 
-                if ($newCounter == 0) {
-                    return false;
-                }
                 $this->_unseen_notifications = $newCounter;
                 
                 return true;      

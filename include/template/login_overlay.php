@@ -1,6 +1,6 @@
 <?php
 require_once 'include/handler/loginHandler.php';
-$display = $loginHandler->check_login() || (isset($_GET["page"]) && (($_GET["page"] == "resetpassword" && isset($_GET["step"]) && $_GET["step"] == "confirmpassword")) || $_GET["page"] == "find_certificates");
+$display = $loginHandler->check_login() || isset($_GET["page"]) && ((($_GET["page"] == "resetpassword" && isset($_GET["step"]) && $_GET["step"] == "confirmpassword") || $_GET["page"] == "find_certificates"));
 $loginHandler = new LoginHandler();
 ?>
 
@@ -33,7 +33,7 @@ $loginHandler = new LoginHandler();
         </div>
 
         <div class="simple-page-footer">
-            <p><a class="change_page_from_overlay a text-primary m-r-md" page="resetpassword"><?= TranslationHandler::get_static_text("RESET_PASS"); ?></a> || <a class="change_page_from_overlay a text-primary m-l-md m-r-md" page="contact"><?= TranslationHandler::get_static_text("CONTACT"); ?></a> || <a class="change_page_from_overlay a text-primary m-l-md" page="find_certificates"><?= TranslationHandler::get_static_text("FIND_CERTIFICATE"); ?></a></p>
+            <p><a class="change_page_from_overlay a text-primary m-r-md" page="resetpassword"><?= TranslationHandler::get_static_text("RESET_PASS"); ?></a> &bull; <a class="change_page_from_overlay a text-primary m-l-md m-r-md" page="contact"><?= TranslationHandler::get_static_text("CONTACT"); ?></a> &bull; <a class="change_page_from_overlay a text-primary m-l-md" page="find_certificates"><?= TranslationHandler::get_static_text("FIND_CERTIFICATE"); ?></a></p>
         </div>
 
 

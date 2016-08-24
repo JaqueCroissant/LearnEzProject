@@ -930,77 +930,6 @@ class UserHandler extends Handler
         }
     }
     
-    public function get_users($ids)
-    {
-        //SECURE WITH RIGHTS BEFORE USE!!!!!!!!!!!!!!
-        try
-        {
-            $this->validate_user_logged_in();
-
-            if(is_array($ids))
-            {
-                 $this->get_multiple_users($ids);
-            }
-            elseif(is_numeric($ids))
-            {
-                $this->get_single_user($ids);
-            }
-            else
-            {
-                throw new Exception("USER_INVALID_ID");
-            }
-        }
-        catch(Exception $ex)
-        {
-            $this->error = ErrorHandler::return_error($ex->getMessage());
-            return false;
-        }
-
-        return true;
-    }
-
-    private function get_multiple_users($ids)
-    {
-        $query = "SELECT * FROM users WHERE id IN (";
-
-        for($i=0; $i<count($ids); $i++)
-        {
-            $user = $ids[$i];
-            if($i != 0 && $i!=count($ids))
-            {
-                $query .= ", ";
-            }
-
-            if(!is_numeric($ids[$i]))
-            {
-                throw new Exception("USER_INVALID_ID");
-            }
-            $query .=  $ids[$i];
-        }
-
-        $query .= ")";
-        $user_data = DbHandler::get_instance()->return_query($query);
-        if(count($user_data > 0))
-        {
-            $this->temp_user_array = array();
-            foreach ($user_data as $user)
-            {
-
-                $this->temp_user_array[] = new User($user);
-            }
-        }
-        else
-        {
-            unset($this->temp_user_array);
-        }
-    }
-
-    private function get_single_user($id)
-    {
-        $user_data = DbHandler::get_instance()->return_query("SELECT * FROM users WHERE id = :id", $id);
-        $this->temp_user = isset($user_data) ? new User(reset($user_data)) : NULL;
-    }
-    
     public function get_by_school_id($school_id, $student_and_teacher_bool = false, $only_open = true)
     {
         try
@@ -1186,23 +1115,23 @@ class UserHandler extends Handler
             
             while(!feof($file))
             {
-                $row = fgetcsv($file, 0, ";",",");
+                //$row = fgetcsv($file, 0, ";",",");
+                $row = utf8_encode(fgets($file));
+
                 if($index<$count)
                 {
                     if($index > 0)
                     {
 
-                        $users[] = $this->validate_csv_content($row, $offset, $school_id, $class_ids);
+                        $users[] = $this->validate_csv_content($this->row_to_array($row), $offset, $school_id, $class_ids);
                     }
                     else
                     {
-                        $offset = $this->validate_csv_columns($row);
-                        $is_first = false;
+                        //$offset = $this->validate_csv_columns($this->row_to_array($row));
                     }
                 }
                 $index++;
             }
-            fclose($file);
 
             $this->insert_csv_content($users);
             
@@ -1258,6 +1187,7 @@ class UserHandler extends Handler
 
     private function validate_csv_content($row, $offset, $school_id, $class_ids)
     {
+        
         if(empty($row[0+$offset]) || empty($row[1+$offset]) || empty($row[2+$offset]))
         {
             throw new Exception("IMPORT_MISSING_VALUE");
@@ -1265,16 +1195,18 @@ class UserHandler extends Handler
 
         $user = new User();
 
-        $firstname = utf8_encode($row[0+$offset]);
-        $surname = utf8_encode($row[1+$offset]);
-        $type = utf8_encode($row[2+$offset]);
-        $email = utf8_encode($row[3+$offset]);
-        $password = utf8_encode($row[4+$offset]);
+        $firstname = $row[0+$offset];
+        $surname = $row[1+$offset];
+        $type = $row[2+$offset];
+        $email = $row[3+$offset];
+        $password = trim($row[4+$offset]);
 
+        var_dump($password);
+        
         $this->check_if_valid_string($firstname, false);
         $this->check_if_valid_string($surname, false);
         $this->verify_class_ids($class_ids);
-
+        
         $user->user_type_id = $this->check_if_valid_type($type);
         $user->firstname = $firstname;
         $user->surname = $surname;
@@ -1287,6 +1219,8 @@ class UserHandler extends Handler
             $user->email = $email;
         }
 
+        
+        
         if(!empty($password))
         {
             if(strlen($password) < 6)
@@ -1304,6 +1238,7 @@ class UserHandler extends Handler
     private function validate_csv_columns($row)
     {
         $count = count($row);
+        var_dump($row);
         $offset = 0;
 
         if($count != 5)
@@ -1314,6 +1249,7 @@ class UserHandler extends Handler
             }
             else
             {
+                
                 throw new Exception("IMPORT_INVALID_FORMATTING");
             }
         }
@@ -1334,6 +1270,11 @@ class UserHandler extends Handler
         {
             throw new Exception("IMPORT_INVALID_FORMAT");
         }
+    }
+    
+    private function row_to_array($row_to_convert)
+    {
+        return explode(";", $row_to_convert);
     }
 
     private function check_if_valid_type($type)

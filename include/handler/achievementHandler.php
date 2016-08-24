@@ -54,6 +54,12 @@ class AchievementHandler extends Handler {
 
     public static function assign_achievement($type, $course_id = 0) {
         try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            if (!is_string($type)) {
+                throw new exception("INVALID_INPUT");
+            }
             switch (strtolower($type)) {
                 case "lecture":
                     $table = "user_course_" . strtolower(self::LECTURE);

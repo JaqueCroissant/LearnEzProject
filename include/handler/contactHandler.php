@@ -2,8 +2,7 @@
 
 class ContactHandler extends Handler
 {
-    //private $_support_email = "support@learnez.dk";
-    private $_support_email = "sunfolk88@gmail.com";
+    private $_support_email = "support@learnez.dk";
 
     public function __construct()
     {
@@ -151,7 +150,7 @@ class ContactHandler extends Handler
         {
             throw new Exception("EMAIL_HAS_WRONG_FORMAT");
         }
-        /*
+        
         if(isset($_COOKIE['zk4b']) && strtotime($_COOKIE['zk4b']))
         {
             if(strtotime($_COOKIE['zk4b']) > strtotime("-15 minutes"))
@@ -163,7 +162,6 @@ class ContactHandler extends Handler
         {
             $this->validate_timeframe($email);
         }
-        */
     }
     
     private function log_activity($email)

@@ -1034,11 +1034,11 @@ class UserHandler extends Handler
             
             if($teachers_and_students)
             {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class ON users.id = user_class.users_id AND user_class.class_id = :id WHERE users.user_type_id > 2", $class_id);
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class ON users.id = user_class.users_id AND user_class.class_id = :id WHERE users.user_type_id > 2 AND users.open = 1", $class_id);
             }
             else
             {
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class ON users.id = user_class.users_id AND user_class.class_id = :id WHERE users.user_type_id > 3", $class_id);
+                $user_data = DbHandler::get_instance()->return_query("SELECT users.* FROM users INNER JOIN user_class ON users.id = user_class.users_id AND user_class.class_id = :id WHERE users.user_type_id > 3 AND users.open = 1", $class_id);
             }
             
             $this->users = array();

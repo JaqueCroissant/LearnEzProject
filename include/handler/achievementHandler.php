@@ -381,19 +381,32 @@ class AchievementHandler extends Handler {
                 $temp[$value['achievement_type_id']]['breakpoint'] += $value['breakpoint'];
                 $value['breakpoint'] = $temp[$value['achievement_type_id']]['breakpoint'];
             }
-            if ($value['text'] == "" && $value['achievement_type_id'] == "4") {
+            if ($value['text'] == "" && $value['achievement_type_id'] == "4" && $value['award_type_id'] == "3") {
                 $value = $this->get_course_title($value);
+            } else if ($value['text'] == "" && $value['achievement_type_id'] == "4") {
+                $value['text'] = $value['breakpoint'] . " " . strtolower(TranslationHandler::get_static_text("COURSES")) . " " . strtolower(TranslationHandler::get_static_text("COMPLETED_ALT"));
+            }
+            if ($value['achievement_type_id'] == "3" && $value['award_type_id'] == "1"){
+                $value['text'] = $value['breakpoint'];
             }
             $this->user_achievements[$value['achievement_type_id']][] = new Achievement($value);
         }
         $this->get_not_completed($ach_ids);
     }
-    
+
     private function get_not_completed($id_arr) {
-        $ids = generate_in_query($id_arr);
-        $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where achievement.id NOT IN (" . $ids . ") and award_type_id != 2 and (language_id = :id OR language_id is null) order by breakpoint DESC ";
+        if (count($id_arr) == 0) {
+            $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where award_type_id != 2 and (language_id = :id OR language_id is null) order by breakpoint DESC ";
+        } else {
+            $ids = generate_in_query($id_arr);
+            $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where achievement.id NOT IN (" . $ids . ") and award_type_id != 2 and (language_id = :id OR language_id is null) order by breakpoint DESC ";
+        }
         $not_data = DbHandler::get_instance()->return_query($not_q, TranslationHandler::get_current_language());
+        
         foreach ($not_data as $val) {
+            if ($val['award_type_id'] == "1" || $val['award_type_id'] == "2") {
+                $val['text'] = isset($val['breakpoint']) ? $val['breakpoint'] . ' ' . strtolower($val['text']) : $val['text'];
+            }
             $this->not_achieved[$val['achievement_type_id']][] = new Achievement($val);
         }
     }

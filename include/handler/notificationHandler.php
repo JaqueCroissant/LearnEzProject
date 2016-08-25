@@ -337,9 +337,15 @@
                 foreach ($data as $d) {
                     if ($d["id"] == $f[$name]) {
                         $get_values = "";
-                        foreach ($to_get as $g) {
-                            $get_values .= ucfirst($d[$g]) . " ";
+                        if ($table == "users") {
+                            $get_values = format_first_last_name($d["firstname"], $d["surname"], 30);
                         }
+                        else {
+                            foreach ($to_get as $g) {
+                                $get_values .= ucfirst($d[$g]) . " ";
+                            }
+                        }
+                        
                         array_push($array, array($name => $get_values, "arg_id" => $f["arg_id"]));
                         break;
                     }
@@ -415,7 +421,7 @@
             foreach ($array as $value) {
                 $sub = substr($string, $value[0] + 2, $value[1]);
                 if (isset($args[$sub])) {
-                    $final = substr_replace($final, "<b>" . format_name($args[$sub], 30) . "</b>", $value[0], $value[1] + 3);
+                    $final = substr_replace($final, "<b>" . $args[$sub] . "</b>", $value[0], $value[1] + 3);
                     continue;
                 }
                 $final = substr_replace($final, "<b>" . ucfirst(TranslationHandler::get_static_text("UNKNOWN")) . " </b>", $value[0], $value[1] + 3);

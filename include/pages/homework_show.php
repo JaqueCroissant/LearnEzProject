@@ -69,7 +69,7 @@ $incomplete_tests = 0;
             <div class="col-sm-2 col-xs-6 promo-tab">
                 <div class="text-center">
                     <small><?= TranslationHandler::get_static_text("CREATED_BY") ?></small>             
-                    <h4 class="m-0 m-t-xs change_page" page="account_profile" args="&user_id=<?= $current_homework->user_id ?>" style="cursor:pointer;"><?= $current_homework->firstname . " " . $current_homework->surname ?></h4>
+                    <h4 class="m-0 m-t-xs change_page" page="account_profile" args="&user_id=<?= $current_homework->user_id ?>" style="cursor:pointer;"><?= format_first_last_name($current_homework->firstname, $current_homework->surname, 40) ?></h4>
                 </div>
             </div>
             <div class="col-sm-2 col-xs-12 promo-tab">

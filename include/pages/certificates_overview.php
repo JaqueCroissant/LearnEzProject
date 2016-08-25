@@ -14,6 +14,7 @@ if (!$certificateHandler->get_all_certificates($current_page, $current_order, $c
     die();
 }
 
+
 $certificates = $paginationHandler->run_pagination($certificateHandler->certificates, $current_page, SettingsHandler::get_settings()->elements_shown);
 ?>
 <form method="POST" action="" id="certificates_form" url="download_pdf.php?step=download_multiple" name="certificate">

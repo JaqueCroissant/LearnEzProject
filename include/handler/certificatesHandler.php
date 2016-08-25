@@ -165,6 +165,10 @@ class CertificatesHandler extends Handler {
                 $temp = DbHandler::get_instance()->return_query($query, $this->_user->id, $this->_user->school_id, TranslationHandler::get_current_language());
             }
             
+            if(empty($temp)) {
+                throw new Exception("NO_CERTIFICATES");
+            }
+            
             $array = array();
             foreach ($temp as $value) {
                 $certificate = new Certificate($value);
@@ -193,7 +197,6 @@ class CertificatesHandler extends Handler {
             
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
-            echo $this->error->title;
             return false;
         }
     }

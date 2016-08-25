@@ -65,23 +65,33 @@ if (isset($_POST['step'])) {
         case "3":
             $school_id = (isset($_POST['id']) ? $_POST['id'] : "");
             $course_ids = (isset($_POST['selected']) ? $_POST['selected'] : []);
+            if ($schoolHandler->get_school_by_id($school_id)) {
+                $school = $schoolHandler->school;
+            }
             if ($courseHandler->assign_school_course($course_ids, $school_id)) {
                 $data_array['success'] = TranslationHandler::get_static_text("COURSES_ASSIGNED");
+                $data_array['school'] = $school;
                 $data_array['status_value'] = true;
             } else {
                 $data_array['error'] = $courseHandler->error->title;
+                $data_array['school'] = $school;
                 $data_array["status_value"] = false;
             }
             break;
         case "upload_school_image":
             $image_file = isset($_FILES['school_image']) ? $_FILES['school_image'] : "";
             $school_id = isset($_POST['school_id']) ? $_POST['school_id'] : "";
+            if ($schoolHandler->get_school_by_id($school_id)) {
+                $school = $schoolHandler->school;
+            }
             if ($schoolHandler->upload_image($school_id, $image_file)) {
                 $data_array['success'] = TranslationHandler::get_static_text("THUMBNAIL_UPLOADED");
                 $data_array['file_name'] = $schoolHandler->current_file_name;
+                $data_array['school'] = $school;
                 $data_array['status_value'] = true;
             } else {
                 $data_array['error'] = $schoolHandler->error->title;
+                $data_array['school'] = $school;
                 $data_array["status_value"] = false;
             }
             break;

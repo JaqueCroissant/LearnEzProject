@@ -164,7 +164,7 @@ if (isset($_GET['school_id'])) {
                             {
                                 ?>
                                     <div class="streamline">
-                                        <div style="width:100%; text-align:center; margin:20px 0px;"><?= TranslationHandler::get_static_text("CLASS_NO_ACTIVE")?></div>
+                                        <div style="width:100%; text-align:center; margin:20px 0px;"><?= TranslationHandler::get_static_text("SCHOOL_NO_ACTIVE")?></div>
                                 <?php
                             }
                             else

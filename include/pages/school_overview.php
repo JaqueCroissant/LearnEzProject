@@ -42,7 +42,7 @@ switch ($classHandler->_user->user_type_id) {
                                     <th><?php echo TranslationHandler::get_static_text("CITY"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("START"); ?></th>
                                     <th><?php echo TranslationHandler::get_static_text("END"); ?></th>
-                                    <th><?php echo TranslationHandler::get_static_text("STUDENTS"); ?></th>
+                                    <th><?php echo TranslationHandler::get_static_text("ACCOUNTS"); ?></th>
                                     <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                         <th class="center"><?php echo TranslationHandler::get_static_text("EDIT"); ?></th>
                                     <?php } ?>

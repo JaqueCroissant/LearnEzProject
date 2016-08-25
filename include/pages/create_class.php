@@ -57,13 +57,13 @@ $classHandler = new ClassHandler();
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-2 control-label" for="class_begin"><?php echo TranslationHandler::get_static_text("BEGIN"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control" type="text" id="class_begin" name="class_begin" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("BEGIN"); ?>">
+                                <input class="form-control datepickers" type="text" id="class_begin" name="class_begin" placeholder="<?php echo TranslationHandler::get_static_text("BEGIN"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 col-sm-offset-2 control-label" for="class_end"><?php echo TranslationHandler::get_static_text("END"); ?></label>
                             <div class="col-md-5">
-                                <input class="form-control" type="text" id="class_end" name="class_end" data-options="{format: 'YYYY/MM/DD', showTodayButton:true}" data-plugin="datetimepicker" placeholder="<?php echo TranslationHandler::get_static_text("END"); ?>">
+                                <input class="form-control datepickers" type="text" id="class_end" name="class_end" placeholder="<?php echo TranslationHandler::get_static_text("END"); ?>">
                             </div>
                         </div>
                         <div class="form-group">
@@ -91,3 +91,8 @@ $classHandler = new ClassHandler();
     </div>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(".datepickers").datepicker( {
+        dateFormat: "yy-mm-dd"
+    });
+</script>

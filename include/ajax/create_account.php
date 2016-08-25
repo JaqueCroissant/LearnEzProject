@@ -77,15 +77,15 @@
                     }
                     else
                     {
+                        $jsonArray['has_add_info'] = $userHandler->import_has_add_info;
+                        $jsonArray['add_info'] = $userHandler->import_add_info;
                         $jsonArray['status_value'] = false;
                         $jsonArray['error'] = $userHandler->error->title;
                     }
                 }
-
                 echo json_encode($jsonArray);
                 die();
             }
-
         break;
 
         case 'get_classes':

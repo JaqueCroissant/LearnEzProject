@@ -5,9 +5,10 @@ require_once '../../include/handler/classHandler.php';
 require_once '../../include/handler/schoolHandler.php';
 require_once '../../include/handler/userHandler.php';
 
-if(!isset($_GET['school_id']) || !isset($_GET['class_id']) || !is_numeric($_GET['school_id']) || !is_numeric($_GET['class_id']))
+if(!RightsHandler::has_user_right("CLASS_ASSIGN_USER") || !isset($_GET['school_id']) || !isset($_GET['class_id']) || !is_numeric($_GET['school_id']) || !is_numeric($_GET['class_id']))
 {
-    ErrorHandler::show_error_page("DEFAULT");
+    ErrorHandler::show_error_page();
+    die();
 }
 else
 {

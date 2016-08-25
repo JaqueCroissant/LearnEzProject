@@ -4,6 +4,7 @@ class AchievementHandler extends Handler {
 
     public $user_id;
     public $user_achievements = [];
+    public $not_achieved = [];
     public static $temp_achievement;
     private static $course_id = null;
     private static $breakpoints = [];
@@ -356,15 +357,19 @@ class AchievementHandler extends Handler {
     }
 
     private function get_completion_stats() {
-        $query = "select * FROM achievement_view where (language_id = :language_id OR language_id is NULL) AND users_id = :users_id";
+        $query = "select * FROM achievement_view where (language_id = :language_id OR language_id is NULL) AND users_id = :users_id order by user_achievement_id DESC";
         if (!$this->user_id) {
             $data = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language(), $this->_user->id);
         } else {
             $data = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language(), $this->user_id);
         }
         $this->user_achievements = "";
+        $ach_ids = [];
         $temp = [];
         foreach ($data as $value) {
+            if ($value['award_type_id'] != "2") {
+                $ach_ids[] = $value['achievement_id'];
+            }
             $value['id'] = $value['user_achievement_id'];
             if (!isset($temp[$value['achievement_type_id']])) {
                 $temp[$value['achievement_type_id']] = array();
@@ -381,6 +386,16 @@ class AchievementHandler extends Handler {
             }
             $this->user_achievements[$value['achievement_type_id']][] = new Achievement($value);
         }
+        $this->get_not_completed($ach_ids);
+    }
+    
+    private function get_not_completed($id_arr) {
+        $ids = generate_in_query($id_arr);
+        $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where achievement.id NOT IN (" . $ids . ") and award_type_id != 2 and (language_id = :id OR language_id is null) order by breakpoint DESC ";
+        $not_data = DbHandler::get_instance()->return_query($not_q, TranslationHandler::get_current_language());
+        foreach ($not_data as $val) {
+            $this->not_achieved[$val['achievement_type_id']][] = new Achievement($val);
+        }
     }
 
     private function get_course_title($data) {
@@ -388,7 +403,8 @@ class AchievementHandler extends Handler {
             throw new Exception("DEFAULT");
         }
         $query = "SELECT title FROM translation_course where course_id = :course_id AND language_id = :lang";
-        $data['text'] = reset(reset(DbHandler::get_instance()->return_query($query, $data['value_id'], TranslationHandler::get_current_language()))) . ' ' . strtolower(TranslationHandler::get_static_text("COMPLETED"));
+        $temp = reset(reset(DbHandler::get_instance()->return_query($query, $data['value_id'], TranslationHandler::get_current_language())));
+        $data['text'] = $temp . ' ' . strtolower(TranslationHandler::get_static_text("COMPLETED_ALT"));
         return $data;
     }
 
@@ -436,11 +452,11 @@ class AchievementHandler extends Handler {
     public static function set_cookie($data) {
         $cookie_name = 'achievements';
         $t = array();
+        $temp = array();
         if (isset($_COOKIE[$cookie_name]) && is_array(json_decode($_COOKIE[$cookie_name]))) {
             $temp = json_decode($_COOKIE[$cookie_name]);
         } else if (isset($_COOKIE[$cookie_name])) {
-            $temp = [];
-            $temp[] = json_decode($_COOKIE[$cookie_name]);
+            array_push($temp, json_decode($_COOKIE[$cookie_name]));
         }
         $t['img_path'] = isset($data['img_path']) ? $data['img_path'] : "default.png";
         $t['count'] = isset($data['breakpoint']) ? $data['breakpoint'] : 0;
@@ -448,8 +464,9 @@ class AchievementHandler extends Handler {
         $t['text'] = isset($data['text']) ? $data['text'] : "";
         $t['o_top'] = isset($data['o_top']) ? $data['o_top'] : "";
         $t['o_left'] = isset($data['o_left']) ? $data['o_left'] : "";
-        $temp[] = $t;
+        array_push($temp, $t);
         setcookie($cookie_name, json_encode($temp), time() + (86400 * 30), "/", false);
+        $_COOKIE[$cookie_name] = json_encode($temp);
     }
 
     private static function set_course_id($course_id) {

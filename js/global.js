@@ -602,43 +602,52 @@ function show_status_bar(status_type, message, custom_fade_out) {
 //Show achievements
 function show_achievements() {
     if ($.cookie("achievements") !== undefined) {
-        var achievements = $.parseJSON($.cookie("achievements"));
-        console.log(achievements);
         var left = parseInt($("#aside-inner-scroll").width()) + parseInt($(".wrap").css("padding-left"));
         var element = $("#achievement_container");
-        element.css("position", "absolute");
+        element.removeClass("hidden");
+        element.css("position", "fixed");
         element.css("left", left + "px");
         element.css("bottom", 0);
-        
-        if (display_achievement(element, achievements)) {
-//            $.removeCookie("achievements");
-            console.log("remove cookie");
-        }
+        display_achievement(element);
     }
 }
 
-function display_achievement(element, list) {
-    if (list.length === 0) {
-        return true;
-    }
-    var value = list.shift();
-    var title = value.title === undefined ? "" : value.title;
-    var count = value.count === undefined ? "" : value.count + " ";
-    var text = value.text === undefined ? "" : value.text;
-    element.css("opacity", 0);
-    $("#achievement_txt").html(count + text);
-    $("#achievement_title").html(title);
-    $("#achievement_img").attr("src", "assets/images/achievement/" + value.img_path);
-    element.css("display", "inline-block");
-    element.fadeTo(2000, 1, function () {
+function display_achievement(element) {
+    if ($.cookie("achievements") !== undefined) {
+        var list = $.parseJSON($.cookie("achievements"));
+        if (list.length === 0) {
+            element.addClass("hidden");
+            $.removeCookie("achievements", {path: "/"});
+            return true;
+        }
+        var value = list.shift();
+        var title = value.title === undefined ? "" : value.title;
+        var count = value.count === undefined || value.count === "0" ? "" : value.count + " ";
+        var text = value.text === undefined ? "" : value.text;
+        element.css("display", "inline-block");
+        element.removeClass("hidden");
+        $("#achievement_title").html(title);
+        $("#achievement_txt").html(count + text);
+        $("#achievement_img").attr("src", "assets/images/achievement/" + value.img_path + "-200.png");
+        element.addClass("achievement_animation");
         element_timeout = setTimeout(function () {
-            element.fadeTo(1000, 0);
-            $('#status_container').css("display", "none");
-            display_achievement(element, list);
+            element.fadeTo(0, 2000, function () {
+                element.removeClass("achievement_animation");
+                element.css("display", "none");
+                setTimeout(function () {
+                    element.removeClass("achievement_animation_reverse");
+                    if (list.length === 0) {
+                        element.addClass("hidden");
+                        $.removeCookie("achievements", {path: "/"});
+                        return;
+                    } else {
+                        $.cookie("achievements", JSON.stringify(list), {path: "/"});
+                        display_achievement(element);
+                    }
+                }, 2000);
+            });
         }, 5000);
-    });
-
-
+    }
 }
 
 function cursor_wait()
@@ -661,7 +670,6 @@ function getSearchParameters() {
     var prmstr = window.location.search.substr(1);
     return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
 }
-
 function transformToAssocArray(prmstr) {
     var params = {};
     var prmarr = prmstr.split("&");

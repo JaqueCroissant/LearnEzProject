@@ -737,7 +737,7 @@ $courses_completed = 0;
                 </div>
                 </div>
                 <div class="center">
-                    <b><?php echo htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname); ?></b>
+                    <b><?php echo strlen(htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname)) > 30 ? substr(htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname), 0, 30) . ".." : htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname); ?></b>
                 </div>
                 <br/>
                 <div>

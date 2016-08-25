@@ -218,8 +218,6 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                         </div>
                         <hr class="widget-separator m-0">
                         <div class="panel-body user-progress">
-
-
                             <div data-plugin="chart" data-options="{
                                  tooltip : {
                                  trigger: 'axis'
@@ -267,6 +265,7 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                  }
                                  ],
                                  series : [<?php
+                                 
                                  foreach ($statisticsHandler->login_activity as $key => $value) {
                                      ?>
                                      {
@@ -279,17 +278,15 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                      [
                                         <?php
                                             $iterations = 0;
-                                            $limit = ($activity_limit - 1);
+                                            $limit = ($activity_limit);
                                             $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
                                             $final = "";
                                             while ($iterations < 24 * $activity_limit) {
-                                                if ($iterations == 24 || $iterations == 48) {
+                                                if (($iterations + (date("H") + 1)) % 24 == 0) {
                                                     $limit -= 1;
                                                     $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
                                                 }
-
                                                 $hour = ($iterations + (date("H") + 1)) % 24;
-
                                                 if (array_key_exists($date, $value) && array_key_exists($hour, $value[$date])) {
                                                     $final .= $value[$date][$hour] . ", ";
                                                 } else {
@@ -606,29 +603,25 @@ $colors = ['rgb(103, 157, 198)', 'rgb(57, 128, 181)', '#ffa000', '#e64a19', '#4c
                                             data:
                                             [
                                                <?php
-                                                   $iterations = 0;
-                                                   $limit = ($activity_limit - 1);
-                                                   $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
-                                                   while ($iterations < 24 * $activity_limit) {
-                                                       if ($iterations == 24 || $iterations == 48) {
-                                                           $limit -= 1;
-                                                           $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
-                                                       }
+                                                    $iterations = 0;
+                                                    $limit = ($activity_limit);
+                                                    $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
+                                                    $final = "";
+                                                    while ($iterations < 24 * $activity_limit) {
+                                                        if (($iterations + (date("H") + 1)) % 24 == 0) {
+                                                            $limit -= 1;
+                                                            $date = date('Y-m-d', strtotime(date("Y-m-d") . "-" . $limit . " days"));
+                                                        }
+                                                        $hour = ($iterations + (date("H") + 1)) % 24;
+                                                        if (array_key_exists($date, $value) && array_key_exists($hour, $value[$date])) {
+                                                            $final .= $value[$date][$hour] . ", ";
+                                                        } else {
+                                                            $final .= 0 . ", ";
+                                                        }
 
-                                                       $hour = $iterations % 24;
-
-                                                       if (array_key_exists($date, $value) && array_key_exists($hour, $value[$date])) {
-                                                           echo $value[$date][$hour];
-                                                       } else {
-                                                           echo 0;
-                                                       }
-
-                                                       if ($iterations != 24 * $activity_limit-1) {
-                                                           echo ", ";
-                                                       }
-
-                                                       $iterations++;
-                                                   }
+                                                        $iterations++;
+                                                    }
+                                                    echo rtrim($final, ", ");
                                                ?>
                                             ],
                                         },

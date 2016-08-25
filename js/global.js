@@ -314,12 +314,20 @@ $(document).ready(function () {
             async: false,
             complete: function (data) {
                 ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
-                if (ajax_data.status_value === "true")
+                if (ajax_data.status_value)
                 {
                     show_status_bar("success", ajax_data.success);
-                } else
+                }
+                else
                 {
-                    show_status_bar("error", ajax_data.error);
+                    if(ajax_data.has_add_info)
+                    {
+                        show_status_bar("error", ajax_data.error + " " + ajax_data.add_info);
+                    }
+                    else
+                    {
+                        show_status_bar("error", ajax_data.error);
+                    }
                 }
             },
             cache: false,
@@ -328,7 +336,6 @@ $(document).ready(function () {
         });
 
         event.preventDefault();
-
     });
 
     $(document).on("click", ".reset_pass_submit_email2", function (event) {

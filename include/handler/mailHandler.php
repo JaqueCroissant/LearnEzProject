@@ -509,7 +509,11 @@ class MailHandler extends Handler
                 $receiver_rights_two .= !RightsHandler::has_user_right("MAIL_SEND_TO_LOCAL_ADMIN") ? " AND users.user_type_id != '2'" : "";
                 $receiver_rights_two .= !RightsHandler::has_user_right("MAIL_SEND_TO_TEACHERS") ? " AND users.user_type_id != '3'" : "";
 
-                $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND (school_id = :school_id ". $receiver_rights .") AND (school_id = :school_id " . $receiver_rights_two .")", $this->_user->id, $this->_user->school_id, $this->_user->school_id);
+                if(RightsHandler::has_user_right("MAIL_SEND_TO_ADMIN")) {
+                    $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND (school_id = :school_id ". $receiver_rights .")", $this->_user->id, $this->_user->school_id);
+                } else {
+                    $user_data = DbHandler::get_instance()->return_query("SELECT users.*, school.name as school_name FROM users LEFT JOIN school ON school.id = users.school_id WHERE users.id != :user_id AND (school_id = :school_id ". $receiver_rights .") AND (school_id = :school_id " . $receiver_rights_two .")", $this->_user->id, $this->_user->school_id, $this->_user->school_id);
+                }
             }
             
             $users = array();

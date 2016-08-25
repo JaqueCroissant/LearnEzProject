@@ -1,7 +1,7 @@
 
 <header class="aside-header">
     <div class="animated">
-        <a id="app-brand" class="app-brand change_page" page="front" href="javascript:void(0)">
+        <a id="app-brand" class="app-brand" href="javascript:void(0)" style="cursor:default;">
             <span id="brand-icon" class="brand-icon">
                 <img src="assets/images/LearnEZ-Maskot-sort-30-30.png" class="fa fa-gg">
             </span>
@@ -26,7 +26,7 @@
                 <div class="foldable">
                     <h5>
                         <a class="username" href="javascript:void(0)">
-                        <?php echo strlen($userHandler->_user->firstname . " " . $userHandler->_user->surname) > 30 ? substr($userHandler->_user->firstname . " " . $userHandler->_user->surname, 0, 30) : $userHandler->_user->firstname . " " . $userHandler->_user->surname; ?>
+                        <?php echo strlen($userHandler->_user->firstname) > 13 ? substr($userHandler->_user->firstname, 0, 13) . ".." : $userHandler->_user->firstname; ?>
                         </a>
                     </h5>
                     

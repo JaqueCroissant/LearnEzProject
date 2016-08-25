@@ -11,18 +11,6 @@
             $this->_notifications = array();
         }
         
-        //Til senere brug, cleaner op i arguments tabellen
-        private function clean_arguments(){
-            try {
-                DbHandler::get_instance()->query("DELETE FROM user_notifications_arguments "
-                        . "WHERE arg_id NOT IN ("
-                        . "SELECT arg_id FROM user_notifications)");
-                
-            } catch (Exception $ex) {
-
-            }
-        }
-        
         public function get_notification_categories(){
             try {
                 $this->check_login();
@@ -51,9 +39,6 @@
                         . "WHERE user_id=:userId "
                         . "AND is_read=:isRead", $this->_user->id, 0); 
                 
-                if ($newCounter == 0) {
-                    return false;
-                }
                 $this->_unseen_notifications = $newCounter;
                 
                 return true;      
@@ -430,10 +415,10 @@
             foreach ($array as $value) {
                 $sub = substr($string, $value[0] + 2, $value[1]);
                 if (isset($args[$sub])) {
-                    $final = substr_replace($final, "<b>" . (strlen($args[$sub]) < 50 ? $args[$sub] : (substr($args[$sub], 0, 50) . ".. ")) . "</b>", $value[0], $value[1] + 3);
+                    $final = substr_replace($final, "<b>" . format_name($args[$sub], 30) . "</b>", $value[0], $value[1] + 3);
                     continue;
                 }
-                $final = substr_replace($final, "<b>" . ucfirst(TranslationHandler::get_static_text("UNKNOWN")) . "</b>", $value[0], $value[1] + 3);
+                $final = substr_replace($final, "<b>" . ucfirst(TranslationHandler::get_static_text("UNKNOWN")) . " </b>", $value[0], $value[1] + 3);
             }
             return $final;
         }

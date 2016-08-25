@@ -159,10 +159,14 @@ class CertificatesHandler extends Handler {
             
             if($this->_user->user_type_id == 1) {
                 $query = "SELECT course.id AS course_id, course.color as course_color, course_image.filename as course_image, certificates.completion_date, certificates.validation_code, certificates.id, translation_course.title AS course_title, translation_course.description AS course_description FROM course LEFT JOIN certificates ON certificates.course_id = course.id AND certificates.user_id = :user INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN course_image ON course_image.id = course.image_id " . $order_by;
-                $temp = DbHandler::get_instance()->return_query($query, $this->_user->id,  $this->_user->settings->language_id);
+                $temp = DbHandler::get_instance()->return_query($query, $this->_user->id,  TranslationHandler::get_current_language());
             } else {
                 $query = "SELECT course.id AS course_id, course.color as course_color, course_image.filename as course_image, certificates.completion_date, certificates.validation_code, certificates.id, translation_course.title AS course_title, translation_course.description AS course_description FROM course LEFT JOIN certificates ON certificates.course_id = course.id AND certificates.user_id = :user INNER JOIN school_course ON school_course.school_id = :school AND school_course.course_id = course.id INNER JOIN translation_course ON translation_course.course_id = course.id AND translation_course.language_id = :language INNER JOIN course_image ON course_image.id = course.image_id " . $order_by;
-                $temp = DbHandler::get_instance()->return_query($query, $this->_user->id, $this->_user->school_id, $this->_user->settings->language_id);
+                $temp = DbHandler::get_instance()->return_query($query, $this->_user->id, $this->_user->school_id, TranslationHandler::get_current_language());
+            }
+            
+            if(empty($temp)) {
+                throw new Exception("NO_CERTIFICATES");
             }
             
             $array = array();
@@ -193,7 +197,6 @@ class CertificatesHandler extends Handler {
             
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
-            echo $this->error->title;
             return false;
         }
     }

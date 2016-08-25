@@ -400,7 +400,7 @@ class ClassHandler extends Handler {
     private function get_number_of_students_in_class($class_id) {
         $query = "SELECT user_class.id FROM user_class
                  INNER JOIN users ON user_class.users_id = users.id
-                    WHERE class_id = :id AND users.user_type_id = 4";
+                    WHERE class_id = :id AND users.user_type_id = 4 AND users.open = 1";
         $count = DbHandler::get_instance()->count_query($query, $class_id);
         return $count;
     }

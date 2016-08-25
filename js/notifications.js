@@ -15,13 +15,13 @@ jQuery(function ($) {
                 "<div class='pull-right' style='width:65px;margin-top:8px;'>" +
                 "<a href='javascript:void(0)' class='change_page notification_load_window' page='notifications' id='notifications' step='all'></a></div></div>" +
                 "<div id='notification_data' style='width:400px;'></div>" +    
-                "<div id='notification_loading' style='width:400px;height:25px;'>" +   
-                "<div id='notification_loading_image'></div></div></div>");
+                "<div id='notification_loading'>" +   
+                "<div id='notification_loading_image' class='center'></div></div></div>");
         
         //close on notification click
-//        $('#notification_data').on("click", ".notification_load_window", function(){
-//            $('#notification_window').hide("fast");
-//        });
+        $(document).on("click", "#notification_window", function(event){
+            event.stopPropagation();
+        });
           
         //window open
         $('#notifications').click(function (event) {       
@@ -29,30 +29,33 @@ jQuery(function ($) {
                 no_more_notifications = false;
                 currently_recieving_notifications = true;
                 setTimeout(function(){$('#notification_window').scrollTop(0);},1);
-                $('#notification_loading').show();
-                $("#notification_loading_image").show();
+                $('#notification_data').html("");
+                $(".notification_title").html("");
+                $(".notification_load_window").html("");
+                $('#notification_loading').fadeIn(0);
+                $('#notification_window').show("fast");
                 $.ajax({
                    type: "POST",
                    url: "include/ajax/notifications.php",
                    dataType: "json",
                    data: {action: 'get_notifications'},
                    success: function (result) {
+                        $('#notification_loading').fadeOut(0);
                         if (result.status_value) {
                             $('#notification_data').html(result.notifications);
                             if (result.status_text !== undefined) {
                                 no_more_notifications = true;
-                                $('#notification_loading').hide();
                                 $('#notification_data').append(result.status_text);
                             }
                             $(".notification_load_window").html(result.translations["SEE_ALL"]);
                             $(".notification_title").html(result.translations["NOTIFICATIONS"]);
                             currently_recieving_notifications = false;
-                            $("#notification_loading_image").hide();
-                            $('#notification_window').show("fast");
+
                             $('#notification_counter').addClass("hidden");
                         }
                         else {
                             show_status_bar("error", result.error, 5000);
+                            $('#notification_data').append(result.error);
                         }
                    }
                 });
@@ -62,6 +65,7 @@ jQuery(function ($) {
         //read on click
         $(document).on("click", ".read_notif", function(event){
            if (!currently_clicked_button) {
+               $('#notification_window').hide();
                 currently_clicked_button = true;
                 $.ajax({
                    type: "POST",
@@ -76,10 +80,6 @@ jQuery(function ($) {
                             show_status_bar("error", result.error, 7000);
                         }
                         currently_clicked_button = false;
-                   },
-                   error: function(result){
-                       show_status_bar("error", result.error);
-                       currently_clicked_button = false;
                    }
                 });
             }
@@ -103,10 +103,6 @@ jQuery(function ($) {
                             show_status_bar("error", result.error, 7000);
                         }
                         currently_clicked_button = false;
-                   },
-                   error: function(result){
-                       show_status_bar("error", result.error);
-                       currently_clicked_button = false;
                    }
                 });
             }
@@ -117,26 +113,25 @@ jQuery(function ($) {
             var notif = $("#notification_window");
             if (!no_more_notifications && !currently_recieving_notifications && (notif.scrollTop() + notif.innerHeight() >= notif[0].scrollHeight - 10)) {
                 currently_recieving_notifications = true;
-                $("#notification_loading_image").show();
+                $("#notification_loading_image").fadeIn(0);
                 $.ajax({
                    type: "POST",
                    url: "include/ajax/notifications.php",
                    dataType: "json",
                    data: {action: 'get_more_notifications', offset: $('.notification').length},
                    success: function (result) {
-                        
-                        $('#notification_data').append(result.notifications);
-                        if (result.status_text !== undefined) {
-                            no_more_notifications = true;
-                            $('#notification_loading').hide();
-                            $('#notification_data').append(result.status_text);
+                        $('#notification_loading').fadeOut(0);
+                        if (result.status_value) {
+                            $('#notification_data').append(result.notifications);
+                            if (result.status_text !== undefined) {
+                                no_more_notifications = true;
+                                $('#notification_data').append(result.status_text);
+                            }
+                        }
+                        else {
+                            show_status_bar("error", result.error);
                         }
                         currently_recieving_notifications = false;
-                        $("#notification_loading_image").hide();
-                   },
-                   error: function(result){
-                       currently_recieving_notifications = false;
-                       $("#notification_loading_image").hide();
                    }
                 });
             }

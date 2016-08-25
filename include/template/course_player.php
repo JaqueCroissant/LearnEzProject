@@ -38,7 +38,7 @@
             <div class="course_slide_counter pull-right"></div>
         </div>
         <iframe scrolling="no" id="scaled-frame" class="course_iframe course_window_test" src="" style="display:none;"></iframe>
-        <video class="course_video" src="" style="display:none;"></video>
+        <video class="course_video" controls src="" style="display:none;"></video>
     </div>
     <div id="hidden_element" style="display:none"></div>
     <script>

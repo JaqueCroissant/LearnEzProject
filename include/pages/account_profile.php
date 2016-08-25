@@ -72,7 +72,7 @@ if (!empty($current_user->school_id)) {
             </div>
         </div>
         <div class="text-center">
-            <h4 class="profile-info-name m-b-lg"><span class="title-color"><?= ucwords($current_user->firstname . " " . $current_user->surname); ?></span></h4>
+            <h4 class="profile-info-name m-b-lg"><span class="title-color"><?= ucwords(strlen(htmlspecialchars($current_user->firstname . " " . $current_user->surname)) > 30 ? substr(htmlspecialchars($current_user->firstname . " " . $current_user->surname), 0, 30) . ".." : htmlspecialchars($current_user->firstname . " " . $current_user->surname)); ?></span></h4>
             <div class="text-primary">
                 <span style="padding-right:10px;"><i class="zmdi-hc-fw zmdi p-r-lg zmdi-device-hub zmdi-hc-lg" style="line-height: 0.4em !important;"></i> <?= htmlentities($current_user->user_type_title); ?></span>
                 <span data-toggle="tooltip" title="<?= !empty($current_user->school_id) ? htmlspecialchars($current_school->name) : "LearnEZ"; ?>" class="<?= !empty($current_user->school_id) ? "change_page a " : "" ?>" page='school_profile' step='' args='&school_id=<?= !empty($current_user->school_id) ? $current_user->school_id : "" ?>'><i class="zmdi-hc-fw zmdi p-r-lg zmdi-city zmdi-hc-lg" style="line-height: 0.4em !important;"></i><?= !empty($current_user->school_id) ? (strlen(htmlspecialchars($current_school->name)) > 40 ? substr(htmlspecialchars($current_school->name), 0, 40) : htmlspecialchars($current_school->name)) : "LearnEZ"; ?></span>
@@ -129,7 +129,7 @@ if (!empty($current_user->school_id)) {
                 <table class="profile_information_table">
                     <tr>
                         <td><?= TranslationHandler::get_static_text("NAME") ?>:</td>
-                        <td style="text-align:right;"><?= ucwords(htmlspecialchars($current_user->firstname) . " " . htmlspecialchars($current_user->surname)); ?></td>
+                        <td style="text-align:right;"><?= ucwords(strlen(htmlspecialchars($current_user->firstname . " " . $current_user->surname)) > 30 ? substr(htmlspecialchars($current_user->firstname . " " . $current_user->surname), 0, 30) . ".." : htmlspecialchars($current_user->firstname . " " . $current_user->surname)); ?></td>
                     </tr>
                     <tr>
                         <td><?= TranslationHandler::get_static_text("USERNAME") ?>:</td>

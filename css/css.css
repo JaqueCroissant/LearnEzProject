@@ -418,6 +418,10 @@ a .menu_header {
 
 #notification_loading_image{
     background-image: url('../assets/images/loading_page.GIF');
+    width:128px;
+    height:128px;
+    margin-bottom:50px;
+    background-repeat: no-repeat;
 }
 
 #notification_counter {
@@ -586,6 +590,10 @@ a .menu_header {
 
 .course_video {
     width:100%;
+}
+
+video::-webkit-media-controls-fullscreen-button {
+    display: none;
 }
 
 .course_player{

@@ -307,13 +307,26 @@ $i_rand = rand(100, 1000);
             </div>
             <hr class="widget-separator m-0">
             <div class="panel-body">
-                <div class="streamline m-l-lg">
+                
                     <?php
                     if (isset($_GET['class_id'])) {
                         $statisticsHandler->get_top_students($i_max, null, $_GET['class_id']);
                     }
-                    foreach ($statisticsHandler->top_students as $value) {
+                    
+                    if(count($statisticsHandler->top_students)<1)
+                    {
                         ?>
+                            <div class="streamline">
+                                <div style="width:100%; text-align:center; margin:20px 0px;"><?= TranslationHandler::get_static_text("CLASS_NO_ACTIVE")?></div>
+                        <?php
+                    }
+                    else
+                    {?>
+                            <div class="streamline m-l-lg">
+                    <?php
+                        foreach ($statisticsHandler->top_students as $value) {
+                        ?>
+                            
                         <div class="sl-item p-b-md sl-primary">
                             <div class="sl-avatar avatar avatar-sm avatar-circle">
                                 <img class="img-responsive a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>" src="assets/images/profile_images/<?php echo profile_image_exists($value['profile_image']); ?>">
@@ -326,7 +339,9 @@ $i_rand = rand(100, 1000);
                                 <p><span data-plugin="counterUp"><?php echo $value['points']; ?></span> points</p>
                             </div>
                         </div>
-                    <?php } ?>
+                    <?php }
+                    }
+                     ?>
                 </div>
             </div>
         </div>

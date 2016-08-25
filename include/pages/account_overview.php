@@ -86,10 +86,19 @@ $courses_completed = 0;
                                 </div>
                                 <hr class="widget-separator m-0">
                                 <div class="widget-body">
-                                    <div class="streamline m-l-lg">
+                                    
                                         <?php
-                                        if(count($statisticsHandler->top_students) > 0)
+                                        if(count($statisticsHandler->top_students) < 1)
                                         {
+                                            ?>
+                                            <div class="streamline">
+                                                <div style="width:100%; text-align:center; margin:20px 0px;"><?= TranslationHandler::get_static_text("NO_STUDENTS_FOUND")?></div>
+                                            <?php
+                                        }
+                                        else
+                                        {?>
+                                                <div class="streamline m-l-lg">
+                                                <?php
                                             foreach($statisticsHandler->top_students as $value)
                                             { ?>
                                                 <div class="sl-item p-b-md">
@@ -106,7 +115,9 @@ $courses_completed = 0;
                                                 </div>
                                         <?php
                                             }
-                                        } ?>
+                                        }
+                                        
+                                        ?>
                                     </div>
                                 </div>
                             </div>
@@ -726,7 +737,7 @@ $courses_completed = 0;
                 </div>
                 </div>
                 <div class="center">
-                    <b><?php echo htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname); ?></b>
+                    <b><?php echo strlen(htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname)) > 30 ? substr(htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname), 0, 30) . ".." : htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname); ?></b>
                 </div>
                 <br/>
                 <div>

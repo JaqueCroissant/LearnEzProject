@@ -11,18 +11,6 @@
             $this->_notifications = array();
         }
         
-        //Til senere brug, cleaner op i arguments tabellen
-        private function clean_arguments(){
-            try {
-                DbHandler::get_instance()->query("DELETE FROM user_notifications_arguments "
-                        . "WHERE arg_id NOT IN ("
-                        . "SELECT arg_id FROM user_notifications)");
-                
-            } catch (Exception $ex) {
-
-            }
-        }
-        
         public function get_notification_categories(){
             try {
                 $this->check_login();

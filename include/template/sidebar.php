@@ -1,7 +1,7 @@
 
 <header class="aside-header">
     <div class="animated">
-        <a id="app-brand" class="app-brand change_page" page="front" href="javascript:void(0)">
+        <a id="app-brand" class="app-brand" href="javascript:void(0)" style="cursor:default;">
             <span id="brand-icon" class="brand-icon">
                 <img src="assets/images/LearnEZ-Maskot-sort-30-30.png" class="fa fa-gg">
             </span>

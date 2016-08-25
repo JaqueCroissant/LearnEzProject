@@ -164,8 +164,8 @@ class UserHandler extends Handler
             throw new Exception("USER_EMPTY_USERNAME_INPUT");
         }
 
-        $this->check_if_valid_string($firstname);
-        $this->check_if_valid_string($surname);
+        $this->check_if_valid_string($firstname, false);
+        $this->check_if_valid_string($surname, false);
 
         if(!empty($email))
         {
@@ -641,7 +641,7 @@ class UserHandler extends Handler
                     throw new Exception("INSUFFICIENT_RIGHTS");
                 }
 
-                $this->check_if_valid_string($firstname);
+                $this->check_if_valid_string($firstname, false);
                 $this->_user->firstname = $firstname;
             }
 
@@ -652,7 +652,7 @@ class UserHandler extends Handler
                     throw new Exception("INSUFFICIENT_RIGHTS");
                 }
 
-                $this->check_if_valid_string($surname);
+                $this->check_if_valid_string($surname, false);
                 $this->_user->surname = $surname;
             }
 
@@ -743,13 +743,13 @@ class UserHandler extends Handler
 
             if(!empty($firstname) && $firstname != $user->firstname)
             {
-                $this->check_if_valid_string($firstname);
+                $this->check_if_valid_string($firstname, false);
                 $user->firstname = $firstname;
             }
 
             if(!empty($surname) && $surname != $user->surname)
             {
-                $this->check_if_valid_string($surname);
+                $this->check_if_valid_string($surname, false);
                 $user->surname = $surname;
             }
 

@@ -64,7 +64,7 @@ $userHandler = new UserHandler();
                                             ?>
                                             <tr class="clickable_row account_tr_id_<?php echo $value->id; ?>">
 
-                                                <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? substr($value->firstname . " " . $value->surname, 0, 20) : $value->firstname . " " . $value->surname); ?></td>
+                                                <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo format_first_last_name($value->firstname, $value->surname, 35) ?></td>
                                                 <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>"><?php echo $value->username; ?></td>
                                                 <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>"><?php echo $value->user_type_title; ?></td>
                                                 <td class="change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>" data-search="<?php echo $value->email ?>"><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>
@@ -195,7 +195,7 @@ $userHandler = new UserHandler();
                                                         </td>
                                                     <?php } ?>
 
-                                                    <td class="click_select_me" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? substr($value->firstname . " " . $value->surname, 0, 20) : $value->firstname . " " . $value->surname); ?></td>
+                                                        <td class="click_select_me" data-search="<?php echo $value->firstname . " " . $value->surname; ?>"><?php echo format_first_last_name($value->firstname, $value->surname, 25) ?></td>
                                                     <td class="click_select_me"><?php echo $value->username; ?></td>
                                                     <td class="click_select_me"><?php echo $value->user_type_title; ?></td>
                                                     <td class="click_select_me" data-search="<?php echo $value->email ?>"><?php echo (strlen($value->email) > 20 ? substr($value->email, 0, 20) : $value->email); ?></td>

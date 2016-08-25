@@ -107,7 +107,7 @@ $courses_completed = 0;
                                                     </div>
                                                     <div class="sl-content">
                                                         <h5 class="m-t-0">
-                                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo htmlspecialchars($value['firstname']) . " " . htmlspecialchars($value['surname'])?></a>
+                                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?php echo format_first_last_name($value["firstname"], $value["surname"], 30) ?></a>
                                                             <small class="text-muted fz-sm"><?php echo htmlspecialchars($value['name']) ?></small>
                                                         </h5>
                                                         <p><?php echo $value['points'] . " " . strtolower(TranslationHandler::get_static_text("POINTS")); ?></p>
@@ -294,7 +294,7 @@ $courses_completed = 0;
                                             ?>
                                             <tr class = "a change_page" page="account_profile" step = "" args = "&user_id=<?php echo $value->id; ?>">
                                                 <td><?php echo htmlspecialchars($value->username); ?></td>
-                                                <td><?php echo (strlen($value->firstname . " " . $value->surname) > 20 ? htmlspecialchars(substr($value->firstname . " " . $value->surname, 0, 20)) : htmlspecialchars($value->firstname . " " . $value->surname)); ?></td>
+                                                <td><?php echo format_first_last_name($value->firstname, $value->surname, 20); ?></td>
                                                 <td><?php echo $value->user_type_title; ?></td>
                                                 <td><?php echo strlen($value->email) > 20 ? htmlspecialchars(substr($value->email, 0, 20)) : htmlspecialchars($value->email); ?></td>
                                             </tr>
@@ -737,7 +737,7 @@ $courses_completed = 0;
                 </div>
                 </div>
                 <div class="center">
-                    <b><?php echo strlen(htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname)) > 30 ? substr(htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname), 0, 30) . ".." : htmlspecialchars($userHandler->_user->firstname . " " . $userHandler->_user->surname); ?></b>
+                    <b><?php echo format_first_last_name($userHandler->_user->firstname, $userHandler->_user->surname, 30) ?></b>
                 </div>
                 <br/>
                 <div>

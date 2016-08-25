@@ -6,12 +6,14 @@ class UserHandler extends Handler
     public $temp_user;
     public $new_username;
     public $profile_images;
-
+    public $import_add_info;
+    public $import_has_add_info;
 
     public function __construct() {
         parent::__construct();
         $this->get_user_object();
         $this->current_user = $this->_user;
+        
     }
     
     // old password, new password, new password copy
@@ -162,8 +164,8 @@ class UserHandler extends Handler
             throw new Exception("USER_EMPTY_USERNAME_INPUT");
         }
 
-        $this->check_if_valid_string($firstname, false);
-        $this->check_if_valid_string($surname, false);
+        $this->check_if_valid_string($firstname);
+        $this->check_if_valid_string($surname);
 
         if(!empty($email))
         {
@@ -639,7 +641,7 @@ class UserHandler extends Handler
                     throw new Exception("INSUFFICIENT_RIGHTS");
                 }
 
-                $this->check_if_valid_string($firstname, false);
+                $this->check_if_valid_string($firstname);
                 $this->_user->firstname = $firstname;
             }
 
@@ -650,7 +652,7 @@ class UserHandler extends Handler
                     throw new Exception("INSUFFICIENT_RIGHTS");
                 }
 
-                $this->check_if_valid_string($surname, false);
+                $this->check_if_valid_string($surname);
                 $this->_user->surname = $surname;
             }
 
@@ -741,13 +743,13 @@ class UserHandler extends Handler
 
             if(!empty($firstname) && $firstname != $user->firstname)
             {
-                $this->check_if_valid_string($firstname, false);
+                $this->check_if_valid_string($firstname);
                 $user->firstname = $firstname;
             }
 
             if(!empty($surname) && $surname != $user->surname)
             {
-                $this->check_if_valid_string($surname, false);
+                $this->check_if_valid_string($surname);
                 $user->surname = $surname;
             }
 
@@ -830,19 +832,37 @@ class UserHandler extends Handler
         }
     }
 
-    private function check_if_email($email)
+    private function check_if_email($email, $is_import=false)
     {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL))
         {
-            throw new Exception("EMAIL_HAS_WRONG_FORMAT");
+            if($is_import)
+            {
+                $this->import_has_add_info = true;
+                throw new Exception("IMPORT_EMAIL_HAS_WRONG_FORMAT");
+            }
+            else
+            {
+                throw new Exception("EMAIL_HAS_WRONG_FORMAT");
+            }
+            
         }
     }
 
-    private function check_if_valid_string($string, $allow_special_characters)
+    private function check_if_valid_string($string, $is_import)
     {
         if(!$this->is_valid_input($string))
         {
-            throw new Exception("USER_INVALID_NAME_INPUT");
+            if($is_import)
+            {
+                $this->import_has_add_info = true;
+                throw new Exception("IMPORT_INVALID_NAME_INPUT");
+            }
+            else
+            {
+                throw new Exception("USER_INVALID_NAME_INPUT");
+            }
+            
         }
     }
     
@@ -1077,6 +1097,7 @@ class UserHandler extends Handler
 
     public function import_users($csv_file, $school_id, $class_ids)
     {
+        $this->import_has_add_info = false;
         $uploaded_file = "";
         $dir = '../../temp_files/';
         $file_opened = false;
@@ -1117,12 +1138,11 @@ class UserHandler extends Handler
             {
                 //$row = fgetcsv($file, 0, ";",",");
                 $row = utf8_encode(fgets($file));
-
+                $this->import_add_info = $index+1;
                 if($index<$count)
                 {
                     if($index > 0)
                     {
-
                         $users[] = $this->validate_csv_content($this->row_to_array($row), $offset, $school_id, $class_ids);
                     }
                     else
@@ -1190,6 +1210,7 @@ class UserHandler extends Handler
         
         if(empty($row[0+$offset]) || empty($row[1+$offset]) || empty($row[2+$offset]))
         {
+            $this->import_has_add_info = true;
             throw new Exception("IMPORT_MISSING_VALUE");
         }
 
@@ -1200,11 +1221,9 @@ class UserHandler extends Handler
         $type = $row[2+$offset];
         $email = $row[3+$offset];
         $password = trim($row[4+$offset]);
-
-        var_dump($password);
         
-        $this->check_if_valid_string($firstname, false);
-        $this->check_if_valid_string($surname, false);
+        $this->check_if_valid_string($firstname, true);
+        $this->check_if_valid_string($surname, true);
         $this->verify_class_ids($class_ids);
         
         $user->user_type_id = $this->check_if_valid_type($type);
@@ -1214,17 +1233,16 @@ class UserHandler extends Handler
 
         if(!empty($email))
         {
-            $this->check_if_email($email);
-            $this->mail_exists($email);
+            $this->check_if_email($email, true);
+            $this->mail_exists($email, true);
             $user->email = $email;
         }
 
-        
-        
         if(!empty($password))
         {
             if(strlen($password) < 6)
             {
+                $this->import_has_add_info = true;
                 throw new Exception("IMPORT_INVALID_PASSWORD");
             }
             $user->unhashed_password = $password;
@@ -1238,7 +1256,6 @@ class UserHandler extends Handler
     private function validate_csv_columns($row)
     {
         $count = count($row);
-        var_dump($row);
         $offset = 0;
 
         if($count != 5)
@@ -1249,7 +1266,6 @@ class UserHandler extends Handler
             }
             else
             {
-                
                 throw new Exception("IMPORT_INVALID_FORMATTING");
             }
         }
@@ -1284,7 +1300,8 @@ class UserHandler extends Handler
         if(($type == "SA" && !RightsHandler::has_user_right("ACCOUNT_CREATE_SYSADMIN"))
             || ($type == "A" && !RightsHandler::has_user_right("ACCOUNT_CREATE_LOCADMIN")))
         {
-            throw new Exception("INSUFFICIENT_RIGHTS");
+            $this->import_has_add_info = true;
+            throw new Exception("INSUFFICIENT_IMPORT_RIGHTS");
         }
 
         switch($type)
@@ -1298,6 +1315,7 @@ class UserHandler extends Handler
             case "S":
                 return 4;
             default:
+                $this->import_has_add_info = true;
                 throw new Exception("IMPORT_INVALID_TYPE");
         }
     }
@@ -1317,13 +1335,21 @@ class UserHandler extends Handler
         }
     }
 
-    private function mail_exists($email)
+    private function mail_exists($email, $is_import = false)
     {
         $count = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE email = :email", $email);
 
         if($count > 0)
         {
-            throw new Exception("CREATE_EMAIL_USED");
+            if($is_import)
+            {
+                $this->import_has_add_info = true;
+                throw new Exception("IMPORT_EMAIL_USED");
+            }
+            else
+            {
+                throw new Exception("CREATE_EMAIL_USED");
+            }
         }
     }
 

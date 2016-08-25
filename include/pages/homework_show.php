@@ -21,7 +21,7 @@ $incomplete_tests = 0;
 
 ?>
 
-<div class="profile-header" style="margin: -1.5rem -1.5rem 1.5rem -1.5rem !important;background: #fff;padding: 64px 0px 0px 64px;">
+<div class="profile-header" style="margin: -1.5rem -1.5rem 1.5rem -1.5rem !important;background: #fff;padding: 64px 0px 0px 0px;">
     <div class="center">
         <div class="calendar-homework-big animated shake" style="margin:0px auto 0px auto;background: <?= $current_homework->color; ?>;">!</div>
         <h4 class="profile-info-name m-b-xl m-t-lg"><span class="title-color"><?= $current_homework->title; ?></span></h4>
@@ -58,7 +58,7 @@ $incomplete_tests = 0;
             </div>
         </div>
     </div>
-    <div class="promo-footer">
+    <div class="promo-footer" >
         <div class="row no-gutter">
             <div class="col-sm-2 col-sm-offset-3 col-xs-6 promo-tab">
                 <div class="text-center">

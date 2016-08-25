@@ -95,12 +95,12 @@ class UserHandler extends Handler
 
     private function is_valid_input($string)
     {
-        return preg_match("/^[a-zA-ZÆØÅæøå '-]+$/i", $string);
+        return preg_match("/^[a-zA-ZÆØÅæøåÄËÏÖÜäëïöüï '-]+$/i", $string);
     }
 
     private function is_valid_input_with_num($string)
     {
-        return preg_match("/^[a-zA-Z0-9ÆØÅæøå '-]+$/i", $string);
+        return preg_match("/^[a-zA-Z0-9ÆØÅæøåÄËÏÖÜäëïöüï '-]+$/i", $string);
     }
 
     private function clean($string)

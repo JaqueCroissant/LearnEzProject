@@ -314,7 +314,7 @@ $(document).ready(function () {
             async: false,
             complete: function (data) {
                 ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
-                if (ajax_data.status_value === "true")
+                if (ajax_data.status_value)
                 {
                     show_status_bar("success", ajax_data.success);
                 }
@@ -328,7 +328,6 @@ $(document).ready(function () {
                     {
                         show_status_bar("error", ajax_data.error);
                     }
-
                 }
             },
             cache: false,

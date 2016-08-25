@@ -4,7 +4,6 @@ require_once 'include/extra/require.php';
 
 TranslationHandler::reset();
 RightsHandler::reset();
-
 ?>
 <!DOCTYPE html>
 <html style="overflow-y: scroll !important">
@@ -49,10 +48,19 @@ RightsHandler::reset();
             include 'include/template/statusbar.php';
             ?>
         </div>
-        
+
+        <div id="achievement_container" class="hidden achievement_container m-b-lg" style="display: none; -webkit-box-shadow: 0 0 20px #ccc !important; -moz-box-shadow: 0 0 20px #ccc !important; box-shadow: 0 0 20px #ccc !important;">
+            <div class="user-card m-b-0">
+                <div id="achievement_title" class="achievement_title fz-lg text-center m-b-xl"></div>
+                <img id="achievement_img" src="" style="display: block; margin: auto;">
+                <div id="achievement_txt" class="achievement_text fz-lg text-center text-lowercase"></div>
+            </div>
+        </div>
+
+
         <?php require_once 'include/template/login_overlay.php'; ?>
         <?php require_once 'include/template/cookies.php'; ?>
-        
+
         <?php include 'include/template/course_player.php'; ?>
 
         <script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>

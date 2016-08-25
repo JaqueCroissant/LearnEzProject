@@ -93,8 +93,8 @@ if (isset($_GET['school_id'])) {
     <div class="col-sm-12">
         <div class="row">
             <?php if (RightsHandler::has_user_right("SCHOOL_FIND")) { ?>
-                <div class="col-md-6 col-sm-12">
-                    <div class="panel panel-default">
+                <div class="col-md-6">
+                    <div class="panel panel-default" style="margin-left: -12px; margin-right: -6px;">
                         <div class="panel-heading">
 
                             <h4 class="panel-title no-transform">
@@ -126,8 +126,13 @@ if (isset($_GET['school_id'])) {
                                 </table>
                             <?php } else {
                                 ?>
+                                
                                 <div class="center description" onload="resize()">
-                                    <?php echo TranslationHandler::get_static_text("NO_STUDENTS_FOUND"); ?>
+                                    
+                                    <div style="width:100%; text-align:center; margin:20px 0px;">
+                                        <?php echo TranslationHandler::get_static_text("NO_STUDENTS_FOUND"); ?>
+                                    </div>
+
                                 </div>
                                 <?php
                             }
@@ -140,7 +145,7 @@ if (isset($_GET['school_id'])) {
             $i_max = 5;
             ?>
             <div class="col-md-6 col-sm-12">
-                <div class="panel panel-default">
+                <div class="panel panel-default" style="margin-left: -6px; margin-right: -12px;">
                     <div class="panel-heading">
                         <h4 class="panel-title no-transform">
                             <i class="zmdi-hc-fw zmdi zmdi-accounts zmdi-hc-lg m-r-md"></i>
@@ -154,6 +159,21 @@ if (isset($_GET['school_id'])) {
                             if (isset($_GET['school_id'])) {
                                 $statisticsHandler->get_top_students($i_max, $schoolHandler->school->id);
                             }
+                            
+                            if(count($statisticsHandler->top_students)<1)
+                            {
+                                ?>
+                                    <div class="streamline">
+                                        <div style="width:100%; text-align:center; margin:20px 0px;"><?= TranslationHandler::get_static_text("SCHOOL_NO_ACTIVE")?></div>
+                                <?php
+                            }
+                            else
+                            {
+                                ?>
+                                    <div class="streamline m-l-lg">
+                                <?php
+                            }
+                            
                             foreach ($statisticsHandler->top_students as $value) {
                                 ?>
                                 <div class="sl-item p-b-md sl-primary">

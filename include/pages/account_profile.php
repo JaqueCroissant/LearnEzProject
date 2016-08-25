@@ -6,16 +6,18 @@ require_once '../../include/handler/mailHandler.php';
 require_once '../../include/handler/statisticsHandler.php';
 require_once '../../include/handler/courseHandler.php';
 require_once '../../include/handler/homeworkHandler.php';
+require_once '../../include/handler/achievementHandler.php';
 
 $userHandler = new UserHandler();
 $schoolHandler = new SchoolHandler();
 $statisticsHandler = new StatisticsHandler();
 $courseHandler = new CourseHandler();
 $homeworkHandler = new HomeworkHandler();
+$achievementHandler = new AchievementHandler();
 
 $user_id = isset($_GET["user_id"]) ? $_GET["user_id"] : null;
 
-if(!RightsHandler::has_user_right("ACCOUNT_SHOW_PROFILE") && $user_id != $userHandler->_user->id) {
+if (!RightsHandler::has_user_right("ACCOUNT_SHOW_PROFILE") && $user_id != $userHandler->_user->id) {
     ErrorHandler::show_error_page();
     die();
 }
@@ -374,20 +376,54 @@ if (!empty($current_user->school_id)) {
                                 </div>
                             </div>
 
-                            
+
                         </div>
                     </div>
                 </div>
             </div>
         <?php } ?>
+        <?php
+        $achievementHandler->get($current_user->id);
+        ?>
         <div id="achievements" class="col-sm-12 col-md-6">
             <div class="panel panel-default">
-                <div class="panel-heading p-h-lg p-v-md" >
-                    <h4 class="panel-title" style="text-transform: none !important;"><i class="zmdi-hc-fw zmdi zmdi-star zmdi-hc-lg" style="padding-right:30px;"></i><?= TranslationHandler::get_static_text("ACHIEVEMENTS") ?></h4>
-                </div>
-                <hr class="widget-separator m-0">
+                <div class="m-b-lg nav-tabs-horizontal">
+                <!-- tabs list -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" id="edit_info_header"><a href="#type_1_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
+                    <li role="presentation" id="edit_info_header"><a href="#type_2_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
+                    <li role="presentation" id="edit_info_header"><a href="#type_3_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
+                    <li role="presentation" id="edit_info_header"><a href="#edit_user_info_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("COURSES"); ?></a></li>
+                </ul>
                 <div class="panel-body user-achievements">
-                    <div class="center achievements-text" style="margin-top: 20px; margin-bottom: 20px;"><?= TranslationHandler::get_static_text("NO_ACHIEVEMENTS") ?></div>
+                    <?php if (count($achievementHandler->user_achievements) == 0) { ?>
+                        <div class="center achievements-text" style="margin-top: 20px; margin-bottom: 20px;"><?= TranslationHandler::get_static_text("NO_ACHIEVEMENTS") ?></div>
+                        <?php
+                    } else {
+                        for ($i = 1; $i < 6; $i++) {
+                            if (array_key_exists($i, $achievementHandler->user_achievements)) {
+                                foreach ($achievementHandler->user_achievements[$i] as $value) {
+                                    ?>
+                                    <div class="col-md-4 col-sm-6 p-b-md">
+                                        <h4 class="text-center" style="height: 50px;"><?= $value->text; ?></h4>
+                                        <img class="center" style="display:block; margin: auto; height: 75px;" src="assets/images/achievement/<?= $value->img_path; ?>-100.png">
+                                    </div>
+                                    <?php
+                                }
+                            }
+                            if (array_key_exists($i, $achievementHandler->not_achieved)) {
+                                foreach ($achievementHandler->not_achieved[$i] as $val) {
+                                    ?>
+                                    <div class="col-md-4 col-sm-6 p-b-md" style="opacity: 0.4;">
+                                        <h4 class="text-center" style="height: 50px;"><?= $val->text; ?></h4>
+                                        <img class="center" style="display:block; margin: auto; height: 75px;" src="assets/images/achievement/<?= $val->img_path; ?>-100.png">
+                                    </div>
+                                    <?php
+                                }
+                            }
+                        }
+                        ?>
+                    <?php } ?>
                 </div>
             </div>
         </div>

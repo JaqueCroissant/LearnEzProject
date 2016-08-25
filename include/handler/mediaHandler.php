@@ -57,7 +57,7 @@ class MediaHandler extends Handler {
                 throw new exception("INVALID_INPUT");
             }
 
-            if ($file["size"] > 500000000) {
+            if ($file["size"] > 256000000) {
                 throw new exception("FILE_TOO_LARGE_500");
             }
 

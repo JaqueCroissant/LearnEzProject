@@ -12,26 +12,23 @@ $courseHandler->get_courses();
             <?php
             foreach($courseHandler->courses as $value) {
             ?>
-            <div class="col-md-3 col-sm-6 change_page" style="cursor:pointer;" id="course_show" page="course_show" args="&course_id=<?php echo $value->id; ?>">
+            <div class="col-md-4 col-sm-6 change_page" style="cursor:pointer;" id="course_show" page="course_show" args="&course_id=<?php echo $value->id; ?>">
                 <div class="widget stats-widget" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars($value->description); ?>">
                     <div class="widget-body clearfix">
-                        <div class="pull-left" style="margin-left:-10px;">
-                            <img style="width:70px;height:70px;" src="assets/images/thumbnails/<?php echo htmlspecialchars($value->image_filename); ?>" alt="">
-                        </div>
-                        <div class="pull-right" style="text-align:right !important;">
-                            <h3 class="widget-title text-primary" style="color: <?php echo $value->color; ?> !important;font-size:18px !important;"><?php echo htmlspecialchars($value->title); ?></h3>
-                            <table style="width: auto; float:right;">
-                                <tr>
-                                    <td><small class="text-color"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_LECTURES"); ?>:</small></td>
-                                    <td style="padding-left:10px;"><small class="text-color"><?php echo $value->amount_of_lectures; ?></small></td>
-                                </tr>
-                                <tr>
-                                    <td><small class="text-color"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_TESTS"); ?>:</small></td>
-                                    <td style="padding-left:10px;"><small class="text-color"><?php echo $value->amount_of_tests; ?></small></td>
-                                </tr>
-                            </table>
-                            
-                        </div>
+                                <div style="display: table-cell;width: 100%;"><img style="width:70px;height:70px;" src="assets/images/thumbnails/<?php echo htmlspecialchars($value->image_filename); ?>" alt=""></div>
+                                <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">
+                                    <h3 class="widget-title text-primary" style="color: <?php echo $value->color; ?> !important;font-size:18px !important;"><?php echo htmlspecialchars($value->title); ?></h3>
+                                    <table style="width: auto; float:right;">
+                                        <tr>
+                                            <td><small class="text-color"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_LECTURES"); ?>:</small></td>
+                                            <td style="padding-left:10px;"><small class="text-color"><?php echo $value->amount_of_lectures; ?></small></td>
+                                        </tr>
+                                        <tr>
+                                            <td><small class="text-color"><?php echo TranslationHandler::get_static_text("AMOUNT_OF_TESTS"); ?>:</small></td>
+                                            <td style="padding-left:10px;"><small class="text-color"><?php echo $value->amount_of_tests; ?></small></td>
+                                        </tr>
+                                    </table>
+                                </div>
                     </div>
                     <footer class="widget-footer bg-primary" style="background: <?php echo $value->color; ?> !important;">
                         <span class="pull-left" style="margin-top:4px;font-weight:bold;"><?php echo $value->overall_progress; ?>%</span>

@@ -388,48 +388,57 @@ if (!empty($current_user->school_id)) {
         <div id="achievements" class="col-sm-12 col-md-6">
             <div class="panel panel-default">
                 <div class="m-b-lg nav-tabs-horizontal">
-                <!-- tabs list -->
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" id="edit_info_header"><a href="#type_1_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
-                    <li role="presentation" id="edit_info_header"><a href="#type_2_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
-                    <li role="presentation" id="edit_info_header"><a href="#type_3_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("INFO_EDIT_PROFILE"); ?></a></li>
-                    <li role="presentation" id="edit_info_header"><a href="#edit_user_info_tab" class="my_tab_header" id="edit_user_info_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("COURSES"); ?></a></li>
-                </ul>
-                <div class="panel-body user-achievements">
-                    <?php if (count($achievementHandler->user_achievements) == 0) { ?>
-                        <div class="center achievements-text" style="margin-top: 20px; margin-bottom: 20px;"><?= TranslationHandler::get_static_text("NO_ACHIEVEMENTS") ?></div>
+                    <!-- tabs list -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" id="edit_info_header"><a href="#type_1_tab" class="my_tab_header" id="type_1_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("LECTURE"); ?></a></li>
+                        <li role="presentation" id="edit_info_header"><a href="#type_2_tab" class="my_tab_header" id="type_2_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("TEST"); ?></a></li>
+                        <li role="presentation" id="edit_info_header"><a href="#type_3_tab" class="my_tab_header" id="type_3_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("LOGIN"); ?></a></li>
+                        <li role="presentation" id="edit_info_header"><a href="#type_4_tab" class="my_tab_header" id="type_4_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("COURSES"); ?></a></li>
+                        <li role="presentation" id="edit_info_header"><a href="#type_5_tab" class="my_tab_header" id="type_5_a" data-toggle="tab"><?php echo TranslationHandler::get_static_text("POINTS"); ?></a></li>
+                    </ul>
+                    <div class="my_tab_content">
                         <?php
-                    } else {
                         for ($i = 1; $i < 6; $i++) {
-                            if (array_key_exists($i, $achievementHandler->user_achievements)) {
-                                foreach ($achievementHandler->user_achievements[$i] as $value) {
-                                    ?>
-                                    <div class="col-md-4 col-sm-6 p-b-md">
-                                        <h4 class="text-center" style="height: 50px;"><?= $value->text; ?></h4>
-                                        <img class="center" style="display:block; margin: auto; height: 75px;" src="assets/images/achievement/<?= $value->img_path; ?>-100.png">
-                                    </div>
+                            ?>
+                            <div id="type_<?= $i; ?>_tab" class="my_fade my_tab">
+                                <div class="panel-body">
                                     <?php
-                                }
-                            }
-                            if (array_key_exists($i, $achievementHandler->not_achieved)) {
-                                foreach ($achievementHandler->not_achieved[$i] as $val) {
+                                    $j = 0;
+                                    if (is_array($achievementHandler->user_achievements) && array_key_exists($i, $achievementHandler->user_achievements)) {
+                                        foreach ($achievementHandler->user_achievements[$i] as $value) {
+                                            $j++;
+                                            ?>
+                                            <div class="col-md-3 col-sm-6 p-b-xl m-h-md achievement_display">
+                                                <h5 class="text-center" style="height: 30px;"><?= $value->text; ?></h5>
+                                                <img class="center" style="display:block; margin: auto; height: 75px;" src="assets/images/achievement/<?= $value->img_path; ?>-100.png">
+                                            </div>
+                                            <?php
+                                            if ($j % 4 == 0) {
+                                                
+                                            }
+                                        }
+                                    }
+                                    if (is_array($achievementHandler->not_achieved) && array_key_exists($i, $achievementHandler->not_achieved)) {
+                                        foreach ($achievementHandler->not_achieved[$i] as $val) {
+                                            $j++;
+                                            ?>
+                                            <div class="col-md-3 col-sm-6 p-b-xl m-h-md achievement_display">
+                                                <h5 class="text-center" style="height: 30px;"><?= $val->text; ?></h5>
+                                                <img class="center" style="display:block; margin: auto; height: 75px; filter: grayscale(100%);" src="assets/images/achievement/<?= $val->img_path; ?>-100.png">
+                                            </div>
+                                            <?php
+                                        }
+                                    }
                                     ?>
-                                    <div class="col-md-4 col-sm-6 p-b-md" style="opacity: 0.4;">
-                                        <h4 class="text-center" style="height: 50px;"><?= $val->text; ?></h4>
-                                        <img class="center" style="display:block; margin: auto; height: 75px;" src="assets/images/achievement/<?= $val->img_path; ?>-100.png">
-                                    </div>
-                                    <?php
-                                }
-                            }
-                        }
-                        ?>
-                    <?php } ?>
+                                </div>
+                            </div>
+                        <?php } ?>
+                    </div>
                 </div>
             </div>
+
         </div>
-
     </div>
-
 <?php } ?>
 <div id="alertbox" class="panel panel-danger alert_panel hidden" >
     <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
@@ -446,6 +455,7 @@ if (!empty($current_user->school_id)) {
 </div>
 <input type="hidden" id="user_type_id_hidden" value='<?php echo $courseHandler->_user->user_type_id; ?>'>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script src="js/my_tab.js" type="text/javascript"></script>
 <script>
     $(document).ready(function () {
         $('[data-toggle="tooltip"]').tooltip();

@@ -29,6 +29,31 @@ function month_num_to_string($month_num = 0) {
     return date('F', mktime(0, 0, 0, $month_num, 10));
 }
 
+function format_name($name, $limit){
+    $final_first = "";
+    $first_names = explode(" ", $name);
+    $current_iteration = 0;
+    while(strlen($final_first) < $limit && isset($first_names[$current_iteration])) {
+        $final_first .= (isset($first_names[$current_iteration]) && ((strlen($final_first)+ strlen($first_names[$current_iteration])) < $limit) ? $first_names[$current_iteration] . " " : "");
+        $current_iteration++;
+    }
+    return $final_first;
+}
+
+function format_first_last_name($first, $last, $limit){
+    $final_first = "";
+    $final_last = "";
+    $first_names = explode(" ", $first);
+    $last_names = explode(" ", $last);
+    $current_iteration = 0;
+    while(strlen($final_first) + strlen($final_last) + 1 < $limit && (isset($first_names[$current_iteration]) || isset($last_names[$current_iteration]))) {
+        $final_first .= (isset($first_names[$current_iteration]) && ((strlen($final_first) + strlen($final_last) + strlen($first_names[$current_iteration])) < $limit) ? $first_names[$current_iteration] . " " : "");
+        $final_last .= (isset($last_names[$current_iteration]) && ((strlen($final_first) + strlen($final_last) + strlen($last_names[$current_iteration])) < $limit) ? $last_names[$current_iteration] . " " : ""); 
+        $current_iteration++;
+    }
+    return $final_first . " " . $final_last;
+}
+
 function day_num_to_string($day_num = 0) {
     if(!is_numeric($day_num) || !is_int((int)$day_num)) {
         return;

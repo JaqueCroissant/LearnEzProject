@@ -34,39 +34,38 @@ jQuery(function ($) {
                 $(".notification_load_window").html("");
                 $('#notification_loading').fadeIn(0);
                 $('#notification_window').show("fast");
-                setTimeout(function(){
-                    $.ajax({
-                       type: "POST",
-                       url: "include/ajax/notifications.php",
-                       dataType: "json",
-                       data: {action: 'get_notifications'},
-                       success: function (result) {
-                            $('#notification_loading').fadeOut(0);
-                            if (result.status_value) {
-                                $('#notification_data').html(result.notifications);
-                                if (result.status_text !== undefined) {
-                                    no_more_notifications = true;
-                                    $('#notification_data').append(result.status_text);
-                                }
-                                $(".notification_load_window").html(result.translations["SEE_ALL"]);
-                                $(".notification_title").html(result.translations["NOTIFICATIONS"]);
-                                currently_recieving_notifications = false;
-                                
-                                $('#notification_counter').addClass("hidden");
+                $.ajax({
+                   type: "POST",
+                   url: "include/ajax/notifications.php",
+                   dataType: "json",
+                   data: {action: 'get_notifications'},
+                   success: function (result) {
+                        $('#notification_loading').fadeOut(0);
+                        if (result.status_value) {
+                            $('#notification_data').html(result.notifications);
+                            if (result.status_text !== undefined) {
+                                no_more_notifications = true;
+                                $('#notification_data').append(result.status_text);
                             }
-                            else {
-                                show_status_bar("error", result.error, 5000);
-                                $('#notification_data').append(result.error);
-                            }
-                       }
-                    });
-            }, 2000);
+                            $(".notification_load_window").html(result.translations["SEE_ALL"]);
+                            $(".notification_title").html(result.translations["NOTIFICATIONS"]);
+                            currently_recieving_notifications = false;
+
+                            $('#notification_counter').addClass("hidden");
+                        }
+                        else {
+                            show_status_bar("error", result.error, 5000);
+                            $('#notification_data').append(result.error);
+                        }
+                   }
+                });
             }
         });
         
         //read on click
         $(document).on("click", ".read_notif", function(event){
            if (!currently_clicked_button) {
+               $('#notification_window').hide();
                 currently_clicked_button = true;
                 $.ajax({
                    type: "POST",
@@ -81,10 +80,6 @@ jQuery(function ($) {
                             show_status_bar("error", result.error, 7000);
                         }
                         currently_clicked_button = false;
-                   },
-                   error: function(result){
-                       show_status_bar("error", result.error);
-                       currently_clicked_button = false;
                    }
                 });
             }
@@ -103,7 +98,6 @@ jQuery(function ($) {
                    success: function (result) {
                         if (result.status_value === true) {
                             $(event.target).closest(".notification").remove();
-                            $("#notification_window").trigger("scroll");
                         }
                         else {
                             show_status_bar("error", result.error, 7000);

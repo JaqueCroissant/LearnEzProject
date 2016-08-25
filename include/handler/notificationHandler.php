@@ -415,10 +415,10 @@
             foreach ($array as $value) {
                 $sub = substr($string, $value[0] + 2, $value[1]);
                 if (isset($args[$sub])) {
-                    $final = substr_replace($final, "<b>" . (strlen($args[$sub]) < 50 ? $args[$sub] : (substr($args[$sub], 0, 50) . ".. ")) . "</b>", $value[0], $value[1] + 3);
+                    $final = substr_replace($final, "<b>" . format_name($args[$sub], 30) . "</b>", $value[0], $value[1] + 3);
                     continue;
                 }
-                $final = substr_replace($final, "<b>" . ucfirst(TranslationHandler::get_static_text("UNKNOWN")) . "</b>", $value[0], $value[1] + 3);
+                $final = substr_replace($final, "<b>" . ucfirst(TranslationHandler::get_static_text("UNKNOWN")) . " </b>", $value[0], $value[1] + 3);
             }
             return $final;
         }

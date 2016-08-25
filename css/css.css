@@ -587,6 +587,10 @@ a .menu_header {
     width:100%;
 }
 
+video::-webkit-media-controls-fullscreen-button {
+    display: none;
+}
+
 .course_player{
     margin:0 auto;
 }

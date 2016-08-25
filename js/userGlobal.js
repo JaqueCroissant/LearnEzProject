@@ -21,7 +21,8 @@ $(document).ready(function () {
     var time_between_saves = 15;
     var cookie_expiration_time = 1;
     var course_clickable = true;
-    var time_before_close = 5000;
+    var time_before_close_test = 5000;
+    var time_before_close_lecture = 2000;
     
     if ($.cookie("current_task") !== undefined) {
         
@@ -67,7 +68,7 @@ $(document).ready(function () {
             $(".course_action").attr("disabled", true);
             setTimeout(function(){
                 close();
-            }, time_before_close);
+            }, time_before_close_test);
         }
         
     }
@@ -99,15 +100,22 @@ $(document).ready(function () {
     function switch_play_pause(){
         var player = $(".course_video")[0];
         if(player.ended) {
+            console.log("test");
+            current_progress = $(player)[0].currentTime > max_progress ? max_progress : Math.floor($(player)[0].currentTime);
+            if (current_progress > progress_reached) {
+                progress_reached = current_progress;
+            }
             update_init();
             update = false;
             done = true;
             clearInterval(interval_function);
             setTimeout(function(){
                 close();
-            }, time_before_close);
+            }, time_before_close_lecture);
+            $(player).prop("controls", false);
             $(".course_pause").hide();
             $(".course_play").show();
+            $(".course_action").attr("disabled", true);
         }
         else if (player.paused) {
             $(".course_pause").show();
@@ -128,7 +136,6 @@ $(document).ready(function () {
             time_since_last_save = 0;
             interval_function = setInterval(function(){
                 time_since_last_save++;
-                progress_reached = current_progress > progress_reached ? current_progress : progress_reached;
                 if (time_since_last_save >= time_between_saves) {
                     update_init();
                     progress_reached_last = progress_reached;
@@ -240,7 +247,9 @@ $(document).ready(function () {
     });
 
     function update_init(){
+        console.log(update);
         if (update && progress_reached > progress_reached_last) {
+            console.log("updating");
             if (progress_reached >= max_progress) {
                 update_progress(task, 0, 1);
             }
@@ -480,6 +489,7 @@ $(document).ready(function () {
             $(".course_lecture_menu").show();
             $(".course_iframe").hide();
             $(".course_video").show();
+            $(".course_video").prop("controls", true);
             setTimeout(function(){
                 $(".course_video").attr("src", "courses/lectures/" + data.path);
                 $(".course_video").one("loadeddata", function(){
@@ -508,13 +518,16 @@ $(document).ready(function () {
             switch_play_pause();
         });
         $(".course_video")[0].ontimeupdate = function(){
-            current_progress = $(".course_video")[0].currentTime > max_progress ? max_progress : Math.floor($(".course_video")[0].currentTime);
+            current_progress = $(this)[0].currentTime > max_progress ? max_progress : Math.floor($(this)[0].currentTime);
             update_lecture_counter();
             if (current_progress >= progress_reached - 2) {
                 $(".course_continue").attr("disabled", true);
             }
             else {
                 $(".course_continue").attr("disabled", false);
+            }
+            if (current_progress > progress_reached) {
+                progress_reached = current_progress;
             }
         };
     })();

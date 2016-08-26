@@ -38,7 +38,6 @@
     $(document).on("click", ".btn_close_account", function (event) {
         event.preventDefault();
         var text = $("#account_availability").val() === "1" ? $("#open_text").text() : $("#close_text").text();
-        console.log($("#account_availability").val());
         $("#alertbox").find(".panel-body").text(text);
         $("#alertbox").removeClass("hidden");
         var offset = $(this).offset()["top"] - ($("#alertbox").height());

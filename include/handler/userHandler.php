@@ -569,7 +569,7 @@ class UserHandler extends Handler
                 throw new Exception("PASSWORD_COULDNT_ASSIGN");
             }
 
-            $users[$user->id] = $user->unhashed_password;
+            $users[$user->id] = $user;
         }
         $this->temp_user_array = array();
         $this->temp_user_array = $users;

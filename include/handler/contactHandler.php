@@ -96,7 +96,6 @@ class ContactHandler extends Handler
     {
         try
         {
-            
             if(!is_array($user_list))
             {
                 throw new Exception("INVALID_INPUT");
@@ -319,7 +318,7 @@ class ContactHandler extends Handler
                         <body>
                             <p></p>
                             <p>Hello '. $user_object->firstname .'!</p>
-                            <div>An account has been created for you!</div>
+                            <div>Your account has been updated!</div>
                             <div>You will need the following credentials to log in:</div>
                             </br>
                             <p><b>Username: ' . $user_object->username . '</b></p>

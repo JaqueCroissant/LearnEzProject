@@ -124,6 +124,6 @@ class TranslationHandler {
     }
     
     public static function get_language_options(){
-        return DbHandler::get_instance()->return_query("SELECT * FROM language");
+        return DbHandler::get_instance()->return_query("SELECT language.id, translation_language.title AS title FROM language INNER JOIN translation_language ON translation_language.language_id = language.id WHERE translation_language.user_language_id = :current_lang", self::get_current_language());
     }
 }

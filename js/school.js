@@ -123,7 +123,6 @@ $(document).ready(function () {
         if(!currently_uploading) {
             currently_uploading = true;
             $(".upload_school_image").attr("disabled", true);
-            $(".upload_school_image").val($(".school_thumbnail_upload_trans").html());
             page_state = $(this).attr("id");
             event.preventDefault();
             var formData = new FormData();
@@ -140,7 +139,6 @@ $(document).ready(function () {
                     currently_uploading = false;
                     ajax_data = $.parseJSON(JSON.stringify(data.responseJSON));
                     $(".upload_school_image").attr("disabled", false);
-                    $(".upload_school_image").val($(".school_thumbnail_new_trans").html());
                     if (ajax_data.status_value) {
                         show_status_bar("success", ajax_data.success);
                         $(".school_thumbnail").attr("src", "assets/images/school_profile/" + ajax_data.file_name);

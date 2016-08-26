@@ -1,6 +1,32 @@
 
 
 <!DOCTYPE html>
+<?php
+    session_start();
+    require_once '../../../include/extra/db.class.php';
+    require_once '../../../include/class/orm.class.php';
+    require_once '../../../include/class/user.class.php';
+    require_once '../../../include/class/user_settings.class.php';
+    require_once '../../../include/class/rights.class.php';
+    require_once '../../../include/class/error.class.php';
+    require_once '../../../include/class/course.class.php';
+    require_once '../../../include/class/lecture.class.php';
+    require_once '../../../include/class/test.class.php';
+    require_once '../../../include/handler/handler.php';
+    require_once '../../../include/handler/errorHandler.php';
+    require_once '../../../include/handler/dbHandler.php';
+    require_once '../../../include/handler/sessionKeyHandler.php';
+    require_once '../../../include/handler/rightsHandler.php';
+    require_once '../../../include/handler/loginHandler.php';
+    require_once '../../../include/handler/userHandler.php';
+    require_once '../../../include/handler/courseHandler.php';
+    
+    $loginHandler = new LoginHandler();
+    $courseHandler = new CourseHandler();
+    if(!$loginHandler->check_login()) {
+        die();
+    }
+?>
 <html lang="en">
 <head>
 <meta name='viewport' content='initial-scale = 1, minimum-scale = 1, maximum-scale = 1'/>

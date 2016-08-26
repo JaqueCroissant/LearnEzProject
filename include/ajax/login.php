@@ -75,6 +75,7 @@ if(isset($_POST)) {
     $password = isset($_POST["password"]) ? $_POST["password"] : null;
     $token = isset($_POST["token"]) ? $_POST["token"] : null;
     if($loginHandler->check_login($username, $password, $token)) {
+        AchievementHandler::assign_achievement("login");
         $jsonArray['status_value'] = true;
         TranslationHandler::reset();
     } else {

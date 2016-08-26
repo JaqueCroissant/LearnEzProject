@@ -215,8 +215,7 @@ class LoginHandler
     {
         if(isset($username) && isset($password) && isset($token)) {
             $this->assign_properties($username, $password, $token);
-            $this->verify_login();
-            AchievementHandler::assign_achievement("login");            
+            $this->verify_login();          
         } else {
             $this->verify_login_session();
         }

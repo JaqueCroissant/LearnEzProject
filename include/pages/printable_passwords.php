@@ -18,6 +18,10 @@ try
         SessionKeyHandler::remove_from_session("new_passwords");
         if(count($user_info > 0))
         {
+                echo '<pre>';
+                var_dump($user_info);
+                echo '</pre>';
+                
                 $user_ids = array();
 
                 foreach(array_keys($user_info) as $key)
@@ -51,11 +55,11 @@ try
                         <table>
                             <?php
 
-                            if(count($users_data > 1))
+                            if(count($user_info > 1))
                             {
-                                for($i = 0; $i < count($users_data); $i+= 2)
+                                for($i = 0; $i < count($user_info); $i+= 2)
                                 {
-                                    if(count($users_data)-$i > 1)
+                                    if(count($user_info)-$i > 1)
                                     {
                                     ?>
                                         <tr>

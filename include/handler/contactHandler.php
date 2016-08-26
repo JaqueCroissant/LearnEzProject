@@ -31,6 +31,9 @@ class ContactHandler extends Handler
             $content = 
             '<html>
                 <head>
+                    <style>
+                        body {color: black !important;}
+                    </style>
                 </head>
 
                 <body>
@@ -70,7 +73,12 @@ class ContactHandler extends Handler
 
             $content = 
             '<html>
-                <body>
+                    <head>
+                                <style>
+                                    body {color: black !important;}
+                                </style>
+                            </head>
+                    <body>
                     <p><b>' . htmlspecialchars($name) . $user_affiliations['user_type'] . ", " . htmlspecialchars($email) . '</b></p>' .
                     $user_affiliations['school'] . $user_affiliations['classes'] .
                     '<p><b>' . $subject . '</b></p>
@@ -315,6 +323,11 @@ class ContactHandler extends Handler
         $subject = "Your account at LearnEZ";
         
         $message = '<html>
+                        <head>
+                            <style>
+                                body {color: black !important;}
+                            </style>
+                        </head>
                         <body>
                             <p></p>
                             <p>Hello '. $user_object->firstname .'!</p>

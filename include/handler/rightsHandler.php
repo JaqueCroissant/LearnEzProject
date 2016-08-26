@@ -37,7 +37,7 @@
                 }
                 
             } catch (Exception $ex) {
-                echo $ex->getMessage();
+                //echo $ex->getMessage();
                 $this->error = ErrorHandler::return_error($ex->getMessage());
             }
         }
@@ -368,7 +368,7 @@
             }
             catch (Exception $ex) 
             {
-                echo $ex->getMessage();
+                //echo $ex->getMessage();
             }
             return false;
         }

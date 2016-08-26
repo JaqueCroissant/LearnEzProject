@@ -760,7 +760,6 @@ class CourseHandler extends Handler {
 
             return true;
         } catch (Exception $ex) {
-            echo $ex->getMessage();
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }

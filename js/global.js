@@ -291,7 +291,7 @@ $(document).ready(function () {
             }
             show_status_bar("success", ajax_data.success);
 
-            var url = ajax_data.host + "/LearnEZ/include/pages/printable_passwords.php";
+            var url = ajax_data.host + "/include/pages/printable_passwords.php";
 
             if (!/^(f|ht)tps?:\/\//i.test(url))
             {

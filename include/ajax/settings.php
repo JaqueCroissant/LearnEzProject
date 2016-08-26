@@ -21,7 +21,7 @@
                 {
                     $jsonArray['status_value'] = true;
                     $jsonArray['success'] = TranslationHandler::get_static_text("EDIT_INFO_SUCCESS");
-                    $jsonArray['full_name'] = $userHandler->_user->firstname . " " . $userHandler->_user->surname;
+                    $jsonArray['full_name'] = format_first_last_name($userHandler->_user->firstname, $userHandler->_user->surname, 13);
                     $jsonArray['avatar_id'] = $userHandler->_user->profile_image;
                 } 
                 else 

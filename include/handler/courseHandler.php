@@ -943,7 +943,7 @@ class CourseHandler extends Handler {
             }
 
             $resize = new Resize($file_location . "uncropped/" . $file_name);
-            $resize->resize_image(70, 70, 'auto');
+            $resize->resize_image(130, 130, 'auto');
             $resize->save_image($file_location . "" . $file_name, 100);
 
             DbHandler::get_instance()->query("INSERT INTO course_image (filename) VALUES (:filename)", $file_name);

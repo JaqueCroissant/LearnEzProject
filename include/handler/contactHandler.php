@@ -54,7 +54,6 @@ class ContactHandler extends Handler
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
-        
     }
     
     public function generate_support_mail($name, $email, $context, $user_subject, $user_message, $is_logged_in = false)
@@ -83,6 +82,38 @@ class ContactHandler extends Handler
             mail($this->_support_email,$subject,$content,$headers);
             $this->generate_receipt_mail($email, $content);
             $this->log_activity($email);
+            
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+            return false;
+        }
+    }
+    
+    public function distribute_credentials($user_list)
+    {
+        try
+        {
+            
+            if(!is_array($user_list))
+            {
+                throw new Exception("INVALID_INPUT");
+            }
+            
+            if(count($user_list)<1)
+            {
+                return true;
+            }
+            
+            foreach($user_list as $value)
+            {
+                if(!empty($value->unhashed_password))
+                {
+                    $this->generate_credential_mail($value);
+                }
+            }
             
             return true;
         }
@@ -274,6 +305,32 @@ class ContactHandler extends Handler
             $return_data['classes'] = $classes;
         }
         return $return_data;
+    }
+    
+    private function generate_credential_mail($user_object)
+    {
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "From: no-reply@learnez.dk";
+        
+        $subject = "Your account at LearnEZ";
+        
+        $message = '<html>
+                        <body>
+                            <p></p>
+                            <p>Hello '. $user_object->firstname .'!</p>
+                            <div>An account has been created for you!</div>
+                            <div>You will need the following credentials to log in:</div>
+                            </br>
+                            <p><b>Username: ' . $user_object->username . '</b></p>
+                            <p><b>Password: '. $user_object->unhashed_password . '</b></p>
+
+                            <div>Enjoy!</div>
+                            <a href="www.learnez.dk">LearnEZ</a>
+                        </body>
+                    </html>';
+        
+        mail($user_object->email,$subject,$message,$headers);
     }
 }
 

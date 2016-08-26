@@ -305,7 +305,7 @@ $homeworkHandler->get_user_homework();
 
                                         ?>">
                                         <td class="change_page" page="homework_show" args="&homework_id=<?= $value->id ?>"><?php echo $value->title; ?></td>
-                                        <td class="change_page" page="homework_show" args="&homework_id=<?= $value->id ?>"><span data-toggle="tooltip" title="<?= $value->firstname. ' ' . $value->surname ?>"><?= strlen($value->firstname. ' ' . $value->surname) > 40 ? substr($value->firstname. ' ' . $value->surname, 0, 40) . "..." : $value->firstname. ' ' . $value->surname ?></span></td>
+                                        <td class="change_page" page="homework_show" args="&homework_id=<?= $value->id ?>"><span data-toggle="tooltip" title="<?= $value->firstname. ' ' . $value->surname ?>"><?= format_first_last_name($value->firstname, $value->surname, 40) ?></span></td>
                                         <td class="change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" style='text-align:center;'><?php echo $value->date_expire; ?></td>
                                         <td class="change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" style='text-align:center;'><?= count($value->lectures) ?></td>
                                         <td class="change_page" page="homework_show" args="&homework_id=<?= $value->id ?>" style='text-align:center;'><?= count($value->tests) ?></td>

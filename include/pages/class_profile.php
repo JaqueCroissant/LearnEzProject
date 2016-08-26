@@ -70,7 +70,7 @@ $i_rand = rand(100, 1000);
                                             if ($value->user_type_id == 4) {
                                                 ?>
                                                 <tr class="a change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>">
-                                                    <td><?php echo htmlspecialchars($value->firstname) . " " . htmlspecialchars($value->surname); ?></td>
+                                                    <td><?php echo format_first_last_name($value->firstname, $value->surname, 40); ?></td>
                                                     <td><?php echo htmlspecialchars($value->email); ?></td>
 
                                                 </tr>
@@ -97,7 +97,7 @@ $i_rand = rand(100, 1000);
                                             if ($value->user_type_id == 3) {
                                                 ?>
                                                 <tr class="a change_page" page="account_profile" step="" args="&user_id=<?php echo $value->id; ?>">
-                                                    <td><?php echo htmlspecialchars($value->firstname) . " " . htmlspecialchars($value->surname); ?></td>
+                                                    <td><?php echo format_first_last_name($value->firstname, $value->surname, 40); ?></td>
                                                     <td><?php echo htmlspecialchars($value->email); ?></td>
 
                                                 </tr>
@@ -333,7 +333,7 @@ $i_rand = rand(100, 1000);
                             </div>
                             <div class="sl-content">
                                 <h5 class="m-t-0">
-                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= ucwords(htmlspecialchars($value['firstname']) . ' ' . htmlspecialchars($value['surname'])) ?></a>
+                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= format_first_last_name($value["firstname"], $value["surname"], 20); ?></a>
                                     <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i>": ""; ?></small>
                                 </h5>
                                 <p><span data-plugin="counterUp"><?php echo $value['points']; ?></span> points</p>

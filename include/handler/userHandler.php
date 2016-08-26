@@ -137,11 +137,13 @@ class UserHandler extends Handler
             {
                 $new_user->school_id = $school_id;
             }
-
+            
+            $this->users = array();
+            
             if(!empty($password))
             {
                 $new_user->unhashed_password = $password;
-                $this->create_user_with_password($new_user, false);
+                $this->create_user_with_password($new_user, true);
             }
             else
             {
@@ -428,7 +430,7 @@ class UserHandler extends Handler
 
             if($add_to_user_array)
             {
-                $temp_user_array[] = $user_object;
+                $this->users[] = $user_object;
             }
             return true;
         }
@@ -460,13 +462,12 @@ class UserHandler extends Handler
 
             $latest_id = DbHandler::get_instance()->last_inserted_id();
             DbHandler::get_instance()->query("INSERT INTO user_settings (user_id) VALUES (:user_id)", $latest_id);
-            $user_object->unhashed_password = "";
             
             $this->create_class_affiliation($user_object->class_ids, $latest_id);
 
             if($add_to_user_array)
             {
-                $temp_user_array[] = $user_object;
+                $this->users[] = $user_object;
             }
 
             return true;
@@ -1136,7 +1137,7 @@ class UserHandler extends Handler
             
             while(!feof($file))
             {
-                //$row = fgetcsv($file, 0, ";",",");
+
                 $row = utf8_encode(fgets($file));
                 $this->import_add_info = $index+1;
                 if($index<$count)
@@ -1144,10 +1145,6 @@ class UserHandler extends Handler
                     if($index > 0)
                     {
                         $users[] = $this->validate_csv_content($this->row_to_array($row), $offset, $school_id, $class_ids);
-                    }
-                    else
-                    {
-                        //$offset = $this->validate_csv_columns($this->row_to_array($row));
                     }
                 }
                 $index++;
@@ -1190,7 +1187,7 @@ class UserHandler extends Handler
 
     private function insert_csv_content($users)
     {
-        $this->temp_user_array = array();
+        $this->users = array();
 
         foreach ($users as $user) 
         {

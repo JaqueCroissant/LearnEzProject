@@ -23,6 +23,7 @@ else
         $people_in_class[] = $user;
     }
     $userHandler->get_by_school_id($_GET['school_id'], true);
+//    test_dump($userHandler->users);
     $all_people = object_group_by_key(merge_array_recursively($people_in_class, $userHandler->users, true), "user_type_id");
     
     $missing = array();
@@ -49,7 +50,7 @@ else
                                         {
                                             if(!isset($student->present))
                                             {
-                                                echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
+                                                echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
                                             }
                                             else {
                                                 $missing[] = $student;
@@ -74,7 +75,7 @@ else
                                     <?php
                                         foreach($missing as $student)
                                         {
-                                            echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
+                                            echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
                                         }
                                         $missing = array();
                                     ?>
@@ -92,7 +93,7 @@ else
                                         {
                                             if(!isset($student->present))
                                             {
-                                                echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
+                                                echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
                                             }
                                             else {
                                                 $missing[] = $student;
@@ -117,7 +118,7 @@ else
                                     <?php
                                         foreach($missing as $student)
                                         {
-                                            echo '<option value="' . $student->id . '">' . $student->firstname . " " . $student->surname . " - " . $student->username . '</option>';
+                                            echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
                                         }
                                         $missing = array();
                                     ?>

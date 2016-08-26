@@ -3,11 +3,13 @@
     require_once '../../include/handler/userHandler.php';
     require_once '../../include/handler/classHandler.php';
     require_once '../../include/handler/schoolHandler.php';
+    require_once '../../include/handler/contactHandler.php';
 
     $userHandler = new UserHandler();
     $classHandler = new ClassHandler();
     $schoolHandler = new SchoolHandler();
-
+    $contactHandler = new ContactHandler();
+    
     switch($_GET['step'])
     {
         case 'create_user':
@@ -38,9 +40,17 @@
                 {
                     if($userHandler->create_new_profile($firstname, $surname, $email, $password, $usertype, $school_id, $class_ids))
                     {
-                        $jsonArray['status_value'] = true;
-                        $jsonArray['success'] = TranslationHandler::get_static_text("CREATE_USER_SUCCESS");
-                        $jsonArray['username'] = $userHandler->new_username;
+                        if($contactHandler->distribute_credentials($userHandler->users))
+                        {
+                            $jsonArray['status_value'] = true;
+                            $jsonArray['success'] = TranslationHandler::get_static_text("CREATE_USER_SUCCESS");
+                            $jsonArray['username'] = $userHandler->new_username;
+                        }
+                        else
+                        {
+                            $jsonArray['status_value'] = false;
+                            $jsonArray['error'] = $contactHandler->error->title;
+                        }
                     }
                     else
                     {
@@ -72,8 +82,16 @@
                 {
                     if($userHandler->import_users($file, $school_id, $class_ids))
                     {
-                        $jsonArray['status_value'] = true;
-                        $jsonArray['success'] = TranslationHandler::get_static_text("IMPORT_USER_SUCCESS");
+                        if($contactHandler->distribute_credentials($userHandler->users))
+                        {
+                            $jsonArray['status_value'] = true;
+                            $jsonArray['success'] = TranslationHandler::get_static_text("IMPORT_USER_SUCCESS");
+                        }
+                        else
+                        {
+                            $jsonArray['status_value'] = false;
+                            $jsonArray['error'] = $contactHandler->error->title;
+                        }
                     }
                     else
                     {

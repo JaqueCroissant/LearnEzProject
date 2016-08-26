@@ -252,12 +252,6 @@ $courseHandler = new CourseHandler();
                                         </div>
                                     </div>
                                     
-                                   
-                                    
-                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MEDIA"); ?></h4>
-                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
-                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
-                                    </div>
                                 </div>
 
                                 <div class="col-md-6">
@@ -289,7 +283,7 @@ $courseHandler = new CourseHandler();
                                         <div class="translations">
                                             <?php
                                             foreach(DbHandler::get_instance()->return_query("SELECT translation_course_lecture.*, language.title as language_title FROM translation_course_lecture INNER JOIN language ON language.id = translation_course_lecture.language_id WHERE translation_course_lecture.course_lecture_id = :lecture_id", $courseHandler->current_element->id) as $value) {
-                                               echo ' <div class="translation_'. $value["language_id"] .' translation_element"><div class="user-card m-b-sm student_20" style="padding: 8px !important;background:#f0f0f1;"><div class="media"><div class="media-body"><input type="hidden" name="language_id[]" value="'. $value["language_id"] .'"/><div class="accordion translation_LECTURE'. $value["language_id"] .'" id="accordion" role="tablist" aria-multiselectable="false"><div class=""><div class="panel-heading" role="tab" id="heading-LECTURE'. $value["language_id"] .'"><a class="accordion-toggle collapsed" style="padding: 5px 0px 0px 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-LECTURE'. $value["language_id"] .'" aria-expanded="false" aria-controls="collapse-LECTURE'. $value["language_id"] .'"><label for="textarea'. $value["language_id"] .'" style="cursor:pointer">'. htmlspecialchars($value["language_title"]) .' '. TranslationHandler::get_static_text("TRANSLATION") .'</label><i class="fa acc-switch"></i><i class="zmdi zmdi-hc-lg zmdi-delete pull-right remove_translation" translation_id="'. $value["language_id"] .'" style="margin-top:1px;cursor:pointer;"></i></a></div><div id="collapse-LECTURE'. $value["language_id"] .'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-LECTURE'. $value["language_id"] .'" aria-expanded="false" style="height: 0px;"><div class="panel-body" style="padding: 5px 10px 10px 10px !important;"><label for="title" style="margin-bottom:0px !important;">'. TranslationHandler::get_static_text("TITLE") .'</label><input type="text" id="title" name="title[]" placeholder="" value="'.htmlspecialchars($value["title"]).'" class="form-control"><label for="description" style="margin: 10px 0px 0px 0px !important;">'. TranslationHandler::get_static_text("INFO_DESCRIPTION") .'</label><input type="text" id="description" name="description[]" placeholder="" value="'.htmlspecialchars($value["description"]).'" class="form-control"></div></div></div></div></div></div></div></div>';
+                                               echo ' <div class="translation_'. $value["language_id"] .' translation_element"><div class="user-card m-b-sm student_20" style="padding: 8px !important;background:#f0f0f1;"><div class="media"><div class="media-body"><input type="hidden" name="language_id[]" value="'. $value["language_id"] .'"/><div class="accordion translation_LECTURE'. $value["language_id"] .'" id="accordion" role="tablist" aria-multiselectable="false"><div class=""><div class="panel-heading" role="tab" id="heading-LECTURE'. $value["language_id"] .'"><a class="accordion-toggle collapsed" style="padding: 5px 0px 0px 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-LECTURE'. $value["language_id"] .'" aria-expanded="false" aria-controls="collapse-LECTURE'. $value["language_id"] .'"><label for="textarea'. $value["language_id"] .'" style="cursor:pointer">'. htmlspecialchars($value["language_title"]) .' '. TranslationHandler::get_static_text("TRANSLATION") .'</label><i class="fa acc-switch"></i><i class="zmdi zmdi-hc-lg zmdi-delete pull-right remove_translation" translation_id="'. $value["language_id"] .'" style="margin-top:1px;cursor:pointer;"></i></a></div><div id="collapse-LECTURE'. $value["language_id"] .'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-LECTURE'. $value["language_id"] .'" aria-expanded="false" style="height: 0px;"><div class="panel-body" style="padding: 5px 10px 10px 10px !important;"><label for="title" style="margin-bottom:0px !important;">'. TranslationHandler::get_static_text("TITLE") .'</label><input type="text" id="title" name="title[]" placeholder="" value="'.htmlspecialchars($value["title"]).'" class="form-control"><label for="description" style="margin: 10px 0px 0px 0px !important;">'. TranslationHandler::get_static_text("INFO_DESCRIPTION") .'</label><input type="text" id="description" name="description[]" placeholder="" value="'.(empty($value["description"]) ? '&nbsp;&nbsp;&nbsp;' : $value["description"]).'" class="form-control"></div></div></div></div></div></div></div></div>';
                                             }
                                             ?>
                                         </div>
@@ -380,12 +374,6 @@ $courseHandler = new CourseHandler();
                                         </div>
                                     </div>
                                     
-                                   
-                                    
-                                    <h4 class="widget-title"><?php echo TranslationHandler::get_static_text("MEDIA"); ?></h4>
-                                    <hr class="m-0 m-b-md" style="border-color: #ddd;margin: 16px 0px !important;">
-                                    <div class="col-md-12" style="margin-bottom: 16px !important;">
-                                    </div>
                                 </div>
 
                                 <div class="col-md-6">
@@ -417,7 +405,7 @@ $courseHandler = new CourseHandler();
                                         <div class="translations">
                                             <?php
                                             foreach(DbHandler::get_instance()->return_query("SELECT translation_course_test.*, language.title as language_title FROM translation_course_test INNER JOIN language ON language.id = translation_course_test.language_id WHERE translation_course_test.course_test_id = :test_id", $courseHandler->current_element->id) as $value) {
-                                               echo ' <div class="translation_'. $value["language_id"] .' translation_element"><div class="user-card m-b-sm student_20" style="padding: 8px !important;background:#f0f0f1;"><div class="media"><div class="media-body"><input type="hidden" name="language_id[]" value="'. $value["language_id"] .'"/><div class="accordion translation_TEST'. $value["language_id"] .'" id="accordion" role="tablist" aria-multiselectable="false"><div class=""><div class="panel-heading" role="tab" id="heading-TEST'. $value["language_id"] .'"><a class="accordion-toggle collapsed" style="padding: 5px 0px 0px 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-TEST'. $value["language_id"] .'" aria-expanded="false" aria-controls="collapse-TEST'. $value["language_id"] .'"><label for="textarea'. $value["language_id"] .'" style="cursor:pointer">'. htmlspecialchars($value["language_title"]) .' '. TranslationHandler::get_static_text("TRANSLATION") .'</label><i class="fa acc-switch"></i><i class="zmdi zmdi-hc-lg zmdi-delete pull-right remove_translation" translation_id="'. $value["language_id"] .'" style="margin-top:1px;cursor:pointer;"></i></a></div><div id="collapse-TEST'. $value["language_id"] .'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-TEST'. $value["language_id"] .'" aria-expanded="false" style="height: 0px;"><div class="panel-body" style="padding: 5px 10px 10px 10px !important;"><label for="title" style="margin-bottom:0px !important;">'. TranslationHandler::get_static_text("TITLE") .'</label><input type="text" id="title" name="title[]" placeholder="" value="'.htmlspecialchars($value["title"]).'" class="form-control"><label for="description" style="margin: 10px 0px 0px 0px !important;">'. TranslationHandler::get_static_text("INFO_DESCRIPTION") .'</label><input type="text" id="description" name="description[]" placeholder="" value="'.htmlspecialchars($value["description"]).'" class="form-control"></div></div></div></div></div></div></div></div>';
+                                               echo ' <div class="translation_'. $value["language_id"] .' translation_element"><div class="user-card m-b-sm student_20" style="padding: 8px !important;background:#f0f0f1;"><div class="media"><div class="media-body"><input type="hidden" name="language_id[]" value="'. $value["language_id"] .'"/><div class="accordion translation_TEST'. $value["language_id"] .'" id="accordion" role="tablist" aria-multiselectable="false"><div class=""><div class="panel-heading" role="tab" id="heading-TEST'. $value["language_id"] .'"><a class="accordion-toggle collapsed" style="padding: 5px 0px 0px 0px !important;" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse-TEST'. $value["language_id"] .'" aria-expanded="false" aria-controls="collapse-TEST'. $value["language_id"] .'"><label for="textarea'. $value["language_id"] .'" style="cursor:pointer">'. htmlspecialchars($value["language_title"]) .' '. TranslationHandler::get_static_text("TRANSLATION") .'</label><i class="fa acc-switch"></i><i class="zmdi zmdi-hc-lg zmdi-delete pull-right remove_translation" translation_id="'. $value["language_id"] .'" style="margin-top:1px;cursor:pointer;"></i></a></div><div id="collapse-TEST'. $value["language_id"] .'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-TEST'. $value["language_id"] .'" aria-expanded="false" style="height: 0px;"><div class="panel-body" style="padding: 5px 10px 10px 10px !important;"><label for="title" style="margin-bottom:0px !important;">'. TranslationHandler::get_static_text("TITLE") .'</label><input type="text" id="title" name="title[]" placeholder="" value="'.htmlspecialchars($value["title"]).'" class="form-control"><label for="description" style="margin: 10px 0px 0px 0px !important;">'. TranslationHandler::get_static_text("INFO_DESCRIPTION") .'</label><input type="text" id="description" name="description[]" placeholder="" value="'.(empty($value["description"]) ? '&nbsp;&nbsp;&nbsp;' : $value["description"]).'" class="form-control"></div></div></div></div></div></div></div></div>';
                                             }
                                             ?>
                                         </div>
@@ -457,20 +445,10 @@ $courseHandler = new CourseHandler();
 <script>
     $(document).ready(function() {
         $("#custom").spectrum({
-            showPaletteOnly: true,
-            showPalette:true,
+            preferredFormat: "hex",
+            showInput: true,
             hideAfterPaletteSelect:true,
             replacerClassName: 'form-control',
-            palette: [
-                ["#000","#444","#666","#999","#ccc","#eee","#f3f3f3","#fff"],
-                ["#f00","#f90","#ff0","#0f0","#0ff","#00f","#90f","#f0f"],
-                ["#f4cccc","#fce5cd","#fff2cc","#d9ead3","#d0e0e3","#cfe2f3","#d9d2e9","#ead1dc"],
-                ["#ea9999","#f9cb9c","#ffe599","#b6d7a8","#a2c4c9","#9fc5e8","#b4a7d6","#d5a6bd"],
-                ["#e06666","#f6b26b","#ffd966","#93c47d","#76a5af","#6fa8dc","#8e7cc3","#c27ba0"],
-                ["#c00","#e69138","#f1c232","#6aa84f","#45818e","#3d85c6","#674ea7","#a64d79"],
-                ["#900","#b45f06","#bf9000","#38761d","#134f5c","#0b5394","#351c75","#741b47"],
-                ["#600","#783f04","#7f6000","#274e13","#0c343d","#073763","#20124d","#4c1130"]
-            ],
             change: function(color) {
                 $(".pick_color").val(color.toHexString());
             }

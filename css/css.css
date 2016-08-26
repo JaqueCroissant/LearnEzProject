@@ -1019,3 +1019,7 @@ video::-webkit-media-controls-fullscreen-button {
     -moz-box-shadow: 0 1px 10px #ccc !important;
     box-shadow: 0 1px 10px #ccc !important;
 }
+
+.popover {
+    white-space: pre-wrap;    
+}

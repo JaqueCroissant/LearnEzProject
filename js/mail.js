@@ -1,7 +1,6 @@
 
 $(document).on("click", ".assign_mail_folder", function (event) {
     event.preventDefault();
-    alert("LOL");
     var current_page = $(this).attr("current_folder") === "inbox" ? "" : $(this).attr("current_folder");
     if ($(this).attr("mail_id") !== undefined && $(this).attr("step") !== undefined && $(this).attr("current_folder") !== undefined) {
         submit_get("mail.php?step=" + $(this).attr("step") + "&mail_id=" + $(this).attr("mail_id") + "&current_folder=" + $(this).attr("current_folder"), $(this), function () {

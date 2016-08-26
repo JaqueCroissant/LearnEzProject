@@ -120,7 +120,6 @@ class SettingsHandler extends Handler {
         {
             if(!SessionKeyHandler::session_exists("user_setup"))
             {
-                echo "SESSIONJUNK";
                 throw new Exception("INVALID_SETTINGS_INPUT");
             }
 
@@ -144,7 +143,7 @@ class SettingsHandler extends Handler {
         }
         catch(Exception $ex)
         {
-            echo $ex->getMessage();
+            //echo $ex->getMessage();
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }

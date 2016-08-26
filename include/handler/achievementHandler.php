@@ -104,6 +104,11 @@ class AchievementHandler extends Handler {
                     $breakpoints = [];
                     $breakpoints = self::get_breakpoints($value);
                     $achieved_data = self::get_achieved_data($achievement_type_id, $value);
+                    if ($achieved_data['text'] == "") {
+                        $q = "SELECT text from translation_achievement where achievement_id = :id";
+                        $id = isset($achieved_data['ids']) && is_array($achieved_data['ids']) ? $achieved_data['ids'][0] : isset($achieved_data['id']) ? $achieved_data['id'] : 7;
+                        $achieved_data['text'] = reset(reset(DbHandler::get_instance()->return_query($q, $id)));
+                    }
                     $login_records = DbHandler::get_instance()->return_query("SELECT date(time) as date FROM login_record WHERE users_id = :users_id group by date order by date DESC", SessionKeyHandler::get_from_session("user", TRUE)->id);
                     if (count($login_records) < (int) $achieved_data['breakpoint']) {
                         break;
@@ -397,7 +402,7 @@ class AchievementHandler extends Handler {
         $this->get_min_max();
         $this->get_not_completed($ach_ids, $temp);
     }
-    
+
     public function get_min_max() {
         $min_q = "SELECT count(*) as count, achievement_type_id as type_id FROM user_achievement inner join achievement on user_achievement.achievement_id = achievement.id where users_id = :user_id group by type_id";
         if ($this->user_id) {
@@ -408,7 +413,7 @@ class AchievementHandler extends Handler {
         $max_q = "SELECT count(*) as count, achievement_type_id as type_id FROM achievement where award_type_id != 2 group by type_id";
         $max_data = DbHandler::get_instance()->return_query($max_q);
         $this->min_max = array();
-        
+
         for ($h = 1; $h < 6; $h++) {
             $this->min_max[$h] = array();
             $this->min_max[$h]['current'] = 0;
@@ -514,7 +519,7 @@ class AchievementHandler extends Handler {
         $t['img_path'] = isset($data['img_path']) ? $data['img_path'] : "default.png";
         $t['count'] = isset($data['breakpoint']) ? $data['breakpoint'] : 0;
         $t['title'] = TranslationHandler::get_static_text("NEW_ACHIEVEMENT");
-        $t['text'] = isset($data['text']) && isset($data['breakpoint']) ? $data['breakpoint'] . " " . strtolower($data['text'])  : "";
+        $t['text'] = isset($data['text']) && isset($data['breakpoint']) ? $data['breakpoint'] . " " . strtolower($data['text']) : "";
         $t['o_top'] = isset($data['o_top']) ? $data['o_top'] : "";
         $t['o_left'] = isset($data['o_left']) ? $data['o_left'] : "";
         array_push($temp, $t);

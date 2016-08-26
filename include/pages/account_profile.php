@@ -417,7 +417,7 @@ if (!empty($current_user->school_id)) {
                                         foreach ($achievementHandler->user_achievements[$i] as $value) {
                                             $j++;
                                             ?>
-                                            <div class="col-md-3 col-sm-6 p-b-xl m-h-md achievement_display">
+                                            <div class="col-md-3 col-sm-6 p-h-lg p-b-xl m-h-md achievement_display">
                                                 <h5 class="text-center" style="height: 30px;"><?= $value->text; ?></h5>
                                                 <img class="center" style="display:block; margin: auto; height: 75px;" src="assets/images/achievement/<?= $value->img_path; ?>-100.png">
                                             </div>
@@ -428,7 +428,7 @@ if (!empty($current_user->school_id)) {
                                         foreach ($achievementHandler->not_achieved[$i] as $val) {
                                             $j++;
                                             ?>
-                                            <div class="col-md-3 col-sm-6 p-b-xl m-h-md achievement_display">
+                                            <div class="col-md-3 col-sm-6 p-h-lg p-b-xl m-h-md achievement_display">
                                                 <h5 class="text-center" style="height: 30px;"><?= $val->text; ?></h5>
                                                 <img class="center" style="display:block; margin: auto; height: 75px; -webkit-filter: grayscale(100%); -o-filter: grayscale(100%); -moz-filter: grayscale(100%); -ms-filter: grayscale(100%); filter: grayscale(100%);" src="assets/images/achievement/<?= $val->img_path; ?>-100.png">
                                             </div>

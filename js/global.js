@@ -634,7 +634,7 @@ function display_achievement(element) {
         element.css("display", "inline-block");
         element.removeClass("hidden");
         $("#achievement_title").html(title);
-        $("#achievement_txt").html(count + text);
+        $("#achievement_txt").html(text);
         $("#achievement_img").attr("src", "assets/images/achievement/" + value.img_path + "-200.png");
         element.addClass("achievement_animation");
         element_timeout = setTimeout(function () {

@@ -26,7 +26,7 @@
                 <div class="foldable">
                     <h5>
                         <a class="username" href="javascript:void(0)">
-                        <?php echo strlen($userHandler->_user->firstname) > 13 ? substr($userHandler->_user->firstname, 0, 13) . ".." : $userHandler->_user->firstname; ?>
+                        <?php echo format_first_last_name($userHandler->_user->firstname, $userHandler->_user->surname, 13) ?>
                         </a>
                     </h5>
                     

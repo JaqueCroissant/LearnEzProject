@@ -27,7 +27,7 @@ class PaginationHandler {
 
             return $this->sliced_record_array;
         } catch(Exception $ex) {
-            echo $ex;
+            
         }
     }
     
@@ -59,7 +59,7 @@ class PaginationHandler {
             
             return $this->_current_page_number <= 1;
         } catch(Exception $ex) {
-            echo $ex;
+            
         }
     }
     
@@ -72,7 +72,7 @@ class PaginationHandler {
             return $this->_current_page_number >= $this->_total_pages;
             
         } catch(Exception $ex) {
-            echo $ex;
+            
         }
     }
     
@@ -90,7 +90,7 @@ class PaginationHandler {
             }
             return $page_array;
         } catch(Exception $ex) {
-            echo $ex;
+            
         }
     }
     
@@ -108,7 +108,7 @@ class PaginationHandler {
             }
             return $page_array;
         } catch(Exception $ex) {
-            echo $ex;
+            
         }
     }
     
@@ -123,7 +123,7 @@ class PaginationHandler {
             }
             return 1;
         } catch(Exception $ex) {
-            echo $ex;
+            
         }
     }
     
@@ -138,7 +138,7 @@ class PaginationHandler {
             }
             return $this->_total_pages;
         } catch(Exception $ex) {
-            echo $ex;
+            
         }
     }
     
@@ -150,7 +150,7 @@ class PaginationHandler {
             
             return $this->_total_pages;
         } catch(Exception $ex) {
-            echo $ex;
+            
         } 
     }
     

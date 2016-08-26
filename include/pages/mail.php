@@ -212,7 +212,7 @@ $paginationHandler = new PaginationHandler();
                                                     <tr>
 
                                                         <td class="mail-left">
-                                                            <div class="avatar avatar-lg avatar-circle change_page" page="account_profile" args="&user_id='.$value->sender_id.'" data-toggle="tooltip" title="' . $value->firstname . ' ' . $value->surname .'">
+                                                            <div class="avatar avatar-lg avatar-circle change_page" page="account_profile" args="&user_id='.$value->sender_id.'" data-toggle="tooltip" title="' . format_first_last_name($value->firstname, $value->surname, 60) .'">
                                                                 <img src="assets/images/profile_images/'.profile_image_exists($value->profile_image).'">
                                                             </div>
                                                         </td>
@@ -364,7 +364,7 @@ $paginationHandler = new PaginationHandler();
                                 <div class="media-body">
                                     <div class="m-b-sm">
                                         <h4 class="m-0 inline-block m-r-lg">
-                                            <a href="#" class="title-color change_page" page="account_profile" args="&user_id=<?= ($current_mail->folder_name == "sent" || $current_mail->folder_name == "draft" ? $current_mail->receiver_id : $current_mail->sender_id); ?>"><?php echo $current_mail->firstname . " " . $current_mail->surname; ?></a>
+                                            <a href="#" class="title-color change_page" page="account_profile" args="&user_id=<?= ($current_mail->folder_name == "sent" || $current_mail->folder_name == "draft" ? $current_mail->receiver_id : $current_mail->sender_id); ?>"><?php echo format_first_last_name($current_mail->firstname, $current_mail->surname, 45); ?></a>
                                         </h4>
                                     </div>
                                     
@@ -409,7 +409,7 @@ $paginationHandler = new PaginationHandler();
                                             }
                                             ?>
                                             <div class="panel-heading text-muted" style="padding: 16px 16px 8px 16px !important;">
-                                                <?php echo TranslationHandler::get_static_text("RECEIVER") . ": " . $current_mail->firstname . " " . $current_mail->surname; ?>
+                                                <?php echo TranslationHandler::get_static_text("RECEIVER") . ": " . format_first_last_name($current_mail->firstname, $current_mail->surname, 45); ?>
                                             </div>								
                                             <div class="panel-body p-0">
                                                 <textarea name="message" id="new-message-body" style="padding: 8px 16px 16px 16px !important;" placeholder="<?php echo TranslationHandler::get_static_text("WRITE_YOUR_ANSWER"); ?>"></textarea>
@@ -546,7 +546,7 @@ $paginationHandler = new PaginationHandler();
                                                                     <tr>
 
                                                                         <td class="mail-left">
-                                                                            <div class="avatar avatar-lg avatar-circle change_page" page="account_profile" args="&user_id='. ($value->folder_name == "sent" || $value->folder_name == "draft" ? $value->receiver_id : $value->sender_id) .'" data-toggle="tooltip" title="' . $value->firstname . ' ' . $value->surname .'">
+                                                                            <div class="avatar avatar-lg avatar-circle change_page" page="account_profile" args="&user_id='. ($value->folder_name == "sent" || $value->folder_name == "draft" ? $value->receiver_id : $value->sender_id) .'" data-toggle="tooltip" title="' . format_first_last_name($value->firstname, $value->surname, 60) .'">
                                                                                 <img src="assets/images/profile_images/'.profile_image_exists($value->profile_image).'" >
                                                                             </div>
                                                                         </td>

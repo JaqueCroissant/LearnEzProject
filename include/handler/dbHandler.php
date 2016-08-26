@@ -50,13 +50,13 @@
             return $this->_conn;
         }
 
-        private function handle_arguments($query, $num_args, $args) {
+        private function handle_arguments($query, $num_args, $args, $htmlspecialchars = true) {
             if($num_args > 0) {
                 $queryArguments = $this->find_arguments($this->get_char_array($query));
                 $arguments = $args;
                 
                 for($i = 1; $i < count($args); $i++) {
-                    $this->add_argument($queryArguments[$i-1], htmlspecialchars($arguments[$i]));
+                    $this->add_argument($queryArguments[$i-1], $htmlspecialchars ? htmlspecialchars($arguments[$i]) : $arguments[$i]);
                 }
             }
         }
@@ -106,6 +106,22 @@
                 default:
                     return PDO::PARAM_STR;  
             }
+        }
+        
+        public function _query($query) 
+        {
+            try {
+                $this->_prepare = $this->get_conn_instance()->prepare($query);
+                $this->handle_arguments($query, func_num_args(), func_get_args(), false);
+                $this->_prepare->execute();
+                return true;
+            }
+            catch (PDOException $ex) 
+            {
+                $this->error = ErrorHandler::return_error($ex->getMessage());
+                echo $ex->getMessage();
+            }
+            return false;
         }
         
         public function query($query) 

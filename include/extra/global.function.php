@@ -51,7 +51,7 @@ function format_first_last_name($first, $last, $limit){
         }
         $current_iteration++;
     }
-    return strlen($final_first) == 0 ? substr($first, 0, $limit) . "..." : $final_first . " " . $final_last;
+    return strlen($final_first) <= 1 ? substr($first, 0, $limit) . "..." : $final_first . " " . $final_last;
 }
 
 function day_num_to_string($day_num = 0) {

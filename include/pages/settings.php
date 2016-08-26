@@ -93,7 +93,7 @@ $mediaHandler = new MediaHandler();
                                                     </div>
                                                 </div>
                                                 <div class="media-body">
-                                                    <h5 class="media-heading"><a href="javascript:void(0)" class="title-color user_full_name"><?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname; ?></a></h5>
+                                                    <h5 class="media-heading"><a href="javascript:void(0)" class="title-color user_full_name"><?php echo $userHandler->_user->firstname . " " . $userHandler->_user->surname ?></a></h5>
                                                     <small class="media-meta"><?php echo $userHandler->_user->user_type_title; ?></small>
                                                 </div>
                                             </div>
@@ -310,7 +310,7 @@ $mediaHandler = new MediaHandler();
                                             <select id="student" name="student" class="form-control pull-left" data-plugin="select2">
                                                 <?php
                                                 foreach($mailHandler->get_students() as $value) {
-                                                    echo '<option value="'.$value->id.'">'.$value->firstname . ' ' . $value->surname.'</option>';
+                                                    echo '<option value="'.$value->id.'">'. format_first_last_name($value->firstname, $value->surname, 40) .'</option>';
                                                 }
                                                 ?>
                                             </select>
@@ -335,7 +335,7 @@ $mediaHandler = new MediaHandler();
                                                         <div class="user-card m-b-sm student_<?php echo $user->id; ?>" style="padding: 8px !important;background:#f0f0f1;">
                                                             <div class="media">
                                                                 <div class="media-body">
-                                                                    <?php echo $user->firstname . " " . $user->surname; ?>
+                                                                    <?php echo format_first_last_name($user->firstname, $user->surname, 40) ?>
                                                                     <i class="zmdi zmdi-hc-lg zmdi-close pull-right remove_blocked_student" student_id="<?php echo $user->id; ?>" style="margin-top:4px;cursor:pointer;"></i>
                                                                 </div>
                                                             </div>

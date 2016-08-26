@@ -399,9 +399,18 @@ if (!empty($current_user->school_id)) {
                     <div class="my_tab_content">
                         <?php
                         for ($i = 1; $i < 6; $i++) {
+                            $current = $achievementHandler->min_max[$i]['current'];
+                            $max = $achievementHandler->min_max[$i]['max'];
+                            if ($max > 0) {
+                                $min_max = TranslationHandler::get_static_text("BADGES_ACHIEVED") . ' ' . $current . ' ' . strtolower(TranslationHandler::get_static_text("OF")) . ' ' . $max;
+                            } else {
+                                $min_max = TranslationHandler::get_static_text("BADGES_ACHIEVED") . ' ' . $current;
+                            }
                             ?>
                             <div id="type_<?= $i; ?>_tab" class="my_fade my_tab">
+                                <div class="" style="background-color: #eee; display: block; overflow: auto;"><div class="fz-lg col-sm-12 p-h-md p-l-xl"><?php echo $min_max; ?></div></div>
                                 <div class="panel-body">
+                                    
                                     <?php
                                     $j = 0;
                                     if (is_array($achievementHandler->user_achievements) && array_key_exists($i, $achievementHandler->user_achievements)) {
@@ -413,9 +422,6 @@ if (!empty($current_user->school_id)) {
                                                 <img class="center" style="display:block; margin: auto; height: 75px;" src="assets/images/achievement/<?= $value->img_path; ?>-100.png">
                                             </div>
                                             <?php
-                                            if ($j % 4 == 0) {
-                                                
-                                            }
                                         }
                                     }
                                     if (is_array($achievementHandler->not_achieved) && array_key_exists($i, $achievementHandler->not_achieved)) {
@@ -430,6 +436,7 @@ if (!empty($current_user->school_id)) {
                                         }
                                     }
                                     ?>
+
                                 </div>
                             </div>
                         <?php } ?>

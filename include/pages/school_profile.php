@@ -117,7 +117,7 @@ if (isset($_GET['school_id'])) {
                                         foreach ($userHandler->users as $value) {
                                             ?>
                                             <tr class = "a change_page" page = "account_profile" step = "" args = "&user_id=<?php echo $value->id; ?>">
-                                                <td><?php echo $value->firstname . " " . $value->surname; ?></td>
+                                                <td><?php echo format_first_last_name($value->firstname, $value->surname, 35) ?></td>
                                                 <td><?php echo $value->email; ?></td>
 
                                             </tr>
@@ -182,7 +182,7 @@ if (isset($_GET['school_id'])) {
                                     </div>
                                     <div class="sl-content">
                                         <h5 class="m-t-0">
-                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= $value['firstname'] . ' ' . $value['surname'] ?></a>
+                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= format_first_last_name($value['firstname'], $value['surname'], 35) ?></a>
                                             <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i> " . TranslationHandler::get_static_text("THIS_IS_YOU") : ""; ?></small>
                                         </h5>
                                         <p><span data-plugin="counterUp"><?php echo $value['points']; ?></span> points</p>

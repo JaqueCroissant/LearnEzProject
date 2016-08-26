@@ -233,7 +233,6 @@ function delete_lecture(func) {
     has_uploaded = false;
     $(".lecture_progress_value").html("Sletter upload");
     $(".lecture_progress_bar").addClass("active");
-    console.log(test_file_name);
     initiate_submit_get($(this), "media.php?step=delete_lecture&file_name=" + test_file_name,
             function () {
                 show_status_bar("error", ajax_data.error);

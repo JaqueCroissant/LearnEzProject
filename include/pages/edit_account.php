@@ -39,6 +39,7 @@ $schoolHandler->get_school_types();
                                             <label class="control-label" for="first_name"><?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?></label>
                                             <div class="">
                                                 <input id="edit_user_id" name="user_id" type="hidden" value="<?php echo $userHandler->temp_user->id;?>">
+                                                <input id="edit_user_username" name="username" type="hidden" value="<?php echo $userHandler->temp_user->username;?>">
                                                 <input id="edit_school_id" name="school_id" type="hidden" value="<?php echo $userHandler->temp_user->school_id;?>">
                                                 <input id="edit_type_id" name="type_id" type="hidden" value="<?php echo $userHandler->temp_user->user_type_id;?>">
                                                 <input class="form-control" id="edit_first_name" type="text" name="first_name" placeholder="<?php echo TranslationHandler::get_static_text("INFO_FIRSTNAME"); ?>" value="<?php echo $userHandler->temp_user->firstname; ?>">

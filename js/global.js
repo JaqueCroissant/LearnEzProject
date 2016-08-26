@@ -163,7 +163,7 @@ $(document).ready(function () {
         var action = $(this).attr("action");
         if ($("#" + $(this).attr("target_form") + " input:checkbox:checked").length > 0) {
             initiate_custom_submit_form($(this), function () {
-                alert(ajax_data.error);
+                show_status_bar("error", ajax_data.error);
             }, function () {
                 if (ajax_data.status_value !== undefined) {
                     if (ajax_data.status_value === true) {
@@ -179,7 +179,7 @@ $(document).ready(function () {
                             });
                         }
                     } else {
-                        alert(ajax_data.error);
+                        show_status_bar("error", ajax_data.error);
                     }
                 }
             }, $(this).attr("args"), $(this).attr("target_form"));

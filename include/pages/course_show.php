@@ -34,9 +34,9 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
                     <?php if($order_by == 1) { ?>
                     <div class="col-sm-4 play_lecture" element_id="<?= $value->id; ?>">
                         
-                        <div class="widget" style="cursor:pointer;" data-container="body" <?= !empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? 'data-toggle="popover"' : ''; ?>  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")); ?>">
+                        <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-html="true" data-content="<?= $value->title . "" . (empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? '' : '<br/>') . "" . ($value->description != $value->title ? trim($value->description, " \t\n\r\0\x0B\xC2\xA0") : ''); ?>">
                             
-                            <header class="widget-header" style="padding: 0.7rem 1rem !important;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>">
+                            <header class="widget-header" style="text-overflow: ellipsis; overflow: hidden;white-space:nowrap;padding: 0.7rem 1rem !important;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>">
                                 <?php echo htmlspecialchars($value->title); ?>
                             </header>
                             <hr class="widget-separator m-0">
@@ -72,7 +72,7 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
                     </div>
                     <?php } else { ?>
                     <div class="col-md-12 play_lecture" element_id="<?= $value->id; ?>">
-                        <div class="widget" style="cursor:pointer;margin-bottom:1rem !important;" data-container="body" <?= !empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? 'data-toggle="popover"' : ''; ?>  data-placement="top" data-trigger="hover" data-content="<?= trim($value->description, " \t\n\r\0\x0B\xC2\xA0"); ?>">
+                        <div class="widget" style="cursor:pointer;margin-bottom:1rem !important;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-html="true" data-content="<?= $value->title . "" . (empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? '' : '<br/>') . "" . ($value->description != $value->title ? trim($value->description, " \t\n\r\0\x0B\xC2\xA0") : ''); ?>">
                             <div class="widget-body" style="padding: 1.35rem !important">
                                 <?php echo $value->is_complete ? '<div class="ribbon"><span>'. TranslationHandler::get_static_text("COMPLETED") .'</span></div>' : (array_key_exists($value->id, $homeworkHandler->homework_all_lectures) && !$homeworkHandler->homework_all_lectures[$value->id]->is_complete ? '<div class="ribbon homework-ribbon"><span>'. TranslationHandler::get_static_text("HOMEWORK") .'</span></div>' : ''); ?>
                                 <div class="clearfix">
@@ -107,7 +107,7 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
                     <?php foreach($courseHandler->tests as $value) { ?>
                     <?php if($order_by == 1) { ?>
                     <div class="col-sm-4 play_test" element_id="<?= $value->id; ?>">
-                        <div class="widget" style="cursor:pointer;" data-container="body" <?= !empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? 'data-toggle="popover"' : ''; ?>  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")); ?>">
+                        <div class="widget" style="cursor:pointer;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-html="true" data-content="<?= $value->title . "" . (empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? '' : '<br/>') . "" . ($value->description != $value->title ? trim($value->description, " \t\n\r\0\x0B\xC2\xA0") : ''); ?>">
                             <header class="widget-header" style="padding: 0.7rem 1rem !important;<?php echo $value->is_complete ? 'opacity:0.5;' : ''; ?>">
                                 <?php echo $value->title; ?>
                             </header>
@@ -144,7 +144,7 @@ $has_homework = $homeworkHandler->get_specific_course_homework($course_id);
                     </div>
                     <?php } else { ?>
                     <div class="col-md-12 play_test" element_id="<?= $value->id; ?>">
-                        <div class="widget" style="cursor:pointer;margin-bottom:1rem !important;" data-container="body" <?= !empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? 'data-toggle="popover"' : ''; ?>  data-placement="top" data-trigger="hover" data-content="<?= htmlspecialchars(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")); ?>">
+                        <div class="widget" style="cursor:pointer;margin-bottom:1rem !important;" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-html="true" data-content="<?= $value->title . "" . (empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? '' : '<br/>') . "" . ($value->description != $value->title ? trim($value->description, " \t\n\r\0\x0B\xC2\xA0") : ''); ?>">
                             <div class="widget-body" style="padding: 1.35rem !important">
                                 <?php echo $value->is_complete ? '<div class="ribbon"><span>'. TranslationHandler::get_static_text("COMPLETED") .'</span></div>' : (array_key_exists($value->id, $homeworkHandler->homework_all_tests) && !$homeworkHandler->homework_all_tests[$value->id]->is_complete ? '<div class="ribbon homework-ribbon"><span>'. TranslationHandler::get_static_text("HOMEWORK") .'</span></div>' : ''); ?>
                                   <div class="clearfix">

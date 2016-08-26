@@ -13,7 +13,7 @@ $courseHandler->get_courses();
             foreach($courseHandler->courses as $value) {
             ?>
             <div class="col-md-4 col-sm-6 change_page" style="cursor:pointer;" id="course_show" page="course_show" args="&course_id=<?php echo $value->id; ?>">
-                <div class="widget stats-widget" data-container="body" data-toggle="popover"  data-placement="right" data-trigger="hover" data-content="<?= htmlspecialchars($value->description); ?>">
+                <div class="widget stats-widget" data-container="body" <?= !empty(trim($value->description, " \t\n\r\0\x0B\xC2\xA0")) ? 'data-toggle="popover"' : ''; ?>  data-placement="bottom" data-trigger="hover" data-content="<?= htmlspecialchars($value->description); ?>">
                     <div class="widget-body clearfix">
                                 <div style="display: table-cell;width: 100%;"><img style="width:70px;height:70px;" src="assets/images/thumbnails/<?php echo htmlspecialchars($value->image_filename); ?>" alt=""></div>
                                 <div style="display: table-cell;vertical-align: bottom;white-space: nowrap;">

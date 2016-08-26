@@ -14,7 +14,7 @@ $html = '<html>
             </div>
             
             <div class="name_text_container">
-                <div class="' . (strlen($name) > 16 ? "name_text_small" : "name_text_large") . '">'. $name .'</div>
+                <div class="' . (strlen($name) > 16 ? "name_text_small" : "name_text_large") . '">'. format_first_last_name($name, "", 40) .'</div>
             </div>
             
             <div class="info_text_container">

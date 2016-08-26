@@ -238,7 +238,7 @@ $incomplete_tests = 0;
                                         <tbody>
                                             <?php foreach ($class->students as $value) { ?>
                                                 <tr class="a change_page" page="account_profile" args="&user_id=<?= $value->id ?>">
-                                                    <td><span data-toggle="tooltip" title="<?= $value->firstname . ' ' . $value->surname ?>"><?= strlen($value->firstname . ' ' . $value->surname) > 40 ? substr($value->firstname . ' ' . $value->surname, 0, 40) . "..." : $value->firstname . ' ' . $value->surname ?></span></td>
+                                                    <td><span data-toggle="tooltip" title="<?= $value->firstname . ' ' . $value->surname ?>"><?= format_first_last_name($value->firstname, $value->surname, 40) ?></span></td>
                                                     <td><?php echo $value->username; ?></td>
                                                     <td style='text-align:center;'><i class="fa fa-envelope change_page" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>" page="mail" step="create_mail" args="&receiver_id=USER_ANY_<?= $value->id ?>"></i></td>
                                                     <td style='text-align:center;' data-container="body" data-toggle="popover" data-placement="top" data-trigger="hover" data-html="true" data-content="

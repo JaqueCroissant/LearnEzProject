@@ -100,7 +100,6 @@ $(document).ready(function () {
     function switch_play_pause(){
         var player = $(".course_video")[0];
         if(player.ended) {
-            console.log("test");
             current_progress = $(player)[0].currentTime > max_progress ? max_progress : Math.floor($(player)[0].currentTime);
             if (current_progress > progress_reached) {
                 progress_reached = current_progress;
@@ -247,9 +246,7 @@ $(document).ready(function () {
     });
 
     function update_init(){
-        console.log(update);
         if (update && progress_reached > progress_reached_last) {
-            console.log("updating");
             if (progress_reached >= max_progress) {
                 update_progress(task, 0, 1);
             }
@@ -301,7 +298,7 @@ $(document).ready(function () {
     
     function open(data, open){
         done = false;
-        current_progress = parseInt(data.current_progress);
+        current_progress = parseInt(data.current_progress) < 5 && task === "lecture" ? 0 : parseInt(data.current_progress) ;
         progress_reached = parseInt(data.current_progress);
         progress_reached_last = parseInt(data.current_progress);
         max_progress = task === "test" ? parseInt(data.max_progress) : parseInt(data.max_progress) - 1;

@@ -78,8 +78,8 @@ try
                                     ?>
                                         <tr>
                                             <td class="content" style="padding: 13px;border: 1px solid #000000;">
-                                                <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $user_list[$i]['firstname'] . " " . $user_list[$i]['surname']; ?></div>
-                                                <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $user_list[$i]['username'] ?></span><?php echo '<b>Password:</b> ' . $user_list[$i]['unhashed_password']; ?></div>
+                                                <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $user_list[$i]->firstname . " " . $user_list[$i]->surname; ?></div>
+                                                <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $user_list[$i]->username ?></span><?php echo '<b>Password:</b> ' . $user_list[$i]->unhashed_password; ?></div>
                                             </td>
                                         </tr>
                                     <?php

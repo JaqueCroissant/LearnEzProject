@@ -58,6 +58,10 @@ class CourseHandler extends Handler {
         }
         $this->_school_id = $school_id;
     }
+    
+    public function check_test_name($name){
+        
+    }
 
     //<editor-fold defaultstate="collapsed" desc="CREATE">
     public function create_course($os_id = 0, $points = 0, $color = null, $sort_order = 0, $thumbnail = 0, $titles = array(), $descriptions = array(), $language_ids = array()) {
@@ -862,7 +866,7 @@ class CourseHandler extends Handler {
                 if (DbHandler::get_instance()->count_query("SELECT id FROM " . $table . " WHERE user_id = :user_id AND " . $type . "_id = :type_id AND is_complete = 1", $this->_user->id, $id) != 0) {
                     throw new Exception("COURSE_TYPE_ALREADY_COMPLETED");
                 }
-                $values = "is_complete=1,complete_date=NOW()";
+                $values = "progress=" . $progress .",is_complete=1,complete_date=NOW()";
             } else {
                 $values = "progress=" . $progress;
             }
@@ -1048,4 +1052,5 @@ class CourseHandler extends Handler {
         return DbHandler::get_instance()->return_query("SELECT course_os.id, translation_course_os.title FROM course_os INNER JOIN translation_course_os ON translation_course_os.course_os_id = course_os.id AND translation_course_os.language_id = :language", TranslationHandler::get_current_language());
     }
 
+    
 }

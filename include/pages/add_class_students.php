@@ -23,10 +23,8 @@ else
         $people_in_class[] = $user;
     }
     $userHandler->get_by_school_id($_GET['school_id'], true);
-//    test_dump($userHandler->users);
-    $all_people = object_group_by_key(merge_array_recursively($people_in_class, $userHandler->users, true), "user_type_id");
+    $all_people = array_merge_on_key($people_in_class, $userHandler->users, "id");
     
-    $missing = array();
     $classHandler->get_class_by_id($_GET['class_id'])
 ?>
 <div class="row">   
@@ -46,14 +44,14 @@ else
                                 <label><?php echo TranslationHandler::get_static_text("STUDENTS_IN_SCHOOL"); ?></label>
                                 <select size="5" multiple style="width: 100%; height:200px;" class="form-control students_left">
                                     <?php
-                                        foreach($all_people["4"] as $student)
+                                        foreach($all_people as $student)
                                         {
-                                            if(!isset($student->present))
+                                            if($student->user_type_id == "4" && !isset($student->present))
                                             {
                                                 echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
                                             }
                                             else {
-                                                $missing[] = $student;
+                                                $missing_students[] = $student;
                                             }
                                         }
                                     ?>
@@ -73,11 +71,16 @@ else
                                 <label><?php echo TranslationHandler::get_static_text("STUDENTS_IN_CLASS"); ?></label>
                                 <select name="students_to_add[]" size="5" multiple style="width:100%; height:200px;" class="form-control students_right">
                                     <?php
-                                        foreach($missing as $student)
+                                                                        
+                                        foreach($missing_students as $student)
                                         {
-                                            echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
+                                            if ($student->user_type_id == "4") {
+                                                echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
+                                            }
+                                            else {
+                                                $teachers[] = $student;
+                                            }
                                         }
-                                        $missing = array();
                                     ?>
                                 </select>
                             </div>
@@ -89,14 +92,14 @@ else
                                 <label><?php echo TranslationHandler::get_static_text("TEACHERS_IN_SCHOOL"); ?></label>
                                 <select size="5" multiple style="width: 100%; height:200px;" class="form-control teachers_left">
                                     <?php
-                                        foreach($all_people["3"] as $student)
+                                        foreach($teachers as $student)
                                         {
                                             if(!isset($student->present))
                                             {
                                                 echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
                                             }
                                             else {
-                                                $missing[] = $student;
+                                                $missing_teacher[] = $student;
                                             }
                                         }
                                     ?>
@@ -116,7 +119,7 @@ else
                                 <label><?php echo TranslationHandler::get_static_text("TEACHERS_IN_CLASS"); ?></label>
                                 <select name="students_to_add[]" size="5" multiple style="width:100%; height:200px;" class="form-control teachers_right">
                                     <?php
-                                        foreach($missing as $student)
+                                        foreach($missing_teacher as $student)
                                         {
                                             echo '<option value="' . $student->id . '">' . format_first_last_name($student->firstname, $student->surname, 40) . " - " . $student->username . '</option>';
                                         }

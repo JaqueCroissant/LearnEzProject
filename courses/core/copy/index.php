@@ -1,4 +1,34 @@
+
+
 <!DOCTYPE html>
+<?php
+    session_start();
+    require_once '../../../include/extra/db.class.php';
+    require_once '../../../include/class/orm.class.php';
+    require_once '../../../include/class/user.class.php';
+    require_once '../../../include/class/user_settings.class.php';
+    require_once '../../../include/class/rights.class.php';
+    require_once '../../../include/class/error.class.php';
+    require_once '../../../include/class/course.class.php';
+    require_once '../../../include/class/lecture.class.php';
+    require_once '../../../include/class/test.class.php';
+    require_once '../../../include/handler/handler.php';
+    require_once '../../../include/handler/errorHandler.php';
+    require_once '../../../include/handler/dbHandler.php';
+    require_once '../../../include/handler/sessionKeyHandler.php';
+    require_once '../../../include/handler/rightsHandler.php';
+    require_once '../../../include/handler/loginHandler.php';
+    require_once '../../../include/handler/userHandler.php';
+    require_once '../../../include/handler/courseHandler.php';
+    
+    $loginHandler = new LoginHandler();
+    $courseHandler = new CourseHandler();
+    $name = explode("/", $_SERVER['REQUEST_URI'])[4];
+    
+    if(!$loginHandler->check_login() || !$courseHandler->check_test_name($name)) {
+        die();
+    }
+?>
 <html lang="en">
 <head>
 <meta name='viewport' content='initial-scale = 1, minimum-scale = 1, maximum-scale = 1'/>
@@ -10,7 +40,9 @@
 <style>#initialLoading{background:url(assets/htmlimages/loader.gif) no-repeat center center;background-color:#ffffff;position:absolute;margin:auto;top:0;left:0;right:0;bottom:0;z-index:10010;}</style>
 
 <script>
-
+if (window.self === window.top) {
+    window.stop();
+}
 var deviceReady = false;
 var initCalled = false ;
 var initialized = false;

@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <?php
 session_start();
 
-require_once '../extra/db.class.php';
 require_once '../extra/global.function.php';
+require_once '../class/orm.class.php';
+require_once '../class/user.class.php';
 require_once '../handler/handler.php';
 require_once '../handler/errorHandler.php';
 require_once '../handler/dbHandler.php';
@@ -18,16 +20,13 @@ try
         SessionKeyHandler::remove_from_session("new_passwords");
         if(count($user_info > 0))
         {
-                $user_ids = array();
 
-                foreach(array_keys($user_info) as $key)
-                {
-                    $user_ids[] = $key;
-                }
-
-                $query = "SELECT id, username, firstname, surname FROM users WHERE id IN (" . generate_in_query($user_ids) . ")";
-                $users_data = DbHandler::get_instance()->return_query($query);
+                $user_list = array();
                 
+                foreach($user_info as $key=>$value)
+                {
+                    $user_list[] = $value;
+                }  
                 ?>
                 <html>
                     <head>
@@ -51,22 +50,23 @@ try
                         <table>
                             <?php
 
-                            if(count($users_data > 1))
+                            if(count($user_list > 0))
                             {
-                                for($i = 0; $i < count($users_data); $i+= 2)
-                                {
-                                    if(count($users_data)-$i > 1)
+                                for($i = 0; $i < count($user_list); $i+= 2)
+                                {   
+                                    
+                                    if(count($user_list)-$i > 1)
                                     {
                                     ?>
                                         <tr>
                                             <td class="content" style="padding: 13px;border: 1px solid #000000;">
-                                                <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $users_data[$i]['firstname'] . " " . $users_data[$i]['surname']; ?></div>
-                                                <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $users_data[$i]['username'] ?></span><?php echo '<b>Password:</b> ' . $user_info[$users_data[$i]['id']]; ?></div>
+                                                <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $user_list[$i]->firstname . " " . $user_list[$i]->surname; ?></div>
+                                                <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $user_list[$i]->username ?></span><?php echo '<b>Password:</b> ' . $user_list[$i]->unhashed_password ?></div>
                                             </td>
                                             <td style="padding: 4px !important;"></td>
                                             <td class="content" style="padding: 13px;border: 1px solid #000000;">
-                                                <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $users_data[$i+1]['firstname'] . " " . $users_data[$i+1]['surname']; ?></div>
-                                                <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $users_data[$i+1]['username'] ?></span><?php echo '<b>Password:</b> ' . $user_info[$users_data[$i+1]['id']]; ?></div>
+                                                <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $user_list[$i+1]->firstname . " " . $user_list[$i+1]->surname; ?></div>
+                                                <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $user_list[$i+1]->username ?></span><?php echo '<b>Password:</b> ' . $user_list[$i+1]->unhashed_password ?></div>
                                             </td>
                                         </tr>
 
@@ -78,8 +78,8 @@ try
                                     ?>
                                         <tr>
                                             <td class="content" style="padding: 13px;border: 1px solid #000000;">
-                                                <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $users_data[$i]['firstname'] . " " . $users_data[$i]['surname']; ?></div>
-                                                <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $users_data[$i]['username'] ?></span><?php echo '<b>Password:</b> ' . $user_info[$users_data[$i]['id']]; ?></div>
+                                                <div style="margin-bottom: 8px"><?php echo '<b>Name:</b> ' . $user_list[$i]->firstname . " " . $user_list[$i]->surname; ?></div>
+                                                <div><span style="padding-right: 20px"><?php echo '<b>Username:</b> ' . $user_list[$i]->username ?></span><?php echo '<b>Password:</b> ' . $user_list[$i]->unhashed_password; ?></div>
                                             </td>
                                         </tr>
                                     <?php

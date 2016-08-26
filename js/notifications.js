@@ -65,7 +65,8 @@ jQuery(function ($) {
         //read on click
         $(document).on("click", ".read_notif", function(event){
            if (!currently_clicked_button) {
-               $('#notification_window').hide();
+                $('#notifications').attr("aria-expanded", false);
+                $('#notifications').closest("li").removeClass("open");
                 currently_clicked_button = true;
                 $.ajax({
                    type: "POST",

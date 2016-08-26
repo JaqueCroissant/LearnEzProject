@@ -137,14 +137,29 @@ function get_progress_color($progress = 0) {
     }
 }
 
+function array_merge_on_key($arr1, $arr2, $k){
+    $final = array();
+    foreach ($arr1 as $value) {
+        $final[$value->$k] = $value;
+    }
+    foreach ($arr2 as $value) {
+        if (!array_key_exists($value->$k, $final)) {
+            $final[$value->$k] = $value;
+        }
+    }
+    return $final;
+}
+
 function merge_array_recursively($array1, $array2, $overwrite = true) 
 { 
     foreach($array2 as $key=>$val) 
     { 
         if(isset($array1[$key])) 
         { 
-            if(is_array($val)) 
+            if(is_array($val))  {
+                
                 $array1[$key] = merge_array_recursively($array1[$key], $val); 
+            }
             elseif((is_string($array1[$key]) || is_int($array1[$key])) && $overwrite) 
                 $array1[$key] = $val; 
         } 

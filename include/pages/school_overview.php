@@ -62,7 +62,7 @@ switch ($classHandler->_user->user_type_id) {
                                             <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
                                                 <td>
                                                     <div class="center">
-                                                        <i class="zmdi zmdi-hc-lg zmdi-edit change_page a" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT") ?>"></i>
+                                                        <i class="zmdi zmdi-hc-lg zmdi-edit change_page a" page="edit_school" step="" args="&school_id=<?php echo $value->id; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SCHOOL_EDIT") ?>"></i>
                                                     </div>
                                                 </td>
                                             <?php } ?>
@@ -250,3 +250,4 @@ switch ($classHandler->_user->user_type_id) {
 ?>
 </div>
 <script src="assets/js/include_app.js" type="text/javascript"></script>
+<script>$(document).ready(function(){$("[data-toggle='tooltip']").tooltip()});</script>

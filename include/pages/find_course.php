@@ -131,12 +131,12 @@ $courseHandler = new CourseHandler();
                                                 <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
                                                     <td align="center">
                                                         <div>
-                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="course_edit" args="&type=lecture&id=<?php echo $value->id; ?>" id="course_edit"></i>
+                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="course_edit" args="&type=lecture&id=<?php echo $value->id; ?>" id="course_edit" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_LECTURE")?>"></i>
                                                             <?php if (RightsHandler::has_user_right("COURSE_DELETE")) { ?>
                                                             <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete">
                                                                 <input type="hidden" name="id" value="<?php echo $value->id; ?>">
                                                                 <input type="hidden" name="type" value="lecture">
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="lecture" current_datatable="datatable_2" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="lecture" current_datatable="datatable_2" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style="" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE_LECTURE")?>"></i>
                                                                 <input type="hidden" name="submit" value="submit"></input>
                                                             </form>
                                                             <?php } ?>
@@ -199,12 +199,12 @@ $courseHandler = new CourseHandler();
                                                 <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
                                                     <td align="center">
                                                         <div>
-                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="course_edit" args="&type=test&id=<?php echo $value->id; ?>" id="course_edit"></i>
+                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="course_edit" args="&type=test&id=<?php echo $value->id; ?>" id="course_edit" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_TEST")?>"></i>
                                                             <?php if (RightsHandler::has_user_right("COURSE_DELETE")) { ?>
                                                             <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete">
                                                                 <input type="hidden" name="id" value="<?php echo $value->id; ?>">
                                                                 <input type="hidden" name="type" value="test">
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="test" current_datatable="datatable_3" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="test" current_datatable="datatable_3" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style="" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE_TEST")?>"></i>
                                                                 <input type="hidden" name="submit" value="submit"></input>
                                                             </form>
                                                             <?php } ?>

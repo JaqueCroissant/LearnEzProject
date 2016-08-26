@@ -5,6 +5,7 @@ class AchievementHandler extends Handler {
     public $user_id;
     public $user_achievements = [];
     public $not_achieved = [];
+    public $min_max;
     public static $temp_achievement;
     private static $course_id = null;
     private static $breakpoints = [];
@@ -158,7 +159,7 @@ class AchievementHandler extends Handler {
                             continue;
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
-                        } else if ($value_n['breakpoint'] == $total) {
+                        } else if ($value_n['breakpoint'] <= $total) {
                             self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
                         }
                     }
@@ -239,7 +240,7 @@ class AchievementHandler extends Handler {
                             continue;
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
-                        } else if ($value_n['breakpoint'] == $total) {
+                        } else if ($value_n['breakpoint'] <= $total) {
                             self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
                         }
                     }
@@ -331,8 +332,10 @@ class AchievementHandler extends Handler {
                 $var = DbHandler::get_instance()->return_query($q, TranslationHandler::get_current_language());
                 foreach ($var as $nv) {
                     $nv['id'] = $nv['user_achievement_id'];
-                    if ($nv['achievement_type_id'] == "4") {
+                    if ($nv['achievement_type_id'] == "4" && $value['award_type_id'] == "3") {
                         $nv = $this->get_course_title($nv);
+                    } else if ($value['achievement_type_id'] == "4") {
+                        $value['text'] = $value['breakpoint'] . " " . strtolower($value['text']);
                     }
                     $this->user_achievements[] = new Achievement($nv);
                 }
@@ -342,8 +345,10 @@ class AchievementHandler extends Handler {
                 $q = "SELECT * from achievement_view WHERE user_achievement_id = :id and (language_id = :lang OR language_id is null)";
                 $var = reset(DbHandler::get_instance()->return_query($q, $ach_ids, TranslationHandler::get_current_language()));
                 $var['id'] = $var['user_achievement_id'];
-                if ($var['achievement_type_id'] == "4") {
+                if ($var['achievement_type_id'] == "4" && $value['award_type_id'] == "3") {
                     $var = $this->get_course_title($var);
+                } else if ($value['achievement_type_id'] == "4") {
+                    $value['text'] = $value['breakpoint'] . " " . strtolower($value['text']);
                 }
                 $this->user_achievements = new Achievement($var);
                 return true;
@@ -383,31 +388,69 @@ class AchievementHandler extends Handler {
             }
             if ($value['text'] == "" && $value['achievement_type_id'] == "4" && $value['award_type_id'] == "3") {
                 $value = $this->get_course_title($value);
-            } else if ($value['text'] == "" && $value['achievement_type_id'] == "4") {
-                $value['text'] = $value['breakpoint'] . " " . strtolower(TranslationHandler::get_static_text("COURSES")) . " " . strtolower(TranslationHandler::get_static_text("COMPLETED_ALT"));
-            }
-            if ($value['achievement_type_id'] == "3" && $value['award_type_id'] == "1"){
+            } else if ($value['achievement_type_id'] == "4") {
+                $value['text'] = $value['breakpoint'] . " " . strtolower($value['text']);
+            } else if ($value['achievement_type_id'] == "3" && $value['award_type_id'] == "1") {
                 $value['text'] = $value['breakpoint'];
+            } else {
+                $value['text'] = $value['breakpoint'] . " " . strtolower($value['text']);
             }
             $this->user_achievements[$value['achievement_type_id']][] = new Achievement($value);
         }
-        $this->get_not_completed($ach_ids);
+        $this->get_min_max();
+        $this->get_not_completed($ach_ids, $temp);
+    }
+    
+    public function get_min_max() {
+        $min_q = "SELECT count(*) as count, achievement_type_id as type_id FROM user_achievement inner join achievement on user_achievement.achievement_id = achievement.id where users_id = :user_id group by type_id";
+        if ($this->user_id) {
+            $min_data = DbHandler::get_instance()->return_query($min_q, $this->user_id);
+        } else {
+            $min_data = DbHandler::get_instance()->return_query($min_q, $this->_user->id);
+        }
+        $max_q = "SELECT count(*) as count, achievement_type_id as type_id FROM achievement where award_type_id != 2 group by type_id";
+        $max_data = DbHandler::get_instance()->return_query($max_q);
+        $this->min_max = array();
+        
+        for ($h = 1; $h < 6; $h++) {
+            $this->min_max[$h] = array();
+            $this->min_max[$h]['current'] = 0;
+            $this->min_max[$h]['max'] = 0;
+        }
+        foreach ($min_data as $min) {
+            $this->min_max[$min['type_id']]['current'] = $min['count'];
+        }
+        foreach ($max_data as $max) {
+            $this->min_max[$max['type_id']]['max'] = $max['count'];
+        }
     }
 
-    private function get_not_completed($id_arr) {
+    private function get_not_completed($id_arr, $breakpoints) {
         if (count($id_arr) == 0) {
-            $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where award_type_id != 2 and (language_id = :id OR language_id is null) order by breakpoint DESC ";
+            $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where (language_id = :id OR language_id is null) order by breakpoint ";
         } else {
             $ids = generate_in_query($id_arr);
-            $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where achievement.id NOT IN (" . $ids . ") and award_type_id != 2 and (language_id = :id OR language_id is null) order by breakpoint DESC ";
+            $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where achievement.id NOT IN (" . $ids . ") and (language_id = :id OR language_id is null) order by breakpoint ";
         }
         $not_data = DbHandler::get_instance()->return_query($not_q, TranslationHandler::get_current_language());
-        
         foreach ($not_data as $val) {
-            if ($val['award_type_id'] == "1" || $val['award_type_id'] == "2") {
-                $val['text'] = isset($val['breakpoint']) ? $val['breakpoint'] . ' ' . strtolower($val['text']) : $val['text'];
+            if ($val['award_type_id'] == "2") {
+                for ($i = 1; $i < 4; $i++) {
+                    if ($i == 1) {
+                        $text = $val['text'];
+                    }
+                    if ($val['award_type_id'] == "1" || $val['award_type_id'] == "2") {
+                        $bp = isset($breakpoints[$val['achievement_type_id']]['breakpoint']) ? $breakpoints[$val['achievement_type_id']]['breakpoint'] : 0;
+                        $val['text'] = isset($val['breakpoint']) ? ( (int) ($val['breakpoint'] * $i ) + (int) $bp ) . ' ' . strtolower($text) : $val['text'];
+                    }
+                    $this->not_achieved[$val['achievement_type_id']][] = new Achievement($val);
+                }
+            } else {
+                if ($val['award_type_id'] == "1" || $val['award_type_id'] == "2") {
+                    $val['text'] = isset($val['breakpoint']) ? $val['breakpoint'] . ' ' . strtolower($val['text']) : $val['text'];
+                }
+                $this->not_achieved[$val['achievement_type_id']][] = new Achievement($val);
             }
-            $this->not_achieved[$val['achievement_type_id']][] = new Achievement($val);
         }
     }
 
@@ -474,7 +517,7 @@ class AchievementHandler extends Handler {
         $t['img_path'] = isset($data['img_path']) ? $data['img_path'] : "default.png";
         $t['count'] = isset($data['breakpoint']) ? $data['breakpoint'] : 0;
         $t['title'] = TranslationHandler::get_static_text("NEW_ACHIEVEMENT");
-        $t['text'] = isset($data['text']) ? $data['text'] : "";
+        $t['text'] = isset($data['text']) && isset($data['breakpoint']) ? $data['breakpoint'] . " " . strtolower($data['text'])  : "";
         $t['o_top'] = isset($data['o_top']) ? $data['o_top'] : "";
         $t['o_left'] = isset($data['o_left']) ? $data['o_left'] : "";
         array_push($temp, $t);

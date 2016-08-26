@@ -37,7 +37,7 @@ if (RightsHandler::has_user_right("SCHOOL_EDIT") && ($classHandler->_user->user_
                                     <input class="form-control" id="edit_school_address" type="text" name="school_address" placeholder="<?php echo TranslationHandler::get_static_text("SCHOOL_ADDRESS"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->address : ""; ?>">
                                 </div>
                                 <div class="m-b-sm">
-                                    <label for="school__zip_code"><?php echo TranslationHandler::get_static_text("ZIP_CODE") . " & " . TranslationHandler::get_static_text("CITY"); ?></label>
+                                    <label for="school_zip_code"><?php echo TranslationHandler::get_static_text("ZIP_CODE") . " & " . TranslationHandler::get_static_text("CITY"); ?></label>
                                     <div style="display:table; width:100%;">
                                         <input class="form-control pull-left" style="width:24%;display:table-cell;" id="edit_school_zip_code" type="text" name="school_zip_code" placeholder="<?php echo TranslationHandler::get_static_text("ZIP_CODE"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->zip_code : ""; ?>">
                                         <input class="form-control pull-right" style="width:74%;display:table-cell;" id="edit_school_city" type="text" name="school_city" placeholder="<?php echo TranslationHandler::get_static_text("CITY"); ?>" value="<?php echo isset($_GET['school_id']) ? $schoolHandler->school->city : ""; ?>">

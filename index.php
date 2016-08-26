@@ -49,7 +49,7 @@ RightsHandler::reset();
             ?>
         </div>
 
-        <div id="achievement_container" class="hidden achievement_container m-b-lg" style="display: none; -webkit-box-shadow: 0 0 20px #ccc !important; -moz-box-shadow: 0 0 20px #ccc !important; box-shadow: 0 0 20px #ccc !important;">
+        <div id="achievement_container" class="hidden achievement_container m-b-lg" style="z-index: 9001; display: none; -webkit-box-shadow: 0 0 20px #ccc !important; -moz-box-shadow: 0 0 20px #ccc !important; box-shadow: 0 0 20px #ccc !important;">
             <div class="user-card m-b-0">
                 <div id="achievement_title" class="achievement_title fz-lg text-center m-b-xl"></div>
                 <img id="achievement_img" src="" style="display: block; margin: auto;">

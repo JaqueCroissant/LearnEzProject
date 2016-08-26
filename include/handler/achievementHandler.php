@@ -229,7 +229,7 @@ class AchievementHandler extends Handler {
 
     private static function handle_lecture_test($table, $achievement_type_id) {
         $award_types = DbHandler::get_instance()->return_query("SELECT id, award_type_id, max_days, group_concat(id) as ids, group_concat(breakpoint) as breakpoint FROM achievement WHERE achievement_type_id = :type group by award_type_id, max_days", $achievement_type_id);
-        $total = DbHandler::get_instance()->return_query("SELECT * FROM " . $table . " WHERE user_id = :user_id AND is_complete = 1", SessionKeyHandler::get_from_session("user", TRUE)->id);
+        $total = DbHandler::get_instance()->count_query("SELECT * FROM " . $table . " WHERE user_id = :user_id AND is_complete = 1", SessionKeyHandler::get_from_session("user", TRUE)->id);
         foreach ($award_types as $value) {
             switch ($value['award_type_id']) {
                 case "1":
@@ -249,6 +249,7 @@ class AchievementHandler extends Handler {
                     $achieved_data = self::get_achieved_data($achievement_type_id, $value);
                     $count = $achieved_data['sum'] + $achieved_data['current_breakpoint'];
                     if ($total >= $count) {
+                        $achieved_data['breakpoint'] = $count;
                         self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
                     }
                     break;
@@ -388,10 +389,6 @@ class AchievementHandler extends Handler {
             }
             if ($value['text'] == "" && $value['achievement_type_id'] == "4" && $value['award_type_id'] == "3") {
                 $value = $this->get_course_title($value);
-            } else if ($value['achievement_type_id'] == "4") {
-                $value['text'] = $value['breakpoint'] . " " . strtolower($value['text']);
-            } else if ($value['achievement_type_id'] == "3" && $value['award_type_id'] == "1") {
-                $value['text'] = $value['breakpoint'];
             } else {
                 $value['text'] = $value['breakpoint'] . " " . strtolower($value['text']);
             }

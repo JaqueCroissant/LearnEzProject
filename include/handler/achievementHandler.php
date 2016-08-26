@@ -389,8 +389,6 @@ class AchievementHandler extends Handler {
             }
             if ($value['text'] == "" && $value['achievement_type_id'] == "4" && $value['award_type_id'] == "3") {
                 $value = $this->get_course_title($value);
-            } else if ($value['achievement_type_id'] == "3" && $value['award_type_id'] == "1") {
-                $value['text'] = $value['breakpoint'];
             } else {
                 $value['text'] = $value['breakpoint'] . " " . strtolower($value['text']);
             }

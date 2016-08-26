@@ -19,6 +19,7 @@ if(isset($_POST))
             $user_id = isset($_POST['user_id']) ? $_POST['user_id'] : "";
             $first_name = isset($_POST['first_name']) ? $_POST['first_name'] : "";
             $surname = isset($_POST['surname']) ? $_POST['surname'] : "";
+            $username = isset($_POST['username']) ? $_POST['username'] : "";
             $email = isset($_POST['email']) ? $_POST['email'] : "";
             $description = isset($_POST['description']) ? $_POST['description'] : "";
             $password = isset($_POST['password']) ? $_POST['password'] : "";
@@ -34,7 +35,6 @@ if(isset($_POST))
                 {
                     if(empty($password))
                     {
-                        $jsonArray['password'] = "NO PASSWORD";
                         $jsonArray['success'] = TranslationHandler::get_static_text("ACCOUNT_UPDATED");
                         $jsonArray['status_value'] = true;
                     }
@@ -42,13 +42,13 @@ if(isset($_POST))
                     {
                         $user_object = new User();
                         $user_object->firstname = $first_name;
+                        $user_object->username = $username;
                         $user_object->email = $email;
                         $user_object->unhashed_password = $password;
                         $user_array[] = $user_object;
                         
                         if($contactHandler->distribute_credentials($user_array))
                         {
-                            $jsonArray['password'] = "PASSWORD";
                             $jsonArray['success'] = TranslationHandler::get_static_text("ACCOUNT_UPDATED");
                             $jsonArray['status_value'] = true;
                         }
@@ -58,7 +58,6 @@ if(isset($_POST))
                             $jsonArray['status_value'] = false;
                         }
                     }
-                    
                 }
                 else
                 {

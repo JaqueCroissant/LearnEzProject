@@ -248,7 +248,7 @@ $(document).ready(function () {
     function update_init(){
         if (update && progress_reached > progress_reached_last) {
             if (progress_reached >= max_progress) {
-                update_progress(task, 0, 1);
+                update_progress(task, max_progress, 1);
             }
             else {
                 update_progress(task, progress_reached, 0);

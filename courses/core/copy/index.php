@@ -23,7 +23,9 @@
     
     $loginHandler = new LoginHandler();
     $courseHandler = new CourseHandler();
-    if(!$loginHandler->check_login()) {
+    $name = explode("/", $_SERVER['REQUEST_URI'])[4];
+    
+    if(!$loginHandler->check_login() || !$courseHandler->check_test_name($name)) {
         die();
     }
 ?>
@@ -38,7 +40,9 @@
 <style>#initialLoading{background:url(assets/htmlimages/loader.gif) no-repeat center center;background-color:#ffffff;position:absolute;margin:auto;top:0;left:0;right:0;bottom:0;z-index:10010;}</style>
 
 <script>
-
+if (window.self === window.top) {
+    window.stop();
+}
 var deviceReady = false;
 var initCalled = false ;
 var initialized = false;

@@ -63,12 +63,12 @@ $courseHandler = new CourseHandler();
                                                 <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>
                                                     <td align="center">
                                                         <div>
-                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="course_edit" args="&type=course&id=<?php echo $value->id; ?>" id="course_edit"></i>
+                                                            <i class="zmdi zmdi-hc-lg zmdi-edit edit_account m-r-xs change_page" style="display: inline-block;" page="course_edit" args="&type=course&id=<?php echo $value->id; ?>" id="course_edit" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("EDIT_COURSE")?>"></i>
                                                             <?php if (RightsHandler::has_user_right("COURSE_DELETE")) { ?>
                                                             <form style="display: inline-block;" method="post" id="click_alert_form_<?php echo $value->id; ?>" url="course.php?step=delete">
                                                                 <input type="hidden" name="id" value="<?php echo $value->id; ?>">
                                                                 <input type="hidden" name="type" value="course">
-                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="course" current_datatable="datatable_1" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style=""></i>
+                                                                <i class="zmdi zmdi-hc-lg zmdi-delete btn_delete_course" delete_type="course" current_datatable="datatable_1" element_id="<?php echo $value->id; ?>" id="click_alert_btn" style="" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("DELETE_COURSE")?>"></i>
                                                                 <input type="hidden" name="submit" value="submit"></input>
                                                             </form>
                                                             <?php } ?>
@@ -246,3 +246,4 @@ $courseHandler = new CourseHandler();
 
 <script src="assets/js/include_app.js" type="text/javascript"></script>
 <script src="js/my_tab.js" type="text/javascript"></script>
+<script>$(document).ready(function(){$("[data-toggle='tooltip']").tooltip()});</script>

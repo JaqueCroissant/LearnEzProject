@@ -55,9 +55,9 @@ $courseHandler = new CourseHandler();
                                         foreach ($courseHandler->courses as $value) {
                                             ?>
                                             <tr class="clickable_row account_tr_id_<?php echo $value->id; ?>">
-                                                <td class="click_me" data-search="<?php echo $value->title; ?>"><?php echo (strlen($value->title) > 20 ? substr($value->title, 0, 20) : $value->title); ?></td>
+                                                <td class="click_me" data-search="<?php echo $value->title; ?>"><?php echo (strlen($value->title) > 40 ? substr($value->title, 0, 40) : $value->title); ?></td>
                                                 <td class="click_me" data-search="<?php echo $value->description; ?>"><?php echo (strlen($value->description) > 30 ? substr($value->description, 0, 30) : $value->description); ?></td>
-                                                <td class="click_me" data-search="<?php echo $value->description; ?>"><?php echo $value->os_title; ?></td>
+                                                <td class="click_me"><?php echo $value->os_title; ?></td>
                                                 <td class="click_me" align="center"><?php echo $value->amount_of_lectures; ?></td>
                                                 <td class="click_me" align="center"><?php echo $value->amount_of_tests; ?></td>
                                                 <?php if (RightsHandler::has_user_right("COURSE_ADMINISTRATE")) { ?>

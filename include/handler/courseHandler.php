@@ -60,7 +60,21 @@ class CourseHandler extends Handler {
     }
     
     public function check_test_name($name){
-        
+        try {
+            if (!$this->user_exists()) {
+                throw new exception("USER_NOT_LOGGED_IN");
+            }
+            if ($this->_user->user_type_id != 1) {
+                $temp = DbHandler::get_instance()->return_query("SELECT course_test.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = (SELECT id FROM course_test WHERE path = :path)", $this->_user->school_id, $name);
+                return !empty(reset($temp));
+            }
+            else {
+                return true;
+            }
+        } catch (Exception $ex) {
+            $this->error = ErrorHandler::return_error($ex->getMessage());
+        }
+        return false;
     }
 
     //<editor-fold defaultstate="collapsed" desc="CREATE">
@@ -639,10 +653,9 @@ class CourseHandler extends Handler {
     }
 
     private function fetch_last_completed() {
-        if (!RightsHandler::has_user_right("COURSE_ADMINISTRATE") && !(DbHandler::get_instance()->count_query("SELECT course.id FROM course_lecture INNER JOIN course ON course.id = course_lecture.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_lecture.id = :id", $this->_user->school_id, $this->_current_element_id) > 0)) {
+        if (!RightsHandler::has_user_right("COURSE_ADMINISTRATE") && !(DbHandler::get_instance()->count_query("SELECT id FROM school_course WHERE school_id = :school_id AND course_id = :course_id", $this->_user->school_id, $this->_current_element_id) > 0)) {
             throw new Exception("COURSE_NO_ACCESS");
         }
-
         $combined_data = [];
         $lecture_data = DbHandler::get_instance()->return_query("SELECT course_lecture.id, user_course_lecture.complete_date, translation_course_lecture.title, 1 AS lecture_type FROM course_lecture INNER JOIN translation_course_lecture ON translation_course_lecture.course_lecture_id = course_lecture.id INNER JOIN user_course_lecture ON user_course_lecture.lecture_id = course_lecture.id WHERE translation_course_lecture.language_id = :language_id AND user_course_lecture.user_id = :user_id AND user_course_lecture.is_complete AND course_lecture.course_id = :course_id ORDER BY user_course_lecture.complete_date DESC LIMIT 5", TranslationHandler::get_current_language(), $this->_user->id, $this->_current_element_id);
 
@@ -947,7 +960,7 @@ class CourseHandler extends Handler {
             }
 
             $resize = new Resize($file_location . "uncropped/" . $file_name);
-            $resize->resize_image(70, 70, 'auto');
+            $resize->resize_image(130, 130, 'auto');
             $resize->save_image($file_location . "" . $file_name, 100);
 
             DbHandler::get_instance()->query("INSERT INTO course_image (filename) VALUES (:filename)", $file_name);

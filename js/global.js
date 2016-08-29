@@ -628,6 +628,7 @@ function display_achievement(element) {
             return true;
         }
         var value = list.shift();
+        console.log(value);
         var title = value.title === undefined ? "" : value.title;
         var count = value.count === undefined || value.count === "0" ? "" : value.count + " ";
         var text = value.text === undefined ? "" : value.text;

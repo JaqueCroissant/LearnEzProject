@@ -104,6 +104,9 @@ class AchievementHandler extends Handler {
                     $breakpoints = [];
                     $breakpoints = self::get_breakpoints($value);
                     $achieved_data = self::get_achieved_data($achievement_type_id, $value);
+                    $q = "SELECT text from translation_achievement where achievement_id = :id and language_id = :lang_id";
+                    $id = 6;
+                    $achieved_data['text'] = reset(reset(DbHandler::get_instance()->return_query($q, $id, TranslationHandler::get_current_language())));
                     if ($achieved_data['text'] == "") {
                         $q = "SELECT text from translation_achievement where achievement_id = :id and language_id = :id";
                         $id = isset($achieved_data['ids']) && is_array($achieved_data['ids']) ? $achieved_data['ids'][0] : isset($achieved_data['id']) ? $achieved_data['id'] : 7;
@@ -158,6 +161,9 @@ class AchievementHandler extends Handler {
                 case "1":
                     $breakpoints = self::get_breakpoints($value);
                     $achieved_data = self::get_achieved_data($achievement_type_id, $value);
+                    $q = "SELECT text from translation_achievement where achievement_id = :id and language_id = :lang_id";
+                    $id = 4;
+                    $achieved_data['text'] = reset(reset(DbHandler::get_instance()->return_query($q, $id, TranslationHandler::get_current_language())));
                     $total = DbHandler::get_instance()->count_query("SELECT * FROM certificates WHERE user_id = :user_id", SessionKeyHandler::get_from_session("user", TRUE)->id);
                     foreach ($breakpoints as $value_n) {
                         if ($value_n['breakpoint'] < $achieved_data['sum']) {
@@ -203,7 +209,6 @@ class AchievementHandler extends Handler {
                     $q = "SELECT text from translation_achievement where achievement_id = :id and language_id = :lang_id";
                     $id = 12;
                     $achieved_data['text'] = reset(reset(DbHandler::get_instance()->return_query($q, $id, TranslationHandler::get_current_language())));
-                    echo $achieved_data['text'];
                     $total = reset(reset(DbHandler::get_instance()->return_query("SELECT points FROM users WHERE id = :user_id", SessionKeyHandler::get_from_session("user", TRUE)->id)));
                     foreach ($breakpoints as $value_n) {
                         if ($value_n['breakpoint'] <= $achieved_data['sum']) {
@@ -257,6 +262,8 @@ class AchievementHandler extends Handler {
                     break;
                 case "2":
                     $achieved_data = self::get_achieved_data($achievement_type_id, $value);
+                    $q = "SELECT text from translation_achievement inner join achievement on translation_achievement.achievement_id = achievement.id where language_id = :lang_id and achievement_type_id = :ach_id limit 1";
+                    $achieved_data['text'] = reset(reset(DbHandler::get_instance()->return_query($q, TranslationHandler::get_current_language(), $achievement_type_id)));
                     $count = $achieved_data['sum'] + $achieved_data['current_breakpoint'];
                     if ($total >= $count) {
                         $achieved_data['breakpoint'] = $count;

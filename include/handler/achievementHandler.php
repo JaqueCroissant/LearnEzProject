@@ -290,6 +290,7 @@ class AchievementHandler extends Handler {
     }
 
     private static function add_achievement_for_user($achievement_id, $data_object, $award_type_id) {
+        $data_object['award_type_id'] = $award_type_id;
         $cur_breakpoint = isset($data_object['current_breakpoint']) ? $data_object['current_breakpoint'] : 0;
         if (self::$course_id) {
             $query = "INSERT INTO user_achievement (users_id, achievement_id, breakpoint, value_id) VALUES (:user, :ach_id, :breakpoint, :value_id)";
@@ -480,8 +481,8 @@ class AchievementHandler extends Handler {
 
     private static function get_breakpoints($array) {
         $breakpoints = [];
-        $ids = explode(',', $array['ids']);
-        $bps = explode(',', $array['breakpoint']);
+        $ids = isset($array['ids']) ? explode(',', $array['ids']) : 0;
+        $bps = isset($array['breakpoint']) ? explode(',', $array['breakpoint']) : isset($array['breakpoints']) ? explode(",", $array['breakpoints']) : 0;
         for ($i = 0; $i < count($ids); $i++) {
             $breakpoints[$i]['id'] = $ids[$i];
             $breakpoints[$i]['breakpoint'] = $bps[$i];
@@ -529,9 +530,21 @@ class AchievementHandler extends Handler {
             array_push($temp, json_decode($_COOKIE[$cookie_name]));
         }
         $t['img_path'] = isset($data['img_path']) ? $data['img_path'] : "default.png";
-        $t['count'] = isset($data['current_breakpoint']) ? $data['current_breakpoint'] : 0;
+        $breakpoints = $data['breakpoints'] != "" ? explode(',', $data['breakpoints']) : "";
+        if ($data['award_type_id'] == "2" && is_array($breakpoints)) {
+            if ($data['current_breakpoint'] != "") {
+                $t['count'] = $data['current_breakpoint'] + array_sum($breakpoints);
+            } else if ($data['current_breakpoint'] != "") {
+                $t['count'] = $data['current_breakpoint'];
+            } else {
+                $t['count'] = "";
+            }
+        } else {
+            $t['count'] = isset($data['current_breakpoint']) ? $data['current_breakpoint'] : 0;
+        }
+        
         $t['title'] = TranslationHandler::get_static_text("NEW_ACHIEVEMENT");
-        $t['text'] = isset($data['text']) && isset($data['current_breakpoint']) ? $data['current_breakpoint'] . " " . strtolower($data['text']) : "";
+        $t['text'] = isset($data['text']) ? $t['count'] . " " . strtolower($data['text']) : "";
         $t['o_top'] = isset($data['o_top']) ? $data['o_top'] : "";
         $t['o_left'] = isset($data['o_left']) ? $data['o_left'] : "";
         array_push($temp, $t);

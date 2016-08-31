@@ -114,16 +114,19 @@ class AchievementHandler extends Handler {
                     }
                     $login_records = DbHandler::get_instance()->return_query("SELECT date(time) as date FROM login_record WHERE users_id = :users_id group by date order by date DESC", SessionKeyHandler::get_from_session("user", TRUE)->id);
                     if (count($login_records) < (int) $achieved_data['breakpoint']) {
-                        break;
+                        return;
                     }
-                    foreach ($breakpoints as $n_value) {
-                        self::$breakpoints[SessionKeyHandler::get_from_session("user", TRUE)->id][] = $n_value['breakpoint'];
-                        if (in_array($n_value['breakpoint'], explode(',', $achieved_data['breakpoints']))) {
+                    $bp_array = explode(",", $achieved_data['breakpoints']);
+                    rsort($bp_array);
+                    foreach ($breakpoints as $value_n) {
+                        $total = self::check_consecutive_days($login_records, $value_n['breakpoint']);
+                        if ($value_n['breakpoint'] <= $bp_array[0]) {
                             continue;
-                        }
-                        $cons_days = self::check_consecutive_days($login_records, $n_value['breakpoint']);
-                        if ($cons_days >= $n_value['breakpoint']) {
-                            self::add_achievement_for_user($n_value['id'], $achieved_data, $value['award_type_id']);
+                        } else if ($value_n['breakpoint'] > $total) {
+                            return;
+                        } else if ($value_n['breakpoint'] <= $total) {
+                            $achieved_data['current_breakpoint'] = $value_n['breakpoint'];
+                            self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
                         }
                     }
                     break;
@@ -290,7 +293,6 @@ class AchievementHandler extends Handler {
     }
 
     private static function add_achievement_for_user($achievement_id, $data_object, $award_type_id) {
-        $data_object['award_type_id'] = $award_type_id;
         $cur_breakpoint = isset($data_object['current_breakpoint']) ? $data_object['current_breakpoint'] : 0;
         if (self::$course_id) {
             $query = "INSERT INTO user_achievement (users_id, achievement_id, breakpoint, value_id) VALUES (:user, :ach_id, :breakpoint, :value_id)";
@@ -299,6 +301,7 @@ class AchievementHandler extends Handler {
             $query = "INSERT INTO user_achievement (users_id, achievement_id, breakpoint) VALUES (:user, :ach_id, :breakpoint)";
             DbHandler::get_instance()->query($query, SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_id, $cur_breakpoint);
         }
+        $data_object['award_type_id'] = $award_type_id;
         self::set_cookie($data_object);
     }
 
@@ -481,11 +484,11 @@ class AchievementHandler extends Handler {
 
     private static function get_breakpoints($array) {
         $breakpoints = [];
-        $ids = isset($array['ids']) ? explode(',', $array['ids']) : 0;
-        $bps = isset($array['breakpoint']) ? explode(',', $array['breakpoint']) : isset($array['breakpoints']) ? explode(",", $array['breakpoints']) : 0;
+        $ids = $array['ids'] != "" ? explode(',', $array['ids']) : 0;
+        $bps = $array['breakpoint'] != "" ? explode(',', $array['breakpoint']) : 0;
         for ($i = 0; $i < count($ids); $i++) {
-            $breakpoints[$i]['id'] = $ids[$i];
-            $breakpoints[$i]['breakpoint'] = $bps[$i];
+            $breakpoints[$i]['id'] = is_array($ids) ? $ids[$i] : 0;
+            $breakpoints[$i]['breakpoint'] = is_array($bps) ? $bps[$i] : 0;
         }
         return $breakpoints;
     }
@@ -520,7 +523,7 @@ class AchievementHandler extends Handler {
         $this->user_id = $user_id;
     }
 
-    public static function set_cookie($data) {
+    private static function set_cookie($data) {
         $cookie_name = 'achievements';
         $t = array();
         $temp = array();
@@ -542,7 +545,7 @@ class AchievementHandler extends Handler {
         } else {
             $t['count'] = isset($data['current_breakpoint']) ? $data['current_breakpoint'] : 0;
         }
-        
+
         $t['title'] = TranslationHandler::get_static_text("NEW_ACHIEVEMENT");
         $t['text'] = isset($data['text']) ? $t['count'] . " " . strtolower($data['text']) : "";
         $t['o_top'] = isset($data['o_top']) ? $data['o_top'] : "";

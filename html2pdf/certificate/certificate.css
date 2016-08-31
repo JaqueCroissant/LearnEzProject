@@ -19,25 +19,23 @@ page[size="A4"] {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;     
-    background-image: url("bg.jpg");
-    //background: url("bg.jpg") no-repeat fixed center;
+    background: url("bg.jpg") no-repeat fixed center;
   }
   
   .course_text_container {
       width:100%;
       text-align:center;
-      padding-top:220px;
+      padding-top:375px;
   }
   
   .course_text_large {
       font-family: pacifico;
-      font-size:40px;
+      font-size:28px;
   }
   
   .course_text_small {
-      margin-top:6px;
       font-family: pacifico;
-      font-size:30px;
+      font-size:28px;
   }
   
   .name_text_container {
@@ -50,12 +48,12 @@ page[size="A4"] {
   
   .name_text_small {
       font-family: alexbrush;
-      font-size:60px;
+      font-size:70px;
   }
   
   .name_text_large {
       font-family: alexbrush;
-      font-size:80px;
+      font-size:70px;
   }
   
   .info_text_container {
@@ -74,7 +72,7 @@ page[size="A4"] {
   .certificate_id_text_container {
       width:100%;
       text-align:center;
-      padding-top:170px;
+      padding-top:160px;
   }
   
   .certificate_id_text {
@@ -94,7 +92,7 @@ page[size="A4"] {
   }
   
   .date_awarded_text {
-      width:40%;
+      width:45%;
       text-align:center;
       float:left;
       margin-top:80px;
@@ -103,29 +101,11 @@ page[size="A4"] {
   }
   
   .nazer_text {
-      width:40%;
+      width:45%;
       text-align:center;
       float:right;
       font-family: amaranth;
       font-size:16px;
       margin-top:-20px;
-  }
-  
-  .footer_right {
-      font-family: calibri;
-      font-size:16px;
-      width:auto;
-      position:absolute;
-      bottom: 10px;
-      right: 30px;
-  }
-  
-  .footer_left {
-      font-family: calibri;
-      font-size:16px;
-      width:auto;
-      position:absolute;
-      bottom: 10px;
-      left: 50px;
   }
 }

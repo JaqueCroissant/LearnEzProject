@@ -330,18 +330,17 @@ class ContactHandler extends Handler
                         </head>
                         <body>
                             <p></p>
-                            <p>Hello '. $user_object->firstname .'!</p>
-                            <div>Your account has been updated!</div>
-                            <div>You will need the following credentials to log in:</div>
+                            <p>Hej</p>
+                            <p>Din kontooplysninger er muligvis ændret. Du kan bruge nedenstående loginoplysninger til at logge ind på din konto.</p>
                             </br>
-                            <p><b>Username: ' . $user_object->username . '</b></p>
-                            <p><b>Password: '. $user_object->unhashed_password . '</b></p>
-
-                            <div>Enjoy!</div>
-                            <a href="www.learnez.dk">LearnEZ</a>
+                            <p><b>Brugernavn:</b> ' . $user_object->username . '<br /><b>Kodeord:</b> '. $user_object->unhashed_password . '<br /> <b>Login:</b> <a href="www.login.learnez.dk">login.learnez.dk</a></p>
+                            <p><b>Hvorfor får jeg denne mail?</b></p>
+                            <p>Du modtager denne mail enten fordi, at du er blevet tilmeldt til vores e-lærings kurser i Microsoft Office gennem din skole eller fordi, at du har bedt om en ny adgangskode. </p>
+                            <p>De bedste hilsner<br />
+                            <p>LearnEZ teamet<br />
+                            <a href="www.learnez.dk">LearnEZ</a></p>
                         </body>
                     </html>';
-        
         mail($user_object->email,$subject,$message,$headers);
     }
 }

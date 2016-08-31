@@ -18,8 +18,9 @@ page[size="A4"] {
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
-    background-size: cover;      
-    background: url("bg.jpg") no-repeat fixed center;
+    background-size: cover;     
+    background-image: url("bg.jpg");
+    //background: url("bg.jpg") no-repeat fixed center;
   }
   
   .course_text_container {

@@ -64,13 +64,14 @@ class CourseHandler extends Handler {
             if (!$this->user_exists()) {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
-            if ($this->_user->user_type_id != 1) {
-                $temp = DbHandler::get_instance()->return_query("SELECT course_test.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = (SELECT id FROM course_test WHERE path = :path)", $this->_user->school_id, $name);
-                return !empty(reset($temp));
-            }
-            else {
-                return true;
-            }
+            return true;
+//            if ($this->_user->user_type_id != 1) {
+//                $temp = DbHandler::get_instance()->return_query("SELECT course_test.id FROM course_test INNER JOIN course ON course.id = course_test.course_id INNER JOIN school_course ON school_course.course_id = course.id AND school_course.school_id = :school WHERE course_test.id = (SELECT id FROM course_test WHERE path = :path)", $this->_user->school_id, $name);
+//                return !empty($temp);
+//            }
+//            else {
+//                return true;
+//            }
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
         }

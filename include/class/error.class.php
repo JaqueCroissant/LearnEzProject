@@ -1,5 +1,5 @@
 <?php
-class Error {
+class MyError {
     public $title;
     public $text;
     public $code;

@@ -7,8 +7,8 @@ $html = '<html>
             <link rel="stylesheet" href="../../html2pdf/certificate/certificate.css" type="text/css" />
         </head>
         <body>
-            <page size="A4"></page>
-            
+            <page size="A4">lol</page>
+            <img src="../../html2pdf/certificate/bg.jpg"></img>
             <div class="course_text_container">
                 <div class="' . (strlen($title) > 32 ? "course_text_small" : "course_text_large") . '">' . $title . ' ' . TranslationHandler::get_static_text("CERTIFICATE") . '</div>
             </div>

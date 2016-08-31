@@ -13,9 +13,9 @@ class ErrorHandler
     {
         $error = DbHandler::get_instance()->return_query("SELECT error.prefix, translation_error.title, translation_error.text FROM error INNER JOIN translation_error ON translation_error.error_id = error.id WHERE error.prefix = :prefix AND translation_error.language_id = :language_id", $errorCode, TranslationHandler::get_current_language());
         if($error != null) {
-            return new Error(reset($error)["title"], reset($error)["text"], $errorCode);
+            return new MyError(reset($error)["title"], reset($error)["text"], $errorCode);
         }
-        return new Error("Unknown error occoured.", "Unknown error occoured.", $errorCode);
+        return new MyError("Unknown error occoured.", "Unknown error occoured.", $errorCode);
     }
     
     public static function show_error_page($error = null) {

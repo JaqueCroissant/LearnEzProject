@@ -218,7 +218,8 @@ class StatisticsHandler extends Handler {
         foreach ($data as $value) {
             $tmp_log[$value['date']] = $value['sum'];
         }
-        for ($index = date($format, strtotime('-' . $days . ' days')); $index < date($format, strtotime('+1 days')); $index++) {
+        for ($i = $days ; $i > -1; $i--) {
+            $index = date($format, strtotime('-' . $i . ' days'));
             if (array_key_exists($index, $tmp_log)) {
                 $this->login_activity[] = (int) $tmp_log[$index];
             } else {
@@ -244,13 +245,14 @@ class StatisticsHandler extends Handler {
             $temp_test[$value['date']] = $value['complete'];
         }
         $this->test_graph_stats = [];
-        for ($index = date($format, strtotime('-' . $days . ' days')); $index < date($format, strtotime('+1 days')); $index++) {
-            if (array_key_exists($index, $temp_lect)) {
+        for ($i = $days ; $i > -1; $i--) {
+            $index = date($format, strtotime('-' . $i . ' days'));
+            if (is_array($temp_lect) && array_key_exists($index, $temp_lect)) {
                 $this->lecture_graph_stats[] = (int) $temp_lect[$index];
             } else {
                 $this->lecture_graph_stats[] = 0;
             }
-            if (array_key_exists($index, $temp_test)) {
+            if (is_array($temp_test) && array_key_exists($index, $temp_test)) {
                 $this->test_graph_stats[] = (int) $temp_test[$index];
             } else {
                 $this->test_graph_stats[] = 0;

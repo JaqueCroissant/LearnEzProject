@@ -95,7 +95,7 @@ $classHandler = new ClassHandler();
                                                     <select id="select1" name="school_id" class="create_select_school form-control" data-plugin="select2">
                                                         <option value=""><?php echo TranslationHandler::get_static_text("CREATE_SELECT_SCHOOL"); ?></option>
                                                         <?php
-                                                        $schoolHandler->get_all_schools(true);
+                                                        $schoolHandler->get_all_schools();
 
                                                         foreach ($schoolHandler->all_schools as $school) {
                                                             $insert = "";

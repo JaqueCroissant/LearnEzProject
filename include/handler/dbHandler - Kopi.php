@@ -1,7 +1,7 @@
 <?php
     class DbHandler 
     {
-        private $_dsn = 'mysql:dbname=learnez_dk_db;host=mysql47.unoeuro.com';
+        private $_dsn = 'mysql:dbname=irelax_dk_db;host=mysql45.unoeuro.com';
         private $_username;
         private $_password;
         

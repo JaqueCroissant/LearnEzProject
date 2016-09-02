@@ -33,14 +33,11 @@ class StatisticsHandler extends Handler {
     //LECTURE & TEST
     public $global_tests_complete;
     public $global_lectures_complete;
-
     public $global_test_amount;
     public $global_lectures_amount;
     public $global_course_amount;
     public $course_os_distribution;
     public $course_titles;
-
-
     //GLOBAL STATS
     public $login_activity = array();
     public $lecture_graph_stats;
@@ -56,7 +53,6 @@ class StatisticsHandler extends Handler {
     public $account_type_amount;
     public $account_types = [];
     public $student_total = 0;
-    
     private $_school_id;
     private $_class_id;
     private $_account_type_bool;
@@ -77,34 +73,35 @@ class StatisticsHandler extends Handler {
 
             $this->set_account_type_bool($student_and_teacher_bool);
 
-            $base_query = "SELECT course_id, GROUP_CONCAT(progress / total) as progress, count(total) as total, type from progress_view WHERE user_type_id ";
+            $ql_progress = "SELECT sum(progress) as sum FROM user_course_lecture inner join users on user_course_lecture.user_id = users.id inner join course_lecture on user_course_lecture.lecture_id = course_lecture.id inner join course on course_lecture.course_id = course.id inner join school_course on course.id = school_course.course_id and school_course.school_id = users.school_id inner join user_class on users.id = user_class.users_id inner join class on user_class.class_id = class.id where class_id = :class_id ";
+            $ql_total = "SELECT course_lecture.id, time_length FROM course_lecture inner join course on course_lecture.course_id = course.id inner join school_course on course.id = school_course.course_id inner join class on class.school_id = school_course.school_id where class.id = :class_id group by course_lecture.id";
+            $qt_progress = "SELECT sum(progress) as sum FROM user_course_test inner join users on user_course_test.user_id = users.id inner join course_test on user_course_test.test_id = course_test.id inner join course on course_test.course_id = course.id inner join school_course on course.id = school_course.course_id and school_course.school_id = users.school_id inner join user_class on users.id = user_class.users_id inner join class on user_class.class_id = class.id where class_id = :class_id ";
+            $qt_total = "SELECT course_test.id, total_steps FROM course_test inner join course on course_test.course_id = course_id inner join school_course on course.id = school_course.course_id inner join class on class.school_id = school_course.school_id where class.id = :class_id group by course_test.id";
             if ($this->_account_type_bool) {
-                $query = $base_query . "IN (3, 4) AND class_id = :class_id";
+                $end_q = " AND users.user_type_id IN (3,4)";
+                $q_number = "SELECT * from users inner join user_class on users.id = user_class.users_id WHERE class_id = :class_id and user_type_id IN (3,4)";
             } else {
-                $query = $base_query . "= 4 AND class_id = :class_id";
+                $end_q = " AND users.user_type_id = 4";
+                $q_number = "SELECT * from users inner join user_class on users.id = user_class.users_id WHERE class_id = :class_id and user_type_id = 4";
             }
-            $query .= ' group by course_id, type';
-            $data_array = DbHandler::get_instance()->return_query($query, $this->_class_id);
-            $lecture_avg = [];
-            $lect_total = 0;
-            $test_avg = [];
-            $test_total = 0;
-            foreach ($data_array as $value) {
-                if ($value['type'] == "1") {
-                    $test = explode(',', $value['progress']);
-                    $test_avg[] = $value['total'] != 0 ? array_sum($test) / $value['total'] : 0;
-                    $test_total += $value['total'];
-                } elseif ($value['type'] == "2") {
-                    $lect = explode(',', $value['progress']);
-                    $lecture_avg[] = $value['total'] != 0 ? array_sum($lect) / $value['total'] : 0;
-                    $lect_total += $value['total'];
-                }
+            $ql_progress .= $end_q;
+            $qt_progress .= $end_q;
+            $lect_progress_data = reset(reset(DbHandler::get_instance()->return_query($ql_progress, $this->_class_id)));
+            $lect_total_data = DbHandler::get_instance()->return_query($ql_total, $this->_class_id);
+            $lect_tot = 0;
+            foreach ($lect_total_data as $value) {
+                $lect_tot += $value['time_length'];
             }
-            $this->class_lecture_average = array_sum($lecture_avg) != 0 ? round(array_sum($lecture_avg) * 100 / count($lecture_avg), 0) : 0;
-            $this->class_test_average = array_sum($test_avg) != 0 ? round(array_sum($test_avg) * 100 / count($test_avg), 0) : 0;
-            $this->class_average = $test_total != 0 || $lect_total != 0 ? round((($this->class_lecture_average * $lect_total) + ($this->class_test_average * $test_total)) / ($lect_total + $test_total), 0) : 0;
-
-
+            $test_progress_data = reset(reset(DbHandler::get_instance()->return_query($qt_progress, $this->_class_id)));
+            $test_total_data = DbHandler::get_instance()->return_query($qt_total, $this->_class_id);
+            $test_tot = 0;
+            foreach ($test_total_data as $value) {
+                $test_tot += $value['total_steps'];
+            }
+            $number_of_accounts = DbHandler::get_instance()->count_query($q_number, $this->_class_id);
+            $this->class_lecture_average = round($lect_progress_data / ($number_of_accounts * $lect_tot), 0);
+            $this->class_test_average = round($test_progress_data / ($number_of_accounts * $test_tot), 0);
+            $this->class_average = round(($this->school_lecture_average + $this->school_test_average) / 2, 0);
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -122,32 +119,35 @@ class StatisticsHandler extends Handler {
             }
             $this->set_school_id($school_id);
             $this->set_account_type_bool($student_and_teacher_bool);
-            $base_query = "SELECT course_id, GROUP_CONCAT(progress / total) as progress, count(total) as total, type from progress_view WHERE user_type_id ";
+            $ql_progress = "SELECT sum(progress) as sum FROM user_course_lecture inner join users on user_course_lecture.user_id = users.id inner join course_lecture on user_course_lecture.lecture_id = course_lecture.id inner join course on course_lecture.course_id = course.id inner join school_course on course.id = school_course.course_id and school_course.school_id = users.school_id where users.school_id = :school_id ";
+            $ql_total = "SELECT course_lecture.id, time_length FROM course_lecture inner join course on course_lecture.course_id = course.id inner join school_course on course.id = school_course.course_id where school_course.school_id = :school_id group by course_lecture.id";
+            $qt_progress = "SELECT sum(progress) as sum FROM user_course_test inner join users on user_course_test.user_id = users.id inner join course_test on user_course_test.test_id = course_test.id inner join course on course_test.course_id = course.id inner join school_course on course.id = school_course.course_id and school_course.school_id = users.school_id where users.school_id = :school_id ";
+            $qt_total = "SELECT course_test.id, total_steps FROM course_test inner join course on course_test.course_id = course_id inner join school_course on course.id = school_course.course_id where school_course.school_id = :school_id group by course_test.id";
             if ($this->_account_type_bool) {
-                $query = $base_query . "IN (3, 4) AND school_id = :school_id";
+                $end_q = " AND users.user_type_id IN (3,4)";
+                $q_number = "SELECT * from users where school_id = :school_id and user_type_id IN (3,4)";
             } else {
-                $query = $base_query . "= 4 AND school_id = :school_id";
+                $end_q = " AND users.user_type_id = 4";
+                $q_number = "SELECT * from users where school_id = :school_id and user_type_id = 4";
             }
-            $query .= ' group by course_id, type';
-            $data_array = DbHandler::get_instance()->return_query($query, $this->_school_id);
-            $lecture_avg = [];
-            $lect_total = 0;
-            $test_avg = [];
-            $test_total = 0;
-            foreach ($data_array as $value) {
-                if ($value['type'] == "1") {
-                    $test = explode(',', $value['progress']);
-                    $test_avg[] = $value['total'] != 0 ? array_sum($test) / $value['total'] : 0;
-                    $test_total += $value['total'];
-                } elseif ($value['type'] == "2") {
-                    $lect = explode(',', $value['progress']);
-                    $lecture_avg[] = $value['total'] != 0 ? array_sum($lect) / $value['total'] : 0;
-                    $lect_total += $value['total'];
-                }
+            $ql_progress .= $end_q;
+            $qt_progress .= $end_q;
+            $lect_progress_data = reset(reset(DbHandler::get_instance()->return_query($ql_progress, $this->_school_id)));
+            $lect_total_data = DbHandler::get_instance()->return_query($ql_total, $this->_school_id);
+            $lect_tot = 0;
+            foreach ($lect_total_data as $value) {
+                $lect_tot += $value['time_length'];
             }
-            $this->school_lecture_average = array_sum($lecture_avg) != 0 ? round(array_sum($lecture_avg) * 100 / count($lecture_avg), 0) : 0;
-            $this->school_test_average = array_sum($test_avg) != 0 ? round(array_sum($test_avg) * 100 / count($test_avg), 0) : 0;
-            $this->school_average = $test_total != 0 || $lect_total != 0 ? round((($this->school_lecture_average * $lect_total) + ($this->school_test_average * $test_total)) / ($lect_total + $test_total), 0) : 0;
+            $test_progress_data = reset(reset(DbHandler::get_instance()->return_query($qt_progress, $this->_school_id)));
+            $test_total_data = DbHandler::get_instance()->return_query($qt_total, $this->_school_id);
+            $test_tot = 0;
+            foreach ($test_total_data as $value) {
+                $test_tot += $value['total_steps'];
+            }
+            $number_of_accounts = DbHandler::get_instance()->count_query($q_number, $this->_school_id);
+            $this->school_lecture_average = round($lect_progress_data / ($number_of_accounts * $lect_tot), 0);
+            $this->school_test_average = round($test_progress_data / ($number_of_accounts * $test_tot), 0);
+            $this->school_average = round(($this->school_lecture_average + $this->school_test_average) / 2, 0);
             return true;
         } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
@@ -208,7 +208,7 @@ class StatisticsHandler extends Handler {
             return false;
         }
     }
-    
+
     private function get_login_activity_for_user($user_id, $days = 7) {
         $format = "Y-m-d";
         $login_q = "SELECT count(*) as sum, date(time) as date FROM login_record WHERE users_id = :users_id AND time >= curdate() - interval :days day GROUP BY date ORDER by time";
@@ -218,7 +218,7 @@ class StatisticsHandler extends Handler {
         foreach ($data as $value) {
             $tmp_log[$value['date']] = $value['sum'];
         }
-        for ($i = $days ; $i > -1; $i--) {
+        for ($i = $days; $i > -1; $i--) {
             $index = date($format, strtotime('-' . $i . ' days'));
             if (array_key_exists($index, $tmp_log)) {
                 $this->login_activity[] = (int) $tmp_log[$index];
@@ -245,7 +245,7 @@ class StatisticsHandler extends Handler {
             $temp_test[$value['date']] = $value['complete'];
         }
         $this->test_graph_stats = [];
-        for ($i = $days ; $i > -1; $i--) {
+        for ($i = $days; $i > -1; $i--) {
             $index = date($format, strtotime('-' . $i . ' days'));
             if (is_array($temp_lect) && array_key_exists($index, $temp_lect)) {
                 $this->lecture_graph_stats[] = (int) $temp_lect[$index];
@@ -463,21 +463,20 @@ class StatisticsHandler extends Handler {
             } else {
                 $data = DbHandler::get_instance()->return_query("SELECT users.open, users.user_type_id, translation_user_type.title FROM users INNER JOIN translation_user_type ON translation_user_type.user_type_id = users.user_type_id AND translation_user_type.language_id = :current_lang WHERE users.school_id = :school_id AND users.user_type_id > 1", TranslationHandler::get_current_language(), $this->_user->school_id);
                 $max_accounts = DbHandler::get_instance()->return_query("SELECT max_students FROM school WHERE id = :school_id", $this->_user->school_id);
-                
+
                 $this->account_max = $max_accounts[0]["max_students"];
             }
-            
+
 
             $this->account_count = count($data);
 
             $types = [];
             foreach ($data as $value) {
-                
-                if ($this->_user->user_type_id != "1" && $value['user_type_id'] > 2 && $value['open'] == "1")
-                {
+
+                if ($this->_user->user_type_id != "1" && $value['user_type_id'] > 2 && $value['open'] == "1") {
                     $this->account_student_teacher_count++;
                 }
-                
+
                 if ($value['open'] == "1") {
                     $this->accounts_open++;
                 }
@@ -502,13 +501,10 @@ class StatisticsHandler extends Handler {
             if (!is_numeric($limit)) {
                 throw new Exception("INVALID_INPUT");
             }
-            
-            if($this->_user->user_type_id=="1")
-            {
+
+            if ($this->_user->user_type_id == "1") {
                 $data = DbHandler::get_instance()->return_query("SELECT login_record.time, translation_user_type.user_type_id, translation_user_type.title FROM login_record INNER JOIN users ON users.id = login_record.users_id INNER JOIN translation_user_type ON users.user_type_id = translation_user_type.user_type_id AND translation_user_type.language_id = :current_lang WHERE time >= NOW() - INTERVAL :limit DAY", TranslationHandler::get_current_language(), $limit);
-            }
-            else
-            {
+            } else {
                 $data = DbHandler::get_instance()->return_query("SELECT login_record.time, translation_user_type.user_type_id, translation_user_type.title FROM login_record INNER JOIN users ON users.id = login_record.users_id INNER JOIN translation_user_type ON users.user_type_id = translation_user_type.user_type_id AND translation_user_type.language_id = :current_lang AND users.user_type_id > 1 WHERE time >= NOW() - INTERVAL :limit DAY", TranslationHandler::get_current_language(), $limit);
             }
 
@@ -516,18 +512,15 @@ class StatisticsHandler extends Handler {
             $types = [];
             $types['all'] = array();
 
-            foreach($data as $value)
-            {
-                if(!array_key_exists($value['title'], $types))
-                {
+            foreach ($data as $value) {
+                if (!array_key_exists($value['title'], $types)) {
                     $types[$value['title']] = array();
                 }
                 $types[$value['title']][] = $value['time'];
                 $types['all'][] = $value['time'];
             }
 
-            foreach($types as $key => $value)
-            {
+            foreach ($types as $key => $value) {
                 $types[$key] = $this->convert_to_date_time_array($value);
             }
 
@@ -556,10 +549,7 @@ class StatisticsHandler extends Handler {
             $this->global_tests_complete = $this->sort_and_count($test_dates);
 
             return true;
-
-        }
-        catch(Exception $exc)
-        {
+        } catch (Exception $exc) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
@@ -585,25 +575,20 @@ class StatisticsHandler extends Handler {
         return $dates;
     }
 
-
-    private function convert_to_date_time_array($data)
-    {
+    private function convert_to_date_time_array($data) {
         $dates = array();
-        foreach($data as $value)
-        {
+        foreach ($data as $value) {
             $date = date("Y-m-d", strtotime($value));
             $hour = date("G", strtotime($value));
 
-            if(!key_exists($date, $dates))
-            {
+            if (!key_exists($date, $dates)) {
                 $dates[$date] = array();
             }
 
-            if(!key_exists($hour, $dates[$date]))
-            {
+            if (!key_exists($hour, $dates[$date])) {
                 $dates[$date][$hour] = 0;
             }
-            $dates[$date][$hour]++;
+            $dates[$date][$hour] ++;
         }
 
         return $dates;
@@ -628,91 +613,71 @@ class StatisticsHandler extends Handler {
         return $output;
     }
 
-    
-    public function get_course_stats()
-    {
-        try
-        {
-            if($this->_user->user_type_id=="1")
-            {
+    public function get_course_stats() {
+        try {
+            if ($this->_user->user_type_id == "1") {
                 $this->super_admin_course_stats();
-            }
-            else
-            {
+            } else {
                 $this->local_admin_course_stats();
             }
 
             return true;
-        }
-        catch(Exception $ex)
-        {
+        } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }
-    
-    private function super_admin_course_stats()
-    {
+
+    private function super_admin_course_stats() {
         $course_data = DbHandler::get_instance()->return_query("SELECT course.os_id, translation_course_os.title FROM course INNER JOIN translation_course_os ON course.os_id = translation_course_os.course_os_id AND translation_course_os.language_id = :current_lang", TranslationHandler::get_current_language());
 
         $this->global_course_amount = count($course_data);
         $this->global_lectures_amount = DbHandler::get_instance()->count_query("SELECT id FROM course_lecture");
         $this->global_test_amount = DbHandler::get_instance()->count_query("SELECT id FROM course_test");
 
-        $distribution= [];
-        foreach($course_data as $value)
-        {
-            if(!array_key_exists($value['title'], $distribution))
-            {
+        $distribution = [];
+        foreach ($course_data as $value) {
+            if (!array_key_exists($value['title'], $distribution)) {
                 $distribution[$value['title']] = 0;
             }
-            $distribution[$value['title']]++;
+            $distribution[$value['title']] ++;
         }
 
         $this->course_os_distribution = $distribution;
     }
-    
-    private function local_admin_course_stats()
-    {
+
+    private function local_admin_course_stats() {
         $lectures_data = DbHandler::get_instance()->return_query("SELECT course_lecture.id, translation_course.title FROM course_lecture INNER JOIN school_course ON course_lecture.course_id = school_course.course_id AND school_course.school_id = :school_id INNER JOIN translation_course ON translation_course.course_id = school_course.course_id AND translation_course.language_id = :current_lang", $this->_user->school_id, TranslationHandler::get_current_language());
         $tests_data = DbHandler::get_instance()->return_query("SELECT course_test.id, translation_course.title FROM course_test INNER JOIN school_course ON course_test.course_id = school_course.course_id AND school_course.school_id = :school_id INNER JOIN translation_course ON translation_course.course_id = school_course.course_id AND translation_course.language_id = :current_lang", $this->_user->school_id, TranslationHandler::get_current_language());
         $lectures_started_data = DbHandler::get_instance()->return_query("SELECT user_course_lecture.user_id, translation_course.title FROM user_course_lecture INNER JOIN users ON user_course_lecture.user_id = users.id AND users.school_id = :school_id AND users.user_type_id > 3 INNER JOIN course_lecture ON course_lecture.id = user_course_lecture.lecture_id INNER JOIN translation_course ON translation_course.course_id = course_lecture.course_id AND translation_course.language_id = :current_lang", $this->_user->school_id, TranslationHandler::get_current_language());
         $tests_started_data = DbHandler::get_instance()->return_query("SELECT user_course_test.user_id, translation_course.title FROM user_course_test INNER JOIN users ON user_course_test.user_id = users.id AND users.school_id = :school_id AND users.user_type_id > 3 INNER JOIN course_test ON course_test.id = user_course_test.test_id INNER JOIN translation_course ON translation_course.course_id = course_test.course_id AND translation_course.language_id = :current_lang", $this->_user->school_id, TranslationHandler::get_current_language());
-        
+
         $this->course_titles = [];
-        
+
         $combined_data = array_merge($lectures_data, $tests_data);
-        
-        foreach($combined_data as $value)
-        {
-            if(!array_key_exists($value['title'], $this->course_titles))
-            {
+
+        foreach ($combined_data as $value) {
+            if (!array_key_exists($value['title'], $this->course_titles)) {
                 $this->course_titles[$value['title']] = array();
             }
-            
-            if(!array_key_exists("lectures", $this->course_titles[$value['title']]))
-            {
+
+            if (!array_key_exists("lectures", $this->course_titles[$value['title']])) {
                 $this->course_titles[$value['title']]["lectures"] = array();
             }
-            
-            if(!array_key_exists("tests", $this->course_titles[$value['title']]))
-            {
+
+            if (!array_key_exists("tests", $this->course_titles[$value['title']])) {
                 $this->course_titles[$value['title']]["tests"] = array();
             }
         }
 
-        foreach($lectures_started_data as $value)
-        {
-            if(!in_array($value['user_id'], $this->course_titles[$value['title']]["lectures"]))
-            {
+        foreach ($lectures_started_data as $value) {
+            if (!in_array($value['user_id'], $this->course_titles[$value['title']]["lectures"])) {
                 $this->course_titles[$value['title']]["lectures"][] = $value['user_id'];
             }
         }
-        
-        foreach($tests_started_data as $value)
-        {
-            if(!in_array($value['user_id'], $this->course_titles[$value['title']]["tests"]))
-            {
+
+        foreach ($tests_started_data as $value) {
+            if (!in_array($value['user_id'], $this->course_titles[$value['title']]["tests"])) {
                 $this->course_titles[$value['title']]["tests"][] = $value['user_id'];
             }
         }
@@ -721,22 +686,18 @@ class StatisticsHandler extends Handler {
         $this->global_lectures_amount = count($lectures_data);
         $this->global_test_amount = count($tests_data);
     }
-    
-    public function get_total_students()
-    {
-        try
-        {
-            if($this->_user->user_type_id == "2")
-            {
+
+    public function get_total_students() {
+        try {
+            if ($this->_user->user_type_id == "2") {
                 $this->student_total = DbHandler::get_instance()->count_query("SELECT id FROM users WHERE open = 1 AND user_type_id > 3 AND school_id = :school_id", $this->_user->school_id);
             }
-            
+
             return true;
-        }
-        catch(Exception $ex)
-        {
+        } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($ex->getMessage());
             return false;
         }
     }
+
 }

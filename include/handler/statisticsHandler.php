@@ -99,8 +99,8 @@ class StatisticsHandler extends Handler {
                 $test_tot += $value['total_steps'];
             }
             $number_of_accounts = DbHandler::get_instance()->count_query($q_number, $this->_class_id);
-            $this->class_lecture_average = round($lect_progress_data / ($number_of_accounts * $lect_tot), 0);
-            $this->class_test_average = round($test_progress_data / ($number_of_accounts * $test_tot), 0);
+            $this->class_lecture_average = round($lect_progress_data * 100 / ($number_of_accounts * $lect_tot), 0);
+            $this->class_test_average = round($test_progress_data * 100 / ($number_of_accounts * $test_tot), 0);
             $this->class_average = round(($this->school_lecture_average + $this->school_test_average) / 2, 0);
             return true;
         } catch (Exception $exc) {

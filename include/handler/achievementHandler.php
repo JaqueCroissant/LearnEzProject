@@ -126,7 +126,7 @@ class AchievementHandler extends Handler {
                             return;
                         } else if ($value_n['breakpoint'] <= $total) {
                             $achieved_data['current_breakpoint'] = $value_n['breakpoint'];
-                            self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
+                            self::add_achievement_for_user($value_n['id'], $achieved_data, $value['award_type_id']);
                         }
                     }
                     break;
@@ -174,7 +174,7 @@ class AchievementHandler extends Handler {
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
                         } else if ($value_n['breakpoint'] <= $total) {
-                            self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
+                            self::add_achievement_for_user($value_n['id'], $achieved_data, $value['award_type_id']);
                         }
                     }
                     break;
@@ -220,7 +220,7 @@ class AchievementHandler extends Handler {
                             break;
                         } else if ($value_n['breakpoint'] <= $total) {
                             $achieved_data['current_breakpoint'] = $value_n['breakpoint'];
-                            self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
+                            self::add_achievement_for_user($value_n['id'], $achieved_data, $value['award_type_id']);
                         }
                     }
                     break;
@@ -259,7 +259,7 @@ class AchievementHandler extends Handler {
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
                         } else if ($value_n['breakpoint'] <= $total) {
-                            self::add_achievement_for_user($value['id'], $achieved_data, $value['award_type_id']);
+                            self::add_achievement_for_user($value_n['id'], $achieved_data, $value['award_type_id']);
                         }
                     }
                     break;
@@ -294,6 +294,7 @@ class AchievementHandler extends Handler {
 
     private static function add_achievement_for_user($achievement_id, $data_object, $award_type_id) {
         $cur_breakpoint = isset($data_object['current_breakpoint']) ? $data_object['current_breakpoint'] : 0;
+        echo $achievement_id . '<br/>';
         if (self::$course_id) {
             $query = "INSERT INTO user_achievement (users_id, achievement_id, breakpoint, value_id) VALUES (:user, :ach_id, :breakpoint, :value_id)";
             DbHandler::get_instance()->query($query, SessionKeyHandler::get_from_session("user", TRUE)->id, $achievement_id, $cur_breakpoint, self::$course_id);
@@ -384,7 +385,7 @@ class AchievementHandler extends Handler {
     }
 
     private function get_completion_stats() {
-        $query = "select * FROM achievement_view where (language_id = :language_id OR language_id is NULL) AND users_id = :users_id order by user_achievement_id DESC";
+        $query = "select * FROM achievement_view where (language_id = :language_id OR language_id is NULL) AND users_id = :users_id order by user_achievement_id";
         if (!$this->user_id) {
             $data = DbHandler::get_instance()->return_query($query, TranslationHandler::get_current_language(), $this->_user->id);
         } else {
@@ -451,6 +452,9 @@ class AchievementHandler extends Handler {
             $not_q = "SELECT achievement.*, translation_achievement.text as text, achievement_type.title as achievement_type_title, path as img_path FROM achievement left join translation_achievement on achievement.id = translation_achievement.achievement_id inner join achievement_type on achievement.achievement_type_id = achievement_type.id inner join achievement_img on achievement_img_id = achievement_img.id where achievement.id NOT IN (" . $ids . ") and (language_id = :id OR language_id is null) order by breakpoint ";
         }
         $not_data = DbHandler::get_instance()->return_query($not_q, TranslationHandler::get_current_language());
+//        echo '<pre>';
+//        var_dump($not_data);
+//        echo '</pre>';
         foreach ($not_data as $val) {
             if ($val['award_type_id'] == "2") {
                 for ($i = 1; $i < 4; $i++) {
@@ -464,7 +468,7 @@ class AchievementHandler extends Handler {
                     $this->not_achieved[$val['achievement_type_id']][] = new Achievement($val);
                 }
             } else {
-                if ($val['award_type_id'] == "1" || $val['award_type_id'] == "2") {
+                if ($val['award_type_id'] == "1") {
                     $val['text'] = isset($val['breakpoint']) ? $val['breakpoint'] . ' ' . strtolower($val['text']) : $val['text'];
                 }
                 $this->not_achieved[$val['achievement_type_id']][] = new Achievement($val);

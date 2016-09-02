@@ -145,8 +145,8 @@ class StatisticsHandler extends Handler {
                 $test_tot += $value['total_steps'];
             }
             $number_of_accounts = DbHandler::get_instance()->count_query($q_number, $this->_school_id);
-            $this->school_lecture_average = round($lect_progress_data / ($number_of_accounts * $lect_tot), 0);
-            $this->school_test_average = round($test_progress_data / ($number_of_accounts * $test_tot), 0);
+            $this->school_lecture_average = round($lect_progress_data * 100 / ($number_of_accounts * $lect_tot), 0);
+            $this->school_test_average = round($test_progress_data * 100 / ($number_of_accounts * $test_tot), 0);
             $this->school_average = round(($this->school_lecture_average + $this->school_test_average) / 2, 0);
             return true;
         } catch (Exception $exc) {
@@ -230,9 +230,9 @@ class StatisticsHandler extends Handler {
 
     private function get_completion_graph_stats($user_id, $days) {
         $format = "Y-m-d";
-        $lect_q = "SELECT sum(is_complete) as complete, DATE(complete_date) as date FROM `user_course_lecture` WHERE is_complete = 1 and user_id = :user_id AND complete_date >= CURDATE() - INTERVAL :day day group by date ORDER BY date";
+        $lect_q = "SELECT sum(is_complete) as complete, DATE(complete_date) as date FROM user_course_lecture WHERE is_complete = 1 and user_id = :user_id AND complete_date >= CURDATE() - INTERVAL :day day group by date ORDER BY date";
         $lect_data = DbHandler::get_instance()->return_query($lect_q, $user_id, $days);
-        $test_q = "SELECT sum(is_complete) as complete, DATE(complete_date) as date FROM `user_course_test` WHERE is_complete = 1 and user_id = :user_id AND complete_date >= CURDATE() - INTERVAL :day day group by date ORDER BY date";
+        $test_q = "SELECT sum(is_complete) as complete, DATE(complete_date) as date FROM user_course_test WHERE is_complete = 1 and user_id = :user_id AND complete_date >= CURDATE() - INTERVAL :day day group by date ORDER BY date";
         $test_data = DbHandler::get_instance()->return_query($test_q, $user_id, $days);
         $this->lecture_graph_stats = [];
         $this->test_graph_stats = [];
@@ -244,7 +244,6 @@ class StatisticsHandler extends Handler {
         foreach ($test_data as $value) {
             $temp_test[$value['date']] = $value['complete'];
         }
-        $this->test_graph_stats = [];
         for ($i = $days; $i > -1; $i--) {
             $index = date($format, strtotime('-' . $i . ' days'));
             if (is_array($temp_lect) && array_key_exists($index, $temp_lect)) {
@@ -268,28 +267,20 @@ class StatisticsHandler extends Handler {
     }
 
     private function get_student_averages($user_id) {
-        $lectures = [];
-        $tests = [];
-        $data_array = DbHandler::get_instance()->return_query("SELECT * FROM progress_view WHERE user_id = :user_id", $user_id);
+        $school_id = DbHandler::get_instance()->return_query("SELECT school_id FROM users where id = :id", $user_id)[0]['school_id'];
+        $ql_progress = "SELECT sum(progress) as sum FROM user_course_lecture where user_id = :user_id";
+        $ql_tot = "SELECT sum(time_length) as sum FROM course_lecture inner join school_course on course_lecture.course_id = school_course.course_id where school_id = :school_id";
+        $qt_progress = "SELECT sum(progress) as sum FROM user_course_test where user_id = :user_id";
+        $qt_tot = "SELECT sum(total_steps) as sum FROM course_test inner join school_course on course_test.course_id = school_course.course_id where school_id = :school_id";
+        $lect_prog = reset(reset(DbHandler::get_instance()->return_query($ql_progress, $user_id)));
+        
+        $lect_tot = reset(reset(DbHandler::get_instance()->return_query($ql_tot, $school_id)));
+        echo $lect_prog . ' / ' . $lect_tot;
+        $test_prog = reset(reset(DbHandler::get_instance()->return_query($qt_progress, $user_id)));
+        $test_tot = reset(reset(DbHandler::get_instance()->return_query($qt_tot, $school_id)));
 
-        foreach ($data_array as $value) {
-            if ($value['type'] == 1) {
-                $progress = isset($value['progress']) ? $value['progress'] : 0;
-
-                if (!array_key_exists($value['course_id'], $tests)) {
-                    $tests[$value['course_id']] = $value['total'] != 0 ? ($progress / $value['total']) * 100 : 0;
-                }
-            } else {
-                $progress = isset($value['progress']) ? $value['progress'] : 0;
-
-                if (!array_key_exists($value['course_id'], $lectures)) {
-                    $lectures[$value['course_id']] = $value['total'] != 0 ? ($progress / $value['total']) * 100 : 0;
-                }
-            }
-        }
-
-        $this->student_lecture_average = round(array_sum($lectures) / count($lectures), 0);
-        $this->student_test_average = round(array_sum($tests) / count($tests), 0);
+        $this->student_lecture_average = round($lect_prog * 100 / $lect_tot, 0);
+        $this->student_test_average = round($test_prog * 100 / $test_tot, 0);
     }
 
     private function get_student_totals($user_id) {
@@ -319,64 +310,65 @@ class StatisticsHandler extends Handler {
                 throw new exception("USER_NOT_LOGGED_IN");
             }
 
-            $this->get_teacher_averages();
-            $this->get_teacher_totals();
+//            $this->get_teacher_averages();
+//            $this->get_teacher_totals();
             return true;
         } catch (Exception $ex) {
             $this->error = ErrorHandler::return_error($exc->getMessage());
             return false;
         }
     }
-
-    private function get_teacher_averages() {
-        $data_array = DbHandler::get_instance()->return_query("SELECT progress_view.* FROM progress_view INNER JOIN user_class ON progress_view.class_id = user_class.class_id WHERE user_class.users_id  = :user_id", $this->_user->id);
-        $students = [];
-        $courses = [];
-        $tests = [];
-        $course_progress = 0;
-        $course_total = 0;
-        $test_progress = 0;
-        $test_total = 0;
-
-        foreach ($data_array as $value) {
-            if ($value['user_id'] != $this->_user->id) {
-                $student_exists = array_key_exists($value['user_id'], $students);
-                $course_exists = array_key_exists($value['course_id'], $courses);
-                $test_exists = array_key_exists($value['course_id'], $tests);
-
-                if (!$student_exists) {
-                    $students[] = $value['user_id'];
-                }
-
-                if ($value['type'] == 1) {
-                    if (!$test_exists) {
-                        $tests[] = $value['course_id'];
-                    }
-
-                    if ((!$student_exists && !$test_exists) || ($student_exists && !$test_exists) || (!$student_exists && $test_exists)) {
-                        $test_progress += $value['progress'];
-                        $test_total += $value['total'];
-                    }
-                } else {
-                    if (!$course_exists) {
-                        $courses[] = $value['course_id'];
-                    }
-
-                    if ((!$student_exists && !$course_exists) || ($student_exists && !$course_exists) || (!$student_exists && $course_exists)) {
-                        $course_progress += $value['progress'];
-                        $course_total += $value['total'];
-                    }
-                }
-            }
-        }
-
-        $this->teacher_course_average = $course_total != 0 ? round(($course_progress / $course_total) * 100, 0) : 0;
-        $this->teacher_test_average = $test_total != 0 ? round(($test_progress / $test_total) * 100, 0) : 0;
-    }
-
-    private function get_teacher_totals() {
-        
-    }
+//
+//    private function get_teacher_averages() {
+//        // her
+//        $data_array = DbHandler::get_instance()->return_query("SELECT progress_view.* FROM progress_view INNER JOIN user_class ON progress_view.class_id = user_class.class_id WHERE user_class.users_id  = :user_id", $this->_user->id);
+//        $students = [];
+//        $courses = [];
+//        $tests = [];
+//        $course_progress = 0;
+//        $course_total = 0;
+//        $test_progress = 0;
+//        $test_total = 0;
+//
+//        foreach ($data_array as $value) {
+//            if ($value['user_id'] != $this->_user->id) {
+//                $student_exists = array_key_exists($value['user_id'], $students);
+//                $course_exists = array_key_exists($value['course_id'], $courses);
+//                $test_exists = array_key_exists($value['course_id'], $tests);
+//
+//                if (!$student_exists) {
+//                    $students[] = $value['user_id'];
+//                }
+//
+//                if ($value['type'] == 1) {
+//                    if (!$test_exists) {
+//                        $tests[] = $value['course_id'];
+//                    }
+//
+//                    if ((!$student_exists && !$test_exists) || ($student_exists && !$test_exists) || (!$student_exists && $test_exists)) {
+//                        $test_progress += $value['progress'];
+//                        $test_total += $value['total'];
+//                    }
+//                } else {
+//                    if (!$course_exists) {
+//                        $courses[] = $value['course_id'];
+//                    }
+//
+//                    if ((!$student_exists && !$course_exists) || ($student_exists && !$course_exists) || (!$student_exists && $course_exists)) {
+//                        $course_progress += $value['progress'];
+//                        $course_total += $value['total'];
+//                    }
+//                }
+//            }
+//        }
+//
+//        $this->teacher_course_average = $course_total != 0 ? round(($course_progress / $course_total) * 100, 0) : 0;
+//        $this->teacher_test_average = $test_total != 0 ? round(($test_progress / $test_total) * 100, 0) : 0;
+//    }
+//
+//    private function get_teacher_totals() {
+//        
+//    }
 
     public function get_top_students($limit = 5, $school = null, $class = null) {
         try {

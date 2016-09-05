@@ -123,7 +123,7 @@ class AchievementHandler extends Handler {
                         if ($value_n['breakpoint'] <= $bp_array[0]) {
                             continue;
                         } else if ($value_n['breakpoint'] > $total) {
-                            return;
+                            break;
                         } else if ($value_n['breakpoint'] <= $total) {
                             $achieved_data['current_breakpoint'] = $value_n['breakpoint'];
                             self::add_achievement_for_user($value_n['id'], $achieved_data, $value['award_type_id']);
@@ -213,8 +213,11 @@ class AchievementHandler extends Handler {
                     $id = 12;
                     $achieved_data['text'] = reset(reset(DbHandler::get_instance()->return_query($q, $id, TranslationHandler::get_current_language())));
                     $total = reset(reset(DbHandler::get_instance()->return_query("SELECT points FROM users WHERE id = :user_id", SessionKeyHandler::get_from_session("user", TRUE)->id)));
+                    $bp_array = explode(",", $achieved_data['breakpoints']);
+                    rsort($bp_array);
                     foreach ($breakpoints as $value_n) {
-                        if ($value_n['breakpoint'] <= $achieved_data['sum']) {
+                        $total = self::check_consecutive_days($login_records, $value_n['breakpoint']);
+                        if ($value_n['breakpoint'] <= $bp_array[0]) {
                             continue;
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
@@ -253,12 +256,25 @@ class AchievementHandler extends Handler {
                 case "1":
                     $breakpoints = self::get_breakpoints($value);
                     $achieved_data = self::get_achieved_data($achievement_type_id, $value);
+                    if ($achievement_type_id == "1") {
+                        $q = "SELECT text from translation_achievement where achievement_id = :id and language_id = :lang_id";
+                        $id = 15;
+                        $achieved_data['text'] = reset(reset(DbHandler::get_instance()->return_query($q, $id, TranslationHandler::get_current_language())));
+                    } else {
+                        $q = "SELECT text from translation_achievement where achievement_id = :id and language_id = :lang_id";
+                        $id = 3;
+                        $achieved_data['text'] = reset(reset(DbHandler::get_instance()->return_query($q, $id, TranslationHandler::get_current_language())));
+                    }
+                    $bp_array = explode(",", $achieved_data['breakpoints']);
+                    rsort($bp_array);
                     foreach ($breakpoints as $value_n) {
-                        if ($value_n['breakpoint'] < $achieved_data['sum']) {
+                        $total = self::check_consecutive_days($login_records, $value_n['breakpoint']);
+                        if ($value_n['breakpoint'] <= $bp_array[0]) {
                             continue;
                         } else if ($value_n['breakpoint'] > $total) {
                             break;
                         } else if ($value_n['breakpoint'] <= $total) {
+                            $achieved_data['current_breakpoint'] = $value_n['breakpoint'];
                             self::add_achievement_for_user($value_n['id'], $achieved_data, $value['award_type_id']);
                         }
                     }

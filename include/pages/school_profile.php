@@ -31,7 +31,6 @@ if (isset($_GET['school_id'])) {
 </style>
 <div class="profile-header" style="margin: -1.5rem -1.5rem 1.5rem -1.5rem !important;">
     <div class="col-md-2 pull-right m-t-lg m-r-lg">
-
         <?php if (RightsHandler::has_user_right("SCHOOL_EDIT")) { ?>
             <div class="pull-right p-v-xs">
                 <form method="post" id="alert_form_<?php echo $schoolHandler->school->id; ?>" action="" url="edit_school.php?state=set_availability">
@@ -56,7 +55,7 @@ if (isset($_GET['school_id'])) {
                 <div class="avatar avatar-xl">
                     <img class="img-responsive" src="assets/images/school_profile/<?php echo isset($_GET['school_id']) && !empty($schoolHandler->school->filename) ? $schoolHandler->school->filename : "default.png"; ?>" alt="avatar">
                 </div>
-                
+
             </div>
             <div class="text-center">
                 <span class="cover-icon <?php echo RightsHandler::has_user_right("MAIL_WRITE_TO_SCHOOL") ? " change_page a" : " disabled" ?>" id="mail" page="mail" step="create_mail" args="&receiver_id=SCHOOL_ADMIN_<?= isset($_GET['school_id']) ? $_GET['school_id'] : ""; ?>" data-toggle="tooltip" title="<?= TranslationHandler::get_static_text("SEND_MAIL") ?>"><i class="fa fa-envelope"></i></span>
@@ -126,9 +125,9 @@ if (isset($_GET['school_id'])) {
                                 </table>
                             <?php } else {
                                 ?>
-                                
+
                                 <div class="center description" onload="resize()">
-                                    
+
                                     <div style="width:100%; text-align:center; margin:20px 0px;">
                                         <?php echo TranslationHandler::get_static_text("NO_STUDENTS_FOUND"); ?>
                                     </div>
@@ -159,80 +158,79 @@ if (isset($_GET['school_id'])) {
                             if (isset($_GET['school_id'])) {
                                 $statisticsHandler->get_top_students($i_max, $schoolHandler->school->id);
                             }
-                            
-                            if(count($statisticsHandler->top_students)<1)
-                            {
+
+                            if (count($statisticsHandler->top_students) < 1) {
                                 ?>
-                                    <div class="streamline">
-                                        <div style="width:100%; text-align:center; margin:20px 0px;"><?= TranslationHandler::get_static_text("SCHOOL_NO_ACTIVE")?></div>
-                                <?php
-                            }
-                            else
-                            {
-                                ?>
+                                <div class="streamline">
+                                    <div style="width:100%; text-align:center; margin:20px 0px;"><?= TranslationHandler::get_static_text("SCHOOL_NO_ACTIVE") ?></div>
+                                    <?php
+                                } else {
+                                    ?>
                                     <div class="streamline m-l-lg">
-                                <?php
-                            }
-                            
-                            foreach ($statisticsHandler->top_students as $value) {
-                                ?>
-                                <div class="sl-item p-b-md sl-primary">
-                                    <div class="sl-avatar avatar avatar-sm avatar-circle">
-                                        <img class="img-responsive a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>" src="assets/images/profile_images/<?php echo profile_image_exists($value['profile_image']); ?>">
-                                    </div>
-                                    <div class="sl-content">
-                                        <h5 class="m-t-0">
-                                            <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= format_first_last_name($value['firstname'], $value['surname'], 35) ?></a>
-                                            <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i> " . TranslationHandler::get_static_text("THIS_IS_YOU") : ""; ?></small>
-                                        </h5>
-                                        <p><span data-plugin="counterUp"><?php echo $value['points']; ?></span> points</p>
-                                    </div>
+                                        <?php
+                                    }
+
+                                    foreach ($statisticsHandler->top_students as $value) {
+                                        ?>
+                                        <div class="sl-item p-b-md sl-primary">
+                                            <div class="sl-avatar avatar avatar-sm avatar-circle">
+                                                <img class="img-responsive a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>" src="assets/images/profile_images/<?php echo profile_image_exists($value['profile_image']); ?>">
+                                            </div>
+                                            <div class="sl-content">
+                                                <h5 class="m-t-0">
+                                                    <a class="m-r-xs text-primary a change_page" page="account_profile" step="" args="&user_id=<?php echo $value['id']; ?>"><?= format_first_last_name($value['firstname'], $value['surname'], 35) ?></a>
+                                                    <small class="text-muted fz-sm"><?php echo $value['id'] == $classHandler->_user->id ? "<i class='zmdi zmdi-hc-lg zmdi-long-arrow-left'></i> " . TranslationHandler::get_static_text("THIS_IS_YOU") : ""; ?></small>
+                                                </h5>
+                                                <p><span data-plugin="counterUp"><?php echo $value['points']; ?></span> points</p>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
                                 </div>
-                            <?php } ?>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <?php if (RightsHandler::has_user_right("SCHOOL_STATISTICS")) { ?>
-            <div class="row" id="statistic">
-                <div class="col-sm-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title no-transform">
-                                <i class="zmdi-hc-fw zmdi zmdi-trending-up zmdi-hc-lg m-r-md"></i>
-                                <?php echo TranslationHandler::get_static_text("STATISTICS"); ?>
-                            </h4>
-                        </div>
-                        <hr class="widget-separator m-0">
-                        <div class="panel-body">
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <div class="user-card m-b-0">
-                                        <div class="center">
-                                            <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
-                                            <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
-                                                <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_average; ?></span>%    </strong>
+                <?php if (RightsHandler::has_user_right("SCHOOL_STATISTICS")) { ?>
+                    <div class="row" id="statistic">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title no-transform">
+                                        <i class="zmdi-hc-fw zmdi zmdi-trending-up zmdi-hc-lg m-r-md"></i>
+                                        <?php echo TranslationHandler::get_static_text("STATISTICS"); ?>
+                                    </h4>
+                                </div>
+                                <hr class="widget-separator m-0">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <div class="user-card m-b-0">
+                                                <div class="center">
+                                                    <h4 class="widget-title p-b-md"><?php echo substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10); ?></h4>
+                                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_average) ?>"}, thickness: 10}' data-size="70">
+                                                        <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_average; ?></span>%    </strong>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="user-card m-b-0">
-                                        <div class="center">
-                                            <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
-                                            <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
-                                                <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_lecture_average; ?></span>%    </strong>
+                                        <div class="col-sm-4">
+                                            <div class="user-card m-b-0">
+                                                <div class="center">
+                                                    <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("LECTURE") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
+                                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_lecture_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_lecture_average) ?>"}, thickness: 10}' data-size="70">
+                                                        <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_lecture_average; ?></span>%    </strong>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4">
-                                    <div class="user-card m-b-0">
-                                        <div class="center">
-                                            <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
-                                            <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">
-                                                <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_test_average; ?></span>%    </strong>
+                                        <div class="col-sm-4">
+                                            <div class="user-card m-b-0">
+                                                <div class="center">
+                                                    <h4 class="widget-title p-b-md"><?php echo TranslationHandler::get_static_text("TEST") . " " . strtolower(substr(TranslationHandler::get_static_text("AVERAGE"), 0, 10)); ?></h4>
+                                                    <div class="pieprogress" data-value="<?php echo $statisticsHandler->school_test_average / 100; ?>" data-plugin="circleProgress" data-options='{fill: {color: "<?php echo get_progress_color($statisticsHandler->school_test_average) ?>"}, thickness: 10}' data-size="70">
+                                                        <strong style="margin-top: -14px; font-size: 14px;"><span data-plugin="counterUp"><?php echo $statisticsHandler->school_test_average; ?></span>%    </strong>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -240,40 +238,38 @@ if (isset($_GET['school_id'])) {
                             </div>
                         </div>
                     </div>
-                </div>
+                <?php } ?>
             </div>
-        <?php } ?>
-    </div>
-</div>
-<div id="click_close_alertbox" class="panel panel-danger alert_panel hidden" >
-    <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
-    <div class="panel-body">
-        <div class="hidden" id="open_text"><?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?></div>
-        <div class="hidden" id="close_text"><?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?></div>
-    </div>
-    <div class="panel-footer p-h-sm">
-        <p class="m-0">
-            <input class="btn btn-default btn-sm p-v-lg accept_click_close_alertbox_btn" id="" page='school_profile' type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
-            <input class="btn btn-default btn-sm p-v-lg cancel_click_close_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
-        </p>
-    </div>
-</div>
-<script src="assets/js/include_app.js" type="text/javascript"></script>
-<script>
-                            $(document).ready(function () {
-                                function resize() {
-                                    if ($(".students_stream").height() > $(".students_list").height()) {
-                                        var padding = Math.floor(($(".students_stream").height()) / 2);
-                                        $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
-                                        $(".students_list").height($(".students_stream").height());
-                                    } else {
-                                        $(".students_stream").height($(".students_list").height());
-                                        var padding = Math.floor(($(".students_list").height()) / 2);
-                                        $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
-                                    }
-                                }
-                                $('[data-toggle="tooltip"]').tooltip();
+        </div>
+        <div id="click_close_alertbox" class="panel panel-danger alert_panel hidden" >
+            <div class="panel-heading"><h4 class="panel-title"><?php echo TranslationHandler::get_static_text("ALERT"); ?></h4></div>
+            <div class="panel-body">
+                <div class="hidden" id="open_text"><?php echo TranslationHandler::get_static_text("CONFIRM_CLOSE") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?></div>
+                <div class="hidden" id="close_text"><?php echo TranslationHandler::get_static_text("CONFIRM_OPEN") . " " . strtolower(TranslationHandler::get_static_text("THIS")) . " " . strtolower(TranslationHandler::get_static_text("SCHOOL")) . "?"; ?></div>
+            </div>
+            <div class="panel-footer p-h-sm">
+                <p class="m-0">
+                    <input class="btn btn-default btn-sm p-v-lg accept_click_close_alertbox_btn" id="" page='school_profile' type="button" value="<?php echo TranslationHandler::get_static_text("ACCEPT"); ?>">
+                    <input class="btn btn-default btn-sm p-v-lg cancel_click_close_alertbox_btn" id="" type="button" value="<?php echo TranslationHandler::get_static_text("CANCEL"); ?>">
+                </p>
+            </div>
+        </div>
+        <script src="assets/js/include_app.js" type="text/javascript"></script>
+        <script>
+                                    $(document).ready(function () {
+                                        function resize() {
+                                            if ($(".students_stream").height() > $(".students_list").height()) {
+                                                var padding = Math.floor(($(".students_stream").height()) / 2);
+                                                $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+                                                $(".students_list").height($(".students_stream").height());
+                                            } else {
+                                                $(".students_stream").height($(".students_list").height());
+                                                var padding = Math.floor(($(".students_list").height()) / 2);
+                                                $('.description').attr("style", "padding-top: " + padding + "px;padding-bottom:" + padding + "px");
+                                            }
+                                        }
+                                        $('[data-toggle="tooltip"]').tooltip();
 
-                                $(document).on("draw.dt", resize);
-                            });
-</script>
+                                        $(document).on("draw.dt", resize);
+                                    });
+        </script>
